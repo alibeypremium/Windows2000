@@ -5026,3 +5026,112 @@ button.selected:focus {
   color: #00f;
   text-decoration: underline;
 }
+
+/* Property sheet extras */
+.rk-field {
+  position: absolute;
+  box-sizing: border-box;
+  border: 0;
+  outline: 0;
+  background: #fff;
+  font: 11px/13px Tahoma, "Wine Tahoma", sans-serif;
+  padding: 1px 3px;
+  box-shadow:
+    inset 1px 1px #808080,
+    inset -1px -1px #fff,
+    inset 2px 2px #404040,
+    inset -2px -2px #d4d0c8;
+  pointer-events: auto;
+}
+.rk-spin {
+  position: absolute;
+}
+.rk-spin .rk-field {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  padding-right: 18px;
+}
+.rk-spin .up,
+.rk-spin .down {
+  position: absolute;
+  right: 2px;
+  width: 16px;
+  height: 8px;
+  box-sizing: border-box;
+  background: #d4d0c8;
+  border: 1px solid;
+  border-color: #fff #404040 #404040 #fff;
+  box-shadow: inset -1px -1px #808080;
+}
+.rk-spin .up {
+  top: 2px;
+}
+.rk-spin .down {
+  bottom: 2px;
+}
+.rk-zone-label {
+  display: flex;
+  justify-content: center;
+}
+.rk-zone-label.sel span {
+  background: #0a246a;
+  color: #fff;
+}
+.rk-slider-v {
+  position: absolute;
+  width: 40px;
+  height: 110px;
+  pointer-events: auto;
+}
+.rk-slider-v .groove {
+  position: absolute;
+  left: 14px;
+  top: 3px;
+  width: 4px;
+  height: 100px;
+  border: 1px solid;
+  border-color: #808080 #fff #fff #808080;
+  box-sizing: border-box;
+}
+.rk-slider-v i {
+  position: absolute;
+  width: 4px;
+  height: 1px;
+  background: #404040;
+}
+.rk-slider-v i.l {
+  left: 0;
+}
+.rk-slider-v i.r {
+  left: 28px;
+}
+.rk-slider-v .thumb {
+  position: absolute;
+  left: 5px;
+  width: 22px;
+  height: 11px;
+  box-sizing: border-box;
+  background: #d4d0c8;
+  border: 1px solid;
+  border-color: #fff #404040 #404040 #fff;
+  box-shadow: inset -1px -1px #808080;
+}
+.rk-spin .up::after,
+.rk-spin .down::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  border: 3px solid transparent;
+}
+.rk-spin .up::after {
+  top: 1px;
+  border-bottom: 3px solid #000;
+  border-top: 0;
+}
+.rk-spin .down::after {
+  top: 2px;
+  border-top: 3px solid #000;
+  border-bottom: 0;
+}

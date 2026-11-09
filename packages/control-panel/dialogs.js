@@ -5,7 +5,7 @@ import { refWindow, kit } from "./refkit.js";
 const DLG = "/assets/ui/dialogs/";
 
 /** Shared OK / Cancel / Apply row used by property sheets. */
-function sheetButtons(w, k, { ok, apply, y = 480, xs = [586, 667, 748] }) {
+export function sheetButtons(w, k, { ok, apply, y = 480, xs = [586, 667, 748] }) {
   const applyBtn = k.btn(xs[2], y, 75, 23, "Apply", {
     disabled: true,
     onclick: () => {

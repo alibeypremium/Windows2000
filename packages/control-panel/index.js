@@ -8,6 +8,7 @@ import {
   statusBar,
 } from "../ui/index.js";
 import { downloadFile, pickFiles, DOCS } from "../core/index.js";
+import { openInternetProperties } from "./inet.js";
 import {
   openAccessibility,
   openAddRemovePrograms,
@@ -235,6 +236,7 @@ export function openControlPanel(ctx, { page = "system" } = {}) {
   if (page === "hardware") return openHardwareWizard(ctx);
   if (page === "autoupdate") return openAutomaticUpdates(ctx);
   if (page === "bde") return openBdeAdministrator(ctx);
+  if (page === "internet") return openInternetProperties(ctx);
   const entry =
       controlItems.find((p) => p.id === page) ||
       controlItems.find((p) => p.id === "system"),
