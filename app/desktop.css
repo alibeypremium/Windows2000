@@ -5226,3 +5226,128 @@ button.selected:focus {
 .rk-gridrow .c2 { left: 125px; width: 126px; }
 .rk-gridrow .c3 { left: 251px; width: 63px; }
 .rk-hdr.left { text-align: left; padding-left: 4px; }
+
+/* Folder Options extras */
+.rk-tlist {
+  position: absolute;
+  box-sizing: border-box;
+  background: #fff;
+  overflow: hidden;
+  box-shadow:
+    inset 1px 1px #808080,
+    inset -1px -1px #fff,
+    inset 2px 2px #404040,
+    inset -2px -2px #d4d0c8;
+  pointer-events: auto;
+}
+.rk-trow {
+  position: absolute;
+  height: 16px;
+  white-space: nowrap;
+  line-height: 16px;
+}
+.rk-trow img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 16px;
+  height: 16px;
+}
+.rk-trow.folder span {
+  position: absolute;
+  left: 21px;
+  top: 0;
+}
+.rk-trow.check .tbox,
+.rk-trow.radio .tradio {
+  position: absolute;
+  left: 0;
+  top: 1px;
+  width: 13px;
+  height: 13px;
+  box-sizing: border-box;
+  border: 2px solid #000;
+  background: #fff;
+}
+.rk-trow.radio .tradio {
+  border-radius: 50%;
+}
+.rk-trow.check.on .tbox::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: -1px;
+  width: 3px;
+  height: 6px;
+  border: solid #000;
+  border-width: 0 2px 2px 0;
+  transform: rotate(40deg);
+}
+.rk-trow.radio.on .tradio::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #000;
+}
+.rk-trow.check span,
+.rk-trow.radio span {
+  position: absolute;
+  left: 19px;
+  top: 0;
+}
+.rk-frow {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 17px;
+  line-height: 17px;
+  white-space: nowrap;
+}
+.rk-frow img {
+  position: absolute;
+  left: 3px;
+  top: 1px;
+}
+.rk-frow .e {
+  position: absolute;
+  left: 20px;
+}
+.rk-frow .t {
+  position: absolute;
+  left: 69px;
+}
+.rk-frow.sel {
+  background: #0a246a;
+  color: #fff;
+}
+.rk-slider-h {
+  position: absolute;
+  pointer-events: auto;
+}
+.rk-slider-h .groove {
+  position: absolute;
+  left: 0;
+  top: 9px;
+  width: 145px;
+  height: 4px;
+  border: 1px solid;
+  border-color: #808080 #fff #fff #808080;
+  box-sizing: border-box;
+}
+.rk-slider-h .thumb {
+  position: absolute;
+  left: 42px;
+  top: 1px;
+  width: 11px;
+  height: 20px;
+  box-sizing: border-box;
+  background: #d4d0c8;
+  border: 1px solid;
+  border-color: #fff #404040 #404040 #fff;
+  box-shadow: inset -1px -1px #808080;
+}
+.rk-spin.right input { text-align: right; }
