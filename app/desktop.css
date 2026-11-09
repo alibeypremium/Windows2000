@@ -19,7 +19,7 @@
   --active-gradient: #a6caf0;
   --text: #000;
   --ui-font-size: 11px;
-  --taskbar-height: 30px;
+  --taskbar-height: 28px;
   color-scheme: light;
   font:
     var(--ui-font-size) DesktopTahoma,
@@ -651,15 +651,15 @@ button.selected:focus {
 }
 .popup-menu {
   position: fixed;
-  min-width: 175px;
+  min-width: 0;
   max-width: min(380px, 100vw);
   background: var(--face);
   padding: 3px;
   box-shadow:
     inset -1px -1px #404040,
-    inset 1px 1px #fff,
+    inset 1px 1px #d4d0c8,
     inset -2px -2px #808080,
-    inset 2px 2px #dfdfdf;
+    inset 2px 2px #fff;
   pointer-events: auto;
   max-height: calc(100dvh - 5px);
   overflow-y: auto;
@@ -668,15 +668,16 @@ button.selected:focus {
 .popup-item {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 0;
   width: 100%;
   box-shadow: none;
-  min-height: 21px;
-  padding: 2px 8px 2px 2px;
+  height: 20px;
+  min-height: 20px;
+  padding: 0 5px 0 2px;
   text-align: left;
 }
 .popup-item:active {
-  padding: 2px 8px 2px 2px !important;
+  padding: 0 5px 0 2px !important;
   box-shadow: none !important;
 }
 .popup-item:hover:not(:disabled),
@@ -695,19 +696,30 @@ button.selected:focus {
   width: 0;
 }
 .popup-item .icon {
-  margin-right: 3px;
+  margin-right: 8px;
 }
 .menu-label {
   flex: 1;
   white-space: nowrap;
+  padding-right: 15px;
 }
 .menu-shortcut {
   padding-left: 20px;
   font-size: 11px;
 }
+.menu-arrow,
+.start-arrow {
+  display: inline-block;
+  width: 4px;
+  height: 7px;
+  flex: none;
+  background: currentColor;
+  -webkit-mask: url("/assets/ui/menu-arrow.png") no-repeat;
+  mask: url("/assets/ui/menu-arrow.png") no-repeat;
+  image-rendering: pixelated;
+}
 .menu-arrow {
-  font-size: 8px;
-  margin-left: 8px;
+  margin-left: 0;
 }
 .menu-separator {
   height: 2px;
@@ -720,7 +732,7 @@ button.selected:focus {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 30px;
+  height: var(--taskbar-height);
   display: flex;
   align-items: center;
   background: var(--face);
@@ -735,13 +747,13 @@ button.selected:focus {
   min-height: 24px;
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 5px;
   font-size: 11px;
-  padding: 0 5px !important;
+  padding: 0 4px 0 3px !important;
 }
 .start-button .icon {
-  width: 20px;
-  height: 20px;
+  width: 17px;
+  height: 16px;
 }
 .taskbar-grip {
   height: 21px;
@@ -837,67 +849,45 @@ button.selected:focus {
 }
 .start-menu {
   position: fixed;
-  bottom: 29px;
+  bottom: 24px;
   left: 2px;
   display: flex;
+  width: 254px;
   max-height: calc(100dvh - 32px);
-  min-width: 220px;
   pointer-events: auto;
   background: var(--face);
-  padding: 3px;
+  padding: 3px 2px 3px 3px;
   box-shadow:
     inset -1px -1px #404040,
-    inset 1px 1px #fff,
+    inset 1px 1px #d4d0c8,
     inset -2px -2px #808080,
-    inset 2px 2px #dfdfdf;
+    inset 2px 2px #fff;
 }
 .start-brand {
-  width: 24px;
-  background: #808080;
+  width: 21px;
+  flex: none;
   align-self: stretch;
-  position: relative;
-  overflow: hidden;
-}
-.start-brand > div {
-  position: absolute;
-  left: 3px;
-  bottom: 6px;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  font-family: Arial, sans-serif;
-  color: #d4d0c8;
-  white-space: nowrap;
-  font-size: 20px;
-  display: flex;
-  align-items: baseline;
-  gap: 0;
-}
-.start-brand strong {
-  color: #c0c0c0;
-}
-.start-brand small {
-  font-size: 12px;
-  letter-spacing: 1px;
-  color: #fff;
-  margin-top: 7px;
+  background: #000 url("/assets/ui/start-banner.png") no-repeat left bottom;
+  image-rendering: pixelated;
 }
 .start-items {
   flex: 1;
   overflow: visible;
+  padding-top: 1px;
 }
 .start-item {
-  height: 36px;
-  min-height: 36px;
+  height: 32px;
+  min-height: 32px;
   width: 100%;
   display: flex;
   gap: 8px;
   align-items: center;
   box-shadow: none;
-  padding: 2px 8px 2px 6px;
+  padding: 0 6px 0 2px;
   text-align: left;
 }
 .start-item:active {
-  padding: 2px 8px 2px 6px !important;
+  padding: 0 6px 0 2px !important;
   box-shadow: none !important;
 }
 .start-item:hover,
@@ -912,11 +902,10 @@ button.selected:focus {
   height: 32px;
 }
 .start-arrow {
-  font-size: 8px;
   margin-left: auto;
 }
 .start-items .menu-separator {
-  margin: 3px 1px;
+  margin: 3px 0;
 }
 .dialog-padding {
   padding: 14px 16px;

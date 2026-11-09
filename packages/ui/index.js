@@ -52,7 +52,7 @@ export const button = (label, action, attrs = {}) =>
   el("button", { type: "button", onclick: action, ...attrs }, label);
 const icons = {
   computer: "my-computer",
-  documents: "my-documents",
+  documents: "w2k/documents",
   network: "network",
   recycle: "recycle-bin",
   recycleFull: "recycle-bin-full",
@@ -62,31 +62,31 @@ const icons = {
   drive: "w2k/hard-drive",
   notepad: "w2k/notepad-1",
   paint: "w2k/paint",
-  calculator: "calculator",
-  solitaire: "solitaire",
-  freecell: "solitaire",
-  minesweeper: "minesweeper",
+  calculator: "w2k/ref-calculator",
+  solitaire: "w2k/ref-solitaire",
+  freecell: "w2k/ref-freecell",
+  minesweeper: "w2k/ref-minesweeper",
   pinball: "pinball",
   games: "games",
   programs: "w2k/programs",
-  settings: "w2k/settings",
+  settings: "w2k/settings-b",
   control: "w2k/control-panel",
   run: "w2k/run",
   shutdown: "w2k/shut-down",
   logoff: "w2k/log-off",
   help: "w2k/help",
-  search: "w2k/search",
+  search: "w2k/find",
   document: "w2k/default-document",
-  wordpad: "w2k/write",
-  cmd: "w2k/ms-dos-application",
+  wordpad: "w2k/ref-wordpad",
+  cmd: "w2k/ref-command-prompt",
   speaker: "w2k/sndvol-5",
   media: "w2k/wmp-1",
   registry: "settings",
   taskmgr: "task-manager",
   keyboard: "my-computer",
   display: "system-display",
-  mail: "document",
-  address: "document",
+  mail: "w2k/ref-outlook-express",
+  address: "w2k/ref-address-book",
   font: "w2k/font",
   cd: "w2k/cd-rom-drive",
   pictures: "my-pictures",
@@ -104,13 +104,23 @@ const icons = {
   camera: "camera",
   fax: "fax-machine",
   sounds: "sounds-music",
+  showDesktop: "w2k/ref-show-desktop",
+  qlDesktop: "w2k/desktop",
+  qlIe: "w2k/ref-ql-internet-explorer",
+  qlMail: "w2k/ref-ql-outlook-express",
+  setProgram: "w2k/ref-set-program-access",
+  programGroup: "w2k/program-group",
+  imagingApp: "w2k/ref-imaging",
+  syncApp: "w2k/server",
+  explorerApp: "w2k/search",
+  ieSmall: "w2k/ref-internet-explorer",
   sysInfo: "w2k/system",
   recorderApp: "w2k/sndrec-1",
   defragApp: "w2k/defragment",
   deviceMgr: "system-gear",
   magnifier: "w2k/search-2",
   dialerApp: "dialup-document",
-  windowsUpdate: "w2k/windows-update",
+  windowsUpdate: "w2k/ref-windows-update",
   taskbar: "w2k/taskbar",
   adminToolsFolder: "w2k/administrative-tools",
   dialup: "w2k/dial-up-networking",
@@ -131,11 +141,13 @@ export function icon(name = "document", size = 16) {
   return el("img", {
     class: "icon",
     src:
-      name === "windows"
-        ? `/assets/icons/windows-${size === 32 ? "32x32" : "22x22"}-8bpp.png`
+      name === "windows" && size !== 32
+        ? "/assets/icons/w2k/ref-start-logo.png"
+        : name === "windows"
+        ? "/assets/icons/windows-32x32-8bpp.png"
         : `/assets/icons/${resolved}-${size === 32 ? "32x32" : "16x16"}.png`,
-    width: size,
-    height: size,
+    width: name === "windows" && size !== 32 ? 17 : size,
+    height: name === "windows" && size !== 32 ? 16 : size,
     alt: "",
     draggable: "false",
     onerror: (e) => {
@@ -182,6 +194,7 @@ export function popup(items, x, y, { parent = null, anchor = null } = {}) {
   if (!parent) closeMenus();
   const menu = el("div", { class: "popup-menu", role: "menu", tabindex: -1 });
   let child = null;
+  const hasCheck = items.some((i) => i && i.checked != null);
   for (const item of items) {
     if (!item) continue;
     if (item.separator) {
@@ -198,11 +211,13 @@ export function popup(items, x, y, { parent = null, anchor = null } = {}) {
         disabled: item.disabled,
         tabindex: -1,
       },
-      el("span", { class: "menu-check", text: item.checked ? "✓" : "" }),
+      hasCheck
+        ? el("span", { class: "menu-check", text: item.checked ? "✓" : "" })
+        : null,
       item.icon ? icon(item.icon) : el("span", { class: "menu-icon-space" }),
       el("span", { class: "menu-label", text: item.label }),
       el("span", { class: "menu-shortcut", text: item.shortcut || "" }),
-      item.submenu ? el("span", { class: "menu-arrow", text: "▶" }) : null,
+      item.submenu ? el("span", { class: "menu-arrow" }) : null,
     );
     const openChild = () => {
       if (child) {
@@ -217,7 +232,7 @@ export function popup(items, x, y, { parent = null, anchor = null } = {}) {
         const r = row.getBoundingClientRect();
         child = popup(
           typeof item.submenu === "function" ? item.submenu() : item.submenu,
-          r.right - 3,
+          r.right - 2,
           r.top - 3,
           { parent: menu },
         );

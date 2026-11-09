@@ -474,17 +474,22 @@ export class DesktopShell {
       el(
         "div",
         { id: "quick-launch" },
-        button(icon("computer"), () => ctx.wm.showDesktop(), {
+        button(icon("showDesktop"), () => ctx.wm.showDesktop(), {
           class: "quick-launch-button",
           title: "Show Desktop",
           "aria-label": "Show Desktop",
         }),
-        button(icon("ie"), () => ctx.launch("ie"), {
+        button(icon("qlDesktop"), () => ctx.launch("explorer"), {
+          class: "quick-launch-button",
+          title: "Windows Explorer",
+          "aria-label": "Windows Explorer",
+        }),
+        button(icon("qlIe"), () => ctx.launch("ie"), {
           class: "quick-launch-button",
           title: "Launch Internet Explorer Browser",
           "aria-label": "Internet Explorer",
         }),
-        button(icon("mail"), () => ctx.launch("outlook"), {
+        button(icon("qlMail"), () => ctx.launch("outlook"), {
           class: "quick-launch-button",
           title: "Launch Outlook Express",
           "aria-label": "Outlook Express",
@@ -495,24 +500,11 @@ export class DesktopShell {
       el(
         "div",
         { class: "system-tray inset" },
-        button("EN", () => ctx.launch("control", { page: "keyboard" }), {
-          class: "tray-button language",
-          title: "English (United States)",
-        }),
         button(icon("speaker"), () => ctx.launch("volume"), {
           class: "tray-button",
           title: "Volume",
           "aria-label": "Volume",
         }),
-        button(
-          icon("network"),
-          () => ctx.launch("control", { page: "network" }),
-          {
-            class: "tray-button",
-            title: "Local Area Connection",
-            "aria-label": "Network status",
-          },
-        ),
         button("", () => ctx.launch("control", { page: "datetime" }), {
           id: "taskbar-clock",
           class: "tray-button clock",
@@ -641,12 +633,12 @@ export class DesktopShell {
       accessories = [
         {
           label: "Accessibility",
-          icon: "folder",
+          icon: "programGroup",
           submenu: this.appItems(["magnifier", "keyboard"]),
         },
         {
           label: "Communications",
-          icon: "folder",
+          icon: "programGroup",
           submenu: this.appItems([
             "hyperterminal",
             "dialer",
@@ -657,7 +649,7 @@ export class DesktopShell {
         },
         {
           label: "Entertainment",
-          icon: "folder",
+          icon: "programGroup",
           submenu: this.appItems([
             "cdplayer",
             "recorder",
@@ -665,10 +657,10 @@ export class DesktopShell {
             "mediaplayer",
           ]),
         },
-        { label: "Games", icon: "games", submenu: games },
+        { label: "Games", icon: "programGroup", submenu: games },
         {
           label: "System Tools",
-          icon: "folder",
+          icon: "programGroup",
           submenu: this.appItems([
             "clipboard",
             "charmap",
@@ -678,7 +670,6 @@ export class DesktopShell {
             "diskmanager",
           ]),
         },
-        separator(),
         ...this.appItems([
           "address",
           "calculator",
@@ -692,14 +683,13 @@ export class DesktopShell {
         ]),
       ];
     const programs = [
-        { label: "Accessories", icon: "folder", submenu: accessories },
-        ...this.appItems(["ie", "outlook", "mediaplayer"]),
-        separator(),
+        { label: "Accessories", icon: "programGroup", submenu: accessories },
         {
-          label: "Administrative Tools",
-          icon: "adminToolsFolder",
-          submenu: this.appItems(["taskmgr", "regedit", "events", "devices"]),
+          label: "Startup",
+          icon: "programGroup",
+          submenu: [{ label: "(Empty)", disabled: true }],
         },
+        ...this.appItems(["ie", "outlook"]),
       ],
       settings = [
         {
@@ -727,6 +717,11 @@ export class DesktopShell {
       .filter((p) => ctx.fs.exists(p))
       .slice(0, 8);
     const rows = [
+      {
+        label: "Set Program Access and Defaults",
+        icon: "setProgram",
+        action: () => ctx.launch("explorer", { path: "control" }),
+      },
       {
         label: "Windows Update",
         icon: "windowsUpdate",
@@ -784,17 +779,7 @@ export class DesktopShell {
     this.start = el(
       "div",
       { class: "start-menu", role: "menu" },
-      el(
-        "div",
-        { class: "start-brand" },
-        el(
-          "div",
-          {},
-          el("strong", { text: "Windows" }),
-          el("span", { text: "2000" }),
-          el("small", { text: "Professional" }),
-        ),
-      ),
+      el("div", { class: "start-brand", "aria-hidden": "true" }),
       items,
     );
     for (const item of rows) {
@@ -807,7 +792,7 @@ export class DesktopShell {
           icon(item.icon, 32),
           el("span", { text: item.label }),
           item.submenu
-            ? el("span", { class: "start-arrow", text: "▶" })
+            ? el("span", { class: "start-arrow" })
             : null,
         ],
         () => {
@@ -831,7 +816,7 @@ export class DesktopShell {
         b.classList.add("selected");
         if (item.submenu) {
           const r = b.getBoundingClientRect();
-          child = popup(item.submenu, r.right - 1, r.top);
+          child = popup(item.submenu, r.right - 4, r.top - 3);
         }
       };
       b.addEventListener("pointerenter", openChild);

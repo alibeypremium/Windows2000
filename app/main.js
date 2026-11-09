@@ -104,7 +104,7 @@ ctx.apps = [
   {
     id: "explorer",
     name: "Windows Explorer",
-    icon: "folder",
+    icon: "explorerApp",
     aliases: ["explorer.exe"],
     open: openExplorer,
   },
@@ -146,7 +146,7 @@ ctx.apps = [
   {
     id: "ie",
     name: "Internet Explorer",
-    icon: "ie",
+    icon: "ieSmall",
     aliases: ["iexplore", "iexplore.exe"],
     open: openInternetExplorer,
   },
@@ -174,7 +174,7 @@ ctx.apps = [
   {
     id: "synchronize",
     name: "Synchronize",
-    icon: "network",
+    icon: "syncApp",
     aliases: ["mobsync", "mobsync.exe"],
     open: openSynchronize,
   },
@@ -217,7 +217,7 @@ ctx.apps = [
   {
     id: "imaging",
     name: "Imaging",
-    icon: "paint",
+    icon: "imagingApp",
     aliases: ["kodakimg", "kodakimg.exe"],
     open: openImaging,
   },
@@ -237,7 +237,7 @@ ctx.apps = [
   },
   {
     id: "freecell",
-    name: "FreeCell",
+    name: "Freecell",
     icon: "freecell",
     aliases: ["freecell.exe"],
     open: (ctx, args) => openSolitaire(ctx, { ...args, freecell: true }),
