@@ -4318,3 +4318,43 @@ button.selected:focus {
     inset 2px 2px #404040,
     inset -2px -2px #d4d0c8;
 }
+
+.rk-checklist {
+  position: absolute;
+  box-sizing: border-box;
+  background: #fff;
+  overflow-y: scroll;
+  box-shadow:
+    inset 1px 1px #808080,
+    inset -1px -1px #fff,
+    inset 2px 2px #404040,
+    inset -2px -2px #d4d0c8;
+  padding: 2px;
+}
+.rk-checklist .row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 16px;
+  white-space: nowrap;
+}
+.rk-checklist .box {
+  box-sizing: border-box;
+  width: 13px;
+  height: 13px;
+  border: 2px solid #000;
+  background: #fff;
+  position: relative;
+  flex: none;
+}
+.rk-checklist .row.checked .box::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: -1px;
+  width: 3px;
+  height: 6px;
+  border: solid #000;
+  border-width: 0 2px 2px 0;
+  transform: rotate(40deg);
+}

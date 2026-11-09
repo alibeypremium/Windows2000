@@ -203,3 +203,134 @@ export function openAccessibility(ctx) {
   );
   return w;
 }
+
+export function openTaskbarProperties(ctx) {
+  const OX = 2,
+    OY = 336,
+    k = kit(OX, OY),
+    w = refWindow(ctx, {
+      title: "Taskbar and Start Menu Properties",
+      width: 344,
+      height: 400,
+      appId: "taskbarprops",
+      help: true,
+      noIcon: true,
+    });
+  const get = (key, fallback) => {
+    const v = ctx.settings.get(key);
+    return v === undefined || v === null ? fallback : !!v;
+  };
+  const state = {
+    taskbarOnTop: get("taskbarOnTop", true),
+    taskbarAutoHide: get("taskbarAutoHide", false),
+    smallStartIcons: !get("largeIcons", true),
+    showClock: get("showClock", true),
+    personalizedMenus: get("personalizedMenus", true),
+  };
+  const startItems = [
+    "Display Administrative Tools",
+    "Display Favorites",
+    "Display Logoff",
+    "Expand Control Panel",
+    "Expand My Documents",
+    "Expand Network and Dial-up Connections",
+    "Expand Printers",
+    "Scroll the Programs menu",
+  ];
+  const startState = Object.fromEntries(
+    startItems.map((n) => [n, !!ctx.settings.get("start:" + n)]),
+  );
+  const dirty = () => w.setDirty?.(true);
+  const bind = (key) => (v) => {
+    state[key] = v;
+    dirty();
+  };
+  const apply = () => {
+    ctx.settings.patch({
+      taskbarOnTop: state.taskbarOnTop,
+      taskbarAutoHide: state.taskbarAutoHide,
+      largeIcons: !state.smallStartIcons,
+      showClock: state.showClock,
+      personalizedMenus: state.personalizedMenus,
+      ...Object.fromEntries(
+        Object.entries(startState).map(([n, v]) => ["start:" + n, v]),
+      ),
+    });
+  };
+  const list = () => {
+    const box = document.createElement("div");
+    box.className = "rk-checklist";
+    for (const name of startItems) {
+      const row = document.createElement("div");
+      row.className = "row" + (startState[name] ? " checked" : "");
+      row.innerHTML = '<span class="box"></span>';
+      row.append(name);
+      row.addEventListener("click", () => {
+        startState[name] = !startState[name];
+        row.classList.toggle("checked", startState[name]);
+        dirty();
+      });
+      box.append(row);
+    }
+    box.style.cssText = `left:${27 - OX}px;top:${608 - OY}px;width:297px;height:73px`;
+    return box;
+  };
+  const tabsDef = [
+    {
+      label: "General",
+      x: 14,
+      w: 48,
+      content: () => [
+        k.img(36, 410, DLG + "taskbar-preview.png", 277, 133),
+        k.check(36, 564, "Always on top", {
+          checked: state.taskbarOnTop,
+          onchange: bind("taskbarOnTop"),
+        }),
+        k.check(36, 589, "Auto hide", {
+          checked: state.taskbarAutoHide,
+          onchange: bind("taskbarAutoHide"),
+        }),
+        k.check(36, 613, "Show small icons in Start menu", {
+          checked: state.smallStartIcons,
+          onchange: bind("smallStartIcons"),
+        }),
+        k.check(36, 638, "Show clock", {
+          checked: state.showClock,
+          onchange: bind("showClock"),
+        }),
+        k.check(36, 662, "Use Personalized Menus", {
+          checked: state.personalizedMenus,
+          onchange: bind("personalizedMenus"),
+        }),
+      ],
+    },
+    {
+      label: "Advanced",
+      x: 63,
+      w: 58,
+      content: () => [
+        k.group(27, 405, 296, 180, "Customize Start menu", 9),
+        k.img(44, 415, DLG + "tb-customize.png", 32, 32),
+        k.text(87, 416, "You can customize your\nStart menu by adding or\nremoving items from it."),
+        k.btn(231, 416, 80, 22, "Add...", { def: true }),
+        k.btn(231, 441, 80, 22, "Remove..."),
+        k.btn(231, 467, 80, 22, "Advanced..."),
+        k.btn(231, 492, 80, 22, "Re-sort"),
+        k.img(48, 522, DLG + "tb-recycle.png", 27, 32),
+        k.text(
+          89,
+          523,
+          "To remove records of\nrecently accessed\ndocuments, programs, and\nWeb sites,  click Clear.",
+        ),
+        k.btn(231, 553, 80, 22, "Clear"),
+        k.text(26, 593, "Start Menu Settings"),
+        list(),
+      ],
+    },
+  ];
+  w.place(
+    k.tabs({ top: 365, pane: [12, 385, 324, 311], tabs: tabsDef, active: 0 }),
+    sheetButtons(w, k, { ok: apply, apply, y: 703, xs: [100, 181, 262] }),
+  );
+  return w;
+}

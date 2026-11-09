@@ -11,6 +11,7 @@ import {
   safely,
 } from "../ui/index.js";
 import { DESKTOP, DOCS, joinPath, basename, pickFiles } from "../core/index.js";
+import { openTaskbarProperties } from "../control-panel/dialogs.js";
 export { openHelp, openWelcome, openAbout } from "./help.js";
 export class DesktopShell {
   constructor(ctx) {
@@ -853,45 +854,7 @@ export class DesktopShell {
   }
   taskbarProperties() {
     this.closeStart();
-    const ctx = this.ctx,
-      w = ctx.wm.create({
-        title: "Taskbar and Start Menu Properties",
-        icon: "settings",
-        width: 400,
-        height: 245,
-        dialog: true,
-        minimizable: false,
-        maximizable: false,
-        resizable: false,
-        appId: "taskbarprops",
-      });
-    let quick = ctx.settings.get("quickLaunch"),
-      seconds = ctx.settings.get("showSeconds");
-    w.setContent(
-      el(
-        "div",
-        { class: "dialog-padding" },
-        el(
-          "fieldset",
-          {},
-          el("legend", { text: "Taskbar appearance" }),
-          checkbox("Show Quick Launch", quick, (v) => (quick = v)),
-          checkbox("Show seconds in clock", seconds, (v) => (seconds = v)),
-        ),
-        el("p", {
-          text: "Right-click the taskbar to arrange your open windows.",
-        }),
-      ),
-      el(
-        "div",
-        { class: "dialog-buttons" },
-        button("OK", () => {
-          ctx.settings.patch({ quickLaunch: quick, showSeconds: seconds });
-          w.close();
-        }),
-        button("Cancel", () => w.close()),
-      ),
-    );
+    openTaskbarProperties(this.ctx);
   }
   async keydown(e) {
     this.lastActivity = Date.now();
