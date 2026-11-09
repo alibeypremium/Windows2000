@@ -4079,3 +4079,12 @@ button.selected:focus {
 .explorer-window .icons-view .file-item .file-name {
   letter-spacing: -0.08px;
 }
+.explorer-window .explorer-side .side-far {
+  margin-top: 40px;
+}
+.explorer-window .explorer-side span.text-link.side-first {
+  margin-top: 12px;
+}
+.explorer-window .explorer-side span.text-link.side-far {
+  margin-top: 39px;
+}

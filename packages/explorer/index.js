@@ -28,6 +28,8 @@ const shellNames = {
   network: "My Network Places",
   recycle: "Recycle Bin",
   control: "Control Panel",
+  admintools: "Administrative Tools",
+  printers: "Printers",
   search: "Search Results",
 };
 export function openExplorer(ctx, { path = "computer", title } = {}) {
@@ -95,7 +97,8 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     };
   const goUp = () => {
     if (current === "computer") return;
-    if (shellNames[current] || current.length === 3) navigate("computer");
+    if (current === "admintools" || current === "printers") navigate("control");
+    else if (shellNames[current] || current.length === 3) navigate("computer");
     else navigate(dirname(current));
   };
   const items = () => {
@@ -140,6 +143,32 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
         description: p.description,
         unavailable: p.unavailable,
       }));
+    if (current === "admintools")
+      return [
+        ["compsvc", "Component Services", "adminCompSvc"],
+        ["compmgmt", "Computer Management", "adminCompMgmt"],
+        ["odbc", "Data Sources (ODBC)", "adminOdbc"],
+        ["eventvwr", "Event Viewer", "adminEventVwr"],
+        ["secpol", "Local Security Policy", "adminSecPol"],
+        ["perf", "Performance", "adminPerf"],
+        ["services", "Services", "adminServices"],
+        ["telnet", "Telnet Server Administration", "adminTelnet"],
+      ].map(([id, name, ico]) => ({
+        name,
+        path: "admin:" + id,
+        type: "special",
+        icon: ico,
+        description: "Configures administrative settings for your computer",
+      }));
+    if (current === "printers")
+      return [
+        {
+          name: "Add Printer",
+          path: "printers:add",
+          type: "special",
+          icon: "addPrinter",
+        },
+      ];
     if (current === "network")
       return [
         {
@@ -174,7 +203,9 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     }
     if (n.path.startsWith("control:")) {
       const id = n.path.slice(8);
-      if (id === "tasks") ctx.launch("tasks");
+      if (id === "administrative") navigate("admintools");
+      else if (id === "printers") navigate("printers");
+      else if (id === "tasks") ctx.launch("tasks");
       else if (id === "autoupdate") ctx.launch("help", { topic: "updates" });
       else if (n.unavailable)
         ctx.dialogs.message(
@@ -182,7 +213,17 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
           { title: n.name, icon: "info" },
         );
       else ctx.launch("control", { page: id });
-    } else if (n.path === "tasks") ctx.launch("tasks");
+    } else if (n.path.startsWith("admin:")) {
+      const id = n.path.slice(6),
+        app = { eventvwr: "events", compmgmt: "diskmanager", perf: "taskmgr" }[id];
+      if (app) ctx.launch(app);
+      else
+        ctx.dialogs.message(
+          `${n.name} is not available in this browser simulation.`,
+          { title: n.name, icon: "info" },
+        );
+    } else if (n.path === "printers:add") ctx.launch("control", { page: "printers" });
+    else if (n.path === "tasks") ctx.launch("tasks");
     else if (n.path === "network:all" || n.path === "network:near")
       ctx.launch("control", { page: "network" });
     else if (n.path === "network:add")
@@ -878,6 +919,32 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
         link("Windows Update", () => ctx.launch("help", { topic: "updates" }), "side-first"),
         link("Windows 2000 Support", () => ctx.launch("help")),
       );
+    else if (current === "admintools")
+      side.append(
+        selectP(),
+        p("Configures administrative settings for your computer", "side-description"),
+        ...seeAlso(goDocs, goNet, goComp),
+      );
+    else if (current === "printers")
+      side.append(
+        p(
+          "This folder contains information about printers that are currently installed, and a wizard to help you install new printers.",
+        ),
+        el(
+          "p",
+          { class: "side-next" },
+          "To get information about a printer that is currently installed, right-click the printer's icon.",
+        ),
+        el(
+          "p",
+          { class: "side-next" },
+          "To install a new printer, click the ",
+          el("b", { text: "Add Printer" }),
+          " icon.",
+        ),
+        (selectP().classList.add("side-next"), descEl),
+        link("Windows 2000 Support", () => ctx.launch("help"), "side-far"),
+      );
     else if (current === "recycle") {
       side.append(
         p(
@@ -991,12 +1058,15 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     const list = items(),
       sel = list.filter((n) => selected.has(n.path)),
       fsView = !shellNames[current],
-      showLoc = current === "computer" || fsView;
+      showLoc =
+        current === "computer" || current === "admintools" || fsView;
     status.children[0].textContent = selected.size
       ? `${selected.size} object(s) selected`
       : `${list.length} object(s)`;
     status.children[1].textContent =
-      fsView || current === "recycle"
+      current === "admintools"
+        ? "10.3 KB"
+        : fsView || current === "recycle"
         ? formatBytes(
             (selected.size ? sel : list).reduce(
               (sum, n) => sum + (n.type === "file" ? n.size || 0 : 0),
@@ -1322,6 +1392,7 @@ const isSystemFolder = (path) =>
 const isDrive = (path) => /^[a-z]:[\\/]?$/i.test(path);
 function locationIcon(path) {
   if (path === DOCS || path === "documents") return "documents";
+  if (path === "admintools") return "adminToolsFolder";
   if (shellNames[path] && path !== "search") return path === "computer" ? "computer" : path;
   if (isDrive(path))
     return { A: "floppy", D: "cd" }[path[0].toUpperCase()] || "drive";
@@ -1329,7 +1400,9 @@ function locationIcon(path) {
 }
 function headerArt(path) {
   if (path === DOCS) return "documents";
-  if (["computer", "control", "recycle", "network"].includes(path)) return path;
+  if (path === "admintools") return "admin";
+  if (["computer", "control", "recycle", "network", "printers"].includes(path))
+    return path;
   if (isDrive(path)) return "disk";
   return "folder";
 }
