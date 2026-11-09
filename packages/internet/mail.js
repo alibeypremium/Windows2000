@@ -8,6 +8,7 @@ import {
   separator,
 } from "../ui/index.js";
 import { DOCS, downloadFile } from "../core/index.js";
+import { loadOeMenus, oeMenu } from "./oe-menu.js";
 const CONTACTS = DOCS + "/Address Book.json",
   MAIL = DOCS + "/Mail.json";
 const read = (ctx, path, initial) => {
@@ -343,45 +344,33 @@ export function openMail(
         { title: "Outlook Express", icon: "mail" },
       );
     };
-    w.setMenu({
-      File: [
-        { label: "Save Draft", action: save },
-        {
-          label: "Export Message...",
-          action: () =>
-            downloadFile(
-              "Message.eml",
-              `To: ${toInput.value}\r\nCc: ${cc.value}\r\nSubject: ${subject.value}\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n${body.value}`,
-              "message/rfc822",
-            ),
-        },
-        { label: "Close", action: () => w.close() },
-      ],
-      Edit: [
-        { label: "Select All", action: () => body.select() },
-        {
-          label: "Paste",
-          action: async () =>
-            body.setRangeText(
-              await ctx.clipboard.getText(),
-              body.selectionStart,
-              body.selectionEnd,
-              "end",
-            ),
-        },
-      ],
-      Tools: [{ label: "Address Book", action: () => ctx.launch("address") }],
+    const exportEml = () =>
+      downloadFile(
+        "Message.eml",
+        `To: ${toInput.value}\r\nCc: ${cc.value}\r\nSubject: ${subject.value}\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n${body.value}`,
+        "message/rfc822",
+      );
+    const paste = async () => body.setRangeText(await ctx.clipboard.getText(), body.selectionStart, body.selectionEnd, "end");
+    const ed = (cmd) => ({ action: () => (body.focus(), document.execCommand(cmd)) });
+    const cids = {
+      40465: { action: () => openMail(ctx, { compose: true }) }, 40170: { action: () => openMail(ctx, { compose: true }) },
+      40411: { action: () => send().catch((e) => ctx.dialogs.error(e)) }, 40225: { action: () => save().catch((e) => ctx.dialogs.error(e)) },
+      40227: { action: () => save().catch((e) => ctx.dialogs.error(e)) }, 40477: { action: exportEml },
+      40228: { action: () => w.close() },
+      40229: ed("undo"), 40230: ed("cut"), 40484: ed("copy"), 40231: { action: paste },
+      40125: { action: () => body.select() },
+      40199: { action: () => ctx.launch("address") }, 40265: { action: () => ctx.launch("address") },
+    };
+    loadOeMenus().then((m) => w.setMenu(oeMenu(m.compose, (id) => cids[id], {
       Help: [
+        { label: "Contents and Index", action: () => ctx.launch("help", { topic: "outlook" }) },
+        separator(),
         {
-          label: "Sending Mail",
-          action: () =>
-            ctx.dialogs.message(
-              "This browser edition stores drafts locally and hands sending to your device’s mail application. SMTP and POP3 accounts require an external mail service.",
-              { title: "Outlook Express Help", icon: "mail" },
-            ),
+          label: "About Outlook Express",
+          action: () => ctx.dialogs.message("Microsoft Outlook Express\nVersion 5.50.4807.1700\n\nCopyright © 1981-2000 Microsoft Corp.", { title: "About Outlook Express", icon: "oe" }),
         },
       ],
-    });
+    })));
     w.setContent(
       toolbar([
         { icon: "mail", label: "Send", action: send },
@@ -581,40 +570,26 @@ export function openMail(
     selected = null;
     render();
   };
-  w.setMenu({
-    File: [
-      { label: "New", submenu: [{ label: "Mail Message", action: newMail }] },
-      { label: "Exit", action: () => w.close() },
-    ],
-    Edit: [{ label: "Delete", action: deleteMessage }],
-    View: [{ label: "Refresh", action: render }],
-    Tools: [
-      { label: "Address Book...", action: () => ctx.launch("address") },
-      {
-        label: "Accounts...",
-        action: () =>
-          ctx.dialogs.message(
-            "This desktop stores local drafts. Sending uses your device’s configured mail application.",
-            { title: "Internet Accounts", icon: "mail" },
-          ),
-      },
-    ],
-    Message: [
-      { label: "New Message", action: newMail },
-      { label: "Reply", action: replyTo },
-    ],
-    Help: [
-      { label: "Contents and Index", action: () => ctx.launch("help", { topic: "internet" }) },
-      {
-        label: "About Outlook Express",
-        action: () =>
-          ctx.dialogs.message(
-            "Outlook Express\nBrowser recreation\n\nLocal messages, drafts, address book, .eml export, and mail-client handoff.",
-            { title: "Outlook Express", icon: "mail" },
-          ),
-      },
-    ],
-  });
+  const ids = {
+    40465: { action: newMail }, 40170: { action: newMail }, 40017: undefined,
+    40123: { action: () => w.close() },
+    40128: { action: deleteMessage, disabled: !selected }, 40433: undefined,
+    40176: { action: replyTo, disabled: !selected }, 40177: { action: replyTo, disabled: !selected },
+    40199: { action: () => ctx.launch("address") }, 40364: { action: () => ctx.launch("address") },
+    40158: { action: render }, 40193: { action: render }, 40194: { action: render }, 40195: { action: render },
+    40121: { action: () => ctx.settings.set("oeOffline", !ctx.settings.get("oeOffline")), checked: !!ctx.settings.get("oeOffline") },
+    40203: { action: () => ctx.dialogs.message("This desktop stores local drafts. Sending uses your device’s configured mail application.", { title: "Internet Accounts", icon: "mail" }) },
+  };
+  loadOeMenus().then((m) => w.setMenu(oeMenu(m.main, (id) => { const r = ids[id]; return r && { ...r, disabled: r.disabled }; }, {
+      Help: [
+        { label: "Contents and Index", action: () => ctx.launch("help", { topic: "outlook" }) },
+        separator(),
+        {
+          label: "About Outlook Express",
+          action: () => ctx.dialogs.message("Microsoft Outlook Express\nVersion 5.50.4807.1700\n\nCopyright © 1981-2000 Microsoft Corp.", { title: "About Outlook Express", icon: "oe" }),
+        },
+      ],
+    })));
   w.el.querySelector(":scope > .menu-bar")?.append(im("throbber", "throbber oe-throbber"), el("i", { class: "oe-mgrip" }));
   contacts.append(
     el("div", { class: "oe-phead" }, el("span", {}, el("u", { text: "C" }), "ontacts"), el("i", { class: "oe-dd" }), el("b", { class: "oe-x", text: "×" })),

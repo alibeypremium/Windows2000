@@ -164,7 +164,7 @@ const HELP = "/assets/help/";
 let HELP_DATA = null;
 const loadHelp = () => (HELP_DATA ? Promise.resolve(HELP_DATA) : fetch(HELP + "help.json").then((r) => r.json()).then((d) => (HELP_DATA = d)));
 const BOOK_ORDER = ["getstart", "howto", "concepts", "tshoot", "cpanel", "display", "access", "hardware", "printing", "folderop", "find", "fonts", "recycle", "keyb", "mouse", "datetime", "sounds", "notepad", "wordpad", "mspaint", "calc", "charmap", "clipbrd", "mplayer", "soundrec", "sndvol32", "freecell", "sol", "winmine", "pinball", "regedit", "taskmgr", "iexplore", "msoe", "nthelp", "glossary"];
-const TOPIC_BOOK = { notepad: "notepad", wordpad: "wordpad", paint: "mspaint", calculator: "calc", media: "mplayer", internet: "iexplore", system: "tshoot", games: "sol", solitaire: "sol", freecell: "freecell", minesweeper: "winmine", pinball: "pinball", shortcuts: "folderop" };
+const TOPIC_BOOK = { notepad: "notepad", wordpad: "wordpad", paint: "mspaint", calculator: "calc", media: "mplayer", internet: "iexplore", system: "tshoot", games: "sol", solitaire: "sol", freecell: "freecell", minesweeper: "winmine", outlook: "msoe", pinball: "pinball", shortcuts: "folderop" };
 const walk = (nodes, fn, path = []) => nodes.forEach((n, i) => (fn(n, [...path, i]), n.c && walk(n.c, fn, [...path, i])));
 
 export function openHelp(ctx, { topic } = {}) {
