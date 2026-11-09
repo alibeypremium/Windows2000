@@ -392,3 +392,4 @@ Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the origi
 - Paint Flip/Rotate, Stretch/Skew, Custom Zoom: mspaint.exe (`paint-data.js`). Menus of Notepad, WordPad, Paint, Calculator, Imaging (kodakimg.exe), Address Book (wab32res.dll) follow the real resources. IE 5.01 menus follow the real browser menu order (they are not stored as RT_MENU in the ISO).
 
 - Task Manager, Registry Editor, System Information, Magnifier (dialogs), Event Viewer, Device Manager, Disk Management and Disk Defragmenter: menus and dialogs follow the Windows 2000 SP4 ISO resources (taskmgr, regedit, msinfo32, magnify, mmc).
+- Windows Media Player UI bitmaps (button strips, Windows Media logo, volume) and menus extracted from msdxm.ocx (assets/wmp).

@@ -388,40 +388,95 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
         { label: "About CD Player", action: () => ctx.dialogs.message("CD Player\nVersion 5.0 (Build 2195: Service Pack 4)\n\nCopyright © 1990-1999 Microsoft Corp.", { title: "About CD Player", icon: "media" }) },
       ],
     });
+  if (cd) {
   w.setContent(
-    title,
-    el("div", { class: "media-display" }, video, visual),
-    el(
-      "div",
-      { class: "media-transport" },
-      seek,
+      title,
+      el("div", { class: "media-display" }, video, visual),
       el(
         "div",
-        { class: "media-buttons" },
-        playButton,
-        stopButton,
-        button(
-          "◀|",
-          () => {
-            if (index > 0) load(playlist[--index], true);
-            else video.currentTime = 0;
-          },
-          { class: "media-control", title: "Previous" },
+        { class: "media-transport" },
+        seek,
+        el(
+          "div",
+          { class: "media-buttons" },
+          playButton,
+          stopButton,
+          button(
+            "◀|",
+            () => {
+              if (index > 0) load(playlist[--index], true);
+              else video.currentTime = 0;
+            },
+            { class: "media-control", title: "Previous" },
+          ),
+          button(
+            "|▶",
+            () => {
+              if (index < playlist.length - 1) load(playlist[++index], true);
+            },
+            { class: "media-control", title: "Next" },
+          ),
+          time,
+          icon("speaker"),
+          volume,
         ),
-        button(
-          "|▶",
-          () => {
-            if (index < playlist.length - 1) load(playlist[++index], true);
-          },
-          { class: "media-control", title: "Next" },
-        ),
-        time,
-        icon("speaker"),
-        volume,
       ),
+      status,
+    );
+    } else {
+  const spr = (n, i, dis) => ({ backgroundImage: `url(assets/wmp/bmp${n}.png)`, backgroundPosition: `-${i * 20}px 0` });
+  const wb = (i, titleText, fn) => {
+    const b = el("button", { class: "wmp-btn", title: titleText, "aria-label": titleText, onclick: fn });
+    Object.assign(b.style, spr(5208, i));
+    return b;
+  };
+  const wmpPlay = wb(0, "Play", () => toggle(true));
+  const wmpPause = wb(1, "Pause", () => video.pause());
+  const logo = el("img", { class: "wmp-logo", src: "assets/wmp/bmp140.png", alt: "" });
+  const skipBack = () => (index > 0 ? load(playlist[--index], true) : (video.currentTime = 0));
+  const skipFwd = () => index < playlist.length - 1 && load(playlist[++index], true);
+  const sync = () => {
+    const idle = video.paused && !video.currentTime;
+    logo.hidden = !idle;
+    visual.style.visibility = idle ? "hidden" : "visible";
+  };
+  video.addEventListener("play", sync);
+  video.addEventListener("pause", sync);
+  const info = (k, v) => el("div", { class: "wmp-info-row" }, el("span", { class: "wmp-info-k", text: k }), el("span", { class: "wmp-info-v" }, v));
+  const vol = el("div", { class: "wmp-vol" });
+  const volImg = el("div", { class: "wmp-vol-icon" });
+  Object.assign(volImg.style, { backgroundImage: "url(assets/wmp/bmp5212.png)", backgroundPosition: "0 0" });
+  volImg.onclick = () => ctx.settings.set("muted", !ctx.settings.get("muted"));
+  volume.className = "wmp-vol-slider";
+  vol.append(volImg, volume);
+  const syncMute = () => (volImg.style.backgroundPosition = ctx.settings.get("muted") ? "-40px 0" : "0 0");
+  w.addCleanup(ctx.bus.on("settings:change", syncMute));
+  syncMute();
+  seek.className = "wmp-seek";
+  w.setContent(
+    el("div", { class: "wmp-root" },
+      el("div", { class: "wmp-screen" }, video, visual, logo),
+      el("div", { class: "wmp-seekrow" }, seek),
+      el("div", { class: "wmp-controls" },
+        wmpPlay,
+        wmpPause,
+        wb(2, "Stop", () => { video.pause(); video.currentTime = 0; sync(); }),
+        el("span", { class: "wmp-sep" }),
+        wb(3, "Skip Back", skipBack),
+        wb(4, "Rewind", () => (video.currentTime = Math.max(0, video.currentTime - 5))),
+        wb(5, "Fast Forward", () => (video.currentTime = Math.min(video.duration || 0, video.currentTime + 5))),
+        wb(6, "Skip Forward", skipFwd),
+        el("span", { class: "wmp-flex" }),
+        vol,
+      ),
+      el("div", { class: "wmp-info" }, info("Show:", ""), info("Clip:", (title.className = "wmp-clip", title)), info("Author:", ""), info("Copyright:", "")),
     ),
     status,
   );
+  status.children[1] && (status.children[1].textContent = "");
+  video.addEventListener("timeupdate", () => status.children[1] && (status.children[1].textContent = time.textContent));
+  sync();
+  }
   w.addCleanup(() => {
     cancelAnimationFrame(raf);
     video.pause();
