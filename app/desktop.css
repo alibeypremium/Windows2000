@@ -5420,3 +5420,4 @@ button.selected:focus {
 .kb-hot span { position: absolute; left: 2px; top: 4px; line-height: 13px; }
 .kb-hot .r { left: auto; right: 3px; }
 .kb-hot.sel { background: #0a246a; color: #fff; }
+.ns-bar { position: absolute; background: #808080; }

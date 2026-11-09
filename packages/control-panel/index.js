@@ -16,6 +16,7 @@ import { openUsersAndPasswords } from "./users.js";
 import { openPowerOptions } from "./power.js";
 import { openMouseProperties } from "./mouse.js";
 import { openKeyboardProperties } from "./keyboard.js";
+import { openLocationInformation, openLanStatus } from "./netdlg.js";
 import { openFolderOptions } from "./folderopts.js";
 import {
   openAccessibility,
@@ -129,7 +130,6 @@ export const controlItems = [
     icon: "cpPhone",
     description: "Configure your telephone dialing rules and modem settings.",
     label: "Phone and Modem ...",
-    unavailable: true,
   },
   {
     id: "power",
@@ -245,6 +245,8 @@ export function openControlPanel(ctx, { page = "system" } = {}) {
   if (page === "bde") return openBdeAdministrator(ctx);
   if (page === "internet") return openInternetProperties(ctx);
   if (page === "gaming") return openGamingOptions(ctx);
+  if (page === "phone") return openLocationInformation(ctx);
+  if (page === "network") return openLanStatus(ctx);
   if (page === "keyboard") return openKeyboardProperties(ctx);
   if (page === "mouse") return openMouseProperties(ctx);
   if (page === "power") return openPowerOptions(ctx);
