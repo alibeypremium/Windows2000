@@ -412,7 +412,7 @@ export function openAddRemovePrograms(ctx, page = "change") {
         );
         n.addEventListener("click", () => {
           if (key === "components") {
-            openWindowsComponents?.(ctx);
+            openComponentsWizard(ctx);
             return;
           }
           show(key);
@@ -572,4 +572,136 @@ export function openAddRemovePrograms(ctx, page = "change") {
   show(page);
   return w;
 }
-const openWindowsComponents = null;
+
+
+/* ---------- Windows Components Wizard ---------- */
+
+const COMPONENTS = [
+  ["Indexing Service", "comp-indexing", "0.0 MB", true],
+  ["Internet Explorer", "comp-ie", "0.0 MB", true],
+  ["Internet Information Services (IIS)", "comp-iis", "18.2 MB", false],
+  ["Management and Monitoring Tools", "comp-mgmt", "0.8 MB", false],
+  ["Message Queuing Services", "comp-msmq", "2.6 MB", false],
+];
+const DESCRIPTIONS = {
+  "Indexing Service": "Enables fast full-text searching of files.",
+  "Internet Explorer": "Includes Internet Explorer and related components.",
+  "Internet Information Services (IIS)": "IIS services (Web and FTP support) along with support for FrontPage, transactions, ASPs, database connections, and receiving of mail.",
+  "Management and Monitoring Tools": "Includes tools for monitoring and improving network performance.",
+  "Message Queuing Services": "Message Queuing provides loosely-coupled and reliable network communication services.",
+};
+
+export function openComponentsWizard(ctx) {
+  const OX = 315,
+    OY = 87,
+    k = kit(OX, OY),
+    w = refWindow(ctx, {
+      title: "Windows Components Wizard",
+      width: 501,
+      height: 383,
+      appId: "control",
+      noIcon: true,
+      x: OX,
+      y: OY,
+      className: "ref-dialog wiz-dialog",
+    });
+  let sel = 0;
+  const desc = k.text(363, 352, "Description:  " + DESCRIPTIONS[COMPONENTS[0][0]]);
+  const list = el("div", { class: "wiz-list" });
+  const render = () => {
+    list.replaceChildren(
+      ...COMPONENTS.map(([name, ic, size, on], i) => {
+        const row = el(
+          "div",
+          { class: "wiz-row" + (i === sel ? " selected" : "") },
+          el("span", { class: "wiz-box" + (on ? " checked" : "") }),
+          el("img", { src: ARP + ic + ".png", alt: "", draggable: "false" }),
+          el("span", { class: "wiz-name", text: name }),
+          el("span", { class: "wiz-size", text: size }),
+        );
+        row.addEventListener("mousedown", (e) => {
+          if (e.target.classList.contains("wiz-box")) COMPONENTS[i][3] = !on;
+          sel = i;
+          desc.textContent = "Description:  " + DESCRIPTIONS[name];
+          render();
+        });
+        return row;
+      }),
+    );
+  };
+  render();
+  const listBox = el("div", { class: "wiz-listbox" }, list);
+  listBox.style.left = 364 - OX + "px";
+  listBox.style.top = 253 - OY + "px";
+  w.place(
+    el("div", { class: "wiz-header" }),
+    el("div", { class: "wiz-rule", style: { top: 169 - OY - 2 + "px" } }),
+    el("div", { class: "wiz-title", style: { left: 341 - OX + "px", top: 120 - OY + "px" } }, "Windows Components"),
+    k.text(363, 136, "You can add or remove components of Windows 2000."),
+    k.img(762, 115, DLG + "wiz-components-banner.png", 49, 49),
+    k.text(
+      363,
+      191,
+      "To add or remove a component, click the checkbox.  A shaded box means that only\npart of the component will be installed.  To see what's included in a component, click\nDetails.",
+    ),
+    k.text(363, 237, "Components:"),
+    listBox,
+    desc,
+    k.text(363, 383, "Total disk space required:"),
+    k.text(363, 399, "Space available on disk:"),
+    k.text(463, 383, "0.0 MB", { w: 112, align: "right" }),
+    k.text(463, 399, "368.8 MB", { w: 112, align: "right" }),
+    k.btn(696, 384, 75, 23, "Details...", { disabled: true }),
+    el("div", { class: "wiz-rule", style: { top: 423 - OY - 1 + "px" } }),
+    k.btn(570, 436, 75, 23, "< Back"),
+    k.btn(646, 436, 75, 23, "Next >", {
+      def: true,
+      onclick: () => {
+        w.close();
+        ctx.dialogs.message("No changes were made to the installed Windows components.", {
+          title: "Windows Components Wizard",
+        });
+      },
+    }),
+    k.btn(731, 436, 75, 23, "Cancel", { onclick: () => w.close() }),
+  );
+  return w;
+}
+
+/* ---------- Add/Remove Hardware Wizard ---------- */
+
+export function openHardwareWizard(ctx) {
+  const OX = 131,
+    OY = 131,
+    k = kit(OX, OY),
+    w = refWindow(ctx, {
+      title: "Add/Remove Hardware Wizard",
+      width: 501,
+      height: 383,
+      appId: "control",
+      noIcon: true,
+      x: OX,
+      y: OY,
+      className: "ref-dialog wiz-dialog",
+    });
+  w.place(
+    el("div", { class: "wiz-white", style: { left: "2px", top: "21px", width: "497px", height: "313px" } }),
+    k.img(135, 154, DLG + "wiz-hardware-side.png", 164, 313),
+    el("div", { class: "wiz-welcome", style: { left: 306 - OX + "px", top: 166 - OY + "px" } }, "Welcome to the Add/Remove\nHardware Wizard"),
+    k.text(306, 218, "This wizard helps you add, remove, unplug, and\ntroubleshoot your hardware."),
+    k.text(306, 444, "To continue, click Next."),
+    el("div", { class: "wiz-rule", style: { top: 467 - OY - 1 + "px" } }),
+    k.btn(387, 481, 75, 23, "< Back", { disabled: true }),
+    k.btn(462, 481, 75, 23, "Next >", {
+      def: true,
+      onclick: () => {
+        w.close();
+        ctx.dialogs.message("No hardware changes were detected on this computer.", {
+          title: "Add/Remove Hardware Wizard",
+        });
+      },
+    }),
+    k.btn(547, 481, 75, 23, "Cancel", { onclick: () => w.close() }),
+  );
+  return w;
+}

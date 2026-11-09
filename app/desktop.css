@@ -4541,3 +4541,111 @@ button.selected:focus {
   background: #fff;
   pointer-events: none;
 }
+
+/* Wizards */
+.wiz-header {
+  position: absolute;
+  left: 2px;
+  top: 21px;
+  width: 497px;
+  height: 59px;
+  background: #fff;
+}
+.wiz-white {
+  position: absolute;
+  background: #fff;
+}
+.wiz-rule {
+  position: absolute;
+  left: 2px;
+  width: 497px;
+  height: 2px;
+  box-sizing: border-box;
+  border-top: 1px solid #808080;
+  border-bottom: 1px solid #fff;
+}
+.wiz-welcome {
+  position: absolute;
+  white-space: pre;
+  font: 18px/20px Verdana, Tahoma, sans-serif;
+}
+.wiz-listbox {
+  position: absolute;
+  width: 408px;
+  height: 87px;
+  box-sizing: border-box;
+  background: #fff;
+  box-shadow:
+    inset 1px 1px #808080,
+    inset -1px -1px #fff,
+    inset 2px 2px #404040,
+    inset -2px -2px #d4d0c8;
+  padding: 2px;
+}
+.wiz-list {
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+.wiz-row {
+  position: relative;
+  height: 18px;
+  white-space: nowrap;
+}
+.wiz-row.selected {
+  background: #0a246a;
+  color: #fff;
+  outline: 1px dotted #ffff80;
+  outline-offset: -1px;
+}
+.wiz-box {
+  position: absolute;
+  left: 0;
+  top: 2px;
+  width: 13px;
+  height: 13px;
+  box-sizing: border-box;
+  border: 2px solid #808080;
+  border-right-color: #fff;
+  border-bottom-color: #fff;
+  background: #fff;
+  box-shadow: inset 1px 1px #404040;
+}
+.wiz-box.checked::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: -1px;
+  width: 3px;
+  height: 6px;
+  border: solid #000;
+  border-width: 0 2px 2px 0;
+  transform: rotate(40deg);
+}
+.wiz-row img {
+  position: absolute;
+  left: 16px;
+  top: 1px;
+  width: 16px;
+  height: 16px;
+}
+.wiz-name {
+  position: absolute;
+  left: 34px;
+  top: 2px;
+}
+.wiz-size {
+  position: absolute;
+  left: 340px;
+  width: 40px;
+  text-align: right;
+  top: 2px;
+}
+
+.wiz-title {
+  position: absolute;
+  font-weight: 700;
+  letter-spacing: 0.35px;
+  white-space: pre;
+  line-height: 13px;
+}

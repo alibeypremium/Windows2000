@@ -8,7 +8,11 @@ import {
   statusBar,
 } from "../ui/index.js";
 import { downloadFile, pickFiles, DOCS } from "../core/index.js";
-import { openAccessibility, openAddRemovePrograms } from "./dialogs.js";
+import {
+  openAccessibility,
+  openAddRemovePrograms,
+  openHardwareWizard,
+} from "./dialogs.js";
 export const controlItems = [
   {
     id: "accessibility",
@@ -228,6 +232,7 @@ export function applyTheme(settings) {
 export function openControlPanel(ctx, { page = "system" } = {}) {
   if (page === "accessibility") return openAccessibility(ctx);
   if (page === "programs") return openAddRemovePrograms(ctx);
+  if (page === "hardware") return openHardwareWizard(ctx);
   const entry =
       controlItems.find((p) => p.id === page) ||
       controlItems.find((p) => p.id === "system"),
