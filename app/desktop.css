@@ -5746,3 +5746,12 @@ input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type=
 .odbc-btns { position: absolute; right: 18px; top: 40px; display: flex; flex-direction: column; gap: 6px; } .odbc-btns button { width: 75px; height: 23px; font: inherit; }
 .tn-root { position: relative; width: 100%; height: 100%; background: #000; color: #c0c0c0; font: 16px/16px "Lucida Console", monospace; white-space: pre; padding: 4px; box-sizing: border-box; flex: 1; min-height: 0; }
 .anp h3 { margin: 6px 0 10px; font-size: 14px; } .anp p { margin: 0 0 14px; } .anp .full { display: block; width: 100%; margin-top: 4px; font: inherit; border: 2px inset #fff; }
+.rk-input { position: absolute; inset: 0; width: 100%; height: 100%; box-sizing: border-box; border: 0; padding: 0 2px; background: #fff; font: 13px W2KSans, Tahoma, sans-serif; outline: 0; }
+.rk-etched { position: absolute; border-top: 1px solid #808080; border-bottom: 1px solid #fff; height: 0 !important; }
+/* Minesweeper */
+.ms-root { position: relative; background: #c0c0c0; overflow: hidden; border: 3px solid; border-color: #fff #808080 #808080 #fff; box-sizing: border-box; user-select: none; }
+.ms-box { position: absolute; border: solid; border-color: #808080 #fff #fff #808080; box-sizing: border-box; }
+.ms-led { position: absolute; width: 41px; height: 25px; border: 1px solid; border-color: #808080 #fff #fff #808080; box-sizing: border-box; }
+.ms-led i { position: absolute; top: 0; width: 13px; height: 23px; background: url(/assets/games/minesweeper/led.png) no-repeat; image-rendering: pixelated; }
+.ms-face { position: absolute; width: 24px; height: 24px; background: url(/assets/games/minesweeper/faces.png) no-repeat; image-rendering: pixelated; }
+.ms-cell { position: absolute; width: 16px; height: 16px; background: url(/assets/games/minesweeper/tiles.png) no-repeat; image-rendering: pixelated; }

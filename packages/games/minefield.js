@@ -2,7 +2,7 @@ export class Minefield {
   constructor(width = 9, height = 9, mines = 10, random = Math.random) {
     this.width = width;
     this.height = height;
-    this.mineCount = Math.min(mines, width * height - 9);
+    this.mineCount = Math.min(mines, width * height - 1);
     this.random = random;
     this.cells = Array.from({ length: width * height }, () => ({
       mine: false,
@@ -30,7 +30,7 @@ export class Minefield {
     return result;
   }
   seed(index) {
-    const safe = new Set([index, ...this.neighbors(index)]),
+    const safe = new Set([index]),
       candidates = this.cells.map((_, i) => i).filter((i) => !safe.has(i));
     for (let i = candidates.length - 1; i > 0; i--) {
       const j = Math.floor(this.random() * (i + 1));

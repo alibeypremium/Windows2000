@@ -378,3 +378,6 @@ HTML Help topics, images and stylesheets from the original Windows 2000 Professi
 
 ## Services / consoles
 Service list, descriptions and start-up types follow the default Windows 2000 Professional set (packages/system/services.js). Local Security Policy, Component Services, ODBC, Telnet Server Admin and Add Network Place are layout approximations built from the ISO dialog structure; no reference screenshots exist yet for them.
+
+## Games
+Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the original resources of winmine.exe (Windows 2000 SP4). Window layout constants follow the original client geometry; no reference screenshot was available.

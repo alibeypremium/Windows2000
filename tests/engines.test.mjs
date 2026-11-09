@@ -34,12 +34,12 @@ test("percent uses pending accumulator, and scientific operations are bounded", 
   assert.equal(calculate(["5", "n!"]).display, "120");
   assert.equal(calculate(["9", "0", "sin"]).display, "1");
 });
-test("mine placement never hits first square or adjacent neighbors", () => {
+test("mine placement never hits the first square", () => {
   for (const start of [0, 4, 40, 80]) {
     const m = new Minefield(9, 9, 10, () => 0.37);
     m.reveal(start);
     assert.equal(m.cells.filter((c) => c.mine).length, 10);
-    for (const index of [start, ...m.neighbors(start)])
+    for (const index of [start])
       assert.equal(m.cells[index].mine, false);
     assert.equal(m.over, false);
   }
