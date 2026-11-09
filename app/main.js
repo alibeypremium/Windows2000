@@ -651,7 +651,7 @@ async function start() {
     });
   }
   window.win2k = { version: "1.0.0", ...ctx };
-  if ("serviceWorker" in navigator && !location.hostname.endsWith(".local"))
+  if ("serviceWorker" in navigator && !location.hostname.endsWith(".local") && !["localhost", "127.0.0.1"].includes(location.hostname))
     navigator.serviceWorker
       .register("/sw.js")
       .catch((e) => console.info("Offline cache unavailable:", e.message));

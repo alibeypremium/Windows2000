@@ -33,4 +33,12 @@ for await (const file of walk(out)) {
   if (file === join(out, 'sw.js')) text = text.replaceAll('"/"', '"./"').replace('k !== CACHE', 'k.startsWith("win2k-desktop-") && k !== CACHE');
   if (text !== source) await writeFile(file, text);
 }
+const list = [];
+for await (const file of walk(join(out, 'assets'))) if (/\.(png|gif|ico)$/i.test(file)) list.push(relative(out, file).split(sep).join('/'));
+list.sort();
+await writeFile(join(out, 'assets-manifest.json'), JSON.stringify(list));
+// New icon set = new cache, so stale pictures never outlive a deploy.
+const { createHash } = await import('node:crypto');
+const sw = join(out, 'sw.js');
+await writeFile(sw, (await readFile(sw, 'utf8')).replace('win2k-desktop-v1', 'win2k-desktop-' + createHash('sha1').update(list.join()).digest('hex').slice(0, 8)));
 console.log('Static site written to _site');
