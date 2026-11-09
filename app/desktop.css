@@ -4358,3 +4358,186 @@ button.selected:focus {
   border-width: 0 2px 2px 0;
   transform: rotate(40deg);
 }
+
+/* Add/Remove Programs */
+.arp-grey {
+  position: absolute;
+  background: #808080;
+}
+.arp-nav {
+  position: absolute;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: default;
+  border: 1px solid transparent;
+}
+.arp-nav.arp-sel {
+  border-color: #404040 #fff #fff #404040;
+}
+.arp-nav img {
+  position: absolute;
+}
+.arp-nav-text {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  white-space: pre;
+  line-height: 13px;
+}
+.arp-listwrap {
+  position: absolute;
+  left: 104px;
+  top: 61px;
+  width: 481px;
+  height: 372px;
+  overflow: hidden;
+}
+.arp-list {
+  position: absolute;
+  inset: 0;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  background: #fff;
+}
+.arp-row {
+  position: relative;
+  height: 22px;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+.arp-row img {
+  position: absolute;
+  left: 4px;
+  top: 4px;
+  width: 16px;
+  height: 16px;
+}
+.arp-name {
+  position: absolute;
+  left: 24px;
+  top: 4px;
+  line-height: 13px;
+}
+.arp-sizel {
+  position: absolute;
+  left: 370px;
+  top: 4px;
+  line-height: 13px;
+}
+.arp-sizev {
+  position: absolute;
+  left: 401px;
+  width: 56px;
+  text-align: right;
+  top: 4px;
+  line-height: 13px;
+}
+.arp-row.selected {
+  height: 81px;
+  background: #0a246a;
+  color: #fff;
+}
+.arp-row.selected .arp-name {
+  font-weight: bold;
+  white-space: normal;
+  width: 270px;
+  top: 3px;
+}
+.arp-row.selected .arp-sizel {
+  left: 364px;
+  top: 7px;
+}
+.arp-row.selected .arp-sizev {
+  top: 7px;
+  text-decoration: underline;
+}
+.arp-usedl {
+  position: absolute;
+  left: 314px;
+  top: 29px;
+  line-height: 13px;
+}
+.arp-usedv {
+  position: absolute;
+  left: 409px;
+  top: 29px;
+  line-height: 13px;
+}
+.arp-hint {
+  position: absolute;
+  left: 24px;
+  top: 49px;
+  white-space: pre;
+  line-height: 13px;
+}
+.arp-row .rk-btn {
+  color: #000;
+}
+.arp-menu {
+  position: absolute;
+  width: 110px;
+  background: #fff;
+  border: 1px solid #000;
+  z-index: 5;
+  pointer-events: auto;
+}
+.arp-menu div {
+  padding: 1px 3px;
+}
+.arp-menu div:hover {
+  background: #0a246a;
+  color: #fff;
+}
+.arp-access {
+  position: absolute;
+  width: 484px;
+  height: 320px;
+  box-sizing: border-box;
+  background: #fff;
+  overflow-y: scroll;
+  box-shadow:
+    inset 1px 1px #808080,
+    inset -1px -1px #fff,
+    inset 2px 2px #404040,
+    inset -2px -2px #d4d0c8;
+  padding: 2px;
+}
+.arp-access-in {
+  position: relative;
+  height: 330px;
+}
+.arp-sec {
+  position: absolute;
+  left: 0;
+  width: 100%;
+}
+.arp-sec-title {
+  position: absolute;
+  left: 9px;
+  top: 4px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+.arp-sec .rk-radio,
+.arp-sec .rk-check {
+  position: absolute;
+}
+.arp-rule {
+  position: absolute;
+  left: 9px;
+  top: 69px;
+  width: 400px;
+  height: 1px;
+  background: linear-gradient(90deg, #d4d0c8, #fff);
+}
+
+.arp-white {
+  position: absolute;
+  left: 4px;
+  top: 22px;
+  width: 592px;
+  height: 424px;
+  background: #fff;
+  pointer-events: none;
+}
