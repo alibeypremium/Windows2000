@@ -5603,3 +5603,21 @@ button.selected:focus {
 .ab-row.sel { background: #0a246a; color: #fff; }
 .ab-status { position: absolute; left: 0; right: 0; bottom: 0; height: 20px; padding: 3px 3px; box-sizing: border-box; box-shadow: inset 1px 1px #808080, inset -1px -1px #fff; }
 .ab-status.hidden { display: none; }
+
+/* WordPad (reference r8) */
+.wp-root { position: relative; width: 100%; height: 100%; flex: 1; min-height: 0; font-size: 11px; background: #d4d0c8; }
+.wp-tools, .wp-format { position: absolute; left: 0; right: 0; top: 0; height: 0; }
+.wp-btn { position: absolute; width: 23px; height: 22px; background-repeat: no-repeat; image-rendering: pixelated; cursor: default; }
+.wp-btn.on::after { content: ""; position: absolute; inset: 2px; background: repeating-conic-gradient(#fff 0 25%, #d4d0c8 0 50%) 0 0 / 2px 2px; opacity: .55; pointer-events: none; }
+.wp-sel { position: absolute; height: 22px; box-sizing: border-box; appearance: none; -webkit-appearance: none; border: 0; border-radius: 0; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='18'%3E%3Crect width='16' height='18' fill='%23d4d0c8'/%3E%3Cpath d='M0 0h15v1H1v16H0z' fill='%23fff'/%3E%3Cpath d='M15 0h1v18H0v-1h15z' fill='%23404040'/%3E%3Cpath d='M4 7h7l-3.5 4z'/%3E%3C/svg%3E") right 2px center no-repeat; box-shadow: inset 1px 1px #808080, inset -1px -1px #fff, inset 2px 2px #404040, inset -2px -2px #d4d0c8; padding: 0 20px 0 3px; font: 11px Tahoma, "MS Sans Serif", sans-serif; color: #000; letter-spacing: -0.2px; }
+.wp-color { position: absolute; left: 429px; top: 34px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.wp-ruler { position: absolute; left: 4px; top: 61px; width: 710px; height: 22px; background: url(/assets/ui/wp/ruler.png) no-repeat; image-rendering: pixelated; }
+.wp-work { position: absolute !important; left: 0; right: 0; top: 84px; bottom: 21px; padding: 0 !important; background: #fff !important; box-shadow: inset 1px 1px #808080, inset -1px -1px #fff, inset 2px 2px #404040, inset -2px -2px #d4d0c8; overflow: auto; box-sizing: border-box; border: 2px solid transparent; }
+.wp-work .wordpad-page { min-height: 100%; background: #fff; box-shadow: none; padding: 0 2px; margin: 0; font: 10pt Arial, sans-serif; line-height: normal; }
+.wp-status { position: absolute; left: 0; right: 0; bottom: 0; height: 20px; }
+.wp-status-text { position: absolute; left: 1px; top: 3px; letter-spacing: -0.2px; }
+.wp-panel { position: absolute; top: 2px; height: 17px; box-sizing: border-box; box-shadow: inset 1px 1px #808080, inset -1px -1px #fff; padding: 2px 2px; }
+.wp-sel { -webkit-text-fill-color: #000; }
+.wp-tools::after, .wp-format::after { content: ""; position: absolute; width: 2px; box-shadow: inset 1px 0 #808080, inset 2px 0 #fff; }
+.wp-tools::after { left: 297px; top: 3px; height: 24px; }
+.wp-format::after { left: 566px; top: 33px; height: 24px; }

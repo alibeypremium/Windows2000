@@ -4,7 +4,6 @@ import {
   button,
   icon,
   toolbar,
-  statusBar,
   separator,
   checkbox,
   field,
@@ -411,8 +410,10 @@ export function openWordPad(ctx, { path = null } = {}) {
   const w = ctx.wm.create({
     title: (path ? basename(path) : "Document") + " - WordPad",
     icon: "wordpad",
-    width: 720,
-    height: 520,
+    width: 768,
+    height: 537,
+    x: 88,
+    y: 88,
     appId: "wordpad",
   });
   let filename = path,
@@ -442,7 +443,6 @@ export function openWordPad(ctx, { path = null } = {}) {
     else editor.textContent = raw;
   }
   saved = editor.innerHTML;
-  const status = statusBar("For Help, press F1", "");
   const update = () => {
     changed = editor.innerHTML !== saved;
     w.setTitle(
@@ -450,8 +450,6 @@ export function openWordPad(ctx, { path = null } = {}) {
         (filename ? basename(filename) : "Document") +
         " - WordPad",
     );
-    status.children[1].textContent =
-      editor.innerText.trim().split(/\s+/).filter(Boolean).length + " words";
   };
   editor.addEventListener("input", update);
   let selection = null;
@@ -526,95 +524,97 @@ export function openWordPad(ctx, { path = null } = {}) {
     const p = await ctx.dialogs.file({ mode: "open" });
     if (p) ctx.launch("wordpad", { path: p });
   };
-  const family = el(
+  const sel = (x, wd, label, options, onchange) =>
+    el(
       "select",
-      {
-        "aria-label": "Font",
-        onchange: (e) => command("fontName", e.target.value),
-      },
-      ...["Arial", "Times New Roman", "Courier New", "Tahoma", "Verdana"].map(
-        (n) => el("option", { text: n }),
-      ),
-    ),
-    size = el(
-      "select",
-      {
-        "aria-label": "Font size",
-        onchange: (e) => command("fontSize", e.target.value),
-      },
-      ...[
-        ["1", "8"],
-        ["2", "10"],
-        ["3", "12"],
-        ["4", "14"],
-        ["5", "18"],
-        ["6", "24"],
-        ["7", "36"],
-      ].map(([value, text]) =>
-        el("option", { value, text, selected: value === "3" }),
-      ),
+      { class: "wp-sel", style: { left: x + "px", top: "34px", width: wd + "px" }, "aria-label": label, onchange },
+      ...options,
     );
+  const family = sel(
+      6,
+      159,
+      "Font",
+      ["Arial", "Times New Roman", "Courier New", "Tahoma", "Verdana"].map((n) => el("option", { text: n })),
+      (e) => command("fontName", e.target.value),
+    ),
+    size = sel(
+      174,
+      50,
+      "Font size",
+      [["1", "8"], ["2", "10"], ["3", "12"], ["4", "14"], ["5", "18"], ["6", "24"], ["7", "36"]].map(([value, text]) =>
+        el("option", { value, text, selected: value === "2" }),
+      ),
+      (e) => command("fontSize", e.target.value),
+    ),
+    script = sel(
+      232,
+      120,
+      "Script",
+      ["Western", "Greek", "Turkish", "Baltic", "Central European", "Cyrillic"].map((n) => el("option", { text: n })),
+      () => {},
+    );
+  const wb = (x, y, name, title, action, { on = false } = {}) => {
+    const b = el("div", {
+      class: "wp-btn" + (on ? " on" : ""),
+      style: { left: x + "px", top: y + "px", backgroundImage: `url(/assets/ui/wp/${name}.png)` },
+      title,
+      role: "button",
+    });
+    b.addEventListener("click", () => action(b));
+    return b;
+  };
+  const colorInput = el("input", {
+    type: "color",
+    value: "#000000",
+    "aria-label": "Text color",
+    class: "wp-color",
+    onchange: (e) => command("foreColor", e.target.value),
+  });
+  const align = {};
+  const setAlign = (k, cmd) => {
+    for (const [n, b] of Object.entries(align)) {
+      b.classList.toggle("on", n === k);
+      if (n === "left") b.style.backgroundImage = `url(/assets/ui/wp/${k === "left" ? "left" : "left_n"}.png)`;
+    }
+    command(cmd);
+  };
+  align.left = wb(460, 34, "left", "Align Left", () => setAlign("left", "justifyLeft"), { on: true });
+  align.center = wb(483, 34, "center", "Center", () => setAlign("center", "justifyCenter"));
+  align.right = wb(506, 34, "right", "Align Right", () => setAlign("right", "justifyRight"));
   const formatting = el(
     "div",
-    { class: "toolbar wordpad-format" },
+    { class: "wp-format" },
     family,
     size,
-    button("B", () => command("bold"), {
-      class: "tool-button bold",
-      title: "Bold",
-    }),
-    button("I", () => command("italic"), {
-      class: "tool-button italic",
-      title: "Italic",
-    }),
-    button("U", () => command("underline"), {
-      class: "tool-button underline",
-      title: "Underline",
-    }),
-    el("input", {
-      type: "color",
-      value: "#000000",
-      title: "Text color",
-      "aria-label": "Text color",
-      onchange: (e) => command("foreColor", e.target.value),
-    }),
-    el("span", { class: "toolbar-separator" }),
-    button("≡", () => command("justifyLeft"), {
-      class: "tool-button",
-      title: "Align Left",
-    }),
-    button("≡", () => command("justifyCenter"), {
-      class: "tool-button",
-      title: "Center",
-    }),
-    button("≡", () => command("justifyRight"), {
-      class: "tool-button",
-      title: "Align Right",
-    }),
-    button("• ≡", () => command("insertUnorderedList"), {
-      class: "tool-button",
-      title: "Bullets",
-    }),
+    script,
+    wb(360, 34, "bold", "Bold", () => command("bold")),
+    wb(383, 34, "italic", "Italic", () => command("italic")),
+    wb(406, 34, "underline", "Underline", () => command("underline")),
+    wb(429, 34, "color", "Color", () => colorInput.click()),
+    colorInput,
+    align.left,
+    align.center,
+    align.right,
+    wb(537, 34, "bullets", "Bullet Style", () => command("insertUnorderedList")),
   );
   formatting.addEventListener("mousedown", (e) => {
-    if (e.target.closest("button")) e.preventDefault();
+    if (e.target.closest(".wp-btn")) e.preventDefault();
   });
-  const tools = toolbar([
-    { icon: "document", title: "New", action: newDoc },
-    { icon: "folderOpen", title: "Open", action: open },
-    { glyph: "▣", title: "Save", action: () => save() },
-    { separator: true },
-    { glyph: "✂", title: "Cut", action: () => command("cut") },
-    { glyph: "▤", title: "Copy", action: () => command("copy") },
-    {
-      glyph: "▣",
-      title: "Paste",
-      action: async () => command("insertText", await ctx.clipboard.getText()),
-    },
-    { separator: true },
-    { glyph: "↶", title: "Undo", action: () => command("undo") },
-    { glyph: "↷", title: "Redo", action: () => command("redo") },
-  ]);
+  const tools = el(
+    "div",
+    { class: "wp-tools" },
+    wb(6, 4, "new", "New", newDoc),
+    wb(29, 4, "open", "Open", open),
+    wb(52, 4, "save", "Save", () => save()),
+    wb(83, 4, "print", "Print", () => ctx.printText(editor.innerText, filename || "Document")),
+    wb(106, 4, "preview", "Print Preview", () => ctx.printText(editor.innerText, filename || "Document")),
+    wb(137, 4, "find", "Find", () => ctx.dialogs.message("Find is not available in this document.", { title: "WordPad", icon: "info" })),
+    wb(168, 4, "cut", "Cut", () => command("cut")),
+    wb(191, 4, "copy", "Copy", () => command("copy")),
+    wb(214, 4, "paste", "Paste", async () => command("insertText", await ctx.clipboard.getText())),
+    wb(237, 4, "undo", "Undo", () => command("undo")),
+    wb(268, 4, "datetime", "Date/Time", () => command("insertText", new Date().toLocaleString())),
+  );
   tools.addEventListener("mousedown", (e) => e.preventDefault());
   w.setMenu({
     File: [
@@ -710,19 +710,24 @@ export function openWordPad(ctx, { path = null } = {}) {
       },
     ],
   });
-  const ruler = el(
+  const ruler = el("div", { class: "wp-ruler" });
+  const status = el(
     "div",
-    { class: "wordpad-ruler" },
-    ...Array.from({ length: 8 }, (_, i) =>
-      el("span", { text: i ? String(i) : "" }),
-    ),
+    { class: "wp-status" },
+    el("span", { class: "wp-status-text", text: "For Help, press F1" }),
+    el("span", { class: "wp-panel", style: { right: "52px", width: "25px" } }),
+    el("span", { class: "wp-panel", style: { right: "22px", width: "26px" }, text: "NUM" }),
   );
   w.setContent(
-    tools,
-    formatting,
-    ruler,
-    el("div", { class: "wordpad-workspace" }, editor),
-    status,
+    el(
+      "div",
+      { class: "wp-root" },
+      tools,
+      formatting,
+      ruler,
+      el("div", { class: "wordpad-workspace wp-work" }, editor),
+      status,
+    ),
   );
   w.onClose = discard;
   w.el.addEventListener(
