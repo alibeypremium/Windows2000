@@ -242,7 +242,8 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
           `${n.name} is not available in this browser simulation.`,
           { title: n.name, icon: "info" },
         );
-    } else if (n.path === "printers:add") ctx.launch("control", { page: "printers" });
+    } else if (n.path.startsWith("fonts:")) ctx.launch("fontview", { name: n.path.slice(6) });
+    else if (n.path === "printers:add") ctx.launch("control", { page: "printers" });
     else if (n.path === "tasks:add") ctx.launch("taskwizard");
     else if (n.path === "tasks") ctx.launch("explorer", { path: "tasks" });
     else if (n.path === "network:all" || n.path === "network:near")

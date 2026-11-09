@@ -1,0 +1,282 @@
+{
+"Arial": {
+"family": "Arial",
+"sub": "Regular",
+"ver": "Version 3.00",
+"copy": "Typeface \u00a9 The Monotype Corporation plc. Data \u00a9 The Monotype Corporation plc/Type Solutions Inc. 1990-1992. All Rights Reserved",
+"kb": 359
+},
+"Arial Black": {
+"family": "Arial Black",
+"sub": "Regular",
+"ver": "Version 2.35",
+"copy": "Digitized data copyright The Monotype Corporation 1991-1995. All rights reserved. Arial\u00ae is a trademark of The Monotype Corporation which may be registered in certain jurisdictions.",
+"kb": 115
+},
+"Arial Bold": {
+"family": "Arial",
+"sub": "Bold",
+"ver": "Version 3.00",
+"copy": "Typeface \u00a9 The Monotype Corporation plc. Data \u00a9 The Monotype Corporation plc/Type Solutions Inc. 1990-1992. All Rights Reserved",
+"kb": 344
+},
+"Arial Bold Italic": {
+"family": "Arial",
+"sub": "Bold Italic",
+"ver": "Version 2.76",
+"copy": "Typeface \u00a9 The Monotype Corporation plc. Data \u00a9 The Monotype Corporation plc/Type Solutions Inc. 1990-1992. All Rights Reserved",
+"kb": 217
+},
+"Arial Italic": {
+"family": "Arial",
+"sub": "Italic",
+"ver": "Version 2.76",
+"copy": "Typeface \u00a9 The Monotype Corporation plc. Data \u00a9 The Monotype Corporation plc/Type Solutions Inc. 1990-1992. All Rights Reserved",
+"kb": 196
+},
+"Comic Sans MS": {
+"family": "Comic Sans MS",
+"sub": "Regular",
+"ver": "Version 2.10",
+"copy": "Copyright (c) 1995 Microsoft Corporation. All rights reserved.",
+"kb": 124
+},
+"Comic Sans MS Bold": {
+"family": "Comic Sans MS",
+"sub": "Bold",
+"ver": "Version 2.10",
+"copy": "Copyright (c) 1995 Microsoft Corporation. All rights reserved.",
+"kb": 109
+},
+"Courier New": {
+"family": "Courier New",
+"sub": "Regular",
+"ver": "Version 2.76",
+"copy": "Typeface \u00a9 The Monotype Corporation plc. Data \u00a9 The Monotype Corporation plc/Type Solutions Inc. 1990-1994. All Rights Reserved",
+"kb": 291
+},
+"Courier New Bold": {
+"family": "Courier New",
+"sub": "Bold",
+"ver": "Version 2.76",
+"copy": "Typeface \u00a9 The Monotype Corporation plc. Data \u00a9 The Monotype Corporation plc/Type Solutions Inc. 1990-1992. All Rights Reserved",
+"kb": 300
+},
+"Courier New Bold Italic": {
+"family": "Courier New",
+"sub": "Bold Italic",
+"ver": "Version 2.76",
+"copy": "Typeface \u00a9 The Monotype Corporation plc. Data \u00a9 The Monotype Corporation plc/Type Solutions Inc. 1990-1992. All Rights Reserved",
+"kb": 224
+},
+"Courier New Italic": {
+"family": "Courier New",
+"sub": "Italic",
+"ver": "Version 2.76",
+"copy": "Typeface \u00a9 The Monotype Corporation plc. Data \u00a9 The Monotype Corporation plc/Type Solutions Inc. 1990-1992. All Rights Reserved",
+"kb": 233
+},
+"Georgia": {
+"family": "Georgia",
+"sub": "Regular",
+"ver": "Version 2.05",
+"copy": "Typeface and data copyright 1996 Microsoft Corporation. All Rights Reserved.",
+"kb": 140
+},
+"Georgia Bold": {
+"family": "Georgia",
+"sub": "Bold",
+"ver": "Version 2.05",
+"copy": "Typeface and data copyright 1996 Microsoft Corporation. All Rights Reserved.",
+"kb": 137
+},
+"Georgia Italic": {
+"family": "Georgia",
+"sub": "Italic",
+"ver": "Version 2.05",
+"copy": "Typeface and data copyright 1996 Microsoft Corporation. All Rights Reserved.",
+"kb": 153
+},
+"Georgia Bold Italic": {
+"family": "Georgia",
+"sub": "Bold Italic",
+"ver": "Version 2.05",
+"copy": "Typeface and data copyright 1996 Microsoft Corporation. All Rights Reserved.",
+"kb": 156
+},
+"Impact": {
+"family": "Impact",
+"sub": "Regular",
+"ver": "Version 2.35",
+"copy": "Digitized data copyright (C) 1991-1996 The Monotype Corporation. All rights reserved. Impact is a trademark of Stephenson Blake (Holdings) Ltd.",
+"kb": 133
+},
+"Lucida Console": {
+"family": "Lucida Console",
+"sub": "Regular",
+"ver": "Version 1.60",
+"copy": "Copyright \u00a9 1993 Bigelow & Holmes Inc. All rights reserved.",
+"kb": 113
+},
+"Lucida Sans Unicode": {
+"family": "Lucida Sans Unicode",
+"sub": "Regular",
+"ver": "Version 2.00",
+"copy": "Copyright \u00a9 1993 Bigelow & Holmes Inc. All rights reserved. Pat. Des. 289,420. Pats. Pend.",
+"kb": 317
+},
+"Microsoft Sans Serif Regular": {
+"family": "Microsoft Sans Serif",
+"sub": "Regular",
+"ver": "Version 1.10",
+"copy": "Copyright \u00a9 1997 Microsoft Corporation. All rights reserved.",
+"kb": 254
+},
+"Palatino Linotype": {
+"family": "Palatino Linotype",
+"sub": "Regular",
+"ver": "Version 1.15",
+"copy": "Copyright 1981-1983, 1989,1993, 1998 Heidelberger Druckmaschinen AG. All rights reserved. The digitally encoded machine readable outline data for producing the Typefaces licensed are the property of Heidelberger Druckmaschinen AG and/or its subsidiaries, represented by Linotype Library GmbH, Dupont Strasse 1, 61352 Bad Homburg Germany. Portions \u00a9 1996-1998 Microsoft Corporation. All Rights Reserved. ",
+"kb": 495
+},
+"Palatino Linotype Bold": {
+"family": "Palatino Linotype",
+"sub": "Bold",
+"ver": "Version 1.15",
+"copy": "Copyright 1981-1983, 1989,1993, 1998 Heidelberger Druckmaschinen AG. All rights reserved. The  digitally encoded machine readable outline data for producing the Typefaces licensed are the property of Heidelberger Druckmaschinen AG and/or its subsidiaries, represented by Linotype Library GmbH, Dupont Strasse 1, 61352 Bad Homburg Germany. Portions \u00a9 1996-1998 Microsoft Corporation. All Rights Reserved.",
+"kb": 441
+},
+"Palatino Linotype Bold Italic": {
+"family": "Palatino Linotype",
+"sub": "Bold Italic",
+"ver": "Version 1.15",
+"copy": "Copyright 1981-1983, 1989,1993, 1998 Heidelberger Druckmaschinen AG. All rights reserved. The  digitally encoded machine readable outline data for producing the Typefaces licensed are the property of Heidelberger Druckmaschinen AG and/or its subsidiaries, represented by Linotype Library GmbH, Dupont Strasse 1, 61352 Bad Homburg Germany. Portions \u00a9 1996-1998 Microsoft Corporation. All Rights Reserved. ",
+"kb": 354
+},
+"Palatino Linotype Italic": {
+"family": "Palatino Linotype",
+"sub": "Italic",
+"ver": "Version 1.15",
+"copy": "Copyright 1981-1983, 1989,1993, 1998 Heidelberger Druckmaschinen AG. All rights reserved. The  digitally encoded machine readable outline data for producing the Typefaces licensed are the property of Heidelberger Druckmaschinen AG and/or its subsidiaries, represented by Linotype Library GmbH, Dupont Strasse 1, 61352 Bad Homburg Germany. Portions \u00a9 1996-1998 Microsoft Corporation. All Rights Reserved. ",
+"kb": 438
+},
+"Symbol": {
+"family": "Symbol",
+"sub": "Regular",
+"ver": "Version 1.60",
+"copy": "Typeface \u00a9 The Monotype Corporation plc. Data \u00a9 The Monotype Corporation plc/Type Solutions Inc. 1990-1992. All Rights Reserved",
+"kb": 68
+},
+"Tahoma": {
+"family": "Tahoma",
+"sub": "Regular",
+"ver": "Version 2.80",
+"copy": "Typeface and data \u00a9 1995-1999 Microsoft Corporation. All Rights Reserved.",
+"kb": 260
+},
+"Tahoma Bold": {
+"family": "Tahoma",
+"sub": "Bold",
+"ver": "Version 2.80",
+"copy": "Typeface and data \u00a9 1995-1999 Microsoft Corporation. All Rights Reserved.",
+"kb": 255
+},
+"Times New Roman": {
+"family": "Times New Roman",
+"sub": "Regular",
+"ver": "Version 3.00",
+"copy": "Typeface \u00a9 The Monotype Corporation plc. Data \u00a9 The Monotype Corporation plc/Type Solutions Inc. 1990-1992. All Rights Reserved",
+"kb": 400
+},
+"Times New Roman Bold": {
+"family": "Times New Roman",
+"sub": "Bold",
+"ver": "Version 3.00",
+"copy": "Typeface \u00a9 The Monotype Corporation plc. Data \u00a9 The Monotype Corporation plc/Type Solutions Inc. 1990-1992. All Rights Reserved",
+"kb": 390
+},
+"Times New Roman Bold Italic": {
+"family": "Times New Roman",
+"sub": "Bold Italic",
+"ver": "Version 2.76",
+"copy": "Typeface \u00a9 The Monotype Corporation plc. Data \u00a9 The Monotype Corporation plc/Type Solutions Inc. 1990-1992. All Rights Reserved",
+"kb": 229
+},
+"Times New Roman Italic": {
+"family": "Times New Roman",
+"sub": "Italic",
+"ver": "Version 2.76",
+"copy": "Typeface \u00a9 The Monotype Corporation plc. Data \u00a9 The Monotype Corporation plc/Type Solutions Inc. 1990-1992. All Rights Reserved",
+"kb": 237
+},
+"Trebuchet MS": {
+"family": "Trebuchet MS",
+"sub": "Regular",
+"ver": "Version 1.15",
+"copy": "Copyright (c) 1996 Microsoft Corporation. All rights reserved.",
+"kb": 64
+},
+"Trebuchet MS Bold": {
+"family": "Trebuchet MS",
+"sub": "Bold",
+"ver": "Version 1.15",
+"copy": "Copyright (c) 1996 Microsoft Corporation. All rights reserved.",
+"kb": 64
+},
+"Trebuchet MS Bold Italic": {
+"family": "Trebuchet MS",
+"sub": "Bold Italic",
+"ver": "Version 1.15",
+"copy": "Copyright (c) 1996 Microsoft Corporation. All rights reserved.",
+"kb": 64
+},
+"Trebuchet MS Italic": {
+"family": "Trebuchet MS",
+"sub": "Italic",
+"ver": "Version 1.15",
+"copy": "Copyright (c) 1996 Microsoft Corporation. All rights reserved.",
+"kb": 70
+},
+"Verdana": {
+"family": "Verdana",
+"sub": "Regular",
+"ver": "Version 2.35",
+"copy": "Typeface and data \u00a9 1996 Microsoft Corporation. All Rights Reserved",
+"kb": 137
+},
+"Verdana Bold": {
+"family": "Verdana",
+"sub": "Bold",
+"ver": "Version 2.35",
+"copy": "Typeface and data \u00a9 1996 Microsoft Corporation. All Rights Reserved",
+"kb": 133
+},
+"Verdana Bold Italic": {
+"family": "Verdana",
+"sub": "Bold Italic",
+"ver": "Version 2.35",
+"copy": "Typeface and data \u00a9 1996 Microsoft Corporation. All Rights Reserved",
+"kb": 150
+},
+"Verdana Italic": {
+"family": "Verdana",
+"sub": "Italic",
+"ver": "Version 2.35",
+"copy": "Typeface and data \u00a9 1996 Microsoft Corporation. All Rights Reserved",
+"kb": 151
+},
+"Webdings": {
+"family": "Webdings",
+"sub": "Regular",
+"ver": "Version 1.03",
+"copy": "Copyright (c) 1997 Microsoft Corporation. All rights reserved.",
+"kb": 116
+},
+"Wingdings": {
+"family": "Wingdings",
+"sub": "Regular",
+"ver": "Version 2.55",
+"copy": "Copyright \u00a9 1992-1995 Microsoft Corp. All Rights Reserved. \u00a9 1990-1991 Type Solutions, Inc. All Rights Reserved.",
+"kb": 80
+}
+}

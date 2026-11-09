@@ -28,6 +28,7 @@ import {
   openAbout,
 } from "/packages/shell/index.js";
 import { openExplorer } from "/packages/explorer/index.js";
+import { openFontViewer } from "/packages/explorer/fontview.js";
 import {
   openNotepad,
   openWordPad,
@@ -363,6 +364,7 @@ ctx.apps = [
     aliases: ["winhelp", "hh"],
     open: openHelp,
   },
+  { id: "fontview", name: "Font Viewer", icon: "fontTT", hidden: true, open: openFontViewer },
   {
     id: "welcome",
     name: "Getting Started",

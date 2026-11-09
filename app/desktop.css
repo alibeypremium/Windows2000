@@ -5703,3 +5703,12 @@ button.selected:focus {
 html, body, button, label { cursor: var(--cur-default); }
 a, [role="link"], .rk-link { cursor: var(--cur-pointer); }
 input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="color"]), textarea, [contenteditable="true"] { cursor: var(--cur-text); }
+
+.fv-root { position: relative; width: 100%; height: 100%; flex: 1; min-height: 0; overflow: hidden; background: #d4d0c8; font: 13px/16px W2KSans, Tahoma, sans-serif; display: flex; flex-direction: column; }
+.fv-head { padding: 8px 10px 6px; position: relative; border-bottom: 2px groove #fff; min-height: 96px; }
+.fv-head b { font-weight: bold; }
+.fv-copy { margin-top: 2px; max-width: 360px; }
+.fv-btns { position: absolute; right: 10px; top: 8px; display: flex; flex-direction: column; gap: 6px; }
+.fv-btns button { width: 75px; height: 23px; font: inherit; }
+.fv-sheet { flex: 1; overflow: auto; background: #fff; margin: 0; padding: 4px 8px; border: 2px inset #fff; color: #000; }
+.fv-line { white-space: nowrap; line-height: 1.25; }
