@@ -267,6 +267,10 @@ button.selected:focus {
     inset -1px -1px #404040,
     inset 1px 1px #fff;
 }
+::-webkit-scrollbar-button:vertical:start:decrement { background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><path d='M4 10h8L8 6z' fill='%23000'/></svg>") center / 16px 16px no-repeat, var(--face); }
+::-webkit-scrollbar-button:vertical:end:increment { background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><path d='M4 6h8L8 10z' fill='%23000'/></svg>") center / 16px 16px no-repeat, var(--face); }
+::-webkit-scrollbar-button:horizontal:start:decrement { background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><path d='M10 4v8L6 8z' fill='%23000'/></svg>") center / 16px 16px no-repeat, var(--face); }
+::-webkit-scrollbar-button:horizontal:end:increment { background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><path d='M6 4v8l4-4z' fill='%23000'/></svg>") center / 16px 16px no-repeat, var(--face); }
 ::-webkit-scrollbar-corner {
   background: var(--face);
 }
@@ -1656,10 +1660,11 @@ button.selected:focus {
   min-height: 0;
   width: 100%;
   resize: none;
-  box-shadow: inset 1px 1px #808080 !important;
-  margin-top: 1px;
+  box-shadow: inset 1px 1px #808080, inset 2px 2px #404040, inset -1px -1px #fff, inset -2px -2px #d4d0c8 !important;
+  margin-top: 0;
   border: 0 !important;
-  padding: 2px 3px !important;
+  padding: 3px 3px !important;
+  overflow-y: scroll !important;
   background: white;
   font-family: "Courier New", monospace;
   font-size: 13px;
@@ -1764,102 +1769,24 @@ button.selected:focus {
 .wordpad-page p {
   margin: 0;
 }
-.calculator {
-  padding: 10px 8px 7px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.calculator-display {
-  height: 27px;
-  text-align: right;
-  font:
-    13px "Courier New",
-    monospace !important;
-  flex: none;
-  padding-right: 7px !important;
-  width: 100%;
-}
-.calculator-operation {
-  height: 8px;
-  font-size: 9px;
-  text-align: right;
-  color: #666;
-  margin-top: -4px;
-}
-.calc-top {
-  display: flex;
-  gap: 5px;
-  height: 28px;
-  flex: none;
-}
-.calc-top > button {
-  min-width: 42px;
-  padding: 3px 8px;
-}
-.calc-top > button:nth-child(2) {
-  flex: 1;
-}
-.calculator-memory {
-  width: 27px;
-  min-width: 27px;
-  text-align: center;
-  padding: 6px 1px;
-  font-size: 12px;
-}
-.calc-keyboards {
-  display: flex;
-  gap: 9px;
-  flex: 1;
-  min-height: 0;
-}
-.calculator-pad {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 5px;
-  flex: 1;
-}
-.calculator-pad button {
-  min-width: 26px;
-  min-height: 28px;
-  padding: 4px 3px;
-  text-align: center;
-  font-size: 11px;
-}
-.calculator-pad button:active,
-.calculator-scientific button:active {
-  padding: 5px 2px 3px 4px !important;
-}
-.calc-red {
-  color: #b00000;
-}
-.calc-blue {
-  color: #0000c0;
-}
-.calculator-scientific {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 5px;
-  width: 162px;
-  flex: none;
-}
-.calculator-scientific button {
-  min-width: 36px;
-  padding: 4px 3px;
-}
-.calc-units {
-  grid-column: 1/-1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 4px;
-  font-size: 10px;
-}
-.calc-units label {
-  display: flex;
-  align-items: center;
-}
+.calculator { position: relative; margin-top: -3px; flex: 1; min-height: 0; background: #d4d0c8; font: 11px/13px Tahoma, "Wine Tahoma", sans-serif; }
+.calculator > * { position: absolute; }
+.calculator-display { left: 7px; top: 0; width: 239px; height: 26px; box-sizing: border-box; text-align: right; font: 11px Tahoma, "Wine Tahoma", sans-serif !important; padding: 0 5px !important; border: 0 !important; background: #fff; box-shadow: inset 1px 1px #808080, inset 2px 2px #404040, inset -1px -1px #fff !important; }
+.calculator-operation { display: none; }
+.calculator-memory { left: 11px; top: 39px; width: 27px; height: 26px; box-sizing: border-box; text-align: center; padding: 6px 1px; font-size: 12px; }
+.calc-keyboards { left: 0; top: 0; right: 0; bottom: 0; pointer-events: none; }
+.calc-keyboards > * { pointer-events: auto; }
+.calculator-pad { position: absolute; inset: 0; pointer-events: none; }
+.calculator-pad button, .calculator > button { position: absolute; padding: 0; text-align: center; font: 11px Tahoma, "Wine Tahoma", sans-serif; min-width: 0; min-height: 0; pointer-events: auto; }
+.calculator-pad button:active, .calculator > button:active, .calculator-scientific button:active { padding: 1px 0 0 1px !important; }
+.calc-red { color: #f00 !important; }
+.calc-blue { color: #00f !important; }
+.calculator-scientific { position: absolute; left: 8px; top: 37px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; width: 162px; pointer-events: auto; }
+.calculator.sci .calculator-pad { left: 186px; }
+.calculator.sci .calculator-display { width: 429px; }
+.calculator-scientific button { min-width: 36px; padding: 4px 3px; }
+.calc-units { grid-column: 1/-1; display: flex; align-items: center; justify-content: space-between; gap: 4px; font-size: 10px; }
+.calc-units label { display: flex; align-items: center; }
 .paint-main {
   display: flex;
   flex: 1;
@@ -2604,12 +2531,16 @@ button.selected:focus {
   background: #000;
   color: #c0c0c0;
   font:
-    14px/17px "Courier New",
+    bold 12px/12px "Lucida Console",
+    "Courier New",
     monospace;
-  overflow: auto;
+  letter-spacing: calc(8px - 1ch);
+  box-shadow: inset 1px 1px #808080, inset 2px 2px #404040;
+  overflow-y: scroll;
+  overflow-x: hidden;
   flex: 1;
   min-height: 0;
-  padding: 4px 5px;
+  padding: 3px 3px;
   user-select: text;
   cursor: text;
 }
@@ -2618,12 +2549,12 @@ button.selected:focus {
   overflow-wrap: anywhere;
 }
 .terminal-output > div {
-  min-height: 17px;
+  min-height: 12px;
 }
 .terminal-input-row {
   display: flex;
   align-items: baseline;
-  min-height: 18px;
+  min-height: 12px;
   white-space: pre-wrap;
 }
 .terminal-input {
@@ -2631,12 +2562,13 @@ button.selected:focus {
   box-shadow: none !important;
   border: 0 !important;
   padding: 0 !important;
-  min-height: 17px !important;
+  min-height: 12px !important;
   color: inherit !important;
   font: inherit !important;
+  letter-spacing: inherit !important;
   flex: 1;
   min-width: 20px;
-  height: 18px;
+  height: 12px;
 }
 .terminal-prompt {
   flex: none;

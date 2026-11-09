@@ -18,8 +18,10 @@ export function openNotepad(ctx, { path = null, text = "" } = {}) {
   const w = ctx.wm.create({
     title: (filename ? basename(filename) : "Untitled") + " - Notepad",
     icon: "notepad",
-    width: 610,
-    height: 410,
+    width: 600,
+    height: 411,
+    x: 199,
+    y: 92,
     appId: "notepad",
   });
   const input = el("textarea", {

@@ -474,6 +474,7 @@ export class WindowManager {
     resizable = true,
     minimizable = true,
     maximizable = true,
+    disabledMax = false,
     dialog = false,
     owner = null,
     help = false,
@@ -523,7 +524,7 @@ export class WindowManager {
       "div",
       { class: "caption-controls" },
       minimizable ? minimize : null,
-      maximizable ? maximize : null,
+      maximizable ? maximize : disabledMax ? ((maximize.disabled = true), maximize) : null,
       help
         ? button("", () => w.onHelp?.(), {
             class: "caption-button help-button",

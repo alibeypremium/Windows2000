@@ -5,27 +5,31 @@ export function openCalculator(ctx) {
   const w = ctx.wm.create({
       title: "Calculator",
       icon: "calculator",
-      width: 270,
-      height: 300,
+      width: 260,
+      height: 252,
+      x: 417,
+      y: 225,
       appId: "calculator",
       resizable: false,
       maximizable: false,
+      disabledMax: true,
     }),
     engine = new CalculatorEngine();
   let scientific = false,
     degrees = true;
   const display = el("input", {
       class: "calculator-display",
-      value: "0",
+      value: "0.",
       readonly: true,
       "aria-label": "Calculator display",
     }),
     mem = el("div", { class: "calculator-memory inset", text: "" }),
     history = el("div", { class: "calculator-operation", text: "" });
+  const fmt = (v) => (/^-?\d+$/.test(v) ? v + "." : v);
   const press = (key) => {
     if (["sin", "cos", "tan"].includes(key)) engine.unary(key, degrees);
     else engine.key(key);
-    display.value = engine.display;
+    display.value = fmt(engine.display);
     mem.textContent = engine.memory ? "M" : "";
     history.textContent = engine.operation
       ? `${engine.accumulator} ${engine.operation}`
@@ -33,37 +37,21 @@ export function openCalculator(ctx) {
   };
   const pad = el("div", { class: "calculator-pad" }),
     sci = el("div", { class: "calculator-scientific" });
-  for (const key of [
-    "MC",
-    "7",
-    "8",
-    "9",
-    "÷",
-    "√",
-    "MR",
-    "4",
-    "5",
-    "6",
-    "×",
-    "%",
-    "MS",
-    "1",
-    "2",
-    "3",
-    "−",
-    "1/x",
-    "M+",
-    "0",
-    "±",
-    ".",
-    "+",
-    "=",
-  ])
-    pad.append(
-      button(key, () => press(key), {
-        class: /^(M|[+−×÷=])/.test(key) ? "calc-red" : "calc-blue",
-      }),
-    );
+  const LABEL = { "÷": "/", "×": "*", "−": "-", "±": "+/-", "√": "sqrt" };
+  [
+    "MC", "7", "8", "9", "÷", "√",
+    "MR", "4", "5", "6", "×", "%",
+    "MS", "1", "2", "3", "−", "1/x",
+    "M+", "0", "±", ".", "+", "=",
+  ].forEach((key, i) => {
+    const b = button(LABEL[key] || key, () => press(key), {
+      class: /^(M|[+−×÷=])/.test(key) ? "calc-red" : "calc-blue",
+    });
+    const col = i % 6,
+      row = (i / 6) | 0;
+    b.style.cssText = `left:${[8, 54, 93, 132, 171, 210][col]}px;top:${73 + row * 33}px;width:35px;height:32px`;
+    pad.append(b);
+  });
   for (const key of [
     "sin",
     "cos",
@@ -109,8 +97,9 @@ export function openCalculator(ctx) {
   const setScientific = (value) => {
     scientific = value;
     sci.hidden = !value;
-    w.geometry.width = value ? 452 : 270;
-    w.geometry.height = value ? 320 : 300;
+    w.geometry.width = value ? 450 : 260;
+    w.geometry.height = 252;
+    root.classList.toggle("sci", value);
     ctx.wm.applyGeometry(w);
   };
   w.setMenu({
@@ -161,23 +150,23 @@ export function openCalculator(ctx) {
       },
     ],
   });
-  w.setContent(
-    el(
-      "div",
-      { class: "calculator" },
-      display,
-      history,
-      el(
-        "div",
-        { class: "calc-top" },
-        mem,
-        button("Backspace", () => press("Backspace"), { class: "calc-red" }),
-        button("CE", () => press("CE"), { class: "calc-red" }),
-        button("C", () => press("C"), { class: "calc-red" }),
-      ),
-      el("div", { class: "calc-keyboards" }, sci, pad),
-    ),
+  const top = (label, x, wd) => {
+    const b = button(label, () => press(label), { class: "calc-red" });
+    b.style.cssText = `left:${x}px;top:37px;width:${wd}px;height:28px`;
+    return b;
+  };
+  const root = el(
+    "div",
+    { class: "calculator" },
+    display,
+    history,
+    mem,
+    top("Backspace", 53, 62),
+    top("CE", 119, 61),
+    top("C", 185, 61),
+    el("div", { class: "calc-keyboards" }, sci, pad),
   );
+  w.setContent(root);
   w.el.addEventListener("keydown", async (e) => {
     if (e.ctrlKey || e.metaKey) {
       if (e.key.toLowerCase() === "c") {

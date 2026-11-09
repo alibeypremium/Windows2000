@@ -16,11 +16,13 @@ export function openTerminal(ctx, { command = null } = {}) {
   const w = ctx.wm.create({
     title: "Command Prompt",
     icon: "cmd",
-    width: 720,
-    height: 430,
+    width: 667,
+    height: 331,
+    x: 176,
+    y: 176,
     appId: "cmd",
   });
-  let cwd = "C:/Documents and Settings/Administrator",
+  let cwd = "C:/",
     history = [],
     historyIndex = 0,
     busy = false;
@@ -417,7 +419,7 @@ export function openTerminal(ctx, { command = null } = {}) {
   });
   w.setContent(terminal);
   print("Microsoft Windows 2000 [Version 5.00.2195]");
-  print("(C) Browser desktop reimplementation.");
+  print("(C) Copyright 1985-2000 Microsoft Corp.");
   print("");
   prompt.textContent = promptText();
   queueMicrotask(() => input.focus());
