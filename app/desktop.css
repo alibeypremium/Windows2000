@@ -5393,3 +5393,11 @@ button.selected:focus {
 .rk-spin .down::after, .dt-tspin .down::after { top: 2px; border-top: 3px solid #000; border-bottom: 0; }
 .rk-spin.disabled .up::after { border-bottom-color: #808080; }
 .rk-spin.disabled .down::after { border-top-color: #808080; }
+.up-row { position: absolute; height: 17px; white-space: nowrap; cursor: default; }
+.up-row img { position: absolute; left: 0; top: -1px; width: 18px; height: 18px; image-rendering: pixelated; }
+.up-row .n { position: absolute; left: 16px; top: 1px; padding: 0 1px; line-height: 15px; }
+.up-row .g { position: absolute; left: 165px; top: 1px; line-height: 15px; }
+.up-row.sel { background: #0a246a; color: #fff; }
+.up-row.sel { background: linear-gradient(90deg, transparent 15px, #0a246a 15px); color: #fff; }
+.up-row.sel img { }
+.pw-sep { position: absolute; height: 0; border-top: 1px solid #808080; border-bottom: 1px solid #fff; }

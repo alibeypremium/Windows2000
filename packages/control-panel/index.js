@@ -12,6 +12,8 @@ import { openInternetProperties } from "./inet.js";
 import { openGamingOptions } from "./gaming.js";
 import { openDisplayProperties } from "./display.js";
 import { openDateTimeProperties } from "./datetime.js";
+import { openUsersAndPasswords } from "./users.js";
+import { openPowerOptions } from "./power.js";
 import { openFolderOptions } from "./folderopts.js";
 import {
   openAccessibility,
@@ -241,6 +243,8 @@ export function openControlPanel(ctx, { page = "system" } = {}) {
   if (page === "bde") return openBdeAdministrator(ctx);
   if (page === "internet") return openInternetProperties(ctx);
   if (page === "gaming") return openGamingOptions(ctx);
+  if (page === "power") return openPowerOptions(ctx);
+  if (page === "users") return openUsersAndPasswords(ctx);
   if (page === "datetime") return openDateTimeProperties(ctx);
   if (page === "display") return openDisplayProperties(ctx, { schemes, applyTheme });
   if (page === "folder") return openFolderOptions(ctx);
