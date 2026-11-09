@@ -197,27 +197,116 @@ export function openInternetProperties(ctx, { tab = 0 } = {}) {
     k.text(399, 415, "LAN Settings do not apply to dial-up connections.\nChoose Settings above for dial-up settings."),
     k.btn(654, 411, 79, 23, "LAN Settings..."),
   ];
+  const progCombo = (y, label, sel) => {
+    const c = k.combo(516, y, 214, 19, "");
+    c.firstChild.nodeValue = "";
+    c.prepend(sel ? el("span", { class: "dt-sel wide", text: label }) : document.createTextNode(label));
+    return c;
+  };
   const programs = () => [
-    k.group(389, 148, 356, 190, "Internet programs"),
-    k.text(402, 164, "You can specify which program Windows automatically uses for\neach Internet service."),
-    ...["HTML editor:", "E-mail:", "Newsgroups:", "Internet call:", "Calendar:", "Contact list:"].map((l, i) =>
-      [k.text(402, 203 + i * 22, l, { w: 85, align: "left" }), k.combo(500, 199 + i * 22, 230, 19, ["Notepad", "Outlook Express", "Outlook Express", "NetMeeting", "", ""][i])]),
-    k.group(389, 350, 356, 50, "Reset Web Settings"),
-    k.text(402, 363, "You can reset Internet Explorer to use default\nhome and search pages."),
-    k.btn(640, 366, 95, 22, "Reset Web Settings"),
-    k.check(389, 415, "Internet Explorer should check to see whether it is the default browser", { checked: true }),
+    k.group(389, 149, 356, 220, "Internet programs"),
+    k.img(399, 158, IMG + "prog.png", 34, 35),
+    k.text(440, 161, "You can specify which program Windows automatically uses\nfor each Internet service."),
+    ...["HTML editor:", "E-mail:", "Newsgroups:", "Internet call:", "Calendar:", "Contact list:"].map((l, i) => k.text(441, [200, 228, 256, 283, 311, 338][i], l)),
+    progCombo(198, "\u00a0", true),
+    progCombo(226, "Outlook Express"),
+    progCombo(254, "Outlook Express"),
+    progCombo(282, "NetMeeting"),
+    progCombo(309, ""),
+    progCombo(337, "Address Book"),
+    k.btn(389, 383, 123, 23, "Reset Web Settings...", { onclick: () => ctx.dialogs.message("Internet Explorer home and search pages have been reset.", { title: "Reset Web Settings" }) }),
+    k.text(522, 382, "You can reset Internet Explorer to the default\nhome and search pages."),
+    k.check(390, 419, "Internet Explorer should check to see whether it is the default browser", { checked: true, onchange: dirty }),
+  ];
+  const ADV = [
+    ["Accessibility", "access"],
+    ["Always expand ALT text for images", false],
+    ["Move system caret with focus/selection changes", false],
+    ["Browsing", "browse"],
+    ["Always send URLs as UTF-8 (requires restart)", true],
+    ["Automatically check for Internet Explorer updates", false],
+    ["Close unused folders in History and Favorites (requires restart)", true],
+    ["Disable script debugging", true],
+    ["Display a notification about every script error", false],
+    ["Enable folder view for FTP sites", true],
+    ["Enable Install On Demand (Internet Explorer)", false],
+    ["Enable Install On Demand (Other)", true],
+    ["Enable offline items to be synchronized on a schedule", true],
+    ["Enable page transitions", true],
+    ["Enable Personalized Favorites Menu", true],
+    ["Enable third-party browser extensions (requires restart)", true],
+    ["Force offscreen compositing even under Terminal Server", false],
+    ["Notify when downloads complete", true],
+    ["Reuse windows for launching shortcuts", true],
+    ["Show friendly HTTP error messages", true],
+    ["Show friendly URLs", true],
+    ["Use Passive FTP (for firewall and DSL modem compatibility)", false],
+    ["Use smooth scrolling", true],
+    ["HTTP 1.1 settings", "browse"],
+    ["Use HTTP 1.1", true],
+    ["Use HTTP 1.1 through proxy connections", false],
+    ["Microsoft VM", "browse"],
+    ["Java console enabled (requires restart)", false],
+    ["Java JIT compiler enabled", true],
+    ["Java logging enabled", false],
+    ["Multimedia", "browse"],
+    ["Always show Internet Explorer (5.0 or later) Radio toolbar", false],
+    ["Enable Automatic Image Resizing", true],
+    ["Play animations in web pages", true],
+    ["Play sounds in web pages", true],
+    ["Play videos in web pages", true],
+    ["Show image download placeholders", false],
+    ["Show pictures", true],
+    ["Printing", "browse"],
+    ["Print background colors and images", false],
+    ["Security", "browse"],
+    ["Check for publisher's certificate revocation", false],
+    ["Do not save encrypted pages to disk", false],
+    ["Empty Temporary Internet Files folder when browser is closed", false],
+    ["Use SSL 2.0", true],
+    ["Use SSL 3.0", true],
+    ["Warn about invalid site certificates", true],
   ];
   const advanced = () => {
-    const box = el("div", { class: "rk-checklist" });
-    box.style.cssText = `left:${389 - OX}px;top:${165 - OY}px;width:356px;height:270px`;
-    for (const [n, on] of [["Accessibility", null], ["Always expand ALT text for images", false], ["Move system caret with focus/selection changes", false], ["Browsing", null], ["Automatically check for Internet Explorer updates", true], ["Close unused folders in History and Favorites", false], ["Disable script debugging", true], ["Display a notification about every script error", false], ["Enable folder view for FTP sites", true], ["Enable page transitions", true], ["Show friendly HTTP error messages", true], ["Underline links: Always", null]]) {
-      const r = document.createElement("div");
-      r.className = "row" + (on ? " checked" : "");
-      if (on === null) { r.append(n); r.style.fontWeight = "normal"; }
-      else { r.innerHTML = '<span class="box"></span>'; r.append(n); r.addEventListener("click", () => { r.classList.toggle("checked"); dirty(); }); }
-      box.append(r);
-    }
-    return [k.text(389, 143, "Settings:"), box, k.btn(660, 442, 85, 22, "Restore Defaults")];
+    const ROW = 16,
+      H = 254,
+      list = el("div", { class: "dp-list" }),
+      inner = el("div", { class: "dp-rows" }),
+      max = ADV.length * ROW - H;
+    let top = 0;
+    const sb = k.vscroll(728, 166, 255, 17, 53),
+      track = 255 - 32 - 53,
+      sync = () => {
+        inner.style.top = -top + "px";
+        sb.querySelector(".thumb").style.top = 16 + Math.round((top / max) * track) + "px";
+      };
+    list.style.cssText = `left:${391 - OX}px;top:${167 - OY}px;width:337px;height:${H}px`;
+    ADV.forEach(([label, v], i) => {
+      const r = el("div", { class: "ia-row", style: { top: i * ROW + "px" } });
+      if (typeof v === "string") {
+        r.append(el("img", { src: IMG + (v === "access" ? "cat-access" : "cat-browse") + ".png", alt: "", draggable: "false" }), el("span", { class: "cat" + (i === 0 ? " sel" : ""), text: label }));
+      } else {
+        const cb = el("span", { class: "ia-box" + (v ? " on" : "") });
+        r.append(cb, el("span", { class: "lbl", text: label }));
+        r.addEventListener("click", () => {
+          cb.classList.toggle("on");
+          dirty();
+        });
+      }
+      inner.append(r);
+    });
+    list.append(inner);
+    list.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      top = Math.max(0, Math.min(max, top + Math.sign(e.deltaY) * ROW * 3));
+      sync();
+    });
+    sb.querySelector(".up").addEventListener("click", () => ((top = Math.max(0, top - ROW)), sync()));
+    sb.querySelector(".down").addEventListener("click", () => ((top = Math.min(max, top + ROW)), sync()));
+    sync();
+    const hs = el("div", { class: "rk-hscroll" }, el("span", { class: "sb left" }), el("span", { class: "sb right" }), el("span", { class: "thumb", style: { width: "264px" } }));
+    Object.assign(hs.style, { left: 391 - OX + "px", top: 423 - OY + "px", width: "337px", height: "16px" });
+    return [k.text(389, 142, "Settings:"), k.sunken(389, 165, 357, 275), list, sb, hs, k.btn(636, 451, 110, 22, "Restore Defaults", { onclick: () => ctx.dialogs.message("Defaults restored.", { title: "Internet Options" }) })];
   };
   const tabs = k.tabs({
     top: 111,
