@@ -5421,3 +5421,23 @@ button.selected:focus {
 .kb-hot .r { left: auto; right: 3px; }
 .kb-hot.sel { background: #0a246a; color: #fff; }
 .ns-bar { position: absolute; background: #808080; }
+.jv-root { position: absolute; inset: 0; pointer-events: none; font: bold 11px/13px Arial, "Liberation Sans", sans-serif; color: #000; }
+.jv-root > * { position: absolute; }
+.jv-root > * { pointer-events: auto; }
+.jv-body { inset: 0; pointer-events: none !important; }
+.jv-body > * { pointer-events: auto; }
+.jv-bg { left: 3px; top: 22px; width: 412px; height: 317px; background: #ccc; }
+.jv-pane { background: #cccccc; border: 1px solid; border-color: #fff #666 #666 #fff; box-shadow: inset -1px -1px #999; box-sizing: border-box; }
+.jv-tab { position: absolute; box-sizing: border-box; background: #999; border: 1px solid; border-color: #ccc #333 #333 #ccc; text-align: center; padding-top: 3px; cursor: default; }
+.jv-tab.on { background: #ccc; border-bottom-color: #ccc; z-index: 2; outline: 1px dotted #6666a0; outline-offset: -3px; }
+.jv-text { position: absolute; white-space: nowrap; }
+.jv-text.purple { color: #666699; }
+.jv-text.center { width: 100%; text-align: center; }
+.jv-check { position: absolute; display: flex; gap: 4px; align-items: center; white-space: nowrap; cursor: default; }
+.jv-check .b { width: 12px; height: 12px; box-sizing: border-box; background: #ccc; border: 1px solid; border-color: #666 #fff #fff #666; box-shadow: inset 1px 1px #333; display: inline-block; margin-right: 6px; font-size: 11px; line-height: 9px; text-align: center; }
+.jv-check.on .b::after { content: "\2714"; font-size: 9px; }
+.jv-field { position: absolute; box-sizing: border-box; background: #fff; border: 1px solid; border-color: #666 #fff #fff #666; font: 11px Arial, sans-serif; padding: 2px 4px; }
+.jv-box { position: absolute; box-sizing: border-box; background: #fff; border: 1px solid; border-color: #666 #fff #fff #666; font-weight: normal; padding: 4px; }
+.jv-btn { position: absolute; box-sizing: border-box; background: #ccc; border: 1px solid #333; border-color: #fff #333 #333 #fff; box-shadow: inset -1px -1px #999; font: bold 11px Arial, sans-serif; }
+.jv-btn:disabled { color: #999; border-color: #999; box-shadow: none; }
+.jv-sep { position: absolute; border-top: 1px solid #999; }

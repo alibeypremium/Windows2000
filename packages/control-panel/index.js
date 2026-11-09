@@ -17,6 +17,7 @@ import { openPowerOptions } from "./power.js";
 import { openMouseProperties } from "./mouse.js";
 import { openKeyboardProperties } from "./keyboard.js";
 import { openLocationInformation, openLanStatus } from "./netdlg.js";
+import { openJavaPlugin } from "./java.js";
 import { openFolderOptions } from "./folderopts.js";
 import {
   openAccessibility,
@@ -103,7 +104,6 @@ export const controlItems = [
     name: "Java Plug-in 1.3.1_01",
     icon: "cpJava",
     description: "Configure the Java Plug-in.",
-    unavailable: true,
   },
   {
     id: "keyboard",
@@ -245,6 +245,7 @@ export function openControlPanel(ctx, { page = "system" } = {}) {
   if (page === "bde") return openBdeAdministrator(ctx);
   if (page === "internet") return openInternetProperties(ctx);
   if (page === "gaming") return openGamingOptions(ctx);
+  if (page === "java") return openJavaPlugin(ctx);
   if (page === "phone") return openLocationInformation(ctx);
   if (page === "network") return openLanStatus(ctx);
   if (page === "keyboard") return openKeyboardProperties(ctx);
