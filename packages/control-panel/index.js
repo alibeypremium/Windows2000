@@ -18,6 +18,7 @@ import { openMouseProperties } from "./mouse.js";
 import { openKeyboardProperties } from "./keyboard.js";
 import { openLocationInformation, openLanStatus } from "./netdlg.js";
 import { openJavaPlugin } from "./java.js";
+import { openSystemProperties } from "./sysprops.js";
 import { openFolderOptions } from "./folderopts.js";
 import {
   openAccessibility,
@@ -245,6 +246,7 @@ export function openControlPanel(ctx, { page = "system" } = {}) {
   if (page === "bde") return openBdeAdministrator(ctx);
   if (page === "internet") return openInternetProperties(ctx);
   if (page === "gaming") return openGamingOptions(ctx);
+  if (page === "system") return openSystemProperties(ctx);
   if (page === "java") return openJavaPlugin(ctx);
   if (page === "phone") return openLocationInformation(ctx);
   if (page === "network") return openLanStatus(ctx);

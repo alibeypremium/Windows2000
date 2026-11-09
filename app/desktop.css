@@ -5448,3 +5448,5 @@ button.selected:focus {
 .ia-box { position: absolute; left: 21px; top: 1px; width: 13px; height: 13px; box-sizing: border-box; background: #fff; border: 1px solid; border-color: #808080 #fff #fff #808080; box-shadow: inset 1px 1px #404040, inset -1px -1px #d4d0c8; }
 .ia-box.on::after { content: ""; position: absolute; left: 3px; top: 1px; width: 3px; height: 6px; border: solid #000; border-width: 0 2px 2px 0; transform: rotate(40deg); }
 .ia-row .lbl { position: absolute; left: 40px; top: 1px; line-height: 14px; }
+.sp-row { position: absolute; height: 14px; background: #d4d0c8; white-space: nowrap; }
+.sp-row span { position: absolute; top: 0; line-height: 14px; }
