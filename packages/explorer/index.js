@@ -42,10 +42,11 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
           : path === "recycle"
             ? "recycle"
             : "folder",
-    width: 690,
-    height: 460,
+    width: 721,
+    height: 537,
     appId: "explorer",
   });
+  w.el.classList.add("explorer-window");
   let current = path,
     history = [path],
     historyIndex = 0,
@@ -68,9 +69,11 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     }),
     side = el("aside", { class: "explorer-side" }),
     content = el("div", { class: "explorer-content" }, side, listing),
-    status = statusBar("", "");
+    status = explorerStatus();
   const navigate = (p, push = true) => {
     if (!shellNames[p]) {
+      if (/^a:[\\/]?$/i.test(String(p).trim()))
+        throw new Error("A:\\ is not accessible.\n\nThe device is not ready.");
       p = normalizePath(p);
       const node = ctx.fs.get(p);
       if (!node || node.trashed)
@@ -102,6 +105,13 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     if (current === "computer")
       return [
         {
+          name: "3½ Floppy (A:)",
+          path: "A:/",
+          type: "folder",
+          icon: "floppy",
+          detail: "3½-Inch Floppy Disk",
+        },
+        {
           name: "Local Disk (C:)",
           path: "C:/",
           type: "folder",
@@ -120,12 +130,6 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
           path: "control",
           type: "special",
           icon: "control",
-        },
-        {
-          name: "Scheduled Tasks",
-          path: "tasks",
-          type: "special",
-          icon: "scheduledTasks",
         },
       ];
     if (current === "control")
@@ -475,38 +479,256 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
       { label: "About Windows", action: () => ctx.launch("about") },
     ],
   });
-  const tools = toolbar([
-    { glyph: "◀", label: "Back", title: "Back", action: goBack },
-    { glyph: "▶", title: "Forward", action: goForward },
-    { icon: "folderOpen", title: "Up", action: goUp },
-    { separator: true },
-    { icon: "search", label: "Search", action: () => navigate("search") },
-    {
-      icon: "folder",
-      label: "Folders",
-      action: () => {
+  w.el.querySelector(":scope > .menu-bar").append(
+    el("img", {
+      class: "throbber",
+      src: "/assets/ui/explorer/throbber.png",
+      alt: "",
+      draggable: "false",
+    }),
+  );
+  const SPRITE_DIR = "/assets/ui/explorer/";
+  const sprite = (name, x, y, w, h, bx, by) =>
+    el("img", {
+      class: "tb-sprite",
+      src: `${SPRITE_DIR}${name}.png`,
+      width: w,
+      height: h,
+      alt: "",
+      draggable: "false",
+      style: { left: `${x - bx}px`, top: `${y - by}px` },
+    });
+  // Buttons are placed at the pixel positions measured on a Windows 2000 reference screenshot.
+  const tbButton = (id, [l, r], sprites, label, title, action) => {
+    const b = el(
+      "button",
+      {
+        type: "button",
+        class: "tb-button",
+        id: "tb-" + id,
+        title,
+        "aria-label": title,
+        style: { left: `${l - 126}px`, width: `${r - l + 1}px` },
+        onclick: action,
+      },
+      ...sprites.map(([n, x, y, sw, sh]) => sprite(n, x, y, sw, sh, l, 91)),
+      label
+        ? el("span", {
+            class: "tb-label",
+            text: label[0],
+            style: { left: `${label[1] - l - 1}px` },
+          })
+        : null,
+    );
+    return b;
+  };
+  const tbSeparator = (x) =>
+    el("span", { class: "tb-separator", style: { left: `${x - 126}px` } });
+  const historyMenu = (e) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    popup(
+      history.map((p, i) => ({
+        label: displayPath(p),
+        checked: i === historyIndex ? true : undefined,
+        action: () => {
+          historyIndex = i;
+          navigate(history[i], false);
+        },
+      })),
+      r.left,
+      r.bottom,
+    );
+  };
+  const moveCopy = (mode) => async () => {
+    const files = [...selected].filter((p) => ctx.fs.exists(p));
+    if (!files.length) return;
+    const dest = await ctx.dialogs.prompt(
+      `Type the folder to ${mode === "cut" ? "move" : "copy"} the selected items to:`,
+      DOCS,
+      { title: mode === "cut" ? "Move Items" : "Copy Items" },
+    );
+    if (!dest) return;
+    const target = normalizePath(dest.replaceAll("\\", "/"));
+    ctx.clipboard.setFiles(files, mode);
+    await ctx.clipboard.pasteFiles(ctx.fs, target);
+    render();
+  };
+  const tools = el(
+    "div",
+    { class: "explorer-band explorer-toolbar" },
+    tbButton(
+      "back",
+      [132, 176],
+      [["back-disabled", 135, 96, 13, 11]],
+      ["Back", 151],
+      "Back",
+      goBack,
+    ),
+    tbButton(
+      "back-drop",
+      [179, 190],
+      [["back-drop", 182, 100, 6, 4]],
+      null,
+      "Recent pages",
+      historyMenu,
+    ),
+    tbButton(
+      "forward",
+      [194, 212],
+      [["fwd-disabled", 197, 96, 13, 11]],
+      null,
+      "Forward",
+      goForward,
+    ),
+    tbButton(
+      "forward-drop",
+      [216, 227],
+      [["fwd-drop", 219, 100, 6, 4]],
+      null,
+      "Recent pages",
+      historyMenu,
+    ),
+    tbButton("up", [229, 249], [["up", 232, 95, 15, 13]], null, "Up", goUp),
+    tbSeparator(254),
+    tbButton(
+      "search",
+      [260, 315],
+      [["search", 263, 93, 16, 16]],
+      ["Search", 283],
+      "Search",
+      () => navigate("search"),
+    ),
+    tbButton(
+      "folders",
+      [324, 381],
+      [["folders", 327, 94, 15, 14]],
+      ["Folders", 345],
+      "Folders",
+      () => {
         treeVisible = !treeVisible;
         renderSide();
       },
-    },
-    { separator: true },
-    {
-      icon: "document",
-      label: "Views",
-      action: (e) => {
+    ),
+    tbButton(
+      "history",
+      [389, 410],
+      [["history", 392, 93, 16, 16]],
+      null,
+      "History",
+      historyMenu,
+    ),
+    tbSeparator(414),
+    tbButton(
+      "moveto",
+      [419, 441],
+      [["moveto", 422, 93, 17, 16]],
+      null,
+      "Move To",
+      moveCopy("cut"),
+    ),
+    tbButton(
+      "copyto",
+      [443, 465],
+      [["copyto", 446, 93, 17, 16]],
+      null,
+      "Copy To",
+      moveCopy("copy"),
+    ),
+    tbButton(
+      "delete",
+      [468, 486],
+      [["delete", 471, 95, 13, 13]],
+      null,
+      "Delete",
+      remove,
+    ),
+    tbButton(
+      "undo",
+      [491, 511],
+      [["undo", 494, 96, 15, 10]],
+      null,
+      "Undo",
+      () => ctx.dialogs.message("There is nothing to undo."),
+    ),
+    tbSeparator(516),
+    tbButton(
+      "views",
+      [521, 549],
+      [
+        ["views", 524, 94, 16, 14],
+        ["views-drop", 542, 100, 5, 3],
+      ],
+      null,
+      "Views",
+      (e) => {
         const r = e.currentTarget.getBoundingClientRect();
         popup(viewMenu(), r.left, r.bottom);
       },
-    },
-  ]);
-  const addressRow = el(
-    "div",
-    { class: "address-bar" },
-    el("span", { text: "Address" }),
-    icon("folder"),
-    address,
-    button("Go", () => navigateInput(), { class: "tool-button" }),
+    ),
   );
+  const setNavState = () => {
+    const back = historyIndex > 0,
+      fwd = historyIndex < history.length - 1,
+      q = (id) => tools.querySelector("#tb-" + id);
+    q("back").disabled = !back;
+    q("back-drop").disabled = !back && !fwd;
+    q("forward").disabled = !fwd;
+    q("forward-drop").disabled = !back && !fwd;
+    q("back").querySelector("img").src =
+      `${SPRITE_DIR}${back ? "back-enabled" : "back-disabled"}.png`;
+    q("forward").querySelector("img").src =
+      `${SPRITE_DIR}${fwd ? "fwd-enabled" : "fwd-disabled"}.png`;
+  };
+  const addressIcon = icon("computer"),
+    addressRow = el(
+      "div",
+      { class: "explorer-band explorer-address-band" },
+      el("span", { class: "address-label", text: "Address" }),
+      el(
+        "div",
+        { class: "address-combo" },
+        addressIcon,
+        address,
+        el(
+          "button",
+          {
+            type: "button",
+            class: "combo-drop",
+            "aria-label": "Address history",
+            onclick: historyMenu,
+          },
+          el("img", {
+            src: SPRITE_DIR + "combo-arrow.png",
+            width: 7,
+            height: 4,
+            alt: "",
+            draggable: "false",
+          }),
+        ),
+      ),
+      el(
+        "button",
+        {
+          type: "button",
+          class: "tb-button go-button",
+          onclick: () => navigateInput(),
+        },
+        el("img", {
+          class: "tb-sprite",
+          src: SPRITE_DIR + "go.png",
+          width: 13,
+          height: 15,
+          alt: "",
+          draggable: "false",
+          style: { left: "4px", top: "1px" },
+        }),
+        el("span", {
+          class: "tb-label",
+          text: "Go",
+          style: { left: "19px" },
+        }),
+      ),
+    );
   function navigateInput() {
     const input = address.value;
     const match = Object.entries(shellNames).find(
@@ -587,17 +809,22 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
       el(
         "div",
         { class: "explorer-side-title" },
-        icon(
-          current === "computer"
-            ? "computer"
-            : current === "control"
-              ? "control"
-              : current === "recycle"
-                ? "recycle"
-                : "folder",
-          32,
-        ),
-        el("h2", { text: shellNames[current] || basename(current) || current }),
+        current === "computer"
+          ? el("img", {
+              class: "side-art",
+              src: "/assets/ui/explorer/header-computer.png",
+              alt: "",
+              draggable: "false",
+            })
+          : icon(
+              current === "control"
+                ? "control"
+                : current === "recycle"
+                  ? "recycle"
+                  : "folder",
+              32,
+            ),
+        el("h2", { text: locationName(current) }),
       ),
       el("div", { class: "explorer-rule" }),
       el("p", {
@@ -613,11 +840,20 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     );
     if (current === "computer")
       side.append(
+        el("p", {
+          class: "side-description",
+          text: "Displays the files and folders on your computer",
+        }),
         el("p", { class: "side-note", text: "See also:" }),
         button("My Documents", () => navigate(DOCS), { class: "text-link" }),
         button("My Network Places", () => navigate("network"), {
           class: "text-link",
         }),
+        button(
+          "Network and Dial-up Connections",
+          () => ctx.launch("control", { page: "network" }),
+          { class: "text-link" },
+        ),
       );
     if (current === "recycle")
       side.append(
@@ -650,9 +886,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
       ? one.type === "folder"
         ? "File Folder"
         : one.detail || formatBytes(one.size || 0)
-      : current === "computer"
-        ? "My Computer"
-        : displayPath(current);
+      : "";
   }
   function renderList() {
     listing.className = "file-list " + view + "-view";
@@ -662,8 +896,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
         return ((a.size || 0) - (b.size || 0)) * sortDirection;
       if (sortBy === "modified")
         return ((a.modified || 0) - (b.modified || 0)) * sortDirection;
-      if (current === "computer")
-        return a.path === "C:/" ? -1 : b.path === "C:/" ? 1 : 0;
+      if (current === "computer") return 0;
       if (sortBy === "type")
         return a.type.localeCompare(b.type) * sortDirection;
       return (
@@ -769,12 +1002,22 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     renderSelection();
   }
   function render() {
-    w.setTitle(title || shellNames[current] || basename(current) || current);
+    w.setTitle(title || locationName(current));
     address.value = displayPath(current);
     renderSide();
     renderList();
-    tools.children[0].disabled = historyIndex === 0;
-    tools.children[1].disabled = historyIndex >= history.length - 1;
+    setNavState();
+    addressIcon.src = icon(
+      current === "computer"
+        ? "computer"
+        : current === "control"
+          ? "control"
+          : current === "recycle"
+            ? "recycle"
+            : "folder",
+    ).src;
+    status.lastLocation.textContent = locationName(current);
+    status.lastIcon.src = addressIcon.src;
     w.path = current;
   }
   function bindDrop(node, getPath) {
@@ -898,6 +1141,31 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
   render();
   w.navigate = navigate;
   return w;
+}
+function explorerStatus() {
+  const lastIcon = icon("computer"),
+    lastLocation = el("span", { text: "My Computer" }),
+    bar = el(
+      "div",
+      { class: "status-bar explorer-status" },
+      el("div", { class: "status-panel", text: "" }),
+      el("div", { class: "status-panel", text: "" }),
+      el("div", { class: "status-panel status-location" }, lastIcon, lastLocation),
+      el("span", { class: "status-grip" }),
+    );
+  bar.lastIcon = lastIcon;
+  bar.lastLocation = lastLocation;
+  return bar;
+}
+function locationName(path) {
+  const drive = /^([a-z]):[\\/]?$/i.exec(path);
+  if (drive)
+    return (
+      { C: "Local Disk (C:)", D: "Compact Disc (D:)", A: "3½ Floppy (A:)" }[
+        drive[1].toUpperCase()
+      ] || path
+    );
+  return shellNames[path] || basename(path) || path;
 }
 function displayPath(path) {
   return shellNames[path] || path.replaceAll("/", "\\");

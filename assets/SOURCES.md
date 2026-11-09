@@ -336,3 +336,7 @@ Added from the project owner's archive `windows_2000_ve_donem_arsivi.zip`, folde
 | `w2k/wupdate-1` | w2k_wupdate_1.ico | 16:native, 32:native |
 | `w2k/wupdate-2` | w2k_wupdate_2.ico | 16:native, 32:native |
 | `w2k/zip-file` | w2k_zip_file.ico | 16:native, 32:native |
+
+## Assets cropped from reference screenshots (user-supplied)
+
+Pixel-exact crops of a Windows 2000 desktop, taken from two screenshots supplied by the project owner: the Start menu banner (`assets/ui/start-banner.png`), the Start logo and a few 16x16/32x32 icons for which no `.ico` was available (`assets/icons/w2k/ref-*.png`), and the Explorer toolbar buttons, throbber, Go/drop-down glyphs and the My Computer header art (`assets/ui/explorer/*.png`). Mirrored copies are used for the Back (enabled) and Forward (disabled) arrows. Positions in `packages/explorer/index.js` were measured against the same screenshots.

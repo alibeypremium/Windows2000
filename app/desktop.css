@@ -344,11 +344,11 @@ button.selected:focus {
   position: absolute;
   display: flex;
   flex-direction: column;
-  padding: 3px;
+  padding: 4px;
   background: var(--face);
   box-shadow:
     inset -1px -1px #404040,
-    inset 1px 1px #dfdfdf,
+    inset 1px 1px #d4d0c8,
     inset -2px -2px #808080,
     inset 2px 2px #fff;
   pointer-events: auto;
@@ -400,8 +400,11 @@ button.selected:focus {
 }
 .caption-controls {
   display: flex;
-  gap: 2px;
+  gap: 0;
   margin-left: 3px;
+}
+.caption-controls .close-button {
+  margin-left: 2px;
 }
 .caption-button {
   width: 16px;
@@ -3644,4 +3647,308 @@ button.selected:focus {
 .sync-items {
   background: #fff;
   padding: 4px 12px;
+}
+
+/* ---- Explorer window, measured against a Windows 2000 reference screenshot ---- */
+.explorer-window > .menu-bar,
+.explorer-band {
+  position: relative;
+  height: 24px;
+  min-height: 24px;
+  flex: none;
+  padding: 2px 0 0;
+  border: 0;
+  box-shadow: none;
+  background: linear-gradient(#808080 0 1px, #fff 1px 2px, transparent 2px);
+}
+.explorer-window > .menu-bar {
+  margin-top: 1px;
+  display: flex;
+  padding: 2px 2px 0;
+}
+.explorer-window > .menu-bar::before,
+.explorer-band::before,
+.explorer-window > .menu-bar::after,
+.explorer-band::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  bottom: 0;
+  width: 2px;
+  pointer-events: none;
+  background: linear-gradient(90deg, #808080 0 1px, #fff 1px 2px);
+}
+.explorer-window > .menu-bar::before,
+.explorer-band::before {
+  left: 0;
+}
+.explorer-window > .menu-bar::after,
+.explorer-band::after {
+  right: 0;
+}
+.explorer-window .menu-bar-item {
+  height: 22px;
+  min-height: 22px;
+  padding: 0 8px;
+  line-height: 22px;
+}
+.explorer-window .menu-bar-item:active,
+.explorer-window .menu-bar-item.menu-open {
+  padding: 0 8px;
+}
+.explorer-window .throbber {
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  width: 39px;
+  height: 22px;
+  z-index: 1;
+}
+.tb-button {
+  position: absolute;
+  top: 3px;
+  height: 20px;
+  min-height: 0;
+  padding: 0 !important;
+  background: transparent;
+  box-shadow: none;
+  color: #000;
+}
+.go-button {
+  top: 2px;
+  height: 22px;
+  right: 5px;
+  width: 39px;
+}
+.tb-button:hover:not(:disabled) {
+  box-shadow:
+    inset 1px 1px #fff,
+    inset -1px -1px #808080;
+}
+.tb-button:active:not(:disabled) {
+  box-shadow:
+    inset 1px 1px #808080,
+    inset -1px -1px #fff;
+}
+.tb-button:disabled {
+  text-shadow: none;
+}
+.tb-button:disabled .tb-label {
+  color: #808080;
+}
+.tb-sprite {
+  position: absolute;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+.tb-label {
+  position: absolute;
+  top: 0;
+  line-height: 20px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.go-button .tb-label {
+  line-height: 22px;
+}
+.tb-separator {
+  position: absolute;
+  top: 4px;
+  width: 2px;
+  height: 18px;
+  background: linear-gradient(90deg, #808080 0 1px, #fff 1px 2px);
+}
+.explorer-address-band .address-label {
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  line-height: 22px;
+}
+.address-combo {
+  position: absolute;
+  left: 49px;
+  right: 51px;
+  top: 2px;
+  height: 22px;
+  background: #fff;
+  box-shadow:
+    inset 1px 1px #808080,
+    inset 2px 2px #404040,
+    inset -1px -1px #fff,
+    inset -2px -2px #d4d0c8;
+}
+.address-combo > .icon {
+  position: absolute;
+  left: 3px;
+  top: 3px;
+}
+.address-combo input.explorer-address {
+  position: absolute;
+  left: 21px;
+  right: 18px;
+  top: 2px;
+  height: 18px !important;
+  min-height: 0 !important;
+  padding: 0 0 0 1px !important;
+  line-height: 18px;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.combo-drop {
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  width: 16px;
+  height: 18px;
+  min-height: 0;
+  padding: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    inset -1px -1px #404040,
+    inset 1px 1px #d4d0c8,
+    inset -2px -2px #808080,
+    inset 2px 2px #fff;
+}
+.combo-drop:not(:disabled):active {
+  box-shadow:
+    inset 1px 1px #808080,
+    inset -1px -1px #fff;
+}
+.explorer-window .explorer-content {
+  position: relative;
+  margin-top: 2px;
+  padding: 2px;
+  background: #fff;
+  box-shadow:
+    inset 1px 1px #808080,
+    inset 2px 2px #404040,
+    inset -1px -1px #fff,
+    inset -2px -2px #d4d0c8;
+}
+.explorer-window .explorer-content::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -2px;
+  height: 2px;
+  background: linear-gradient(#808080 0 1px, #fff 1px 2px);
+}
+.explorer-window .explorer-side {
+  position: relative;
+  z-index: 2;
+  width: 191px;
+  min-width: 191px;
+  flex: none;
+  padding: 0;
+  background: #fff;
+  overflow: visible;
+}
+.explorer-window .explorer-side.tree-mode {
+  overflow: auto;
+}
+.explorer-window .explorer-side-title {
+  position: relative;
+  padding-top: 50px;
+}
+.explorer-window .explorer-side-title > .icon {
+  position: absolute;
+  left: 12px;
+  top: 9px;
+}
+.explorer-window .explorer-side-title > .side-art {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 124px;
+  height: 50px;
+}
+.explorer-window .explorer-side h2 {
+  margin: 0;
+  padding: 0 0 0 13px;
+  height: 22px;
+  margin-top: -1px;
+  line-height: 22px;
+  font: 700 18px/22px Arial, sans-serif;
+  white-space: nowrap;
+}
+.explorer-window .explorer-rule {
+  height: 2px;
+  margin: 0 -9px 0 0;
+  background: #6699cc;
+}
+.explorer-window .explorer-side p {
+  margin: 15px -9px 0 12px;
+  font-size: 11px;
+  line-height: 13px;
+}
+.explorer-window .explorer-side p.side-description {
+  margin: 12px -9px 0 12px;
+  border: 1px solid #d3d3d3;
+  background: #ffffe1;
+  padding: 0;
+}
+.explorer-window .explorer-side p.side-note {
+  margin: 13px 0 0 12px;
+}
+.explorer-window .explorer-side .text-link {
+  display: block;
+  margin: 4px 0 0 12px;
+  padding: 0;
+  min-height: 13px;
+  line-height: 13px;
+}
+.explorer-window .file-list.icons-view {
+  padding: 0;
+  grid-template-columns: repeat(auto-fill, 75px);
+  grid-auto-rows: max-content;
+  gap: 0;
+}
+.explorer-window .icons-view .file-item {
+  width: 75px;
+  min-height: 0;
+  padding: 0;
+  gap: 5px;
+  align-items: flex-start;
+}
+.explorer-window .icons-view .file-item > .icon {
+  margin-left: 21px;
+}
+.explorer-window .icons-view .file-item .file-name {
+  align-self: center;
+  padding: 1px 0;
+  max-width: 71px;
+  text-align: center;
+  line-height: 13px;
+}
+.explorer-status {
+  height: 22px;
+  min-height: 22px;
+  gap: 2px;
+  padding: 2px 0;
+}
+.explorer-status .status-panel {
+  flex: none;
+  min-width: 0;
+  height: 18px;
+  padding: 0 2px;
+  line-height: 18px;
+}
+.explorer-status .status-panel:nth-child(1) {
+  flex: 1;
+}
+.explorer-status .status-panel:nth-child(2) {
+  width: 76px;
+}
+.explorer-status .status-panel:nth-child(3) {
+  width: 147px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.explorer-status .status-grip {
+  width: 6px;
+  margin-left: -2px;
 }

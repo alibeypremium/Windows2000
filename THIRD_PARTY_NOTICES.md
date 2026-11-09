@@ -23,3 +23,7 @@ The desktop melody and short event sounds are synthesized by this project's Java
 ## Windows 2000 ICO set (archive supplied by the project owner)
 
 `assets/icons/w2k/` contains Windows 2000 shell icons converted from an `.ico` archive supplied by the project owner. They are Microsoft's imagery and are not covered by any permissive license; they are included for this non-commercial fan project only.
+
+## Assets cropped from reference screenshots
+
+`assets/ui/` and `assets/icons/w2k/ref-*.png` are crops of Windows 2000 user-interface imagery from screenshots supplied by the project owner. They are Microsoft's imagery, are not covered by any permissive license and are included for this non-commercial fan project only.
