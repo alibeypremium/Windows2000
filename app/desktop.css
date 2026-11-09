@@ -5529,7 +5529,7 @@ button.selected:focus {
 .oe-x { position: absolute; right: 5px; top: 0; font: bold 13px/15px Arial, sans-serif; }
 .oe-dd { position: absolute; left: 53px; top: 6px; border: 3px solid transparent; border-top: 4px solid #000; border-bottom: 0; }
 .oe-cbody { position: absolute; left: 5px; right: 0; top: 24px; letter-spacing: -.3px; }
-.oe-fl { position: absolute; left: 0; height: 18px; white-space: nowrap; cursor: default; }
+.oe-fl { position: absolute; left: 0; right: 0; height: 18px; white-space: nowrap; cursor: default; }
 .oe-fl img { position: absolute; image-rendering: pixelated; }
 .oe-fl span { position: absolute; line-height: 14px; padding: 0 2px; top: 2px; letter-spacing: -.3px; }
 .oe-fl em { position: absolute; font-style: normal; color: #0000ff; top: 2px; left: 57px; white-space: pre; }
