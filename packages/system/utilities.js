@@ -510,7 +510,7 @@ export function openRegistry(ctx) {
 export function openSystemInfo(ctx, { devices = false } = {}) {
   const w = ctx.wm.create({
       title: devices ? "Device Manager" : "System Information",
-      icon: "computer",
+      icon: devices ? "deviceMgr" : "sysInfo",
       width: 690,
       height: 440,
       appId: devices ? "devices" : "systeminfo",
@@ -641,7 +641,7 @@ export function openSystemInfo(ctx, { devices = false } = {}) {
         action: () =>
           ctx.dialogs.message(
             "This utility reports real browser capabilities and the state of the virtual desktop. Native kernel and device-driver information is outside the browser sandbox.",
-            { title: "System Information", icon: "computer" },
+            { title: "System Information", icon: "sysInfo" },
           ),
       },
     ],
@@ -680,7 +680,7 @@ export function openSystemInfo(ctx, { devices = false } = {}) {
 export function openEventViewer(ctx) {
   const w = ctx.wm.create({
       title: "Event Viewer",
-      icon: "settings",
+      icon: "eventViewer",
       width: 700,
       height: 430,
       appId: "events",
@@ -776,7 +776,7 @@ export function openEventViewer(ctx) {
 export function openTasks(ctx) {
   const w = ctx.wm.create({
       title: "Scheduled Tasks",
-      icon: "settings",
+      icon: "scheduledTasks",
       width: 640,
       height: 410,
       appId: "tasks",
@@ -1173,7 +1173,7 @@ export function openKeyboard(ctx) {
 export function openMagnifier(ctx) {
   const w = ctx.wm.create({
     title: "Magnifier Settings",
-    icon: "display",
+    icon: "magnifier",
     width: 370,
     height: 220,
     appId: "magnifier",

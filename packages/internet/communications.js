@@ -268,7 +268,7 @@ export function openHyperTerminal(ctx) {
 export function openPhoneDialer(ctx) {
   const w = ctx.wm.create({
     title: "Phone Dialer",
-    icon: "network",
+    icon: "dialerApp",
     width: 285,
     height: 365,
     appId: "dialer",

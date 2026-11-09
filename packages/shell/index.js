@@ -697,7 +697,7 @@ export class DesktopShell {
         separator(),
         {
           label: "Administrative Tools",
-          icon: "settings",
+          icon: "adminToolsFolder",
           submenu: this.appItems(["taskmgr", "regedit", "events", "devices"]),
         },
       ],
@@ -709,17 +709,17 @@ export class DesktopShell {
         },
         {
           label: "Network and Dial-up Connections",
-          icon: "network",
+          icon: "dialup",
           action: () => ctx.launch("control", { page: "network" }),
         },
         {
           label: "Printers",
-          icon: "document",
+          icon: "printers",
           action: () => ctx.launch("control", { page: "printers" }),
         },
         {
           label: "Taskbar & Start Menu...",
-          icon: "settings",
+          icon: "taskbar",
           action: () => this.taskbarProperties(),
         },
       ];
@@ -729,7 +729,7 @@ export class DesktopShell {
     const rows = [
       {
         label: "Windows Update",
-        icon: "windows",
+        icon: "windowsUpdate",
         action: () => ctx.launch("help", { topic: "updates" }),
       },
       { separator: true },

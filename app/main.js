@@ -167,7 +167,7 @@ ctx.apps = [
   {
     id: "dialer",
     name: "Phone Dialer",
-    icon: "network",
+    icon: "dialerApp",
     aliases: ["dialer.exe"],
     open: openPhoneDialer,
   },
@@ -202,7 +202,7 @@ ctx.apps = [
   {
     id: "recorder",
     name: "Sound Recorder",
-    icon: "speaker",
+    icon: "recorderApp",
     aliases: ["sndrec32", "sndrec32.exe"],
     open: openSoundRecorder,
   },
@@ -268,7 +268,7 @@ ctx.apps = [
   {
     id: "systeminfo",
     name: "System Information",
-    icon: "computer",
+    icon: "sysInfo",
     aliases: ["msinfo32", "msinfo32.exe"],
     singleton: true,
     open: openSystemInfo,
@@ -276,14 +276,14 @@ ctx.apps = [
   {
     id: "devices",
     name: "Device Manager",
-    icon: "computer",
+    icon: "deviceMgr",
     aliases: ["devmgmt.msc"],
     open: (ctx, args) => openSystemInfo(ctx, { ...args, devices: true }),
   },
   {
     id: "events",
     name: "Event Viewer",
-    icon: "settings",
+    icon: "eventViewer",
     aliases: ["eventvwr", "eventvwr.msc"],
     singleton: true,
     open: openEventViewer,
@@ -291,7 +291,7 @@ ctx.apps = [
   {
     id: "tasks",
     name: "Scheduled Tasks",
-    icon: "settings",
+    icon: "scheduledTasks",
     aliases: ["tasks"],
     singleton: true,
     open: openTasks,
@@ -306,7 +306,7 @@ ctx.apps = [
   {
     id: "defrag",
     name: "Disk Defragmenter",
-    icon: "drive",
+    icon: "defragApp",
     aliases: ["dfrg.msc"],
     open: (ctx, args) => openDiskManager(ctx, { ...args, defrag: true }),
   },
@@ -335,7 +335,7 @@ ctx.apps = [
   {
     id: "magnifier",
     name: "Magnifier",
-    icon: "display",
+    icon: "magnifier",
     aliases: ["magnify", "magnify.exe"],
     singleton: true,
     open: openMagnifier,
