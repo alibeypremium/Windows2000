@@ -16,8 +16,10 @@ export async function openPaint(ctx, { path = null } = {}) {
   const w = ctx.wm.create({
     title: (path ? basename(path) : "untitled") + " - Paint",
     icon: "paint",
-    width: 820,
-    height: 575,
+    width: 882,
+    height: 666,
+    x: 76,
+    y: 20,
     appId: "paint",
   });
   let file = path,
@@ -38,15 +40,15 @@ export async function openPaint(ctx, { path = null } = {}) {
     selectionImage = null,
     polygon = [];
   const bitmap = document.createElement("canvas");
-  bitmap.width = 640;
-  bitmap.height = 360;
+  bitmap.width = 512;
+  bitmap.height = 384;
   const c = bitmap.getContext("2d", { willReadFrequently: true });
   c.fillStyle = "#ffffff";
   c.fillRect(0, 0, bitmap.width, bitmap.height);
   const screen = el("canvas", {
       class: "paint-canvas",
-      width: 640,
-      height: 360,
+      width: 512,
+      height: 384,
       "aria-label": "Paint canvas",
     }),
     selectionBox = el("div", { class: "paint-selection", hidden: true }),
@@ -54,8 +56,10 @@ export async function openPaint(ctx, { path = null } = {}) {
     workspace = el("div", { class: "paint-workspace" }, stage),
     status = statusBar(
       "For Help, click Help Topics on the Help Menu.",
-      "640 × 360 px",
+      "",
+      "",
     );
+  status.classList.add("paint-status");
   const surface = new GraphicsSurface(screen, {
     preference: new URLSearchParams(location.search).get("renderer") || "auto",
   });
@@ -91,7 +95,8 @@ export async function openPaint(ctx, { path = null } = {}) {
     stage.style.height = bitmap.height * zoom + "px";
     surface.canvas.style.width = bitmap.width * zoom + "px";
     surface.canvas.style.height = bitmap.height * zoom + "px";
-    status.children[1].textContent = `${bitmap.width} × ${bitmap.height} px`;
+    status.children[2].textContent =
+      bitmap.width === 512 && bitmap.height === 384 ? "" : `${bitmap.width} × ${bitmap.height}`;
     updateSelection();
   };
   const setDirty = () => {
@@ -140,7 +145,7 @@ export async function openPaint(ctx, { path = null } = {}) {
   ];
   const toolbox = el("div", { class: "paint-toolbox" }),
     toolgrid = el("div", { class: "paint-tools" }),
-    options = el("div", { class: "paint-tool-options inset" });
+    options = el("div", { class: "paint-tool-options empty" });
   const chooseTool = (id) => {
     if (polygon.length) {
       c.putImageData(base, 0, 0);
@@ -158,14 +163,18 @@ export async function openPaint(ctx, { path = null } = {}) {
       : id === "magnifier"
         ? "zoom-in"
         : "crosshair";
-    status.children[0].textContent = tools.find((t) => t[0] === id)?.[2] || id;
+    options.classList.toggle(
+      "empty",
+      !["line", "curve", "rectangle", "polygon", "ellipse", "roundrect", "brush", "eraser", "airbrush"].includes(id),
+    );
     updateSelection();
   };
   for (const [id, glyph, title] of tools)
     toolgrid.append(
-      button(glyph, () => chooseTool(id), {
+      button("", () => chooseTool(id), {
         class: "paint-tool" + (id === "pencil" ? " pressed" : ""),
         "data-tool": id,
+        style: { backgroundImage: `url(/assets/ui/paint/${id}.png)` },
         title,
         "aria-label": title,
       }),
@@ -452,7 +461,7 @@ export async function openPaint(ctx, { path = null } = {}) {
   );
   stage.addEventListener("pointermove", (e) => {
     const p = pos(e);
-    status.children[0].textContent = `${Math.round(p.x)}, ${Math.round(p.y)} px`;
+    status.children[1].textContent = `${Math.round(p.x)}, ${Math.round(p.y)}`;
     if (!drawing) return;
     if (["select", "free-select"].includes(tool)) {
       if (movingSelection) {
