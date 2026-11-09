@@ -159,10 +159,10 @@ export async function openPaint(ctx, { path = null } = {}) {
       .querySelectorAll("button")
       .forEach((b) => b.classList.toggle("pressed", b.dataset.tool === id));
     surface.canvas.style.cursor = ["text"].includes(id)
-      ? "text"
+      ? "var(--cur-text)"
       : id === "magnifier"
         ? "zoom-in"
-        : "crosshair";
+        : "var(--cur-cross)";
     options.classList.toggle(
       "empty",
       !["line", "curve", "rectangle", "polygon", "ellipse", "roundrect", "brush", "eraser", "airbrush"].includes(id),

@@ -368,3 +368,5 @@ Address Book (`assets/ui/ab/`), WordPad (`assets/ui/wp/`), Imaging (`assets/ui/i
 Fonts (`assets/fonts/`): `tahoma.ttf` and `tahomabd.ttf` are the original Windows 2000 SP4 files from the user's own ISO. `ms-sans-serif*.ttf` are pixel-outline conversions of the original `sserife.fon` 8 pt bitmap font made with `scripts/fon2ttf.py`.
 
 Sounds (`assets/sounds/`) and wallpapers (`assets/wallpapers/`): original Windows 2000 SP4 media files from the user's own ISO (`start.wav` was transcoded from MS ADPCM to PCM; wallpaper BMPs converted to PNG).
+
+Mouse cursors (`assets/cursors/`): extracted from `user32.dll` of the user's own Windows 2000 SP4 ISO (`text` and `crosshair` re-rendered from the inverting XOR mask to opaque black/white pixels).
