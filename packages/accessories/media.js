@@ -801,9 +801,11 @@ export function openSoundRecorder(ctx) {
 export function openImaging(ctx, { path = null } = {}) {
   const w = ctx.wm.create({
     title: path ? basename(path) + " - Imaging" : "Imaging",
-    icon: "paint",
-    width: 700,
-    height: 510,
+    icon: "imagingApp",
+    width: 646,
+    height: 485,
+    x: 174,
+    y: 78,
     appId: "imaging",
   });
   let current = path,
@@ -811,7 +813,13 @@ export function openImaging(ctx, { path = null } = {}) {
     zoom = 1;
   const image = el("img", { class: "imaging-image", alt: "", hidden: true }),
     stage = el("div", { class: "imaging-stage" }, image),
-    status = statusBar("Ready");
+    status = el(
+      "div",
+      { class: "img-status" },
+      el("span", { class: "img-status-text", text: "For Help, press F1" }),
+      el("span", { class: "img-panel", style: { right: "230px", width: "54px" } }),
+      el("span", { class: "img-panel", style: { right: "19px", width: "208px" } }),
+    );
   const load = (p) => {
     const node = ctx.fs.stat(p);
     if (!node.content.startsWith("data:image/"))
@@ -821,7 +829,7 @@ export function openImaging(ctx, { path = null } = {}) {
     image.alt = node.name;
     image.hidden = false;
     w.setTitle(node.name + " - Imaging");
-    status.children[0].textContent = node.name;
+    status.children[0].textContent = "For Help, press F1";
   };
   const update = () =>
     (image.style.transform = `rotate(${rotation}deg) scale(${zoom})`);
@@ -896,6 +904,14 @@ export function openImaging(ctx, { path = null } = {}) {
         },
       },
     ],
+    Page: [{ label: "Rotate Right", action: () => ((rotation += 90), update()) }],
+    Zoom: [
+      { label: "Zoom In", action: () => ((zoom = Math.min(5, zoom + 0.25)), update()) },
+      { label: "Zoom Out", action: () => ((zoom = Math.max(0.25, zoom - 0.25)), update()) },
+      { label: "Best Fit", action: () => ((zoom = 1), update()) },
+    ],
+    Tools: [{ label: "Edit in Paint", action: () => current && ctx.launch("paint", { path: current }) }],
+    Annotation: [{ label: "Show Annotation Toolbar", action: () => {} }],
     Help: [
       {
         label: "Help Topics",
@@ -907,55 +923,38 @@ export function openImaging(ctx, { path = null } = {}) {
       },
     ],
   });
+  const hit = (x, y, wd, title, action) => {
+    const b = el("div", { class: "img-hit", style: { left: x + "px", top: y + "px", width: wd + "px" }, title, role: "button" });
+    b.addEventListener("click", action);
+    return b;
+  };
+  const edit = () => current && ctx.launch("paint", { path: current });
+  const header = el(
+    "div",
+    { class: "img-header" },
+    hit(6, 4, 23, "Open", open),
+    hit(30, 4, 23, "Open", open),
+    hit(86, 4, 23, "Print", () => current && ctx.printImage(image.src)),
+    hit(254, 4, 23, "Zoom In", () => ((zoom = Math.min(5, zoom + 0.25)), update())),
+    hit(278, 4, 23, "Zoom Out", () => ((zoom = Math.max(0.25, zoom - 0.25)), update())),
+    hit(326, 4, 23, "Best Fit", () => ((zoom = 1), update())),
+    hit(350, 4, 23, "Fit to Width", () => ((zoom = 1), update())),
+    hit(236, 34, 23, "Edit in Paint", edit),
+    hit(260, 34, 23, "Rotate", () => ((rotation += 90), update())),
+  );
   w.setContent(
-    toolbar([
-      { icon: "folderOpen", label: "Open", action: open },
-      {
-        icon: "paint",
-        label: "Edit in Paint",
-        action: () => {
-          if (current) ctx.launch("paint", { path: current });
-        },
-      },
-      {
-        glyph: "⊕",
-        title: "Zoom In",
-        action: () => {
-          zoom += 0.25;
-          update();
-        },
-      },
-      {
-        glyph: "⊖",
-        title: "Zoom Out",
-        action: () => {
-          zoom = Math.max(0.25, zoom - 0.25);
-          update();
-        },
-      },
-      {
-        glyph: "↻",
-        title: "Rotate",
-        action: () => {
-          rotation += 90;
-          update();
-        },
-      },
-    ]),
-    stage,
-    status,
+    el(
+      "div",
+      { class: "img-root" },
+      header,
+      el("div", { class: "img-canvas" }, stage),
+      el("div", { class: "img-anno" }),
+      status,
+    ),
   );
   if (path) load(path);
-  else
-    stage.append(
-      el("div", {
-        class: "imaging-empty",
-        text: "Choose File > Open to view an image.",
-      }),
-    );
   image.addEventListener("load", () => {
-    stage.querySelector(".imaging-empty")?.remove();
-    status.children[0].textContent = `${basename(current)}   ${image.naturalWidth} × ${image.naturalHeight} pixels`;
+    status.children[2].textContent = `${image.naturalWidth} × ${image.naturalHeight}`;
   });
   return w;
 }

@@ -5621,3 +5621,14 @@ button.selected:focus {
 .wp-tools::after, .wp-format::after { content: ""; position: absolute; width: 2px; box-shadow: inset 1px 0 #808080, inset 2px 0 #fff; }
 .wp-tools::after { left: 297px; top: 3px; height: 24px; }
 .wp-format::after { left: 566px; top: 33px; height: 24px; }
+
+/* Imaging (reference r4) */
+.img-root { position: relative; width: 100%; height: 100%; flex: 1; min-height: 0; background: #d4d0c8; font-size: 11px; }
+.img-header { position: absolute; left: 0; top: 0; width: 100%; height: 59px; background: #d4d0c8 url(/assets/ui/img/header.png) no-repeat; image-rendering: pixelated; }
+.img-hit { position: absolute; height: 22px; cursor: default; }
+.img-canvas { position: absolute; left: 0; right: 0; top: 59px; bottom: 49px; background: #fff; box-shadow: inset 1px 1px #808080, inset 2px 2px #404040, inset -1px -1px #fff; overflow: auto; box-sizing: border-box; }
+.img-canvas .imaging-stage { background: #fff; min-height: 100%; padding: 2px; }
+.img-anno { position: absolute; left: 0; top: 390px; width: 462px; height: 27px; background: url(/assets/ui/img/anno.png) no-repeat; image-rendering: pixelated; }
+.img-status { position: absolute; left: 0; right: 0; bottom: 0; height: 20px; }
+.img-status-text { position: absolute; left: 2px; top: 5px; letter-spacing: -0.2px; }
+.img-panel { position: absolute; top: 3px; height: 17px; box-sizing: border-box; box-shadow: inset 1px 1px #808080, inset -1px -1px #fff; padding: 2px 3px; white-space: nowrap; overflow: hidden; }
