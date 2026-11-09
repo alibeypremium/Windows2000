@@ -1,4 +1,4 @@
-import { el, button, icon, statusBar, tabs, checkbox } from "../ui/index.js";
+import { el, button, icon, statusBar, tabs, checkbox, popup } from "../ui/index.js";
 const topics = {
   welcome: {
     title: "Welcome to Windows 2000",
@@ -158,92 +158,160 @@ const topics = {
     links: [],
   },
 };
-export function openHelp(ctx, { topic = "welcome" } = {}) {
+const HH = "/assets/ui/help/";
+const BOOKS = [
+  ["Introducing Windows 2000 Professional", ["welcome", "windows"]],
+  ["Files and Folders", ["files"]],
+  ["Internet, E-mail, and Communications", ["internet"]],
+  ["Working with Programs", ["notepad", "wordpad", "paint", "calculator", "games"]],
+  ["Personalizing Your Computer", ["shortcuts"]],
+  ["Hardware", ["media"]],
+  ["Printing", []],
+  ["Troubleshooting and Maintenance", ["system", "updates"]],
+  ["Networking", []],
+  ["Accessibility for Special Needs", []],
+  ["Mobile Users", []],
+  ["Security", []],
+  ["Control Panel", []],
+  ["Glossary", []],
+  ["Reference", ["architecture"]],
+];
+
+export function openHelp(ctx, { topic } = {}) {
   const w = ctx.wm.create({
-    title: "Windows Help",
-    icon: "help",
-    width: 720,
-    height: 480,
+    title: "Windows 2000",
+    icon: "hhHelp",
+    width: 713,
+    height: 634,
+    x: 230,
+    y: 30,
     appId: "help",
   });
-  let current = topic in topics ? topic : "welcome",
-    history = [],
-    query = "";
-  const sidebar = el("div", { class: "help-sidebar" }),
-    article = el("article", { class: "help-article" }),
-    list = el("div", { class: "help-topics" }),
-    search = el("input", {
-      placeholder: "Type a keyword",
-      "aria-label": "Search help",
-      oninput: (e) => {
-        query = e.target.value.toLowerCase();
-        renderList();
-      },
-    });
+  let current = topic in topics ? topic : "start",
+    hist = [],
+    fwd = [],
+    tab = 0,
+    hidden = false;
+  const open = new Set();
+  const img = (name, style = {}) => el("img", { src: HH + name + ".png", draggable: "false", alt: "", style });
+  const left = el("div", { class: "hh-left" }),
+    right = el("div", { class: "hh-right" }),
+    body = el("div", { class: "hh-body" }),
+    tree = el("div", { class: "hh-tree" }),
+    root = el("div", { class: "hh-root" });
+  const tb = (cls, ico, label, x, cx, onclick, disabled = false) => {
+    const b = el("div", { class: "hh-tb " + cls + (disabled ? " off" : ""), onclick: () => !b.classList.contains("off") && onclick() }, img(ico), el("span", { text: label }));
+    b.style.left = x + "px";
+    b.style.setProperty("--cx", cx + "px");
+    return b;
+  };
+  const hide = tb("hide", "hide", "Hide", 0, 0, () => {
+    hidden = !hidden;
+    root.classList.toggle("hide-left", hidden);
+    hide.lastChild.textContent = hidden ? "Show" : "Hide";
+  });
+  const back = tb("back", "back", "Back", 54, 0, () => go(hist.pop(), "back"), true);
+  const fw = tb("fwd", "fwd", "Forward", 109, 0, () => go(fwd.pop(), "fwd"), true);
+  const opt = tb("opt", "options", "Options", 164, 0, () => {
+    const r = opt.getBoundingClientRect();
+    popup([{ label: "Print...", action: () => ctx.printText(body.innerText, "Windows 2000") }], r.left, r.bottom);
+  });
+  opt.lastChild.innerHTML = "<u>O</u>ptions";
+  const web = tb("web", "web", "Web Help", 219, 0, () => ctx.launch("ie"));
+  const sync = () => {
+    back.classList.toggle("off", !hist.length);
+    fw.classList.toggle("off", !fwd.length);
+  };
+  const go = (key, dir) => {
+    if (!key) return;
+    if (dir === "back") fwd.push(current);
+    else if (dir === "fwd") hist.push(current);
+    else (hist.push(current), (fwd.length = 0));
+    show(key);
+    sync();
+  };
   const show = (key) => {
-    history.push(current);
     current = key;
+    renderTree();
+    if (key === "start") {
+      body.replaceChildren(
+        el("div", { class: "hh-orange" }),
+        img("start-art", { position: "absolute", left: "0", top: "14px" }),
+        el("div", { class: "hh-starth", text: "Start Here" }),
+        ...[
+          ["Find it fast", () => setTab(2)],
+          ["If you've used Windows before", () => go("windows")],
+          ["Troubleshooting", () => go("system")],
+          ["Information and support on the Web", () => ctx.launch("ie")],
+        ].map(([t, f], i) => {
+          const a = el("div", { class: "hh-start-link", style: { top: 224 + i * 17 + "px" } }, el("i"), el("span", { text: t }));
+          a.addEventListener("click", f);
+          return a;
+        }),
+        el("div", { class: "hh-copy", text: "© 1985-1999 Microsoft Corporation.\nAll rights reserved." }),
+      );
+      return;
+    }
     const t = topics[key];
-    article.replaceChildren(
-      el("h1", { text: t.title }),
-      ...t.paragraphs.map((p) => el("p", { text: p })),
-      ...(t.links?.length
-        ? [
-            el(
-              "div",
-              { class: "help-related" },
-              el("b", { text: "Related tasks" }),
-              ...t.links.map(([label, id, args]) =>
-                button(label, () => ctx.launch(id, args), {
-                  class: "text-link",
-                }),
-              ),
-            ),
-          ]
-        : []),
+    body.replaceChildren(
+      el("div", { class: "hh-orange" }),
+      el(
+        "div",
+        { class: "hh-article" },
+        el("h1", { text: t.title }),
+        ...t.paragraphs.map((p) => el("p", { text: p })),
+        ...(t.links?.length
+          ? [el("div", { class: "hh-rel" }, el("b", { text: "Related tasks" }), ...t.links.map(([label, id, args]) => el("a", { text: label, onclick: () => ctx.launch(id, args) })))]
+          : []),
+      ),
     );
   };
-  function renderList() {
+  function renderTree() {
+    const row = (ico, text, { x = 0, sel = false, onclick } = {}) => {
+      const r = el("div", { class: "hh-row" }, img(ico), el("span", { text, class: sel ? "sel" : "" }));
+      r.style.paddingLeft = x + "px";
+      r.addEventListener("click", onclick);
+      return r;
+    };
+    const rows = [row("start", "Start Here", { sel: current === "start", onclick: () => go("start") })];
+    BOOKS.forEach(([name, kids]) => {
+      rows.push(row("book", name, { onclick: () => (open.has(name) ? open.delete(name) : open.add(name), renderTree()) }));
+      if (open.has(name))
+        (kids.length ? kids : null)?.forEach((k) => rows.push(row("start", topics[k].title, { x: 16, sel: current === k, onclick: () => go(k) })));
+    });
+    tree.replaceChildren(...rows);
+  }
+  const panel = el("div", { class: "hh-panel" });
+  const list = el("div", { class: "hh-list" });
+  const input = el("input", { class: "hh-input", oninput: () => fillList() });
+  function fillList() {
+    const q = input.value.toLowerCase();
     list.replaceChildren(
       ...Object.entries(topics)
-        .filter(
-          ([key, t]) =>
-            !query ||
-            (t.title + " " + t.paragraphs.join(" "))
-              .toLowerCase()
-              .includes(query),
-        )
-        .map(([key, t]) =>
-          button([icon("help"), t.title], () => show(key), {
-            class: "help-topic",
-          }),
-        ),
+        .filter(([, t]) => tab === 1 ? !q || t.title.toLowerCase().includes(q) : q && (t.title + " " + t.paragraphs.join(" ")).toLowerCase().includes(q))
+        .map(([k, t]) => el("div", { class: "hh-row", onclick: () => go(k) }, img("start"), el("span", { text: t.title }))),
     );
   }
-  sidebar.append(
-    el("div", { class: "help-contents-title", text: "Contents" }),
-    search,
-    list,
-  );
-  w.setContent(
-    el(
-      "div",
-      { class: "help-toolbar" },
-      button("◀ Back", () => {
-        const last = history.pop();
-        if (last) {
-          const saved = history;
-          show(last);
-          history = saved.slice(0, -1);
-        }
-      }),
-      button("Home", () => show("welcome")),
-      button("Print", () => ctx.printText(article.innerText, "Windows Help")),
-    ),
-    el("div", { class: "help-main" }, sidebar, article),
-    statusBar("Windows 2000 Professional"),
-  );
-  renderList();
+  const tabs = ["Contents", "Index", "Search", "Favorites"].map((t, i) => {
+    const n = el("div", { class: "hh-tab t" + i, onclick: () => setTab(i) });
+    n.innerHTML = t === "Contents" ? "<u>C</u>ontents" : t === "Index" ? "In<u>d</u>ex" : t === "Search" ? "<u>S</u>earch" : "F<u>a</u>vorites";
+    return n;
+  });
+  function setTab(i) {
+    tab = i;
+    tabs.forEach((t, j) => t.classList.toggle("on", j === i));
+    panel.replaceChildren(...(i === 0 ? [tree] : i === 3 ? [el("div", { class: "hh-list" })] : [el("div", { class: "hh-lbl", text: i === 1 ? "Type in the keyword to find:" : "Type in the word(s) to search for:" }), input, list]));
+    root.classList.toggle("has-input", i === 1 || i === 2);
+    input.value = "";
+    if (i === 0) renderTree();
+    else fillList();
+  }
+  const sb = el("div", { class: "rk-vscroll disabled hh-sb" }, el("span", { class: "sb up" }), el("span", { class: "sb down" }));
+  left.append(...tabs, panel);
+  right.append(body, sb);
+  root.append(el("div", { class: "hh-toolbar" }, hide, back, fw, opt, web), left, right);
+  w.setContent(root);
+  setTab(0);
   show(current);
   return w;
 }

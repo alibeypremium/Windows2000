@@ -174,6 +174,7 @@ const icons = {
   adminTelnet: "w2k/ref-admin-telnet",
   addPrinter: "w2k/ref-printers-add",
   addTask: "w2k/ref-add-task",
+  hhHelp: "w2k/ref-hh-help",
   netEntire: "w2k/entire-network",
   netNear: "w2k/network-2",
   batchFile: "w2k/ms-dos-batch-file",
