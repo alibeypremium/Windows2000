@@ -1,3 +1,4 @@
+import { refWindow, kit } from "../control-panel/refkit.js";
 import {
   el,
   button,
@@ -341,50 +342,66 @@ export function openPhoneDialer(ctx) {
 }
 
 export function openSynchronize(ctx) {
-  const w = ctx.wm.create({
+  const k = kit(0, 0),
+    w = refWindow(ctx, {
       title: "Items to Synchronize",
       icon: "network",
-      width: 430,
-      height: 270,
+      width: 391,
+      height: 434,
+      x: 316,
+      y: 153,
       appId: "synchronize",
-      resizable: false,
-      maximizable: false,
-    }),
-    status = el("p", { text: "Ready to synchronize the virtual hard drive." }),
-    list = el(
-      "div",
-      { class: "inset sync-items" },
-      el("p", {
-        text: "☑ Local Disk (C:)\n☑ Desktop settings\n☑ Scheduled task configuration",
-      }),
-    );
+      help: true,
+    });
+  let enabled = true,
+    updated = "";
+  const stamp = el("div", {
+    class: "rk-text",
+    style: { left: "239px", top: "164px", width: "100px", whiteSpace: "nowrap" },
+  });
   const synchronize = async () => {
-    status.textContent = "Waiting for pending file transactions...";
     await ctx.fs.queue;
-    status.textContent =
-      "All pending file transactions have completed.\nLast synchronized: " +
-      new Date().toLocaleString();
-    ctx.log(
-      "Information",
-      "Synchronize",
-      "All virtual disk transactions completed.",
-    );
+    updated = new Date().toLocaleString();
+    stamp.textContent = updated;
+    ctx.log("Information", "Synchronize", "All virtual disk transactions completed.");
   };
-  w.setContent(
-    el(
-      "div",
-      { class: "dialog-padding" },
-      el("p", { text: "Select the items you want to synchronize:" }),
-      list,
-      status,
-    ),
-    el(
-      "div",
-      { class: "dialog-buttons" },
-      button("Synchronize", synchronize, { class: "default-button" }),
-      button("Setup...", () => ctx.launch("control", { page: "system" })),
-      button("Close", () => w.close()),
-    ),
+  const list = k.sunken(15, 126, 362, 209);
+  list.style.background = "#fff";
+  list.append(
+    el("div", { class: "sync-head", style: { left: "0", top: "0", width: "222px" }, text: "Name" }),
+    el("div", { class: "sync-head", style: { left: "222px", top: "0", width: "111px" }, text: "Last Updated" }),
+    el("div", { class: "sync-head", style: { left: "333px", top: "0", width: "24px" } }),
+  );
+  list.style.cssText += ";";
+  const row = el("div", { class: "sync-folder" }, el("img", { src: "/assets/ui/sync/folder.png", alt: "" }), el("span", { text: "Offline Web Pages" }));
+  const box = el("span", { class: "sync-box on", role: "checkbox", "aria-checked": "true", tabindex: 0 });
+  const toggle = () => {
+    enabled = !enabled;
+    box.classList.toggle("on", enabled);
+    box.setAttribute("aria-checked", enabled);
+  };
+  box.addEventListener("click", toggle);
+  box.addEventListener("keydown", (e) => e.key === " " && (e.preventDefault(), toggle()));
+  const item = el(
+    "div",
+    { class: "sync-item" },
+    box,
+    el("img", { src: "/assets/ui/sync/page.png", alt: "" }),
+    el("span", { text: "My Current Home Page" }),
+  );
+  list.append(row, item, stamp);
+  stamp.style.cssText = "left:221px;top:41px;width:110px;white-space:nowrap";
+  w.place(
+    k.img(16, 36, "/assets/ui/sync/hdr.png", 30, 32),
+    k.text(58, 37, "To ensure that you have the most current data when working\noffline, you can have Windows synchronize the data on your\ncomputer and the data on the network so that both are up to date.", { w: 320 }),
+    k.text(14, 105, "Select the check box for any items you want to synchronize."),
+    list,
+    k.btn(301, 339, 75, 23, "Properties", { disabled: true }),
+    k.btn(124, 398, 75, 23, "Synchronize", {
+      onclick: () => (enabled ? synchronize() : ctx.dialogs.message("Select an item to synchronize.", { title: "Items to Synchronize", icon: "info" })),
+    }),
+    k.btn(220, 398, 75, 23, "Setup...", { onclick: () => ctx.launch("control", { page: "internet" }) }),
+    k.btn(301, 398, 75, 23, "Close", { onclick: () => w.close() }),
   );
   return w;
 }
