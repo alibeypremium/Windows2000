@@ -370,3 +370,5 @@ Fonts (`assets/fonts/`): `tahoma.ttf` and `tahomabd.ttf` are the original Window
 Sounds (`assets/sounds/`) and wallpapers (`assets/wallpapers/`): original Windows 2000 SP4 media files from the user's own ISO (`start.wav` was transcoded from MS ADPCM to PCM; wallpaper BMPs converted to PNG).
 
 Mouse cursors (`assets/cursors/`): extracted from `user32.dll` of the user's own Windows 2000 SP4 ISO (`text` and `crosshair` re-rendered from the inverting XOR mask to opaque black/white pixels).
+
+Appearance schemes (`packages/control-panel/schemes.js`): colors parsed from `HIVEDEF.INF` of the user's own Windows 2000 SP4 ISO.

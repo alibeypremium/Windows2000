@@ -1,3 +1,4 @@
+import { schemes } from "./schemes.js";
 import {
   el,
   button,
@@ -184,43 +185,6 @@ export const controlItems = [
     description: "Change the desktop user name.",
   },
 ];
-const schemes = {
-  "Windows Standard": {
-    desktopColor: "#3a6ea5",
-    face: "#d4d0c8",
-    active: "#0a246a",
-    gradient: "#a6caf0",
-    text: "#000000",
-  },
-  "Windows Classic": {
-    desktopColor: "#008080",
-    face: "#c0c0c0",
-    active: "#000080",
-    gradient: "#1084d0",
-    text: "#000000",
-  },
-  Desert: {
-    desktopColor: "#a28d68",
-    face: "#d5cbb7",
-    active: "#79603b",
-    gradient: "#c6b28b",
-    text: "#000000",
-  },
-  Lilac: {
-    desktopColor: "#786c8f",
-    face: "#d2ccd7",
-    active: "#45395c",
-    gradient: "#bba9d0",
-    text: "#000000",
-  },
-  "High Contrast Black": {
-    desktopColor: "#000000",
-    face: "#000000",
-    active: "#800080",
-    gradient: "#800080",
-    text: "#ffffff",
-  },
-};
 export function applyTheme(settings) {
   const theme = schemes[settings.get("scheme")] || schemes["Windows Standard"];
   const root = document.documentElement;
@@ -228,13 +192,18 @@ export function applyTheme(settings) {
   root.style.setProperty("--active", theme.active);
   root.style.setProperty("--active-gradient", theme.gradient);
   root.style.setProperty("--text", theme.text);
+  root.style.setProperty("--inactive", theme.inactive || "#808080");
+  root.style.setProperty("--inactive-gradient", theme.inactiveGradient || "#c0c0c0");
+  root.style.setProperty("--caption-text", theme.captionText || "#fff");
+  root.style.setProperty("--highlight", theme.highlight || theme.active);
+  root.style.setProperty("--highlight-text", theme.highlightText || "#fff");
   root.style.setProperty(
     "--ui-font-size",
-    (Number(settings.get("fontSize")) || 11) + "px",
+    (([11, 0].includes(Number(settings.get("fontSize"))) ? 13 : Number(settings.get("fontSize")) || 13)) + "px",
   );
   root.classList.toggle(
     "high-contrast",
-    settings.get("scheme") === "High Contrast Black" ||
+    /^High Contrast/.test(settings.get("scheme")) ||
       settings.get("highContrast"),
   );
   document.querySelector("#desktop").style.backgroundColor =

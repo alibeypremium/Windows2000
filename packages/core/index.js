@@ -563,7 +563,7 @@ export class Settings {
       desktopColor: "#3a6ea5",
       wallpaper: "none",
       scheme: "Windows Standard",
-      fontSize: 11,
+      fontSize: 13,
       volume: 65,
       muted: false,
       showSeconds: false,
