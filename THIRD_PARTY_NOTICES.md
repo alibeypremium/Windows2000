@@ -19,3 +19,7 @@ The desktop melody and short event sounds are synthesized by this project's Java
 ## Windows 2000 system icons (archive supplied by the project owner)
 
 `assets/icons/` contains Windows 2000 system icons taken from an archive supplied by the project owner (see `assets/SOURCES.md`). These are Microsoft's imagery and are not covered by any permissive license; they are included for this non-commercial fan project only.
+
+## Windows 2000 ICO set (archive supplied by the project owner)
+
+`assets/icons/w2k/` contains Windows 2000 shell icons converted from an `.ico` archive supplied by the project owner. They are Microsoft's imagery and are not covered by any permissive license; they are included for this non-commercial fan project only.

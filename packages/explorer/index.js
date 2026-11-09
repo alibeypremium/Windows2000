@@ -125,7 +125,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
           name: "Scheduled Tasks",
           path: "tasks",
           type: "special",
-          icon: "settings",
+          icon: "scheduledTasks",
         },
       ];
     if (current === "control")
