@@ -238,8 +238,8 @@ export function openMinesweeper(ctx) {
       { label: "Exit", action: () => w.close() },
     ],
     Help: [
-      { label: "Contents", shortcut: "F1", action: () => ctx.launch("help", { topic: "games" }) },
-      { label: "Search for Help on...", action: () => ctx.launch("help", { topic: "games" }) },
+      { label: "Contents", shortcut: "F1", action: () => ctx.launch("help", { topic: "minesweeper" }) },
+      { label: "Search for Help on...", action: () => ctx.launch("help", { topic: "minesweeper" }) },
       { label: "Using Help", action: () => ctx.launch("help") },
       separator(),
       { label: "About Minesweeper...", action: () => ctx.openAbout?.("Minesweeper", "minesweeper", "by Robert Donner and Curt Johnson") ?? ctx.dialogs.message("Minesweeper\nby Robert Donner and Curt Johnson", { title: "About Minesweeper", icon: "minesweeper" }) },
@@ -248,7 +248,7 @@ export function openMinesweeper(ctx) {
   w.setContent(root);
   w.el.addEventListener("keydown", (e) => {
     if (e.key === "F2") (e.preventDefault(), newGame());
-    if (e.key === "F1") (e.preventDefault(), ctx.launch("help", { topic: "games" }));
+    if (e.key === "F1") (e.preventDefault(), ctx.launch("help", { topic: "minesweeper" }));
   });
   w.addCleanup(stop);
   if (!st.color) root.style.filter = "grayscale(1)";

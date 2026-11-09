@@ -44,6 +44,7 @@ import {
 import {
   openMinesweeper,
   openSolitaire,
+  openFreeCell,
   openPinball,
 } from "/packages/games/index.js";
 import {
@@ -244,7 +245,7 @@ ctx.apps = [
     name: "Freecell",
     icon: "freecell",
     aliases: ["freecell.exe"],
-    open: (ctx, args) => openSolitaire(ctx, { ...args, freecell: true }),
+    open: openFreeCell,
   },
   {
     id: "pinball",

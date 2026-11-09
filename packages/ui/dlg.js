@@ -31,8 +31,8 @@ export function dialogFromTemplate(ctx, tpl, opts = {}) {
     let node;
     if (c.class === "button") {
       if (t === 7) node = group(x, y + 6, cw, ch - 6, label.replace(/&/g, ""), 9);
-      else if (t === 2 || t === 3 || t === 5 || t === 6) node = check(x, y, label.replace(/&/g, ""), { disabled });
-      else if (t === 4 || t === 9) node = radio(x, y, label.replace(/&/g, ""), { disabled });
+      else if (t === 2 || t === 3 || t === 5 || t === 6) node = check(x, y, label.replace(/&/g, ""), { disabled, checked: !!opts.checked?.[c.id], onchange: opts.on?.[c.id] });
+      else if (t === 4 || t === 9) node = radio(x, y, label.replace(/&/g, ""), { disabled, checked: !!opts.checked?.[c.id], onchange: opts.on?.[c.id] });
       else {
         node = btn(x, y, cw, ch, label.replace(/&/g, ""), { def: t === 1, disabled, onclick: opts.on?.[c.id] });
         withMnemonic(node, label);
@@ -57,6 +57,8 @@ export function dialogFromTemplate(ctx, tpl, opts = {}) {
       if (!byId[c.id]) byId[c.id] = [node].flat()[0];
     }
   }
+  for (const g of opts.groups || []) for (const id of g) byId[id]?.addEventListener("click", () => g.forEach((o) => byId[o]?.classList.toggle("checked", o === id)));
   w.ctl = byId;
+  w.on = (id) => byId[id]?.classList.contains("checked");
   return w;
 }

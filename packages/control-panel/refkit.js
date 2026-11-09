@@ -65,10 +65,11 @@ export const check = (
     );
   if (!disabled) {
     n.addEventListener("click", () => {
+      const on = n.classList.contains("checked");
       if (kind === "radio") {
-        if (checked) return;
+        if (on) return;
         checked = true;
-      } else checked = !checked;
+      } else checked = !on;
       n.classList.toggle("checked", checked);
       n.setAttribute("aria-checked", checked);
       onchange?.(checked, n);
