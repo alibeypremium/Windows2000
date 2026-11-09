@@ -11,6 +11,7 @@ import { downloadFile, pickFiles, DOCS } from "../core/index.js";
 import {
   openAccessibility,
   openAddRemovePrograms,
+  openAutomaticUpdates,
   openHardwareWizard,
 } from "./dialogs.js";
 export const controlItems = [
@@ -43,7 +44,6 @@ export const controlItems = [
     name: "Automatic Updates",
     icon: "cpAutoUpdate",
     description: "Configures Windows Update to download and install updates automatically.",
-    unavailable: true,
   },
   {
     id: "bde",
@@ -233,6 +233,7 @@ export function openControlPanel(ctx, { page = "system" } = {}) {
   if (page === "accessibility") return openAccessibility(ctx);
   if (page === "programs") return openAddRemovePrograms(ctx);
   if (page === "hardware") return openHardwareWizard(ctx);
+  if (page === "autoupdate") return openAutomaticUpdates(ctx);
   const entry =
       controlItems.find((p) => p.id === page) ||
       controlItems.find((p) => p.id === "system"),

@@ -705,3 +705,52 @@ export function openHardwareWizard(ctx) {
   );
   return w;
 }
+
+
+/* ---------- Automatic Updates ---------- */
+
+export function openAutomaticUpdates(ctx) {
+  const OX = 88,
+    OY = 106,
+    k = kit(OX, OY),
+    w = refWindow(ctx, {
+      title: "Automatic Updates",
+      width: 383,
+      height: 422,
+      appId: "control",
+      help: true,
+      noIcon: true,
+      x: OX,
+      y: OY,
+    });
+  const grp = k.group(108, 260, 352, 184, "Settings", 10);
+  grp[1]?.classList.add("disabled");
+  const dis = (...a) => k.text(a[0], a[1], a[2], { disabled: true });
+  w.place(
+    k.img(108, 145, DLG + "au-logo.png", 32, 31),
+    k.text(151, 150, "The Windows Update Service is unavailable."),
+    k.check(108, 180, "", { disabled: true, checked: true }),
+    dis(127, 180, "Keep my computer up to date. With this setting enabled, Windows\nUpdate software may be automatically updated prior to applying any\nother updates."),
+    (() => {
+      const l = k.link(108, 232, "Learn more about automatic updating", () => ctx.launch("help", { topic: "updates" }));
+      l.classList.add("rk-focus");
+      return l;
+    })(),
+    grp,
+    k.radio(123, 275, "", { disabled: true }),
+    dis(139, 270, "Notify me before downloading any updates and notify me again\nbefore installing them on my computer"),
+    k.radio(123, 321, "", { disabled: true, checked: true }),
+    dis(139, 317, "Download the updates automatically and notify me when they are\nready to be installed"),
+    k.radio(123, 365, "", { disabled: true }),
+    dis(139, 361, "Automatically download the updates, and install them on the\nschedule that I specify"),
+    k.combo(140, 395, 138, 19, "", { disabled: true }),
+    k.text(283, 398, "at"),
+    k.combo(299, 395, 90, 19, "", { disabled: true }),
+    k.link(139, 423, "Learn more about scheduled installing", () => ctx.launch("help", { topic: "updates" })),
+    k.btn(339, 451, 121, 23, "Declined Updates", { disabled: true }),
+    k.btn(213, 487, 75, 23, "OK", { disabled: true }),
+    k.btn(301, 487, 75, 23, "Cancel", { onclick: () => w.close() }),
+    k.btn(385, 487, 75, 23, "Apply", { disabled: true }),
+  );
+  return w;
+}

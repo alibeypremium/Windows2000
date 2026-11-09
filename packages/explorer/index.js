@@ -206,7 +206,6 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
       if (id === "administrative") navigate("admintools");
       else if (id === "printers") navigate("printers");
       else if (id === "tasks") ctx.launch("tasks");
-      else if (id === "autoupdate") ctx.launch("help", { topic: "updates" });
       else if (n.unavailable)
         ctx.dialogs.message(
           `${n.name} is not available in this browser simulation.`,

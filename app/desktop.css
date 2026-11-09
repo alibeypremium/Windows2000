@@ -4649,3 +4649,14 @@ button.selected:focus {
   white-space: pre;
   line-height: 13px;
 }
+.rk-group-label.disabled {
+  color: #808080;
+  text-shadow: 1px 1px #fff;
+}
+.rk-link.rk-focus {
+  outline: 1px dotted #000;
+  outline-offset: 0;
+}
+.rk-radio.disabled.checked .box::after {
+  background: #808080;
+}
