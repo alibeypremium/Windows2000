@@ -135,6 +135,40 @@ const icons = {
   warning: "w2k/warning",
   info: "w2k/info",
   folderOptions: "folder-options",
+  cpAccessibility: "w2k/ref-cp-accessibility",
+  cpHardware: "w2k/ref-cp-hardware",
+  cpPrograms: "w2k/ref-cp-programs",
+  cpAdmin: "w2k/administrative-tools",
+  cpAutoUpdate: "w2k/ref-cp-autoupdate",
+  cpBde: "w2k/ref-cp-bde",
+  cpDateTime: "w2k/ref-cp-datetime",
+  cpDisplay: "w2k/ref-cp-display",
+  cpFolderOpts: "w2k/ref-cp-folderopts",
+  cpFonts: "w2k/fonts",
+  cpGaming: "w2k/ref-cp-gaming",
+  cpInternet: "w2k/ref-cp-internet",
+  cpJava: "w2k/ref-cp-java",
+  cpKeyboard: "w2k/ref-cp-keyboard",
+  cpMouse: "w2k/ref-cp-mouse",
+  cpNetwork: "w2k/dial-up-networking",
+  cpPhone: "w2k/ref-cp-phone",
+  cpPower: "w2k/ref-cp-power",
+  cpPrinters: "w2k/printers",
+  cpRegional: "w2k/ref-cp-regional",
+  cpScanners: "w2k/ref-cp-scanners",
+  cpTasks: "w2k/scheduled-tasks",
+  cpSounds: "w2k/sndrec-1",
+  cpSystem: "w2k/my-computer",
+  cpUsers: "w2k/ref-cp-users",
+  netAdd: "w2k/ref-net-add",
+  netEntire: "w2k/entire-network",
+  netNear: "w2k/network-2",
+  batchFile: "w2k/ms-dos-batch-file",
+  sysFile: "w2k/system-file",
+  textFile: "w2k/text-document",
+  waveFile: "w2k/wave-sound",
+  exeFile: "w2k/default-application",
+  v86File: "w2k/ref-md-v86",
 };
 export function icon(name = "document", size = 16) {
   const resolved = icons[name] || name;
@@ -163,13 +197,15 @@ export function fileIcon(file) {
   const ext = extension(file.name);
   if (["png", "bmp", "jpg", "jpeg", "gif", "webp", "svg"].includes(ext))
     return "paint";
-  if (["mp3", "wav", "ogg", "mp4", "webm"].includes(ext)) return "media";
+  if (["wav", "mid", "midi"].includes(ext)) return "waveFile";
+  if (["mp3", "ogg", "mp4", "webm"].includes(ext)) return "media";
+  if (["exe", "com"].includes(ext)) return "exeFile";
+  if (["bat", "cmd"].includes(ext)) return "batchFile";
+  if (["sys", "ini", "dll", "cfg", "inf"].includes(ext)) return "sysFile";
   if (["htm", "html", "url"].includes(ext)) return "ie";
   if (["rtf", "wdoc"].includes(ext)) return "wordpad";
-  if (
-    ["txt", "ini", "log", "md", "js", "json", "css", "bat", "csv"].includes(ext)
-  )
-    return "notepad";
+  if (["txt", "log", "md", "js", "json", "css", "csv"].includes(ext))
+    return "textFile";
   return "document";
 }
 export function separator() {
@@ -511,6 +547,13 @@ export class WindowManager {
       w.title = t;
       caption.textContent = t;
       w.el.setAttribute("aria-label", t);
+      this.bus.emit("windows:change");
+    };
+    w.setIcon = (name) => {
+      if (w.icon === name) return;
+      w.icon = name;
+      const img = titleIcon.querySelector("img");
+      if (img) img.src = icon(name).src;
       this.bus.emit("windows:change");
     };
     w.setContent = (...children) => w.body.replaceChildren(...children);

@@ -3952,3 +3952,130 @@ button.selected:focus {
   width: 6px;
   margin-left: -2px;
 }
+
+/* Explorer web views (Control Panel, folders, disks, Recycle Bin, network),
+   measured against Windows 2000 reference screenshots. */
+.explorer-window .explorer-side span.text-link {
+  display: block;
+  margin: 4px 0 0 12px;
+  padding: 0;
+  min-height: 13px;
+  line-height: 13px;
+  color: #0000ff;
+  font-size: 11px;
+  width: max-content;
+  max-width: 170px;
+}
+.explorer-window .explorer-side span.text-link.inline {
+  display: inline;
+  margin: 0;
+  width: auto;
+  max-width: none;
+}
+.explorer-window .explorer-side button.text-link {
+  color: #0000ff;
+}
+.explorer-window .explorer-side .side-first {
+  margin-top: 12px;
+}
+.explorer-window .explorer-side p.side-next {
+  margin-top: 12px;
+}
+.explorer-window .explorer-side p.side-capacity {
+  margin-top: 25px;
+}
+.explorer-window .side-legend {
+  display: flex;
+  align-items: center;
+  height: 13px;
+  margin: 12px 0 0 28px;
+  font-size: 11px;
+  line-height: 13px;
+}
+.explorer-window .side-legend .swatch {
+  box-sizing: border-box;
+  width: 12px;
+  height: 11px;
+  margin-right: 6px;
+  border: 1px solid #000;
+}
+.explorer-window .side-legend .swatch.used {
+  background: #d4d0c8;
+}
+.explorer-window .side-legend .swatch.free {
+  background: #fff;
+}
+.explorer-window .side-pie {
+  display: block;
+  margin: 42px 0 0 12px;
+}
+.explorer-window .side-pie + .side-note {
+  margin-top: 44px;
+}
+.explorer-window .file-list.system-hidden {
+  background: url(/assets/ui/explorer/bg-systemfolder.png) no-repeat right bottom;
+}
+.explorer-window .icons-view .file-name.fitted {
+  white-space: pre;
+}
+.explorer-window .details-view .file-item,
+.explorer-window .file-details-header {
+  height: 17px;
+}
+.explorer-window .file-details-header {
+  background: #d4d0c8;
+}
+.explorer-window .file-details-header button {
+  height: 17px;
+  min-height: 17px;
+  padding: 0 0 0 5px;
+  line-height: 17px;
+  border: 0;
+  background: #d4d0c8;
+  box-shadow:
+    inset -1px -1px #404040,
+    inset 1px 1px #fff,
+    inset -2px -2px #808080,
+    inset 2px 2px #d4d0c8;
+}
+.explorer-window .file-details-header button:active {
+  padding: 0 0 0 5px !important;
+  box-shadow:
+    inset -1px -1px #fff,
+    inset 1px 1px #808080 !important;
+}
+.explorer-window .file-details-header .sort-arrow {
+  margin-left: 8px;
+  font-size: 8px;
+  color: #808080;
+}
+.explorer-window .details-view.recycle-cols .file-item,
+.explorer-window .recycle-cols .file-details-header {
+  grid-template-columns: 119px 120px 109px 100px 70px;
+  min-width: 518px;
+}
+.explorer-window .recycle-cols .file-name {
+  padding-left: 22px;
+}
+.explorer-window .details-view .file-item > .icon {
+  left: 3px;
+}
+.explorer-window .explorer-side:not(.tree-mode) {
+  margin-right: 9px;
+}
+.explorer-window .file-list.icons-view {
+  grid-auto-rows: 75px;
+}
+.explorer-window .explorer-side .side-first {
+  margin-top: 20px;
+}
+.explorer-window .explorer-side p.side-gap {
+  margin-top: 13px;
+}
+.explorer-window .explorer-side p,
+.explorer-window .explorer-side span.text-link {
+  letter-spacing: -0.08px;
+}
+.explorer-window .icons-view .file-item .file-name {
+  letter-spacing: -0.08px;
+}

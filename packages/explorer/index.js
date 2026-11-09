@@ -34,14 +34,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
   if (path === "documents") path = DOCS;
   const w = ctx.wm.create({
     title: title || shellNames[path] || basename(path),
-    icon:
-      path === "computer"
-        ? "computer"
-        : path === "control"
-          ? "control"
-          : path === "recycle"
-            ? "recycle"
-            : "folder",
+    icon: locationIcon(path),
     width: 721,
     height: 537,
     appId: "explorer",
@@ -51,10 +44,12 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     history = [path],
     historyIndex = 0,
     selected = new Set(),
-    view = "icons",
+    view = path === "recycle" ? "details" : "icons",
     treeVisible = false,
     sortBy = "name",
     sortDirection = 1,
+    descEl = null,
+    shownFiles = new Set(),
     query = "";
   const address = el("input", {
       value: displayPath(current),
@@ -80,6 +75,8 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
         throw new Error("The folder could not be found.");
       if (node.type === "file") return ctx.openFile(p);
     }
+    if (p === "recycle") view = "details";
+    else if (current === "recycle") view = "icons";
     current = p;
     selected.clear();
     if (push) {
@@ -135,24 +132,33 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     if (current === "control")
       return ctx.controlItems.map((p) => ({
         name: p.name,
+        label: p.label,
         path: "control:" + p.id,
         type: "special",
         icon: p.icon || "settings",
         detail: p.description,
+        description: p.description,
+        unavailable: p.unavailable,
       }));
     if (current === "network")
       return [
         {
+          name: "Add Network Place",
+          path: "network:add",
+          type: "special",
+          icon: "netAdd",
+        },
+        {
           name: "Entire Network",
           path: "network:all",
           type: "special",
-          icon: "network",
+          icon: "netEntire",
         },
         {
-          name: "Make New Connection",
-          path: "control:network",
+          name: "Computers Near Me",
+          path: "network:near",
           type: "special",
-          icon: "network",
+          icon: "netNear",
         },
       ];
     if (current === "recycle") return ctx.fs.recycled();
@@ -166,11 +172,24 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
       properties(n);
       return;
     }
-    if (n.path.startsWith("control:"))
-      ctx.launch("control", { page: n.path.slice(8) });
-    else if (n.path === "tasks") ctx.launch("tasks");
-    else if (n.path === "network:all")
+    if (n.path.startsWith("control:")) {
+      const id = n.path.slice(8);
+      if (id === "tasks") ctx.launch("tasks");
+      else if (id === "autoupdate") ctx.launch("help", { topic: "updates" });
+      else if (n.unavailable)
+        ctx.dialogs.message(
+          `${n.name} is not available in this browser simulation.`,
+          { title: n.name, icon: "info" },
+        );
+      else ctx.launch("control", { page: id });
+    } else if (n.path === "tasks") ctx.launch("tasks");
+    else if (n.path === "network:all" || n.path === "network:near")
       ctx.launch("control", { page: "network" });
+    else if (n.path === "network:add")
+      ctx.dialogs.message(
+        "The Add Network Place wizard is not available in this browser simulation.",
+        { title: "Add Network Place", icon: "info" },
+      );
     else if (n.type === "folder" || shellNames[n.path]) navigate(n.path);
     else ctx.openFile(n.path);
   };
@@ -734,7 +753,8 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     const match = Object.entries(shellNames).find(
       ([k, v]) => v.toLowerCase() === input.toLowerCase(),
     );
-    navigate(match ? match[0] : input);
+    const drive = /\(([a-z]):\)\s*$/i.exec(input);
+    navigate(match ? match[0] : drive ? drive[1] + ":/" : input);
   }
   address.addEventListener(
     "keydown",
@@ -809,68 +829,158 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
       el(
         "div",
         { class: "explorer-side-title" },
-        current === "computer"
-          ? el("img", {
-              class: "side-art",
-              src: "/assets/ui/explorer/header-computer.png",
-              alt: "",
-              draggable: "false",
-            })
-          : icon(
-              current === "control"
-                ? "control"
-                : current === "recycle"
-                  ? "recycle"
-                  : "folder",
-              32,
-            ),
+        el("img", {
+          class: "side-art",
+          src: `/assets/ui/explorer/header-${headerArt(current)}.png`,
+          alt: "",
+          draggable: "false",
+        }),
         el("h2", { text: locationName(current) }),
       ),
       el("div", { class: "explorer-rule" }),
-      el("p", {
-        text:
-          current === "computer"
-            ? "Select an item to view its description."
-            : current === "control"
-              ? "Use the settings in Control Panel to personalize your computer."
-              : current === "recycle"
-                ? "To put an item back in its original location, select the item and click Restore."
-                : "Select an item to view its description.",
-      }),
     );
+    const p = (text, cls) => el("p", { text, class: cls }),
+      link = (label, fn, cls = "") => {
+        const n = el("span", {
+          class: "text-link side-link " + cls,
+          role: "link",
+          tabindex: 0,
+          text: label,
+        });
+        n.addEventListener("click", safely(fn));
+        n.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") safely(fn)();
+        });
+        return n;
+      },
+      selectP = () => (descEl = p("Select an item to view its description.")),
+      seeAlso = (...ls) => [
+        p("See also:", "side-note"),
+        ...ls.map(([l, fn]) => link(l, fn)),
+      ],
+      goDocs = ["My Documents", () => navigate(DOCS)],
+      goNet = ["My Network Places", () => navigate("network")],
+      goComp = ["My Computer", () => navigate("computer")];
+    descEl = null;
     if (current === "computer")
       side.append(
-        el("p", {
-          class: "side-description",
-          text: "Displays the files and folders on your computer",
-        }),
-        el("p", { class: "side-note", text: "See also:" }),
-        button("My Documents", () => navigate(DOCS), { class: "text-link" }),
-        button("My Network Places", () => navigate("network"), {
-          class: "text-link",
-        }),
-        button(
+        selectP(),
+        p("Displays the files and folders on your computer", "side-description"),
+        ...seeAlso(goDocs, goNet, [
           "Network and Dial-up Connections",
           () => ctx.launch("control", { page: "network" }),
-          { class: "text-link" },
+        ]),
+      );
+    else if (current === "control")
+      side.append(
+        p("Use the settings in Control Panel to personalize your computer."),
+        (selectP().classList.add("side-gap"), descEl),
+        link("Windows Update", () => ctx.launch("help", { topic: "updates" }), "side-first"),
+        link("Windows 2000 Support", () => ctx.launch("help")),
+      );
+    else if (current === "recycle") {
+      side.append(
+        p(
+          "This folder contains files and folders that you have deleted from your computer.",
         ),
       );
-    if (current === "recycle")
-      side.append(
-        button("Restore selected items", restore, { class: "text-link" }),
-        button(
-          "Empty Recycle Bin",
-          async () => {
+      if (!items().length) side.append(p("There are no items in the Recycle Bin.", "side-next"));
+      else
+        side.append(
+          selectP(),
+          link("Restore selected items", restore, "side-first"),
+          link("Empty Recycle Bin", async () => {
             if (
               await ctx.dialogs.confirm(
                 "Permanently delete all the items in the Recycle Bin?",
               )
             )
               await ctx.fs.emptyRecycleBin();
-          },
-          { class: "text-link" },
+          }),
+        );
+    } else if (current === "network")
+      side.append(
+        p(
+          "Use this folder to open files and folders on other computers and to install network printers.",
+        ),
+        el(
+          "p",
+          { class: "side-next" },
+          "To set up networking on your computer, click ",
+          link(
+            "Network and Dial-up Connections",
+            () => ctx.launch("control", { page: "network" }),
+            "inline",
+          ),
+          ".",
+        ),
+        (selectP().classList.add("side-next"), descEl),
+        ...seeAlso(goDocs, goComp),
+      );
+    else if (isSystemFolder(current)) {
+      side.append(
+        p(
+          "This folder contains files that keep your system working properly. There is no need to modify its contents.",
+        ),
+        el(
+          "p",
+          { class: "side-next" },
+          "To manage your programs, open the ",
+          link(
+            "Add/Remove Programs",
+            () => ctx.launch("control", { page: "programs" }),
+            "inline",
+          ),
+          " applet from the Control Panel.",
         ),
       );
+      if (!shownFiles.has(current))
+        side.append(
+          el(
+            "p",
+            { class: "side-next" },
+            "To view the contents of this folder, click: ",
+            link(
+              "Show Files",
+              () => {
+                shownFiles.add(current);
+                render();
+              },
+              "inline",
+            ),
+          ),
+        );
+    } else if (current === DOCS)
+      side.append(
+        selectP(),
+        p("Stores and manages documents", "side-description"),
+        ...seeAlso(goNet, goComp),
+      );
+    else if (/^[a-z]:[\\/]?$/i.test(current))
+      side.append(
+        selectP(),
+        p("Capacity: 1.99 GB", "side-capacity"),
+        el(
+          "div",
+          { class: "side-legend" },
+          el("span", { class: "swatch used" }),
+          "Used: 1.63 GB",
+        ),
+        el(
+          "div",
+          { class: "side-legend" },
+          el("span", { class: "swatch free" }),
+          "Free: 368 MB",
+        ),
+        el("img", {
+          class: "side-pie",
+          src: "/assets/ui/explorer/disk-pie.png",
+          alt: "",
+          draggable: "false",
+        }),
+        ...seeAlso(goDocs, goNet, goComp),
+      );
+    else side.append(selectP());
   }
   function renderSelection() {
     listing.querySelectorAll("[data-path]").forEach((n) => {
@@ -878,25 +988,58 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
       n.classList.toggle("selected", s);
       n.setAttribute("aria-selected", s);
     });
+    const list = items(),
+      sel = list.filter((n) => selected.has(n.path)),
+      fsView = !shellNames[current],
+      showLoc = current === "computer" || fsView;
     status.children[0].textContent = selected.size
       ? `${selected.size} object(s) selected`
-      : `${items().length} object(s)`;
-    const one = items().find((n) => selected.has(n.path));
-    status.children[1].textContent = one
-      ? one.type === "folder"
-        ? "File Folder"
-        : one.detail || formatBytes(one.size || 0)
-      : "";
+      : `${list.length} object(s)`;
+    status.children[1].textContent =
+      fsView || current === "recycle"
+        ? formatBytes(
+            (selected.size ? sel : list).reduce(
+              (sum, n) => sum + (n.type === "file" ? n.size || 0 : 0),
+              0,
+            ),
+          )
+        : "";
+    status.lastLocation.textContent = showLoc ? "My Computer" : "";
+    status.lastIcon.style.visibility = showLoc ? "visible" : "hidden";
+    if (descEl) {
+      const one = sel.length === 1 && sel[0].description ? sel[0] : null;
+      if (one)
+        descEl.replaceChildren(
+          el("b", { text: one.name }),
+          el("br"),
+          one.description,
+        );
+      else descEl.textContent = "Select an item to view its description.";
+    }
   }
   function renderList() {
-    listing.className = "file-list " + view + "-view";
+    const hidden = isSystemFolder(current) && !shownFiles.has(current);
+    listing.className =
+      "file-list " +
+      view +
+      "-view" +
+      (hidden ? " system-hidden" : "") +
+      (current === "recycle" ? " recycle-cols" : "");
     listing.replaceChildren();
+    if (hidden) return renderSelection();
     let list = items().sort((a, b) => {
+      if (sortBy === "origin")
+        return (
+          String(a.originalPath).localeCompare(String(b.originalPath)) *
+          sortDirection
+        );
+      if (sortBy === "deleted")
+        return ((a.deleted || 0) - (b.deleted || 0)) * sortDirection;
       if (sortBy === "size")
         return ((a.size || 0) - (b.size || 0)) * sortDirection;
       if (sortBy === "modified")
         return ((a.modified || 0) - (b.modified || 0)) * sortDirection;
-      if (current === "computer") return 0;
+      if (current === "computer" || current === "network") return 0;
       if (sortBy === "type")
         return a.type.localeCompare(b.type) * sortDirection;
       return (
@@ -910,14 +1053,30 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
         el(
           "div",
           { class: "file-details-header" },
-          ...["Name", "Size", "Type", "Modified"].map((label, i) =>
-            button(label, () => {
-              const key = ["name", "size", "type", "modified"][i];
-              sortDirection = sortBy === key ? -sortDirection : 1;
-              sortBy = key;
-              renderList();
-            }),
-          ),
+          ...(current === "recycle"
+            ? ["Name", "Original Location", "Date Deleted", "Type", "Size"]
+            : ["Name", "Size", "Type", "Modified"]
+          ).map((label, i) => {
+            const key = (current === "recycle"
+              ? ["name", "origin", "deleted", "type", "size"]
+              : ["name", "size", "type", "modified"])[i];
+            return button(
+              [
+                label,
+                sortBy === key
+                  ? el("span", {
+                      class: "sort-arrow",
+                      text: sortDirection > 0 ? "▲" : "▼",
+                    })
+                  : null,
+              ],
+              () => {
+                sortDirection = sortBy === key ? -sortDirection : 1;
+                sortBy = key;
+                renderList();
+              },
+            );
+          }),
         ),
       );
     for (const n of list) {
@@ -931,9 +1090,32 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
           tabindex: -1,
         },
         icon(n.icon || fileIcon(n), view === "icons" ? 32 : 16),
-        el("span", { class: "file-name", text: n.name }),
+        el("span", {
+          class: "file-name",
+          text: view === "icons" && n.label ? n.label : n.name,
+          title: n.label ? n.name : undefined,
+        }),
       );
-      if (view === "details")
+      if (view === "details" && current === "recycle")
+        b.append(
+          el("span", {
+            class: "file-date",
+            text: dirname(n.originalPath || "").replaceAll("/", "\\"),
+          }),
+          el("span", { class: "file-date", text: formatDeleted(n.deleted) }),
+          el("span", {
+            class: "file-type",
+            text:
+              n.type === "folder"
+                ? "File Folder"
+                : (extension(n.name) || "file").toUpperCase() + " File",
+          }),
+          el("span", {
+            class: "file-size",
+            text: n.type === "file" ? formatBytes(n.size || 0) : "",
+          }),
+        );
+      else if (view === "details")
         b.append(
           el("span", {
             class: "file-size",
@@ -985,7 +1167,8 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
       if (n.type === "folder") bindDrop(b, () => n.path);
       listing.append(b);
     }
-    if (!list.length)
+    if (view === "icons") fitLabels(listing);
+    if (!list.length && !(current === "recycle" && view === "details"))
       listing.append(
         el("div", {
           class: "empty-folder",
@@ -1007,17 +1190,8 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     renderSide();
     renderList();
     setNavState();
-    addressIcon.src = icon(
-      current === "computer"
-        ? "computer"
-        : current === "control"
-          ? "control"
-          : current === "recycle"
-            ? "recycle"
-            : "folder",
-    ).src;
-    status.lastLocation.textContent = locationName(current);
-    status.lastIcon.src = addressIcon.src;
+    addressIcon.src = icon(locationIcon(current)).src;
+    if (!title) w.setIcon(locationIcon(current));
     w.path = current;
   }
   function bindDrop(node, getPath) {
@@ -1142,6 +1316,61 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
   w.navigate = navigate;
   return w;
 }
+const SYSTEM_FOLDERS = ["c:/program files", "c:/winnt", "c:/winnt/system32"];
+const isSystemFolder = (path) =>
+  SYSTEM_FOLDERS.includes(String(path).toLowerCase().replace(/\/$/, ""));
+const isDrive = (path) => /^[a-z]:[\\/]?$/i.test(path);
+function locationIcon(path) {
+  if (path === DOCS || path === "documents") return "documents";
+  if (shellNames[path] && path !== "search") return path === "computer" ? "computer" : path;
+  if (isDrive(path))
+    return { A: "floppy", D: "cd" }[path[0].toUpperCase()] || "drive";
+  return "folder";
+}
+function headerArt(path) {
+  if (path === DOCS) return "documents";
+  if (["computer", "control", "recycle", "network"].includes(path)) return path;
+  if (isDrive(path)) return "disk";
+  return "folder";
+}
+function formatDeleted(ts) {
+  if (!ts) return "";
+  const d = new Date(ts),
+    h = d.getHours() % 12 || 12;
+  return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()} ${h}:${String(d.getMinutes()).padStart(2, "0")} ${d.getHours() < 12 ? "AM" : "PM"}`;
+}
+let measureCtx;
+function fitLabels(root, maxWidth = 71) {
+  measureCtx ||= document.createElement("canvas").getContext("2d");
+  for (const span of root.querySelectorAll(".file-name")) {
+    const text = span.textContent;
+    const cs = getComputedStyle(span);
+    measureCtx.font = cs.font;
+    measureCtx.letterSpacing = cs.letterSpacing === "normal" ? "0px" : cs.letterSpacing;
+    const width = (t) => measureCtx.measureText(t).width;
+    if (width(text) <= maxWidth) continue;
+    const trunc = (t) => {
+      while (t.length > 1 && width(t + "...") > maxWidth) t = t.slice(0, -1);
+      return t + "...";
+    };
+    let lines = [],
+      line = "";
+    for (const word of text.split(" ")) {
+      const next = line ? line + " " + word : word;
+      if (width(next) <= maxWidth) line = next;
+      else {
+        if (line) lines.push(line);
+        line = word;
+      }
+    }
+    lines.push(line);
+    if (lines.length > 2) lines = [lines[0], trunc(lines.slice(1).join(" "))];
+    lines = lines.map((l) => (width(l) > maxWidth ? trunc(l) : l));
+    span.textContent = lines.join("\n");
+    span.classList.add("fitted");
+    span.title ||= text;
+  }
+}
 function explorerStatus() {
   const lastIcon = icon("computer"),
     lastLocation = el("span", { text: "My Computer" }),
@@ -1168,5 +1397,5 @@ function locationName(path) {
   return shellNames[path] || basename(path) || path;
 }
 function displayPath(path) {
-  return shellNames[path] || path.replaceAll("/", "\\");
+  return shellNames[path] || locationName(path);
 }

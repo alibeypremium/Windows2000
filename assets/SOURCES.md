@@ -340,3 +340,7 @@ Added from the project owner's archive `windows_2000_ve_donem_arsivi.zip`, folde
 ## Assets cropped from reference screenshots (user-supplied)
 
 Pixel-exact crops of a Windows 2000 desktop, taken from two screenshots supplied by the project owner: the Start menu banner (`assets/ui/start-banner.png`), the Start logo and a few 16x16/32x32 icons for which no `.ico` was available (`assets/icons/w2k/ref-*.png`), and the Explorer toolbar buttons, throbber, Go/drop-down glyphs and the My Computer header art (`assets/ui/explorer/*.png`). Mirrored copies are used for the Back (enabled) and Forward (disabled) arrows. Positions in `packages/explorer/index.js` were measured against the same screenshots.
+
+## Explorer web-view assets cropped from a second set of reference screenshots (user-supplied)
+
+Six further screenshots supplied by the project owner (Control Panel, Program Files, Local Disk (C:), Recycle Bin, My Network Places, My Documents) provided: the per-folder header art (`assets/ui/explorer/header-{control,folder,disk,recycle,network,documents}.png`), the disk-usage pie chart (`disk-pie.png`), the system-folder background (`bg-systemfolder.png`) and the Control Panel / network / My Documents icons that no `.ico` covered (`assets/icons/w2k/ref-cp-*.png`, `ref-net-add`, `ref-md-v86`; 16x16 versions are downscaled from the 32x32 crops). They are Microsoft's imagery, included for this non-commercial fan project only.
