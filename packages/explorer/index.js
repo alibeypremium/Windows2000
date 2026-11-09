@@ -235,7 +235,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
       else ctx.launch("control", { page: id });
     } else if (n.path.startsWith("admin:")) {
       const id = n.path.slice(6),
-        app = { eventvwr: "events", compmgmt: "diskmanager", perf: "taskmgr" }[id];
+        app = { eventvwr: "events", compmgmt: "diskmanager", perf: "taskmgr", services: "services", secpol: "secpol", compsvc: "compsvc", odbc: "odbc", telnet: "telnetadmin" }[id];
       if (app) ctx.launch(app);
       else
         ctx.dialogs.message(
@@ -248,11 +248,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     else if (n.path === "tasks") ctx.launch("explorer", { path: "tasks" });
     else if (n.path === "network:all" || n.path === "network:near")
       ctx.launch("control", { page: "network" });
-    else if (n.path === "network:add")
-      ctx.dialogs.message(
-        "The Add Network Place wizard is not available in this browser simulation.",
-        { title: "Add Network Place", icon: "info" },
-      );
+    else if (n.path === "network:add") ctx.launch("addnet");
     else if (n.type === "folder" || shellNames[n.path]) navigate(n.path);
     else ctx.openFile(n.path);
   };

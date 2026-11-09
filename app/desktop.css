@@ -5712,3 +5712,37 @@ input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type=
 .fv-btns button { width: 75px; height: 23px; font: inherit; }
 .fv-sheet { flex: 1; overflow: auto; background: #fff; margin: 0; padding: 4px 8px; border: 2px inset #fff; color: #000; }
 .fv-line { white-space: nowrap; line-height: 1.25; }
+
+.svc-root { position: relative; width: 100%; height: 100%; flex: 1; min-height: 0; display: flex; background: #d4d0c8; font: 13px/15px W2KSans, Tahoma, sans-serif; overflow: hidden; }
+.svc-tree { width: 170px; background: #fff; border: 2px inset #fff; margin: 2px; padding: 2px; }
+.svc-node { padding: 1px 3px; } .svc-node.sub { margin-left: 16px; background: var(--highlight, #0a246a); color: #fff; display: inline-block; }
+.svc-right { flex: 1; display: flex; flex-direction: column; min-width: 0; margin: 2px 2px 2px 0; }
+.svc-title { background: #808080; color: #fff; padding: 2px 6px; font-weight: bold; }
+.svc-split { flex: 1; display: flex; min-height: 0; background: #fff; border: 2px inset #fff; }
+.svc-side { width: 175px; padding: 8px; overflow: auto; border-right: 1px solid #d4d0c8; }
+.svc-side b { display: block; font: bold 13px W2KSans, Tahoma, sans-serif; margin-bottom: 8px; font-size: 15px; }
+.svc-links a { color: #00f; text-decoration: underline; cursor: var(--cur-pointer); }
+.svc-desc { margin-top: 10px; white-space: pre-wrap; }
+.svc-root.std .svc-side { display: none; }
+.svc-list { flex: 1; overflow: auto; }
+.svc-list table { border-collapse: collapse; width: max-content; min-width: 100%; }
+.svc-list th { background: #d4d0c8; border: 1px solid; border-color: #fff #808080 #808080 #fff; text-align: left; padding: 1px 4px; font-weight: normal; position: sticky; top: 0; }
+.svc-list td { padding: 0 4px; white-space: nowrap; max-width: 260px; overflow: hidden; text-overflow: ellipsis; height: 17px; }
+.svc-list tr.sel td { background: var(--highlight, #0a246a); color: #fff; }
+.svc-list img { width: 16px; height: 16px; vertical-align: middle; margin-right: 3px; }
+.svc-dlg { position: relative; width: 100%; height: 100%; background: #d4d0c8; font: 13px/15px W2KSans, Tahoma, sans-serif; padding: 6px 8px; box-sizing: border-box; }
+.svc-gen { padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+.svc-gen .r { display: flex; gap: 6px; align-items: flex-start; } .svc-gen .r label { width: 108px; flex: none; }
+.svc-gen input, .svc-gen textarea, .svc-gen select { font: inherit; border: 2px inset #fff; }
+.svc-gen input.full, .svc-gen .r input { flex: 1; } .svc-gen textarea { flex: 1; height: 44px; resize: none; }
+.svc-btns { display: flex; gap: 6px; } .svc-btns button, .svc-ok button { min-width: 75px; height: 23px; font: inherit; }
+.svc-ok { position: absolute; right: 8px; bottom: 8px; display: flex; gap: 6px; }
+.svc-dlg { overflow: hidden; } .svc-dlg .tabs { height: calc(100% - 34px); } .svc-dlg .tab-body { overflow: hidden; }
+.svc-gen { padding: 8px 10px; gap: 3px; } .svc-gen hr { margin: 2px 0; width: 100%; }
+
+.svc-split.cons { border: 2px inset #fff; } .svc-node.sub.cur { background: var(--highlight, #0a246a); color: #fff; } .svc-node.sub:not(.cur) { background: none; color: #000; }
+.odbc-page { padding: 8px 12px; white-space: pre-wrap; } .odbc-list { height: 170px; background: #fff; border: 2px inset #fff; margin: 4px 0; overflow: auto; }
+.odbc-list table { border-collapse: collapse; width: 100%; } .odbc-list th { text-align: left; font-weight: normal; background: #d4d0c8; border: 1px solid; border-color: #fff #808080 #808080 #fff; padding: 0 4px; } .odbc-list td { padding: 0 4px; }
+.odbc-btns { position: absolute; right: 18px; top: 40px; display: flex; flex-direction: column; gap: 6px; } .odbc-btns button { width: 75px; height: 23px; font: inherit; }
+.tn-root { position: relative; width: 100%; height: 100%; background: #000; color: #c0c0c0; font: 16px/16px "Lucida Console", monospace; white-space: pre; padding: 4px; box-sizing: border-box; flex: 1; min-height: 0; }
+.anp h3 { margin: 6px 0 10px; font-size: 14px; } .anp p { margin: 0 0 14px; } .anp .full { display: block; width: 100%; margin-top: 4px; font: inherit; border: 2px inset #fff; }

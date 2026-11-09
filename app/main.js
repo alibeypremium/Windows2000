@@ -28,6 +28,8 @@ import {
   openAbout,
 } from "/packages/shell/index.js";
 import { openExplorer } from "/packages/explorer/index.js";
+import { openLocalSecurityPolicy, openComponentServices, openOdbc, openTelnetAdmin, openAddNetworkPlace } from "/packages/system/consoles.js";
+import { openServices } from "/packages/system/services.js";
 import { openFontViewer } from "/packages/explorer/fontview.js";
 import {
   openNotepad,
@@ -364,6 +366,12 @@ ctx.apps = [
     aliases: ["winhelp", "hh"],
     open: openHelp,
   },
+  { id: "services", name: "Services", icon: "adminServices", aliases: ["services.msc"], singleton: true, open: openServices },
+  { id: "secpol", name: "Local Security Policy", icon: "adminSecPol", aliases: ["secpol.msc"], singleton: true, open: openLocalSecurityPolicy },
+  { id: "compsvc", name: "Component Services", icon: "adminCompSvc", aliases: ["comexp.msc"], singleton: true, open: openComponentServices },
+  { id: "odbc", name: "Data Sources (ODBC)", icon: "adminOdbc", aliases: ["odbcad32"], singleton: true, open: openOdbc },
+  { id: "telnetadmin", name: "Telnet Server Administration", icon: "adminTelnet", aliases: ["tlntadmn"], singleton: true, open: openTelnetAdmin },
+  { id: "addnet", name: "Add Network Place", icon: "netAdd", hidden: true, open: openAddNetworkPlace },
   { id: "fontview", name: "Font Viewer", icon: "fontTT", hidden: true, open: openFontViewer },
   {
     id: "welcome",
