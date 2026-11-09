@@ -5673,3 +5673,10 @@ button.selected:focus {
 .gs-box { width: 13px; height: 13px; box-sizing: border-box; background: #fff; box-shadow: inset 1px 1px #808080, inset 2px 2px #404040, inset -1px -1px #d4d0c8; position: relative; margin-right: 3px; }
 .gs-box.on::after { content: ""; position: absolute; left: 4px; top: 2px; width: 3px; height: 6px; border: solid #000; border-width: 0 2px 2px 0; transform: rotate(40deg); }
 .gs-startup-label { outline: 1px dotted #404040; padding: 0 1px; }
+#desktop-wallpaper {
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat;
+  image-rendering: pixelated;
+  pointer-events: none;
+}

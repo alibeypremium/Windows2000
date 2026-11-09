@@ -366,3 +366,5 @@ Items to Synchronize (`assets/ui/sync/`): header, folder and page icons cropped 
 Address Book (`assets/ui/ab/`), WordPad (`assets/ui/wp/`), Imaging (`assets/ui/img/`), Paint tool icons (`assets/ui/paint/`) and Getting Started with Windows 2000 (`assets/ui/gs/`): cropped from the user-supplied Windows 2000 reference screenshots r1, r4, r6, r8 and r9–r14.
 
 Fonts (`assets/fonts/`): `tahoma.ttf` and `tahomabd.ttf` are the original Windows 2000 SP4 files from the user's own ISO. `ms-sans-serif*.ttf` are pixel-outline conversions of the original `sserife.fon` 8 pt bitmap font made with `scripts/fon2ttf.py`.
+
+Sounds (`assets/sounds/`) and wallpapers (`assets/wallpapers/`): original Windows 2000 SP4 media files from the user's own ISO (`start.wav` was transcoded from MS ADPCM to PCM; wallpaper BMPs converted to PNG).

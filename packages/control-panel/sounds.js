@@ -7,27 +7,28 @@ const IMG = "/assets/ui/sounds/";
 const OX = 357,
   OY = 95;
 const EVENTS = [
-  ["Asterisk", 1, "click"],
+  ["Asterisk", "chimes.wav", "asterisk"],
   ["Close program"],
-  ["Critical Stop", 1, "error"],
-  ["Default Beep", 1, "click"],
-  ["Exclamation", 1, "click"],
-  ["Exit Windows"],
+  ["Critical Stop", "chord.wav", "critical"],
+  ["Default Beep", "ding.wav", "beep"],
+  ["Empty Recycle Bin", "recycle.wav", "recycle"],
+  ["Exclamation", "chord.wav", "exclamation"],
+  ["Exit Windows", "logoff.wav", "exit"],
   ["Low Battery Alarm"],
   ["Maximize"],
   ["Menu command"],
   ["Menu popup"],
   ["Minimize"],
-  ["New Mail Notification"],
+  ["New Mail Notification", "notify.wav", "mail"],
   ["Open program"],
   ["Program Error"],
-  ["Question"],
+  ["Question", "ding.wav", "question"],
   ["Restore Down"],
   ["Restore Up"],
-  ["Start Windows"],
-  ["System Notification"],
-  ["Windows Logoff"],
-  ["Windows Logon"],
+  ["Start Windows", "logon.wav", "startup"],
+  ["System Notification", "notify.wav", "notify"],
+  ["Windows Logoff", "logoff.wav", "logoff"],
+  ["Windows Logon", "logon.wav", "logon"],
 ];
 const DEVICES = [
   ["SONY CD-ROM CDU-1000", "DVD/CD-R...", "cd16", "(Standard CD-ROM drives)", "Location 0 (0)"],
@@ -79,7 +80,7 @@ export function openSoundsProperties(ctx, { tab = 0 } = {}) {
       const ev = i ? EVENTS[i - 1] : null;
       const on = !!(ev && ev[1]);
       [name, play, browse].forEach((n) => n.classList.toggle("disabled", !on));
-      name.firstChild.nodeValue = on ? "chimes.wav" : "(None)";
+      name.firstChild.nodeValue = on ? ev[1] : "(None)";
       if (ev && ev[2]) ctx.sound.play(ev[2]);
     };
     const name = k.combo(34, 218, 193, 21, "(None)", { disabled: true }),

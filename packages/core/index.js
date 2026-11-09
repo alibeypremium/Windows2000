@@ -660,6 +660,26 @@ export class SoundService {
     this.settings = settings;
     this.ctx = null;
   }
+  /** Event kinds map to the original Windows 2000 media files. */
+  static FILES = {
+    startup: "logon",
+    logon: "logon",
+    logoff: "logoff",
+    exit: "logoff",
+    error: "chord",
+    critical: "chord",
+    exclamation: "chord",
+    win: "tada",
+    asterisk: "chimes",
+    click: "start",
+    beep: "ding",
+    question: "ding",
+    mail: "notify",
+    notify: "notify",
+    recycle: "recycle",
+    ringin: "ringin",
+    ringout: "ringout",
+  };
   play(kind = "click") {
     if (
       this.settings.get("muted") ||
@@ -667,33 +687,10 @@ export class SoundService {
     )
       return;
     try {
-      this.ctx ??= new (window.AudioContext || window.webkitAudioContext)();
-      this.ctx.resume();
-      const ctx = this.ctx,
-        gain = ctx.createGain();
-      gain.gain.value = this.settings.get("volume") / 500;
-      gain.connect(ctx.destination);
-      const tones =
-        kind === "startup"
-          ? [523, 659, 784, 1047]
-          : kind === "error"
-            ? [330, 220]
-            : kind === "win"
-              ? [523, 659, 784, 1047, 1318]
-              : [880];
-      tones.forEach((f, i) => {
-        const o = ctx.createOscillator(),
-          g = ctx.createGain(),
-          t = ctx.currentTime + i * 0.12;
-        o.type = "sine";
-        o.frequency.value = f;
-        o.connect(g);
-        g.connect(gain);
-        g.gain.setValueAtTime(0.4, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
-        o.start(t);
-        o.stop(t + 0.22);
-      });
+      const file = SoundService.FILES[kind] || kind;
+      const audio = new Audio(`/assets/sounds/${file}.wav`);
+      audio.volume = Math.max(0, Math.min(1, (this.settings.get("volume") ?? 50) / 100));
+      audio.play().catch(() => {});
     } catch {}
   }
 }

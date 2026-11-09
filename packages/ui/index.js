@@ -905,6 +905,8 @@ export class DialogService {
     } = {},
   ) {
     return new Promise((resolve) => {
+      const kind = { error: "critical", warning: "exclamation", info: "asterisk", help: "question", question: "question" }[ico];
+      if (kind) this.sound?.play(kind);
       const w = this.wm.create({
         title,
         icon: ico,

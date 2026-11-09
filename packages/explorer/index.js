@@ -373,7 +373,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
                   "Confirm Delete",
                 )
               )
-                await ctx.fs.emptyRecycleBin();
+                (await ctx.fs.emptyRecycleBin(), ctx.sound.play("recycle"));
             },
           },
           { label: "Properties", action: () => properties() },
@@ -1009,7 +1009,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
                 "Permanently delete all the items in the Recycle Bin?",
               )
             )
-              await ctx.fs.emptyRecycleBin();
+              (await ctx.fs.emptyRecycleBin(), ctx.sound.play("recycle"));
           }),
         );
     } else if (current === "network")

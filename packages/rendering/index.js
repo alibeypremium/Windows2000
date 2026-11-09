@@ -329,6 +329,7 @@ export class GraphicsSurface {
   }
 }
 
+import { WALLPAPER_FILES } from "./wallpapers.js";
 export class DesktopRenderer {
   constructor(canvas, settings, bus) {
     this.surface = new GraphicsSurface(canvas, {
@@ -358,6 +359,15 @@ export class DesktopRenderer {
   }
   update() {
     const names = { none: 0, pattern: 1, waves: 2 };
+    const host = document.querySelector("#desktop");
+    let layer = document.querySelector("#desktop-wallpaper");
+    if (!layer) {
+      layer = document.createElement("div");
+      layer.id = "desktop-wallpaper";
+      host.insertBefore(layer, document.querySelector("#desktop-icons"));
+    }
+    const file = WALLPAPER_FILES[this.settings.get("wallpaperName")];
+    layer.style.backgroundImage = file ? `url(/assets/wallpapers/${file}.png)` : "none";
     document.querySelector("#desktop").style.backgroundColor =
       this.settings.get("desktopColor");
     this.surface.setDesktop(

@@ -85,6 +85,7 @@ const ctx = {
   controlItems,
 };
 ctx.dialogs = new DialogService(wm, fs);
+ctx.dialogs.sound = ctx.sound;
 ctx.registry = new Registry(fs);
 ctx.renderer = new DesktopRenderer(
   document.querySelector("#desktop-surface"),

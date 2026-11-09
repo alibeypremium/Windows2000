@@ -7,6 +7,7 @@ const IMG = "/assets/ui/display/";
 const OX = 227,
   OY = 61;
 
+import { WALLPAPER_FILES } from "../rendering/wallpapers.js";
 const WALLPAPERS = [
   ["Blue Lace 16", "tile"],
   ["Boiling Point", "paint"],
@@ -310,7 +311,7 @@ export function openDisplayProperties(ctx, { schemes = {}, applyTheme, tab = 0 }
   ];
 
   const apply = () => {
-    const wp = state.wallpaperName === "(None)" ? "none" : WALLPAPERS.find((x) => x[0] === state.wallpaperName)?.[1] === "tile" ? "pattern" : "waves";
+    const wp = state.wallpaperName === "(None)" || WALLPAPER_FILES[state.wallpaperName] ? "none" : WALLPAPERS.find((x) => x[0] === state.wallpaperName)?.[1] === "tile" ? "pattern" : "waves";
     S.patch({
       wallpaper: wp,
       wallpaperName: state.wallpaperName,
