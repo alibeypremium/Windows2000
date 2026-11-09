@@ -141,6 +141,7 @@ const icons = {
   cpAdmin: "w2k/administrative-tools",
   cpAutoUpdate: "w2k/ref-cp-autoupdate",
   cpBde: "w2k/ref-cp-bde",
+  bdeApp: "w2k/ref-bde-app",
   cpDateTime: "w2k/ref-cp-datetime",
   cpDisplay: "w2k/ref-cp-display",
   cpFolderOpts: "w2k/ref-cp-folderopts",

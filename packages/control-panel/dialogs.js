@@ -1,5 +1,5 @@
 /** Control Panel dialogs laid out from Windows 2000 reference screenshots. */
-import { el, icon } from "../ui/index.js";
+import { el, icon, menuBar, popup } from "../ui/index.js";
 import { refWindow, kit } from "./refkit.js";
 
 const DLG = "/assets/ui/dialogs/";
@@ -751,6 +751,108 @@ export function openAutomaticUpdates(ctx) {
     k.btn(213, 487, 75, 23, "OK", { disabled: true }),
     k.btn(301, 487, 75, 23, "Cancel", { onclick: () => w.close() }),
     k.btn(385, 487, 75, 23, "Apply", { disabled: true }),
+  );
+  return w;
+}
+
+
+/* ---------- BDE Administrator ---------- */
+
+export function openBdeAdministrator(ctx) {
+  const OX = 132,
+    OY = 132,
+    k = kit(OX, OY),
+    w = refWindow(ctx, {
+      title: "BDE Administrator  C:\\Program Files\\Common Files\\Borland Shared\\BDE\\IDAPI32.CFG",
+      width: 672,
+      height: 543,
+      appId: "control",
+      x: OX,
+      y: OY,
+      minimizable: true,
+      maximizable: true,
+      className: "ref-dialog bde-dialog",
+    });
+  w.setIcon?.("bdeApp");
+  const at = (n, x, y, wd, h) => {
+    n.style.left = x - OX + "px";
+    n.style.top = y - OY + "px";
+    if (wd != null) n.style.width = wd + "px";
+    if (h != null) n.style.height = h + "px";
+    return n;
+  };
+  const status = at(el("div", { class: "bde-status", text: "3 items in Databases." }), 136, 655, 652, 16);
+  const header = at(el("div", { class: "bde-panel", text: "All Database Aliases" }), 136, 202, 180, 20);
+  const header2 = at(el("div", { class: "bde-panel" }), 319, 202, 483, 20);
+  const tree = (rootLabel, kids, onSelect) => {
+    const box = at(el("div", { class: "bde-tree" }), 141, 251, 174, 398);
+    const items = [];
+    const root = el("div", { class: "bde-node root" },
+      el("span", { class: "bde-exp minus" }),
+      el("img", { src: DLG + "bde-root.png", alt: "", draggable: "false" }),
+      el("span", { class: "bde-label sel", text: rootLabel }));
+    box.append(root);
+    kids.forEach((name, i) => {
+      const n = el("div", { class: "bde-node kid", style: { top: 18 + i * 16 + "px" } },
+        el("span", { class: "bde-exp plus" }),
+        el("img", { src: DLG + "bde-alias.png", alt: "", draggable: "false" }),
+        el("span", { class: "bde-label", text: name }));
+      n.addEventListener("mousedown", () => {
+        box.querySelectorAll(".bde-label").forEach((l) => l.classList.remove("sel"));
+        n.querySelector(".bde-label").classList.add("sel");
+        status.textContent = "";
+        header2.textContent = name;
+      });
+      box.append(n);
+      items.push(n);
+    });
+    root.querySelector(".bde-label").addEventListener("mousedown", () => {
+      box.querySelectorAll(".bde-label").forEach((l) => l.classList.remove("sel"));
+      root.querySelector(".bde-label").classList.add("sel");
+      status.textContent = `${kids.length} items in ${rootLabel}.`;
+      header2.textContent = "";
+    });
+    return box;
+  };
+  const tabs = k.tabs({
+    top: 226,
+    pane: [136, 246, 180, 406],
+    tabs: [
+      {
+        label: "Databases",
+        x: 137,
+        w: 65,
+        content: () => [tree("Databases", ["DBDEMOS", "DefaultDD", "IBLocal"])],
+      },
+      {
+        label: "Configuration",
+        x: 203,
+        w: 72,
+        content: () => [tree("Configuration", ["Drivers", "System"])],
+      },
+    ],
+  });
+  const bar = menuBar({
+    Object: [{ label: "Exit", action: () => w.close() }],
+    Edit: [{ label: "Undo", disabled: true }],
+    View: [{ label: "Refresh", action: () => {} }],
+    Options: [{ label: "Show Hints", checked: true }],
+    Help: [{ label: "About BDE Administrator..." }],
+  });
+  bar.classList.add("bde-menu");
+  w.place(
+    bar,
+    k.img(142, 179, DLG + "bde-toolbar.png", 106, 19),
+    header,
+    header2,
+    tabs,
+    (() => {
+      const r = k.sunken(319, 228, 483, 424);
+      r.style.background = "var(--face)";
+      return r;
+    })(),
+    status,
+    at(el("span", { class: "bde-grip" }), 790, 657, 12, 12),
   );
   return w;
 }

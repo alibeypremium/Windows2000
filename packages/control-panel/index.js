@@ -12,6 +12,7 @@ import {
   openAccessibility,
   openAddRemovePrograms,
   openAutomaticUpdates,
+  openBdeAdministrator,
   openHardwareWizard,
 } from "./dialogs.js";
 export const controlItems = [
@@ -50,7 +51,6 @@ export const controlItems = [
     name: "BDE Administrator",
     icon: "cpBde",
     description: "Configures the Borland Database Engine.",
-    unavailable: true,
   },
   {
     id: "datetime",
@@ -234,6 +234,7 @@ export function openControlPanel(ctx, { page = "system" } = {}) {
   if (page === "programs") return openAddRemovePrograms(ctx);
   if (page === "hardware") return openHardwareWizard(ctx);
   if (page === "autoupdate") return openAutomaticUpdates(ctx);
+  if (page === "bde") return openBdeAdministrator(ctx);
   const entry =
       controlItems.find((p) => p.id === page) ||
       controlItems.find((p) => p.id === "system"),

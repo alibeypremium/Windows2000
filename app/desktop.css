@@ -4660,3 +4660,120 @@ button.selected:focus {
 .rk-radio.disabled.checked .box::after {
   background: #808080;
 }
+
+/* BDE Administrator */
+.bde-menu {
+  position: absolute;
+  left: 3px;
+  top: 21px;
+  width: 666px;
+  font: 11px/13px Tahoma, "Wine Tahoma", sans-serif;
+  pointer-events: auto;
+}
+.bde-panel {
+  position: absolute;
+  box-sizing: border-box;
+  border: 1px solid;
+  border-color: #808080 #fff #fff #808080;
+  padding: 3px 4px;
+  line-height: 13px;
+  white-space: nowrap;
+}
+.bde-status {
+  position: absolute;
+  box-sizing: border-box;
+  border: 1px solid;
+  border-color: #808080 #fff #fff #808080;
+  padding: 1px 3px;
+  line-height: 13px;
+}
+.bde-tree {
+  position: absolute;
+  box-sizing: border-box;
+  background: #fff;
+  box-shadow:
+    inset 1px 1px #808080,
+    inset -1px -1px #fff,
+    inset 2px 2px #404040,
+    inset -2px -2px #d4d0c8;
+  overflow: hidden;
+}
+.bde-node {
+  position: absolute;
+  left: 0;
+  height: 16px;
+  width: 100%;
+  white-space: nowrap;
+}
+.bde-node.root {
+  top: 0;
+}
+.bde-exp {
+  position: absolute;
+  top: 3px;
+  width: 9px;
+  height: 9px;
+  box-sizing: border-box;
+  border: 1px solid #808080;
+  background: #fff;
+}
+.bde-exp::before,
+.bde-exp::after {
+  content: "";
+  position: absolute;
+  background: #000;
+}
+.bde-exp::before {
+  left: 1px;
+  top: 3px;
+  width: 5px;
+  height: 1px;
+}
+.bde-exp.plus::after {
+  left: 3px;
+  top: 1px;
+  width: 1px;
+  height: 5px;
+}
+.bde-node.root .bde-exp {
+  left: 5px;
+}
+.bde-node.kid .bde-exp {
+  left: 24px;
+}
+.bde-node.root img {
+  position: absolute;
+  left: 20px;
+  top: 0;
+}
+.bde-node.kid img {
+  position: absolute;
+  left: 40px;
+  top: 0;
+}
+.bde-label {
+  position: absolute;
+  top: 1px;
+  padding: 1px 2px;
+  line-height: 13px;
+}
+.bde-node.root .bde-label {
+  left: 39px;
+}
+.bde-node.kid .bde-label {
+  left: 59px;
+}
+.bde-label.sel {
+  background: #0a246a;
+  color: #fff;
+  outline: 1px dotted #e8e880;
+  outline-offset: -1px;
+}
+
+.bde-grip {
+  position: absolute;
+  background:
+    linear-gradient(135deg, transparent 5px, #808080 5px, #808080 6px, transparent 6px,
+      transparent 8px, #808080 8px, #808080 9px, transparent 9px,
+      transparent 11px, #808080 11px, #808080 12px, transparent 12px);
+}
