@@ -10,6 +10,8 @@ import {
 import { downloadFile, pickFiles, DOCS } from "../core/index.js";
 import { openInternetProperties } from "./inet.js";
 import { openGamingOptions } from "./gaming.js";
+import { openDisplayProperties } from "./display.js";
+import { openDateTimeProperties } from "./datetime.js";
 import { openFolderOptions } from "./folderopts.js";
 import {
   openAccessibility,
@@ -239,6 +241,8 @@ export function openControlPanel(ctx, { page = "system" } = {}) {
   if (page === "bde") return openBdeAdministrator(ctx);
   if (page === "internet") return openInternetProperties(ctx);
   if (page === "gaming") return openGamingOptions(ctx);
+  if (page === "datetime") return openDateTimeProperties(ctx);
+  if (page === "display") return openDisplayProperties(ctx, { schemes, applyTheme });
   if (page === "folder") return openFolderOptions(ctx);
   const entry =
       controlItems.find((p) => p.id === page) ||
