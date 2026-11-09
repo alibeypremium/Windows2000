@@ -14,7 +14,9 @@ const normalizeAddress = (input) => {
     target =
       target.includes(".") && !target.includes(" ")
         ? "https://" + target
-        : "https://www.bing.com/search?q=" + encodeURIComponent(target);
+        : "http://auto.search.msn.com/response.asp?MT=" +
+          encodeURIComponent(target) +
+          "&srch=3&prov=&utf8";
   if (/^https?:/i.test(target)) target = new URL(target).href;
   if (
     /^about:/i.test(target) &&
@@ -34,8 +36,10 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
   const w = ctx.wm.create({
     title: "Microsoft Internet Explorer",
     icon: "ie",
-    width: 790,
-    height: 545,
+    width: 806,
+    height: 603,
+    x: 95,
+    y: 51,
     appId: "ie",
   });
   let current = initial,
@@ -44,7 +48,16 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
     loading = false;
   const address = el("input", { value: current, "aria-label": "Address" }),
     viewport = el("div", { class: "ie-viewport" }),
-    status = statusBar("Done", "Internet");
+    status = el(
+      "div",
+      { class: "ie-status" },
+      el("div", { class: "ie-pane ie-pane-done", text: "Done" }),
+      el("div", { class: "ie-pane ie-pane-zone", text: "Internet" }),
+      el("div", { class: "ie-pane ie-pane-blank" }),
+      el("div", { class: "ie-pane ie-pane-blank" }),
+      el("div", { class: "ie-pane ie-pane-blank" }),
+      el("span", { class: "status-grip" }),
+    );
   const external = () => {
     if (/^https?:\/\//i.test(current))
       window.open(current, "_blank", "noopener,noreferrer");
@@ -196,6 +209,26 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
       return;
     }
     const url = new URL(current);
+    if (/(^|\.)(bing\.com|search\.msn\.com)$/i.test(url.hostname)) {
+      w.setTitle("Browser Not Supported - Bing - Microsoft Internet Explorer");
+      status.children[1].textContent = "Internet";
+      viewport.append(
+        el(
+          "div",
+          { class: "ie-legacy-page" },
+          "We're sorry, but your current browser is no longer supported. To continue using Bing, please upgrade to a modern browser.",
+          el("br"),
+          el("br"),
+          el("a", {
+            href: "https://www.microsoft.com/edge",
+            target: "_blank",
+            rel: "noopener noreferrer",
+            text: "Upgrade your browser",
+          }),
+        ),
+      );
+      return;
+    }
     if (!["http:", "https:"].includes(url.protocol))
       throw new Error("Only HTTP and HTTPS addresses can be opened.");
     loading = true;
@@ -231,43 +264,45 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
     forward = () => {
       if (index < history.length - 1) navigate(history[++index], false);
     };
-  const tools = toolbar([
-    { glyph: "◀", label: "Back", action: back },
-    { glyph: "▶", title: "Forward", action: forward },
-    {
-      glyph: "×",
-      label: "Stop",
-      action: () => {
-        viewport.querySelector("iframe")?.remove();
-        status.children[0].textContent = "Stopped";
-      },
-    },
-    { glyph: "↻", label: "Refresh", action: render },
-    { icon: "ie", label: "Home", action: home },
-    { separator: true },
-    {
-      icon: "search",
-      label: "Search",
-      action: async () => {
-        const q = await ctx.dialogs.prompt("Search the Web:", "", {
-          title: "Search",
-        });
-        if (q) navigate(q);
-      },
-    },
-    {
-      icon: "folder",
-      label: "Favorites",
-      action: () => navigate("about:favorites"),
-    },
-    {
-      icon: "document",
-      label: "History",
-      action: () => navigate("about:history"),
-    },
-    { separator: true },
-    { icon: "ie", label: "Open in Browser", action: external },
-  ]);
+  const TB = "/assets/ui/ie/tb-";
+  const tbButton = (name, label, action, { drop = false, disabled = false, title } = {}) => {
+    const b = button(
+      [
+        el("img", { src: TB + name + ".png", alt: "", draggable: "false" }),
+        label ? el("span", { text: label }) : null,
+        drop ? el("span", { class: "ie-drop" }) : null,
+      ],
+      action,
+      { class: "ie-tb" + (disabled ? " disabled" : ""), title: title || label },
+    );
+    b.dataset.tb = name;
+    return b;
+  };
+  const sep = () => el("span", { class: "ie-tb-sep" });
+  const tools = el(
+    "div",
+    { class: "ie-toolbar" },
+    el("span", { class: "ie-grip" }),
+    tbButton("back", "Back", back, { drop: true }),
+    tbButton("fwd", "", forward, { drop: true, title: "Forward" }),
+    tbButton("stop", "", () => {
+      viewport.querySelector("iframe")?.remove();
+      status.children[0].textContent = "Stopped";
+    }, { title: "Stop" }),
+    tbButton("refresh", "", render, { title: "Refresh" }),
+    tbButton("home", "", home, { title: "Home" }),
+    sep(),
+    tbButton("search", "Search", async () => {
+      const q = await ctx.dialogs.prompt("Search the Web:", "", { title: "Search" });
+      if (q) navigate(q);
+    }),
+    tbButton("favorites", "Favorites", () => navigate("about:favorites")),
+    tbButton("media", "Media", () => ctx.launch("wmplayer")),
+    tbButton("history", "", () => navigate("about:history"), { title: "History" }),
+    sep(),
+    tbButton("mail", "", () => ctx.launch("mail"), { title: "Mail" }),
+    tbButton("print", "", () => ctx.printText(viewport.innerText, current), { title: "Print" }),
+  );
   w.setMenu({
     File: [
       {
@@ -316,7 +351,33 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
         },
       },
     ],
-    View: [
+    View: () => [
+      {
+        label: "Toolbars",
+        submenu: [
+          { label: "Standard Buttons", checked: true },
+          { label: "Address Bar", checked: true },
+          { label: "Links", checked: true },
+          { separator: true },
+          { label: "Customize..." },
+        ],
+      },
+      {
+        label: "Status Bar",
+        checked: !status.hidden,
+        action: () => {
+          status.hidden = !status.hidden;
+        },
+      },
+      {
+        label: "Explorer Bar",
+        submenu: [
+          { label: "Search", shortcut: "Ctrl+E", action: () => navigate("about:home") },
+          { label: "Favorites", shortcut: "Ctrl+I", action: () => navigate("about:favorites") },
+          { label: "History", shortcut: "Ctrl+H", action: () => navigate("about:history") },
+        ],
+      },
+      { separator: true },
       {
         label: "Go To",
         submenu: [
@@ -325,7 +386,36 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
           { label: "Home Page", action: home },
         ],
       },
+      {
+        label: "Stop",
+        shortcut: "Esc",
+        action: () => {
+          viewport.querySelector("iframe")?.remove();
+          status.children[0].textContent = "Stopped";
+        },
+      },
       { label: "Refresh", shortcut: "F5", action: render },
+      { separator: true },
+      {
+        label: "Text Size",
+        submenu: ["Largest", "Larger", "Medium", "Smaller", "Smallest"].map((label) => ({
+          label,
+          action: () => {
+            viewport.style.fontSize =
+              { Largest: "150%", Larger: "125%", Medium: "100%", Smaller: "85%", Smallest: "70%" }[label];
+          },
+        })),
+      },
+      {
+        label: "Encoding",
+        submenu: [
+          { label: "Auto-Select" },
+          { separator: true },
+          { label: "Western European (Windows)", checked: true },
+          { label: "Unicode (UTF-8)" },
+        ],
+      },
+      { separator: true },
       {
         label: "Source",
         action: () =>
@@ -335,6 +425,14 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
               : viewport.innerHTML,
           }),
       },
+      {
+        label: "Privacy Report...",
+        action: () =>
+          ctx.dialogs.message("No privacy information is available for this page.", {
+            title: "Privacy Report",
+          }),
+      },
+      { label: "Full Screen", shortcut: "F11", action: () => w.maximize() },
     ],
     Favorites: () => [
       {
@@ -388,14 +486,50 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
     tools,
     el(
       "div",
-      { class: "address-bar" },
-      el("span", { text: "Address" }),
-      icon("ie"),
-      address,
-      button("Go", () => navigate(address.value), { class: "tool-button" }),
+      { class: "ie-address" },
+      el("span", { class: "ie-grip" }),
+      el("span", { class: "ie-address-label", text: "Address" }),
+      el(
+        "div",
+        { class: "ie-address-field" },
+        el("img", { src: "/assets/ui/ie/addr-ie.png", alt: "", draggable: "false" }),
+        address,
+        el("span", { class: "ie-combo-drop" }),
+      ),
+      button(
+        [el("img", { src: "/assets/ui/ie/go.png", alt: "", draggable: "false" }), el("span", { text: "Go" })],
+        () => navigate(address.value),
+        { class: "ie-go" },
+      ),
+      el("span", { class: "ie-grip" }),
+      el("span", { class: "ie-links", text: "Links" }),
+      el("span", { class: "ie-chevron", text: "»" }),
     ),
     viewport,
     status,
+  );
+  const HELP = {
+    File: "Contains commands for working with the selected item.",
+    Edit: "Contains editing commands.",
+    View: "Contains commands for manipulating the view.",
+    Favorites: "Contains commands for working with your favorite items.",
+    Tools: "Contains tools and options.",
+    Help: "Contains commands for displaying help.",
+  };
+  w.el.querySelectorAll(":scope > .menu-bar .menu-bar-item").forEach((b) => {
+    b.addEventListener("click", () => {
+      status.children[0].textContent = HELP[b.textContent] || "";
+      const restore = () =>
+        setTimeout(() => {
+          if (!document.querySelector(".popup-menu"))
+            status.children[0].textContent = "Done";
+        }, 0);
+      document.addEventListener("pointerup", restore, { once: true });
+      document.addEventListener("keydown", restore, { once: true });
+    });
+  });
+  w.el.querySelector(":scope > .menu-bar")?.append(
+    el("img", { class: "ie-throbber", src: "/assets/ui/ie/throbber.png", alt: "", draggable: "false" }),
   );
   address.addEventListener("keydown", (e) => {
     if (e.key === "Enter") navigate(address.value);
