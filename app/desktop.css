@@ -5504,3 +5504,79 @@ button.selected:focus {
 .hh-article h1 { font: bold 16px Arial, sans-serif; margin: 0 0 12px; color: #000; }
 .hh-article p { margin: 0 0 10px; }
 .hh-rel { margin-top: 14px; } .hh-rel a { display: block; color: #003366; text-decoration: underline; cursor: pointer; margin-top: 4px; }
+
+/* Outlook Express main window (Windows 2000 / OE 6) */
+.oe-root { position: relative; width: 100%; height: 100%; flex: 1; min-height: 0; background: #d4d0c8; font: 11px/13px Tahoma, "Wine Tahoma", sans-serif; overflow: hidden; }
+.oe-root > * { position: absolute; box-sizing: border-box; }
+.oe-toolbar { left: 0; right: 2px; top: 5px; height: 45px; border-top: 1px solid #808080; border-bottom: 1px solid #fff; box-shadow: inset 0 1px #fff, inset 0 -1px #808080; }
+.oe-tb { position: absolute; top: 0; width: 80px; height: 44px; text-align: center; cursor: default; }
+.oe-tb img { position: absolute; left: 50%; top: 5px; transform: translateX(-50%); image-rendering: pixelated; }
+.oe-tb span { position: absolute; left: 0; right: 0; top: 30px; white-space: nowrap; }
+.oe-tb.off span { color: #808080; text-shadow: 1px 1px #fff; }
+.oe-tb.off img { opacity: .55; }
+.oe-arrow { position: absolute; top: 22px; border: 3px solid transparent; border-top: 3px solid #000; border-bottom: 0; }
+.oe-tb.off .oe-arrow { border-top-color: #808080; }
+.oe-sep { position: absolute; top: 3px; height: 38px; border-left: 1px solid #808080; border-right: 1px solid #fff; width: 0; }
+.oe-mgrip { position: absolute; left: 4px; top: 4px; height: 19px; border-left: 1px solid #fff; border-right: 1px solid #808080; width: 2px; }
+.oe-throbber { position: absolute; right: 1px; top: 4px; width: 22px !important; height: 23px !important; z-index: 2; }
+.oe-band { left: 0; right: 2px; top: 55px; height: 23px; background: #808080; color: #fff; font: 18px/23px Arial, sans-serif; }
+.oe-band img { position: absolute; left: 5px; top: 4px; }
+.oe-band span { position: absolute; left: 24px; top: 0; }
+.oe-folders, .oe-contacts { left: 1px; width: 195px; background: #fff; border: 1px solid; border-color: #808080 #fff #fff #808080; box-shadow: inset 1px 1px #404040; }
+.oe-folders { top: 84px; bottom: 191px; }
+.oe-contacts { bottom: 19px; height: 168px; }
+.oe-phead { position: absolute; left: 0; right: 0; top: 0; height: 17px; background: #d4d0c8; line-height: 15px; padding-left: 5px; border-bottom: 1px solid #808080; }
+.oe-x { position: absolute; right: 5px; top: 0; font: bold 13px/15px Arial, sans-serif; }
+.oe-dd { position: absolute; left: 53px; top: 6px; border: 3px solid transparent; border-top: 4px solid #000; border-bottom: 0; }
+.oe-cbody { position: absolute; left: 5px; right: 0; top: 24px; letter-spacing: -.3px; }
+.oe-fl { position: absolute; left: 0; height: 18px; white-space: nowrap; cursor: default; }
+.oe-fl img { position: absolute; image-rendering: pixelated; }
+.oe-fl span { position: absolute; line-height: 14px; padding: 0 2px; top: 2px; letter-spacing: -.3px; }
+.oe-fl em { position: absolute; font-style: normal; color: #0000ff; top: 2px; left: 57px; white-space: pre; }
+.oe-root-f { top: 16px; } .oe-root-f img { left: 1px; top: 1px; } .oe-root-f span { left: 18px; }
+.oe-local { top: 34px; } .oe-local img { left: 15px; top: 0; } .oe-local span { left: 36px; }
+.oe-minus { position: absolute; left: 4px; top: 5px; width: 8px; height: 8px; border: 1px solid #808080; background: #fff; }
+.oe-minus::after { content: ""; position: absolute; left: 1px; top: 3px; width: 5px; height: 1px; background: #000; }
+.oe-sub img { left: 37px; top: 0; } .oe-sub span { left: 56px; }
+.oe-sub::before { content: ""; position: absolute; left: 28px; top: 9px; width: 9px; border-top: 1px dotted #808080; }
+.oe-sub span.sel { background: #0a246a; color: #fff; font-weight: bold; letter-spacing: 0; outline: 1px dotted #fff; outline-offset: -1px; }
+.oe-sub em { left: 92px; }
+.oe-list { left: 202px; right: 2px; top: 84px; bottom: 272px; background: #fff; border: 1px solid; border-color: #808080 #fff #fff #808080; box-shadow: inset 1px 1px #404040; overflow: hidden; }
+.oe-lhead { position: absolute; left: 0; right: 0; top: 0; height: 18px; }
+.oe-h { position: absolute; top: 0; height: 18px; box-sizing: border-box; background: #d4d0c8; border: 1px solid; border-color: #fff #808080 #808080 #fff; line-height: 15px; padding-left: 5px; white-space: nowrap; }
+.oe-h img { position: absolute; left: 50%; top: 1px; transform: translateX(-50%); }
+.oe-h.h1 { left: 0; width: 19px; } .oe-h.h2 { left: 19px; width: 21px; } .oe-h.h3 { left: 40px; width: 25px; }
+.oe-h.h4 { left: 65px; width: 155px; } .oe-h.h5 { left: 220px; width: 281px; } .oe-h.h6 { left: 501px; width: 111px; } .oe-h.h7 { left: 612px; right: 0; }
+.oe-sort { position: absolute; left: 62px; top: 4px; border: 4px solid transparent; border-bottom: 6px solid #808080; border-top: 0; }
+.oe-rows { position: absolute; left: 65px; top: 19px; right: 0; }
+.oe-row { position: relative; height: 18px; width: 545px; cursor: default; white-space: nowrap; }
+.oe-row.sel { background: #d4d0c8; }
+.oe-row.unread { font-weight: bold; }
+.oe-row > div { position: absolute; top: 3px; height: 14px; line-height: 14px; overflow: hidden; text-overflow: ellipsis; }
+.oe-row .c1 { left: 2px; width: 147px; } .oe-row .c1 img { position: absolute; left: 1px; top: -2px; } .oe-row .c1 span { position: absolute; left: 17px; right: 0; overflow: hidden; text-overflow: ellipsis; }
+.oe-row .c2 { left: 160px; width: 270px; } .oe-row .c3 { left: 440px; width: 105px; }
+.oe-preview { left: 202px; right: 2px; bottom: 19px; height: 248px; background: #fff; border: 1px solid; border-color: #808080 #fff #fff #808080; box-shadow: inset 1px 1px #404040; overflow: hidden; }
+.oe-pvhead { position: absolute; left: 0; right: 0; top: 0; height: 37px; background: #d4d0c8; padding: 3px 2px; line-height: 15px; border-bottom: 1px solid #808080; white-space: pre; }
+.oe-pvbody { position: absolute; left: 0; right: 16px; top: 38px; bottom: 0; overflow: hidden; }
+.oe-pvbody pre { margin: 6px; font: 12px/15px "Courier New", monospace; white-space: pre-wrap; }
+.oe-vs { position: absolute; right: 0; top: 38px; bottom: 0; width: 16px; }
+.oe-welcome { position: relative; font: 11px/13px Verdana, Tahoma, sans-serif; letter-spacing: .5px; }
+.oe-banner { position: absolute; left: 0; top: 0; }
+.oe-feat { position: absolute; left: -1px; top: 69px; width: 191px; height: 19px; background: #ccc; font: bold 12px/19px Verdana, Tahoma, sans-serif; padding-left: 5px; }
+.oe-featline { position: absolute; left: 190px; top: 87px; width: 74px; height: 1px; background: #ccc; }
+.oe-welcome ul { position: absolute; left: 76px; top: 90px; margin: 0; padding: 0; list-style: none; }
+.oe-welcome li { position: relative; height: 20px; line-height: 20px; padding-left: 15px; white-space: nowrap; }
+.oe-welcome li i { position: absolute; left: 0; top: 7px; width: 7px; height: 7px; border-radius: 50%; background: #000; }
+.oe-msn { position: absolute; left: 507px; top: 49px; width: 170px; height: 220px; border-left: 8px solid #003399; padding-left: 5px; }
+.oe-msn p { margin: -3px 0 0; white-space: nowrap; letter-spacing: .6px; line-height: 13px; font-size: 11px; }
+.oe-msn u { color: #0099ff; }
+.oe-status { left: 0; right: 0; bottom: 0; height: 19px; }
+.oe-status > div { position: absolute; top: 0; height: 19px; border: 1px solid; border-color: #808080 #fff #fff #808080; line-height: 17px; white-space: nowrap; }
+.oe-status .s1 { left: 1px; width: 594px; padding-left: 2px; } .oe-status .s2 { left: 596px; width: 125px; } .oe-status .s3 { left: 723px; right: 6px; }
+.oe-status img { position: absolute; left: 2px; top: 0; } .oe-status span { position: absolute; left: 21px; }
+.oe-status::after { content: ""; position: absolute; right: 1px; bottom: 1px; width: 12px; height: 12px; background: repeating-linear-gradient(135deg, transparent 0 2px, #808080 2px 3px, #fff 3px 4px); clip-path: polygon(100% 0, 0 100%, 100% 100%); }
+
+.oe-dots { position: absolute; left: 28px; top: 52px; height: 81px; border-left: 1px dotted #808080; }
+[data-app=outlook] .menu-bar { padding-left: 11px; }
+[data-app=outlook] .menu-bar > *:not(.oe-throbber):not(.oe-mgrip) { position: relative; top: 2px; }
+.oe-status .s3 span { left: 23px; }

@@ -399,93 +399,149 @@ export function openMail(
     return w;
   }
   const w = ctx.wm.create({
-    title: "Outlook Express",
-    icon: "mail",
-    width: 790,
-    height: 510,
+    title: "Inbox - Outlook Express",
+    icon: "oe",
+    width: 903,
+    height: 652,
+    x: 67,
+    y: 22,
     appId: "outlook",
   });
   let folder = "Inbox",
     selected = null;
-  const folders = el("div", { class: "mail-folders inset" }),
-    body = el("tbody"),
-    preview = el("div", { class: "mail-preview inset" }),
-    status = statusBar("", "Working offline");
+  const OE = "/assets/ui/oe/";
+  const im = (name, cls = "", style = {}) => el("img", { src: OE + name + ".png", class: cls, draggable: "false", alt: "", style });
   const welcome = {
     id: "welcome",
     folder: "Inbox",
-    from: "Windows 2000",
-    subject: "Welcome to Outlook Express",
+    from: "Microsoft Outlook Express Team",
+    to: "New Outlook Express User",
+    subject: "Welcome to Outlook Express 6",
     date: Date.now(),
-    body: "Welcome to Outlook Express\n\nWrite and save e-mail drafts, manage your address book, and export messages as .eml files.\n\nChoose Send to hand a message to your device’s mail application. This browser desktop does not connect to native SMTP or POP3 servers.\n\nYour drafts and contacts are stored in My Documents.",
+    unread: true,
+    welcome: true,
+    body: "",
   };
   const messages = () => [
     ...read(ctx, MAIL, []),
     ...(ctx.settings.get("mailWelcomeDeleted") ? [] : [welcome]),
   ];
+  const root = el("div", { class: "oe-root" }),
+    toolbarEl = el("div", { class: "oe-toolbar" }),
+    band = el("div", { class: "oe-band" }),
+    foldersEl = el("div", { class: "oe-folders" }),
+    contacts = el("div", { class: "oe-contacts" }),
+    listEl = el("div", { class: "oe-list" }),
+    rowsEl = el("div", { class: "oe-rows" }),
+    preview = el("div", { class: "oe-preview" }),
+    pvHead = el("div", { class: "oe-pvhead" }),
+    pvBody = el("div", { class: "oe-pvbody" }),
+    status = el("div", { class: "oe-status" });
+  const tbtn = (cx, icon, label, { off = false, arrow = false, action } = {}) => {
+    const b = el("div", { class: "oe-tb" + (off ? " off" : ""), style: { left: cx - 40 + "px" }, onclick: () => !off && action?.() }, im(icon), el("span", { text: label }));
+    if (arrow) b.append(el("i", { class: "oe-arrow", style: { left: arrow - (cx - 40) + "px" } }));
+    return b;
+  };
+  const newMail = () => openMail(ctx, { compose: true }),
+    replyTo = () => openMail(ctx, { compose: true, reply: messages().find((m) => m.id === selected) });
+  const sep = (x) => el("div", { class: "oe-sep", style: { left: x + "px" } });
+  toolbarEl.append(
+    tbtn(41, "new", "Create Mail", { arrow: 78, action: newMail }),
+    tbtn(115, "reply", "Reply", { action: replyTo }),
+    tbtn(176, "replyall", "Reply All", { action: replyTo }),
+    tbtn(237, "fwd", "Forward", { action: replyTo }),
+    sep(272),
+    tbtn(305, "print", "Print", { action: () => ctx.printText(pvBody.innerText, "Outlook Express") }),
+    tbtn(367, "delete", "Delete", { off: true, action: () => deleteMessage() }),
+    sep(402),
+    tbtn(436, "sendrecv", "Send/Recv", { arrow: 473, off: true }),
+    sep(484),
+    tbtn(518, "addr", "Addresses", { action: () => ctx.launch("address") }),
+    tbtn(578, "find", "Find", { arrow: 616 }),
+  );
   const render = () => {
-    folders.replaceChildren(
-      el("div", { class: "tree-title", text: "Folders" }),
-      el("div", { class: "mail-local-title" }, icon("folder"), "Local Folders"),
-      ...["Inbox", "Outbox", "Sent Items", "Deleted Items", "Drafts"].map((f) =>
-        button(
-          [
-            icon(f === "Inbox" ? "mail" : "folder"),
-            f +
-              (f === "Inbox"
-                ? " (" + messages().filter((m) => m.folder === f).length + ")"
-                : ""),
-          ],
-          () => {
-            folder = f;
-            selected = null;
-            render();
-          },
-          { class: "tree-item" + (folder === f ? " selected" : "") },
-        ),
-      ),
-    );
-    const list = messages().filter((m) => m.folder === folder);
-    body.replaceChildren(
-      ...list.map((m) =>
-        el(
-          "tr",
-          {
-            class: selected === m.id ? "selected" : "",
-            onclick: () => {
-              selected = m.id;
-              render();
-            },
-            ondblclick: () => {
-              if (m.folder === "Drafts")
-                openMail(ctx, { compose: true, draft: m });
-            },
-          },
-          el("td", {}, icon("mail"), m.from || m.to),
-          el("td", { text: m.subject || "(No subject)" }),
-          el("td", { text: new Date(m.date).toLocaleDateString() }),
-        ),
-      ),
-    );
-    const message = list.find((m) => m.id === selected) || list[0];
-    if (message) {
-      selected = message.id;
-      preview.replaceChildren(
+    w.setTitle?.(folder + " - Outlook Express");
+    const all = messages();
+    const unread = all.filter((m) => m.folder === "Inbox" && m.unread).length;
+    band.replaceChildren(im("inboxband"), el("span", { text: folder }));
+    const FOLDERS = [
+      ["Inbox", "inbox16", 203],
+      ["Outbox", "outbox16", 221],
+      ["Sent Items", "sent16", 239],
+      ["Deleted Items", "deleted16", 257],
+      ["Drafts", "drafts16", 275],
+    ];
+    foldersEl.replaceChildren(
+      el("div", { class: "oe-phead" }, el("span", { text: "Folders" }), el("b", { class: "oe-x", text: "×" })),
+      el("div", { class: "oe-fl oe-root-f" }, im("oe16"), el("span", { text: "Outlook Express" })),
+      el("div", { class: "oe-fl oe-local" }, el("i", { class: "oe-minus" }), im("local16"), el("span", { text: "Local Folders" })),
+      el("div", { class: "oe-dots" }),
+      ...FOLDERS.map(([f, ico], i) =>
         el(
           "div",
-          { class: "mail-preview-heading" },
-          el("div", { text: "From: " + message.from }),
-          el("div", { text: "Subject: " + message.subject }),
-          el("div", {
-            text: "Date: " + new Date(message.date).toLocaleString(),
-          }),
+          { class: "oe-fl oe-sub", style: { top: 52 + i * 18 + "px" }, onclick: () => ((folder = f), (selected = null), render()) },
+          im(ico),
+          el("span", { class: folder === f ? "sel" : "", text: f }),
+          f === "Inbox" && unread ? el("em", { text: " (" + unread + ")" }) : null,
         ),
-        el("pre", { text: message.body }),
+      ),
+    );
+    const list = all.filter((m) => m.folder === folder);
+    const message = list.find((m) => m.id === selected) || list[0];
+    selected = message?.id ?? null;
+    rowsEl.replaceChildren(
+      ...list.map((m) =>
+        el(
+          "div",
+          {
+            class: "oe-row" + (m.unread ? " unread" : "") + (selected === m.id ? " sel" : ""),
+            onclick: () => ((selected = m.id), render()),
+            ondblclick: () => m.folder === "Drafts" && openMail(ctx, { compose: true, draft: m }),
+          },
+          el("div", { class: "c1" }, im("env16"), el("span", { text: m.from || m.to || "" })),
+          el("div", { class: "c2", text: m.subject || "(No subject)" }),
+          el("div", { class: "c3", text: (() => { const d = new Date(m.date); return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()} ${d.getHours() % 12 || 12}:${String(d.getMinutes()).padStart(2, "0")}:${String(d.getSeconds()).padStart(2, "0")} ${d.getHours() < 12 ? "AM" : "PM"}`; })() }),
+        ),
+      ),
+    );
+    if (message) {
+      pvHead.replaceChildren(
+        el("div", {}, el("b", { text: "From: " }), message.from || "", message.to ? el("span", {}, el("b", { text: "   To: " }), message.to) : null),
+        el("div", {}, el("b", { text: "Subject: " }), message.subject || ""),
       );
-    } else preview.replaceChildren();
-    status.children[0].textContent = list.length + " message(s)";
+      pvBody.replaceChildren(
+        message.welcome
+          ? welcomeBody()
+          : el("pre", { text: message.body }),
+      );
+    } else (pvHead.replaceChildren(), pvBody.replaceChildren());
+    status.replaceChildren(
+      el("div", { class: "s1", text: list.length + " message(s)" + (folder === "Inbox" ? ", " + unread + " unread" : "") }),
+      el("div", { class: "s2" }, im("online16"), el("span", { text: "Working Online" })),
+      el("div", { class: "s3" }, im("nomail16"), el("span", { text: "No new messages" })),
+    );
   };
+  const welcomeBody = () =>
+    el(
+      "div",
+      { class: "oe-welcome" },
+      im("banner", "oe-banner"),
+      el("div", { class: "oe-feat", text: "Featuring" }),
+      el("div", { class: "oe-featline" }),
+      el(
+        "ul",
+        {},
+        ...["E-mail and Newsgroups", "Multiple accounts and Identities", "HTML message support", "Address Book and directory services", "Offline synchronization", "Improved Inbox rules", "Message-level security", "Stationery and file attachments"].map((t) => el("li", {}, el("i"), t)),
+      ),
+      el(
+        "div",
+        { class: "oe-msn" },
+        im("msn"),
+        el("p", {}, "Tired of sharing your e-", el("br"), "mail account with others", el("br"), "in your household? ", el("u", { text: "Get a" }), el("br"), el("u", { text: "free Hotmail account!" }), el("br"), "Then read your mail from", el("br"), "any place on earth. ", el("u", { text: "Click" }), el("br"), el("u", { text: "here to sign up" }), " right now!"),
+      ),
+    );
   const deleteMessage = async () => {
+    if (!selected) return;
     if (selected === "welcome") {
       ctx.settings.set("mailWelcomeDeleted", true);
     } else {
@@ -499,15 +555,7 @@ export function openMail(
   };
   w.setMenu({
     File: [
-      {
-        label: "New",
-        submenu: [
-          {
-            label: "Mail Message",
-            action: () => openMail(ctx, { compose: true }),
-          },
-        ],
-      },
+      { label: "New", submenu: [{ label: "Mail Message", action: newMail }] },
       { label: "Exit", action: () => w.close() },
     ],
     Edit: [{ label: "Delete", action: deleteMessage }],
@@ -524,21 +572,11 @@ export function openMail(
       },
     ],
     Message: [
-      { label: "New Message", action: () => openMail(ctx, { compose: true }) },
-      {
-        label: "Reply",
-        action: () =>
-          openMail(ctx, {
-            compose: true,
-            reply: messages().find((m) => m.id === selected),
-          }),
-      },
+      { label: "New Message", action: newMail },
+      { label: "Reply", action: replyTo },
     ],
     Help: [
-      {
-        label: "Contents and Index",
-        action: () => ctx.launch("help", { topic: "internet" }),
-      },
+      { label: "Contents and Index", action: () => ctx.launch("help", { topic: "internet" }) },
       {
         label: "About Outlook Express",
         action: () =>
@@ -549,62 +587,32 @@ export function openMail(
       },
     ],
   });
-  w.setContent(
-    toolbar([
-      {
-        icon: "mail",
-        label: "New Mail",
-        action: () => openMail(ctx, { compose: true }),
-      },
-      {
-        icon: "document",
-        label: "Reply",
-        action: () =>
-          openMail(ctx, {
-            compose: true,
-            reply: messages().find((m) => m.id === selected),
-          }),
-      },
-      { glyph: "×", label: "Delete", action: deleteMessage },
-      { separator: true },
-      {
-        icon: "address",
-        label: "Addresses",
-        action: () => ctx.launch("address"),
-      },
-    ]),
+  w.el.querySelector(":scope > .menu-bar")?.append(im("throbber", "throbber oe-throbber"), el("i", { class: "oe-mgrip" }));
+  contacts.append(
+    el("div", { class: "oe-phead" }, el("span", {}, el("u", { text: "C" }), "ontacts"), el("i", { class: "oe-dd" }), el("b", { class: "oe-x", text: "×" })),
+    el("div", { class: "oe-cbody", text: "There are no contacts to display. Click on Contacts to create a new contact." }),
+  );
+  const hdr = (cls, inner) => el("div", { class: "oe-h " + cls }, ...inner);
+  listEl.append(
     el(
       "div",
-      { class: "mail-layout" },
-      folders,
-      el(
-        "div",
-        { class: "mail-main" },
-        el(
-          "div",
-          { class: "mail-list inset" },
-          el(
-            "table",
-            { class: "classic-table" },
-            el(
-              "thead",
-              {},
-              el(
-                "tr",
-                {},
-                ...["From", "Subject", "Received"].map((s) =>
-                  el("th", { text: s }),
-                ),
-              ),
-            ),
-            body,
-          ),
-        ),
-        preview,
-      ),
+      { class: "oe-lhead" },
+      hdr("h1", [im("hdr1")]),
+      hdr("h2", [im("hdr2")]),
+      hdr("h3", [im("hdr3")]),
+      hdr("h4", [el("span", { text: "From" })]),
+      hdr("h5", [el("span", { text: "Subject" })]),
+      hdr("h6", [el("span", { text: "Received" }), el("i", { class: "oe-sort" })]),
+      hdr("h7", []),
     ),
-    status,
+    rowsEl,
   );
+  preview.append(pvHead, pvBody, vscrollBar());
+  function vscrollBar() {
+    return el("div", { class: "rk-vscroll oe-vs" }, el("span", { class: "sb up" }), el("span", { class: "sb down" }), el("span", { class: "thumb", style: { top: "16px", height: "62px" } }));
+  }
+  root.append(toolbarEl, band, foldersEl, contacts, listEl, preview, status);
+  w.setContent(root);
   w.addCleanup(ctx.bus.on("mail:change", render));
   w.addCleanup(ctx.bus.on("fs:change", render));
   render();

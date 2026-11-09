@@ -175,6 +175,7 @@ const icons = {
   addPrinter: "w2k/ref-printers-add",
   addTask: "w2k/ref-add-task",
   hhHelp: "w2k/ref-hh-help",
+  oe: "w2k/ref-oe",
   netEntire: "w2k/entire-network",
   netNear: "w2k/network-2",
   batchFile: "w2k/ms-dos-batch-file",
