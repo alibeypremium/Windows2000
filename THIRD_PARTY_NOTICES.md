@@ -15,3 +15,7 @@ Historical icons were obtained from the 98.js repository, React95's icon collect
 Windows, Microsoft, and related product names/imagery belong to their respective owners. This browser recreation is an independent project.
 
 The desktop melody and short event sounds are synthesized by this project's JavaScript; original Microsoft sound recordings are not bundled.
+
+## Windows 2000 system icons (archive supplied by the project owner)
+
+`assets/icons/` contains Windows 2000 system icons taken from an archive supplied by the project owner (see `assets/SOURCES.md`). These are Microsoft's imagery and are not covered by any permissive license; they are included for this non-commercial fan project only.
