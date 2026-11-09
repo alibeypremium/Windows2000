@@ -438,6 +438,7 @@ export function tabs(pages) {
   root.append(strip, body);
   show(0);
   root.select = show;
+  Object.defineProperty(root, "index", { get: () => current });
   return root;
 }
 export const field = (label, input) =>

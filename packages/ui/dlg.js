@@ -4,7 +4,7 @@
  * 8pt MS Shell Dlg font one unit is 1.5 px horizontally and 1.625 px vertically.
  */
 import { el } from "./index.js";
-import { refWindow, btn, check, radio, group, sunken, text } from "../control-panel/refkit.js";
+import { refWindow, btn, check, radio, group, sunken, text, link } from "../control-panel/refkit.js";
 
 export const px = (x) => Math.round((x * 6) / 4);
 export const py = (y) => Math.round((y * 13) / 8);
@@ -26,7 +26,9 @@ export function dialogFromTemplate(ctx, tpl, opts = {}) {
   for (const c of tpl.controls) {
     if (opts.hidden?.includes(c.id)) continue;
     const x = px(c.x) + FRAME_X, y = py(c.y) + FRAME_Y, cw = px(c.cx), ch = py(c.cy);
-    const label = opts.labels?.[c.id] ?? c.text;
+    const isIconRef = c.class === "static" && typeof c.text === "number";
+    if (isIconRef) continue; // icon/bitmap resource reference
+    const label = String(opts.labels?.[c.id] ?? c.text);
     const disabled = !!(c.style & 0x08000000), t = c.style & 0xf;
     let node;
     if (c.class === "button") {
@@ -42,6 +44,8 @@ export function dialogFromTemplate(ctx, tpl, opts = {}) {
       if (c.style & 0x2000) input.type = "number";
       node = sunken(x, y, cw, ch, input);
       byId[c.id] = input;
+    } else if (c.class === "Link Window") {
+      node = link(x, y, label.replace(/<[^>]+>/g, ""), opts.on?.[c.id] || (() => {}));
     } else if (c.class === "static") {
       const kind = c.style & 0x1f;
       if (kind === 0x12 || kind === 0x11 || kind === 0x10) node = el("div", { class: "rk-etched", style: { left: x + "px", top: y + "px", width: cw + "px", height: ch + "px" } });

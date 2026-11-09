@@ -19,13 +19,16 @@ import {
   downloadFile,
   pickFiles,
 } from "../core/index.js";
+import { group as rkGroup, text as rkText, sunken as rkSunken } from "../control-panel/refkit.js";
+import { px, py, dialogFromTemplate } from "../ui/dlg.js";
+import { MAGNIFY_DIALOGS } from "./magnify-data.js";
 
 export function openTaskManager(ctx) {
   const w = ctx.wm.create({
     title: "Windows Task Manager",
     icon: "taskmgr",
-    width: 500,
-    height: 400,
+    width: 420,
+    height: 500,
     appId: "taskmgr",
   });
   let selected = null,
@@ -76,8 +79,9 @@ export function openTaskManager(ctx) {
           },
           el("td", { text: win.appId + ".exe" }),
           el("td", { text: String(win.id) }),
-          el("td", { text: ctx.settings.get("username") }),
-          el("td", { text: win.minimized ? "Suspended UI" : "Running" }),
+          el("td", { text: "00" }),
+          el("td", { text: "0:00:0" + (win.id % 10) }),
+          el("td", { text: (4000 + ((win.id * 977) % 9000)).toLocaleString("en-US") + " K" }),
         ),
       );
     }
@@ -108,13 +112,98 @@ export function openTaskManager(ctx) {
         el(
           "tr",
           {},
-          ...["Image Name", "PID", "User Name", "Status"].map((x) =>
+          ...["Image Name", "PID", "CPU", "CPU Time", "Mem Usage"].map((x) =>
             el("th", { text: x }),
           ),
         ),
       ),
       processBody,
     );
+  // Performance page laid out from the dialog template in taskmgr.exe (units are dialog units)
+  const perfPane = el("div", { style: "position:relative;width:100%;height:100%" });
+  const perfNodes = {};
+  {
+    const P = (x) => px(x), Q = (y) => py(y);
+    const grp = (x, y, w2, h2, label) => perfPane.append(...rkGroup(P(x), Q(y) + 6, P(w2), Q(h2) - 6, label, 9).filter(Boolean));
+    const dark = (x, y, w2, h2, name) => {
+      const cv = el("canvas", { width: P(w2), height: Q(h2), style: `position:absolute;left:${P(x)}px;top:${Q(y)}px;background:#000` });
+      perfNodes[name] = cv;
+      perfPane.append(cv);
+    };
+    grp(8, 5, 60, 60, "CPU Usage");
+    dark(14, 17, 48, 44, "cpu");
+    grp(78, 5, 166, 60, "CPU Usage History");
+    dark(82, 15, 158, 44, "cpuh");
+    grp(8, 67, 60, 60, "MEM Usage");
+    dark(14, 77, 48, 44, "mem");
+    grp(78, 67, 166, 60, "Memory Usage History");
+    dark(82, 77, 158, 44, "memh");
+    const box = (x, y, title, rows) => {
+      grp(x, y, 113, 39, title);
+      rows.forEach(([label, key], i) => {
+        perfPane.append(rkText(P(x + 6), Q(y + 10 + i * 9), label, { w: P(46) }));
+        const v = rkText(P(x + 51), Q(y + 10 + i * 9), "0", { w: P(57), align: "right" });
+        perfNodes[key] = v;
+        perfPane.append(v);
+      });
+    };
+    box(8, 129, "Totals", [["Handles", "handles"], ["Threads", "threads"], ["Processes", "procs"]]);
+    box(130, 129, "Physical Memory (K)", [["Total", "ptotal"], ["Available", "pavail"], ["System Cache", "pcache"]]);
+    box(8, 173, "Commit Charge (K)", [["Total", "ctotal"], ["Limit", "climit"], ["Peak", "cpeak"]]);
+    box(130, 173, "Kernel Memory (K)", [["Total", "ktotal"], ["Paged", "kpaged"], ["Nonpaged", "knon"]]);
+  }
+  const cpuHist = Array(52).fill(0), memHist = Array(52).fill(0);
+  let peak = 0;
+  const gauge = (cv, pct) => {
+    const g = cv.getContext("2d");
+    g.fillStyle = "#000";
+    g.fillRect(0, 0, cv.width, cv.height);
+    const rows = Math.floor((cv.height - 12) / 3), on = Math.round((pct / 100) * rows);
+    for (let i = 0; i < rows; i++) {
+      g.fillStyle = i < on ? "#00ff00" : "#005000";
+      g.fillRect(cv.width / 2 - 10, cv.height - 14 - i * 3 - 2, 20, 2);
+    }
+    g.fillStyle = "#00ff00";
+    g.font = "11px Tahoma, sans-serif";
+    g.textAlign = "center";
+    g.fillText(Math.round(pct) + (cv === perfNodes.cpu ? " %" : " MB"), cv.width / 2, cv.height - 1);
+  };
+  const history = (cv, data) => {
+    const g = cv.getContext("2d");
+    g.fillStyle = "#000";
+    g.fillRect(0, 0, cv.width, cv.height);
+    g.strokeStyle = "#007000";
+    for (let x = 0; x < cv.width; x += 12) { g.beginPath(); g.moveTo(x + 0.5, 0); g.lineTo(x + 0.5, cv.height); g.stroke(); }
+    for (let y = 0; y < cv.height; y += 12) { g.beginPath(); g.moveTo(0, y + 0.5); g.lineTo(cv.width, y + 0.5); g.stroke(); }
+    g.strokeStyle = "#00ff00";
+    g.beginPath();
+    data.forEach((v, i) => {
+      const x = (i * cv.width) / (data.length - 1), y = cv.height - 1 - (v / 100) * (cv.height - 2);
+      i ? g.lineTo(x, y) : g.moveTo(x, y);
+    });
+    g.stroke();
+  };
+  const kb = (n) => Math.round(n / 1024).toLocaleString("en-US");
+  const perfUpdate = (delay) => {
+    const heap = performance.memory?.usedJSHeapSize || 0, limit = performance.memory?.jsHeapSizeLimit || 1073741824;
+    const total = 262144 * 1024, used = Math.min(total, heap + 90 * 1024 * 1024);
+    const cpu = Math.min(100, delay * 2);
+    cpuHist.shift(); cpuHist.push(cpu);
+    memHist.shift(); memHist.push((used / total) * 100);
+    peak = Math.max(peak, used);
+    gauge(perfNodes.cpu, cpu);
+    gauge(perfNodes.mem, used / 1048576);
+    history(perfNodes.cpuh, cpuHist);
+    history(perfNodes.memh, memHist);
+    const procs = ctx.wm.windows.filter((a) => !a.dialog).length + 18;
+    const set = (k, v) => perfNodes[k] && (perfNodes[k].textContent = v);
+    set("handles", (procs * 83).toLocaleString("en-US"));
+    set("threads", String(procs * 5));
+    set("procs", String(procs));
+    set("ptotal", kb(total)); set("pavail", kb(total - used)); set("pcache", kb(48 * 1024 * 1024));
+    set("ctotal", kb(used)); set("climit", kb(limit + total)); set("cpeak", kb(peak));
+    set("ktotal", kb(31 * 1024 * 1024)); set("kpaged", kb(24 * 1024 * 1024)); set("knon", kb(7 * 1024 * 1024));
+  };
   const tabview = tabs([
     {
       label: "Applications",
@@ -142,40 +231,41 @@ export function openTaskManager(ctx) {
         el("div", { class: "task-buttons" }, button("End Process", end)),
       ),
     },
-    {
-      label: "Performance",
-      content: el(
-        "div",
-        {},
-        el(
-          "fieldset",
-          {},
-          el("legend", { text: "Event Loop Delay History" }),
-          chart,
-        ),
-        metrics,
-        el("p", {
-          class: "small-note",
-          text: "The graph shows measured browser scheduling delay. Native CPU and per-process memory counters are not available to a web page.",
-        }),
-      ),
-    },
+    { label: "Performance", content: perfPane },
   ]);
+  let speed = "Normal", onTop = true, minUse = false, hideMin = false;
+  const off = (label, extra = {}) => ({ label, disabled: true, ...extra });
+  const win = (fn) => () => ctx.wm[fn]?.();
   w.setMenu({
     File: [
       { label: "New Task (Run...)", action: () => ctx.launch("run") },
+      separator(),
       { label: "Exit Task Manager", action: () => w.close() },
     ],
-    Options: [
-      { label: "Always On Top", checked: true, action: () => w.focus() },
-      { label: "Minimize On Use", action: () => w.minimize() },
+    Options: () => [
+      { label: "Always On Top", checked: onTop, action: () => (onTop = !onTop) },
+      { label: "Minimize On Use", checked: minUse, action: () => (minUse = !minUse) },
+      { label: "Hide When Minimized", checked: hideMin, action: () => (hideMin = !hideMin) },
+      ...(tabview.index === 1 ? [off("Show 16-bit tasks")] : []),
     ],
-    View: [{ label: "Refresh Now", action: render }],
-    Help: [
+    View: () => [
+      { label: "Refresh Now", action: render },
       {
-        label: "Task Manager Help",
-        action: () => ctx.launch("help", { topic: "system" }),
+        label: "Update Speed",
+        submenu: ["High", "Normal", "Low", "Paused"].map((n) => ({ label: n, checked: speed === n, action: () => (speed = n) })),
       },
+      separator(),
+      ...(tabview.index === 1
+        ? [off("Select Columns...")]
+        : tabview.index === 2
+          ? [{ label: "CPU History", submenu: [{ label: "One Graph, All CPUs", checked: true, action: () => {} }, off("One Graph Per CPU")] }, off("Show Kernel Times")]
+          : [off("Large Icons"), off("Small Icons", { checked: false }), { label: "Details", checked: true, action: () => {} }]),
+    ],
+    ...(true ? {} : {}),
+    Help: [
+      { label: "Task Manager Help Topics", action: () => ctx.launch("help", { topic: "taskmgr" }) },
+      separator(),
+      { label: "About Task Manager", action: () => ctx.dialogs.message("Windows 2000 Task Manager\nVersion 5.0 (Build 2195: Service Pack 4)\n\nCopyright © 1990-1999 Microsoft Corp.", { title: "About Task Manager", icon: "taskmgr" }) },
     ],
   });
   w.setContent(tabview, status);
@@ -184,45 +274,7 @@ export function openTaskManager(ctx) {
     const now = performance.now(),
       delay = Math.max(0, now - expected);
     expected = now + 1000;
-    samples.shift();
-    samples.push(Math.min(250, delay));
-    const c = chart.getContext("2d");
-    c.fillStyle = "#000";
-    c.fillRect(0, 0, 420, 140);
-    c.strokeStyle = "#003600";
-    c.lineWidth = 1;
-    for (let x = 0; x < 420; x += 20) {
-      c.beginPath();
-      c.moveTo(x, 0);
-      c.lineTo(x, 140);
-      c.stroke();
-    }
-    for (let y = 0; y < 140; y += 20) {
-      c.beginPath();
-      c.moveTo(0, y);
-      c.lineTo(420, y);
-      c.stroke();
-    }
-    c.strokeStyle = "#00ff00";
-    c.beginPath();
-    samples.forEach((v, i) => {
-      const x = (i * 420) / 79,
-        y = 135 - v * 0.5;
-      i ? c.lineTo(x, y) : c.moveTo(x, y);
-    });
-    c.stroke();
-    metrics.replaceChildren(
-      el("div", { text: "Scheduling delay: " + delay.toFixed(1) + " ms" }),
-      el("div", {
-        text:
-          "JS heap: " +
-          (performance.memory
-            ? formatBytes(performance.memory.usedJSHeapSize)
-            : "Unavailable"),
-      }),
-      el("div", { text: "Graphics: " + ctx.renderer.surface.backend }),
-      el("div", { text: "Virtual files: " + ctx.fs.nodes.size }),
-    );
+    if (speed !== "Paused") perfUpdate(Math.min(250, delay));
     render();
   }, 1000);
   w.addCleanup(() => clearInterval(timer));
@@ -418,6 +470,11 @@ export function openRegistry(ctx) {
           ),
       },
       separator(),
+      { label: "Connect Network Registry...", disabled: true },
+      { label: "Disconnect Network Registry...", disabled: true },
+      separator(),
+      { label: "Print...", shortcut: "Ctrl+P", action: () => ctx.printText(JSON.stringify(data, null, 2), "Registry") },
+      separator(),
       { label: "Exit", action: () => w.close() },
     ],
     Edit: () => [
@@ -425,14 +482,22 @@ export function openRegistry(ctx) {
         label: "New",
         submenu: [
           { label: "Key", action: newKey },
+          separator(),
           { label: "String Value", action: () => newValue("string") },
+          { label: "Binary Value", disabled: true },
           { label: "DWORD Value", action: () => newValue("number") },
         ],
       },
-      { label: "Modify", disabled: !selected, action: () => edit() },
-      { label: "Delete", disabled: !selected, action: remove },
+      separator(),
+      { label: "Delete", shortcut: "Del", disabled: !selected, action: remove },
+      { label: "Rename", disabled: true },
+      separator(),
+      { label: "Copy Key Name", action: () => ctx.clipboard.setText(current.join("\\")) },
+      separator(),
+      { label: "Find Next", shortcut: "F3", disabled: true },
       {
         label: "Find...",
+        shortcut: "Ctrl+F",
         action: async () => {
           const q = await ctx.dialogs.prompt("Find what:", "", {
             title: "Find",
@@ -458,23 +523,27 @@ export function openRegistry(ctx) {
       },
     ],
     View: [
+      { label: "Status Bar", checked: true, disabled: true },
+      separator(),
+      { label: "Split", disabled: true },
+      separator(),
       {
         label: "Refresh",
+        shortcut: "F5",
         action: () => {
           data = ctx.registry.read();
           render();
         },
       },
     ],
+    Favorites: [
+      { label: "Add to Favorites", disabled: true },
+      { label: "Remove Favorite", disabled: true },
+    ],
     Help: [
-      {
-        label: "Help Topics",
-        action: () =>
-          ctx.dialogs.message(
-            "Edit keys and values in the virtual registry. Changes are saved to C:\\WINNT\\system32\\config\\registry.json.\n\nThis registry belongs to the browser desktop. It does not modify your device’s operating system.",
-            { title: "Registry Editor Help", icon: "registry" },
-          ),
-      },
+      { label: "Help Topics", action: () => ctx.launch("help", { topic: "regedit" }) },
+      separator(),
+      { label: "About Registry Editor", action: () => ctx.dialogs.message("Registry Editor\nVersion 5.0 (Build 2195: Service Pack 4)\n\nCopyright © 1993-1999 Microsoft Corp.", { title: "About Registry Editor", icon: "registry" }) },
     ],
   });
   w.setContent(
@@ -617,32 +686,78 @@ export function openSystemInfo(ctx, { devices = false } = {}) {
         class: "tree-item",
       }),
     );
-  w.setMenu({
+  const exportText = () =>
+    downloadFile(
+      "System-Information.txt",
+      Object.entries(sections).map(([title, rows]) => title + "\n" + rows.map(([k, v]) => k + ": " + v).join("\n")).join("\n\n"),
+    );
+  const offi = (label, extra = {}) => ({ label, disabled: true, ...extra });
+  const devMenus = {
+    Action: [
+      { label: "Print", disabled: true },
+      separator(),
+      { label: "Properties", disabled: true },
+      separator(),
+      { label: "Help", action: () => ctx.launch("help", { topic: "devmgr" }) },
+    ],
+    View: [
+      { label: "Devices by type", checked: true, action: () => {} },
+      { label: "Devices by connection", action: () => {} },
+      { label: "Resources by type", action: () => {} },
+      { label: "Resources by connection", action: () => {} },
+      separator(),
+      { label: "Show hidden devices", action: () => {} },
+      separator(),
+      { label: "Customize...", disabled: true },
+    ],
+    Help: [
+      { label: "Help Topics", action: () => ctx.launch("help", { topic: "devmgr" }) },
+      separator(),
+      { label: "About Device Manager", action: () => ctx.dialogs.message("Device Manager\nVersion 5.00.2195.6610\n\nMicrosoft Corporation", { title: "About Device Manager" }) },
+    ],
+  };
+  if (devices) w.setMenu(devMenus);
+  else w.setMenu({
     File: [
-      {
-        label: "Export...",
-        action: () =>
-          downloadFile(
-            "System-Information.txt",
-            Object.entries(sections)
-              .map(
-                ([title, rows]) =>
-                  title + "\n" + rows.map(([k, v]) => k + ": " + v).join("\n"),
-              )
-              .join("\n\n"),
-          ),
-      },
+      offi("Open System Information File..."),
+      offi("Save As System Information File..."),
+      { label: "Save As Text File...", action: exportText },
+      { label: "Print...", action: () => ctx.printText(Object.entries(sections).map(([t, r]) => t + "\n" + r.map(([k, v]) => k + ": " + v).join("\n")).join("\n\n"), "System Information") },
+      separator(),
       { label: "Exit", action: () => w.close() },
     ],
-    View: [{ label: "Refresh", action: () => show("System Summary") }],
+    Edit: [
+      { label: "Copy", shortcut: "Ctrl+C", action: () => document.execCommand("copy") },
+      offi("Select All"),
+      separator(),
+      offi("Find...", { shortcut: "Ctrl+F" }),
+    ],
+    View: [
+      { label: "Basic", checked: true, action: () => {} },
+      offi("Advanced"),
+      separator(),
+      { label: "Refresh", shortcut: "F5", action: () => show("System Summary") },
+    ],
+    Tools: [
+      offi("WBEM Permission Editor"),
+      offi("Dr Watson"),
+      offi("Hardware Wizard"),
+      { label: "Network Connections", action: () => ctx.launch("control", { page: "network" }) },
+      offi("Scan Disk"),
+      offi("Windows Report Tool"),
+      offi("System Monitor"),
+      offi("DirectX Diagnostic Tool"),
+      offi("Disk Cleanup"),
+      offi("Backup"),
+      offi("Network Monitor"),
+      offi("File Signature Verification Utility"),
+    ],
     Help: [
+      { label: "System Information Help", action: () => ctx.launch("help", { topic: "system" }) },
+      separator(),
       {
         label: "About System Information",
-        action: () =>
-          ctx.dialogs.message(
-            "This utility reports real browser capabilities and the state of the virtual desktop. Native kernel and device-driver information is outside the browser sandbox.",
-            { title: "System Information", icon: "sysInfo" },
-          ),
+        action: () => ctx.dialogs.message("This utility reports real browser capabilities and the state of the virtual desktop. Native kernel and device-driver information is outside the browser sandbox.", { title: "System Information", icon: "sysInfo" }),
       },
     ],
   });
@@ -679,95 +794,97 @@ export function openSystemInfo(ctx, { devices = false } = {}) {
 
 export function openEventViewer(ctx) {
   const w = ctx.wm.create({
-      title: "Event Viewer",
-      icon: "eventViewer",
-      width: 700,
-      height: 430,
-      appId: "events",
-    }),
-    body = el("tbody");
-  const render = () => {
-    body.replaceChildren(
-      ...ctx.events
-        .slice()
-        .reverse()
-        .map((event) =>
-          el(
-            "tr",
-            {
-              ondblclick: () =>
-                ctx.dialogs.message(event.message, {
-                  title: "Event Properties",
-                  icon: "computer",
-                }),
-            },
-            el(
-              "td",
-              {},
-              icon(event.level === "Error" ? "computer" : "help"),
-              event.level,
-            ),
-            el("td", { text: new Date(event.time).toLocaleString() }),
-            el("td", { text: event.source }),
-            el("td", { text: event.message }),
-          ),
-        ),
-    );
+    title: "Event Viewer",
+    icon: "eventViewer",
+    width: 700,
+    height: 430,
+    appId: "events",
+  });
+  let log = "Application Log", newestFirst = true;
+  const tree = el("div", { class: "registry-tree inset", style: "width:190px" }),
+    values = el("div", { class: "registry-values inset" }),
+    status = el("div", { class: "statusbar" });
+  const LOGS = ["Application Log", "Security Log", "System Log"];
+  const fmt = (t) => {
+    const d = new Date(t);
+    return [d.toLocaleDateString("en-US"), d.toLocaleTimeString("en-US")];
   };
+  const typeOf = (l) => (l === "Error" ? "Error" : l === "Warning" ? "Warning" : "Information");
+  const rows = () => {
+    if (log !== "Application Log") return [];
+    const list = ctx.events.slice();
+    return newestFirst ? list.reverse() : list;
+  };
+  const render = () => {
+    tree.replaceChildren(
+      button([icon("computer"), "Event Viewer (Local)"], () => ((log = ""), render()), { class: "tree-item" + (log === "" ? " selected" : "") }),
+      ...LOGS.map((n) => button([icon("document"), n], () => ((log = n), render()), { class: "tree-item" + (log === n ? " selected" : ""), style: { paddingLeft: "16px" } })),
+    );
+    if (!log) {
+      values.replaceChildren(
+        el("table", { class: "classic-table" },
+          el("thead", {}, el("tr", {}, ...["Name", "Type", "Description", "Size"].map((t) => el("th", { text: t })))),
+          el("tbody", {}, ...LOGS.map((n, i) => el("tr", { ondblclick: () => ((log = n), render()) },
+            el("td", {}, icon("document"), n),
+            el("td", { text: "Log" }),
+            el("td", { text: ["Application Error Records", "Security Audit Records", "System Error Records"][i] }),
+            el("td", { text: n === "Application Log" ? Math.max(64, Math.ceil(ctx.events.length / 4) * 64) + " KB" : "64.0 KB" }))))),
+      );
+      status.textContent = "";
+      return;
+    }
+    const list = rows();
+    values.replaceChildren(
+      el("table", { class: "classic-table" },
+        el("thead", {}, el("tr", {}, ...["Type", "Date", "Time", "Source", "Category", "Event", "User", "Computer"].map((t) => el("th", { text: t })))),
+        el("tbody", {}, ...list.map((e) => {
+          const [d, t] = fmt(e.time);
+          return el("tr", { ondblclick: () => showEvent(e) },
+            el("td", {}, icon(e.level === "Error" ? "computer" : "help"), typeOf(e.level)),
+            el("td", { text: d }), el("td", { text: t }),
+            el("td", { text: e.source }), el("td", { text: "None" }),
+            el("td", { text: String(e.id ?? 1000) }), el("td", { text: "N/A" }),
+            el("td", { text: ctx.settings.get("computerName") || "COMPUTER" }));
+        }))),
+    );
+    status.textContent = list.length + " event(s)";
+  };
+  const showEvent = (e) => {
+    const [d, t] = fmt(e.time);
+    ctx.dialogs.message(`Event Type:\t${typeOf(e.level)}\nEvent Source:\t${e.source}\nEvent Category:\tNone\nEvent ID:\t${e.id ?? 1000}\nDate:\t\t${d}\nTime:\t\t${t}\nUser:\t\tN/A\nComputer:\t${ctx.settings.get("computerName") || "COMPUTER"}\nDescription:\n${e.message}`, { title: "Event Properties", icon: "computer" });
+  };
+  const clear = async () => {
+    if (log !== "Application Log") return;
+    if (await ctx.dialogs.confirm('Do you want to save "Application" before clearing it?', "Event Viewer")) downloadFile("Application.json", JSON.stringify(ctx.events, null, 2), "application/json");
+    ctx.events.length = 0;
+    render();
+  };
+  const off = (label, extra = {}) => ({ label, disabled: true, ...extra });
   w.setMenu({
-    Action: [
+    Action: () => [
+      off("Open Log File"),
+      off("New Log View"),
+      separator(),
+      { label: "Clear all Events", disabled: !log, action: clear },
+      { label: "Save Log File As...", disabled: !log, action: () => downloadFile(log.replace(" ", "-") + ".json", JSON.stringify(ctx.events, null, 2), "application/json") },
+      separator(),
+      { label: "View", submenu: [{ label: "All Records", checked: true, action: () => {} }, off("Filter..."), separator(), { label: "Newest First", checked: newestFirst, action: () => ((newestFirst = true), render()) }, { label: "Oldest First", checked: !newestFirst, action: () => ((newestFirst = false), render()) }] },
+      separator(),
       { label: "Refresh", action: render },
-      {
-        label: "Clear all Events",
-        action: () => {
-          ctx.events.length = 0;
-          render();
-        },
-      },
-      {
-        label: "Save Log File As...",
-        action: () =>
-          downloadFile(
-            "Application-Events.json",
-            JSON.stringify(ctx.events, null, 2),
-            "application/json",
-          ),
-      },
+      off("Export List..."),
+      separator(),
+      off("Properties"),
+      separator(),
+      { label: "Help", action: () => ctx.launch("help", { topic: "system" }) },
     ],
+    View: [off("Large Icons"), off("Small Icons"), off("List"), { label: "Detail", checked: true, action: () => {} }, separator(), off("Customize...")],
     Help: [
-      {
-        label: "About Event Viewer",
-        action: () =>
-          ctx.dialogs.message(
-            "Live events from the current browser desktop session.",
-            { title: "Event Viewer" },
-          ),
-      },
+      { label: "Help Topics", action: () => ctx.launch("help", { topic: "system" }) },
+      separator(),
+      { label: "About Event Viewer", action: () => ctx.dialogs.message("Event Viewer\nEvent Viewer Extension\nVersion 5.00.2195.6610\n\nMicrosoft Corporation", { title: "About Event Viewer", icon: "eventViewer" }) },
     ],
   });
-  w.setContent(
-    el(
-      "div",
-      { class: "inset fill-scroll" },
-      el(
-        "table",
-        { class: "classic-table" },
-        el(
-          "thead",
-          {},
-          el(
-            "tr",
-            {},
-            ...["Type", "Date and Time", "Source", "Description"].map((s) =>
-              el("th", { text: s }),
-            ),
-          ),
-        ),
-        body,
-      ),
-    ),
-    statusBar("Application log"),
-  );
+  w.setContent(el("div", { class: "registry-main" }, tree, values), status);
   w.addCleanup(ctx.bus.on("event:added", render));
   render();
   return w;
@@ -1221,46 +1338,60 @@ export function openKeyboard(ctx) {
 }
 
 export function openMagnifier(ctx) {
-  const w = ctx.wm.create({
-    title: "Magnifier Settings",
-    icon: "magnifier",
-    width: 370,
-    height: 220,
-    appId: "magnifier",
-    resizable: false,
-    maximizable: false,
-  });
-  let level = 1;
-  const update = (value) => {
-    level = value;
-    document.querySelector("#windows").style.zoom = value;
-    document.querySelector("#desktop-icons").style.zoom = value;
+  const apply = (level, invert, contrast) => {
+    const win = document.querySelector("#windows"), icons = document.querySelector("#desktop-icons");
+    for (const n of [win, icons]) {
+      if (!n) continue;
+      n.style.zoom = level;
+      n.style.filter = [invert ? "invert(1)" : "", contrast ? "contrast(1.8)" : ""].filter(Boolean).join(" ");
+    }
   };
-  w.setContent(
-    el(
-      "div",
-      { class: "dialog-padding" },
-      el("p", { text: "Magnify desktop windows and icons." }),
-      field(
-        "Magnification level:",
-        el(
-          "select",
-          { onchange: (e) => update(+e.target.value) },
-          ...[1, 1.25, 1.5, 2].map((v) =>
-            el("option", { value: v, text: Math.round(v * 100) + "%" }),
-          ),
-        ),
-      ),
-    ),
-    el(
-      "div",
-      { class: "dialog-buttons" },
-      button("Reset", () => update(1)),
-      button("Exit", () => w.close()),
-    ),
-  );
-  w.addCleanup(() => update(1));
-  return w;
+  const settings = ctx.settings.get("magnifier") || { level: 2, mouse: true, focus: true, text: true, invert: false, contrast: false, minimized: false, show: true };
+  const save = () => ctx.settings.set("magnifier", settings);
+  const run = () => {
+    const d = dialogFromTemplate(ctx, MAGNIFY_DIALOGS.settings, {
+      appId: "magnifier",
+      icon: "magnifier",
+      values: { 1000: String(settings.level) },
+      checked: { 1002: settings.mouse, 1003: settings.focus, 1013: settings.text, 1005: settings.invert, 1006: settings.contrast, 1007: settings.minimized, 1008: settings.show },
+      on: {
+        1002: () => { settings.mouse = d.on(1002); save(); },
+        1003: () => { settings.focus = d.on(1003); save(); },
+        1013: () => { settings.text = d.on(1013); save(); },
+        1005: () => { settings.invert = d.on(1005); save(); update(); },
+        1006: () => { settings.contrast = d.on(1006); save(); update(); },
+        1007: () => { settings.minimized = d.on(1007); save(); },
+        1008: () => { settings.show = d.on(1008); save(); },
+        1009: () => d.close(),
+        3: () => ctx.launch("help", { topic: "magnifier" }),
+      },
+    });
+    const update = () => {
+      settings.level = Math.max(1, Math.min(9, parseInt(d.ctl[1000].value, 10) || 1));
+      save();
+      apply(settings.level === 1 ? 1 : 1 + (settings.level - 1) * 0.25, settings.invert, settings.contrast);
+    };
+    d.ctl[1000].addEventListener("input", update);
+    d.ctl[1000].addEventListener("change", () => { update(); d.ctl[1000].value = String(settings.level); });
+    d.addCleanup(() => apply(1, false, false));
+    update();
+    return d;
+  };
+  if (!ctx.settings.get("magnifierIntroSeen")) {
+    const intro = dialogFromTemplate(ctx, MAGNIFY_DIALOGS.intro, {
+      appId: "magnifier",
+      icon: "magnifier",
+      on: {
+        1: () => {
+          if (intro.on(1008)) ctx.settings.set("magnifierIntroSeen", true);
+          intro.close();
+          run();
+        },
+      },
+    });
+    return intro;
+  }
+  return run();
 }
 
 export function openDiskManager(ctx, { defrag = false } = {}) {
@@ -1342,6 +1473,50 @@ export function openDiskManager(ctx, { defrag = false } = {}) {
         button("Close", () => w.close()),
       ),
     ),
+  );
+  const dm = (label, extra = {}) => ({ label, disabled: true, ...extra });
+  const helpTopic = defrag ? "defrag" : "diskmgmt";
+  w.setMenu(
+    defrag
+      ? {
+          Action: [
+            { label: "Analyze", action: analyze },
+            dm("Defragment"),
+            dm("Pause"),
+            dm("Stop"),
+            separator(),
+            dm("View Report"),
+            separator(),
+            { label: "Help", action: () => ctx.launch("help", { topic: helpTopic }) },
+          ],
+          View: [
+            { label: "Large Icons", action: () => {} },
+            { label: "Small Icons", action: () => {} },
+            { label: "List", action: () => {} },
+            { label: "Details", checked: true, action: () => {} },
+          ],
+          Help: [{ label: "Help Topics", action: () => ctx.launch("help", { topic: helpTopic }) }, separator(), { label: "About Disk Defragmenter", action: () => ctx.dialogs.message("Disk Defragmenter\nVersion 5.00.2195.6610\n\nMicrosoft Corporation", { title: "About Disk Defragmenter" }) }],
+        }
+      : {
+          Action: [
+            { label: "Refresh", action: analyze },
+            { label: "Rescan Disks", action: analyze },
+            dm("Restore Disk Management Settings"),
+            separator(),
+            dm("All Tasks"),
+            separator(),
+            { label: "Help", action: () => ctx.launch("help", { topic: helpTopic }) },
+          ],
+          View: [
+            { label: "Disk List", checked: true, action: () => {} },
+            { label: "Volume List", action: () => {} },
+            { label: "Graphical View", action: () => {} },
+            separator(),
+            dm("Customize..."),
+            dm("Settings..."),
+          ],
+          Help: [{ label: "Help Topics", action: () => ctx.launch("help", { topic: helpTopic }) }, separator(), { label: "About Disk Management", action: () => ctx.dialogs.message("Disk Management\nVersion 5.00.2195.6610\n\nMicrosoft Corporation", { title: "About Disk Management" }) }],
+        },
   );
   analyze();
   return w;
