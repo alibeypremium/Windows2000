@@ -226,6 +226,7 @@ export const kit = (ox, oy) => ({
   img: (x, y, ...a) => img(x - ox, y - oy, ...a),
   sprite: (x, y, ...a) => sprite(x - ox, y - oy, ...a),
   vscroll: (x, y, ...a) => vscroll(x - ox, y - oy, ...a),
+  hslider: (x, y, ...a) => hslider(x - ox, y - oy, ...a),
   tabs: (o) =>
     tabControl({
       ...o,
@@ -245,5 +246,43 @@ export const vscroll = (x, y, h, thumbTop, thumbH, { disabled = false } = {}) =>
     disabled ? null : el("span", { class: "thumb", style: { top: thumbTop + "px", height: thumbH + "px" } }),
   );
   Object.assign(n.style, at(x, y, 16, h));
+  return n;
+};
+
+/**
+ * Horizontal trackbar (Windows 2000 look): groove from x..x+w, pointed thumb,
+ * optional tick marks below. value in [0,1]. Returns an element positioned at
+ * relative coordinates.
+ */
+export const hslider = (x, y, w, value, { ticks = [], onchange, tickY = 15 } = {}) => {
+  const n = el("div", { class: "rk-hslider" }),
+    groove = el("div", { class: "groove" }),
+    thumb = el("div", { class: "thumb" });
+  thumb.innerHTML =
+    '<svg width="11" height="21" viewBox="0 0 11 21" shape-rendering="crispEdges"><polygon points="0,0 11,0 11,12 5.5,20 0,12" fill="#d4d0c8"/><polyline points="0,12 0,0 10,0" fill="none" stroke="#fff"/><polyline points="10,0 10,12 5,19 4,19" fill="none" stroke="#404040"/><polyline points="9,1 9,12 5,18" fill="none" stroke="#808080"/></svg>';
+  Object.assign(n.style, { left: x + "px", top: y + "px", width: w + "px", height: "28px" });
+  groove.style.cssText = `left:0;top:9px;width:${w}px`;
+  n.append(groove);
+  for (const t of ticks) n.append(el("i", { class: "tick", style: { left: Math.round(t * (w - 1)) + "px", top: tickY + 8 + "px" } }));
+  n.append(thumb);
+  const set = (v) => {
+    value = Math.max(0, Math.min(1, v));
+    thumb.style.left = Math.round(value * (w - 1) - 5) + "px";
+  };
+  set(value);
+  const move = (e) => {
+    const r = n.getBoundingClientRect();
+    set((e.clientX - r.left) / (w - 1));
+    onchange?.(value);
+  };
+  n.addEventListener("pointerdown", (e) => {
+    move(e);
+    const up = () => {
+      removeEventListener("pointermove", move);
+      removeEventListener("pointerup", up);
+    };
+    addEventListener("pointermove", move);
+    addEventListener("pointerup", up);
+  });
   return n;
 };

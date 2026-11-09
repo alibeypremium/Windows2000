@@ -5401,3 +5401,12 @@ button.selected:focus {
 .up-row.sel { background: linear-gradient(90deg, transparent 15px, #0a246a 15px); color: #fff; }
 .up-row.sel img { }
 .pw-sep { position: absolute; height: 0; border-top: 1px solid #808080; border-bottom: 1px solid #fff; }
+.rk-hslider { position: absolute; cursor: default; }
+.rk-hslider .groove { position: absolute; height: 4px; box-sizing: border-box; border: 1px solid; border-color: #808080 #fff #fff #808080; box-shadow: inset 1px 1px #404040; }
+.rk-hslider .thumb { position: absolute; top: 0; width: 11px; height: 21px; }
+.rk-hslider .tick { position: absolute; width: 1px; height: 2px; background: #000; }
+.rk-pbox { position: absolute; box-sizing: border-box; border: 1px solid; border-color: #808080 #fff #fff #808080; box-shadow: inset 1px 1px #404040; }
+.ms-row { position: absolute; left: 0; width: 100%; height: 34px; }
+.ms-row span { position: absolute; left: 5px; top: 10px; line-height: 13px; }
+.ms-row img { position: absolute; image-rendering: pixelated; }
+.ms-row.sel { background: #0a246a; color: #fff; }
