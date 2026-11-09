@@ -30,15 +30,31 @@ const shellNames = {
   control: "Control Panel",
   admintools: "Administrative Tools",
   printers: "Printers",
+  fonts: "Fonts",
   search: "Search Results",
 };
+const BITMAP_FONTS = new Set(["Courier 10,12,15", "Modern", "MS Sans Serif 8,10,12,14,18,24", "MS Serif 8,10,12,14,18,24", "Roman", "Script", "Small Fonts", "Symbol 8,10,12,14,18,24", "Terminal"]);
+const FONT_ITEMS = [
+  "Arial", "Arial Black", "Arial Bold", "Arial Bold Italic", "Arial Italic", "Comic Sans MS", "Comic Sans MS Bold", "Courier 10,12,15",
+  "Courier New", "Courier New Bold", "Courier New Bold Italic", "Courier New Italic", "Georgia", "Georgia Bold", "Georgia Bold Italic", "Georgia Italic",
+  "Impact", "Lucida Console", "Lucida Sans Unicode", "Microsoft Sans Serif Regular", "Modern", "MS Sans Serif 8,10,12,14,18,24", "MS Serif 8,10,12,14,18,24", "Palatino Linotype",
+  "Palatino Linotype Bold", "Palatino Linotype Bold Italic", "Palatino Linotype Italic", "Roman", "Script", "Small Fonts", "Symbol", "Symbol 8,10,12,14,18,24",
+  "Tahoma", "Tahoma Bold", "Terminal", "Times New Roman", "Times New Roman Bold", "Times New Roman Bold Italic", "Times New Roman Italic", "Trebuchet MS",
+  "Trebuchet MS Bold", "Trebuchet MS Bold Italic", "Trebuchet MS Italic", "Verdana", "Verdana Bold", "Verdana Bold Italic", "Verdana Italic", "Webdings", "Wingdings",
+].map((name) => ({
+  name,
+  path: "fonts:" + name,
+  type: "special",
+  icon: BITMAP_FONTS.has(name) ? "fontBmp" : "fontTT",
+}));
 export function openExplorer(ctx, { path = "computer", title } = {}) {
   if (path === "documents") path = DOCS;
   const w = ctx.wm.create({
     title: title || shellNames[path] || basename(path),
     icon: locationIcon(path),
-    width: 721,
-    height: 537,
+    width: path === "fonts" ? 675 : 721,
+    height: path === "fonts" ? 455 : 537,
+    ...(path === "fonts" ? { x: 218, y: 33 } : {}),
     appId: "explorer",
   });
   w.el.classList.add("explorer-window");
@@ -97,7 +113,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     };
   const goUp = () => {
     if (current === "computer") return;
-    if (current === "admintools" || current === "printers") navigate("control");
+    if (["admintools", "printers", "fonts"].includes(current)) navigate("control");
     else if (shellNames[current] || current.length === 3) navigate("computer");
     else navigate(dirname(current));
   };
@@ -160,6 +176,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
         icon: ico,
         description: "Configures administrative settings for your computer",
       }));
+    if (current === "fonts") return FONT_ITEMS;
     if (current === "printers")
       return [
         {
@@ -205,6 +222,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
       const id = n.path.slice(8);
       if (id === "administrative") navigate("admintools");
       else if (id === "printers") navigate("printers");
+      else if (id === "fonts") ctx.launch("explorer", { path: "fonts" });
       else if (id === "tasks") ctx.launch("tasks");
       else if (n.unavailable)
         ctx.dialogs.message(
@@ -725,6 +743,15 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
       },
     ),
   );
+  tools.append(
+    el("img", {
+      class: "fonts-views",
+      src: "/assets/ui/explorer/fonts-views.png",
+      alt: "",
+      draggable: "false",
+      style: { display: "none", position: "absolute", left: "289px", top: "1px" },
+    }),
+  );
   const setNavState = () => {
     const back = historyIndex > 0,
       fwd = historyIndex < history.length - 1,
@@ -1059,11 +1086,18 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
       fsView = !shellNames[current],
       showLoc =
         current === "computer" || current === "admintools" || fsView;
-    status.children[0].textContent = selected.size
-      ? `${selected.size} object(s) selected`
-      : `${list.length} object(s)`;
+    status.children[0].textContent =
+      current === "fonts"
+        ? selected.size
+          ? `${selected.size} font(s) selected`
+          : `${list.length} font(s)`
+        : selected.size
+        ? `${selected.size} object(s) selected`
+        : `${list.length} object(s)`;
     status.children[1].textContent =
-      current === "admintools"
+      current === "fonts"
+        ? ""
+        : current === "admintools"
         ? "10.3 KB"
         : fsView || current === "recycle"
         ? formatBytes(
@@ -1257,6 +1291,11 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     w.setTitle(title || locationName(current));
     address.value = displayPath(current);
     renderSide();
+    side.style.display = current === "fonts" ? "none" : "";
+    const fontsMode = current === "fonts";
+    for (const id of ["moveto", "copyto", "delete", "undo", "views"])
+      tools.querySelector("#tb-" + id).style.display = fontsMode ? "none" : "";
+    tools.querySelector(".fonts-views").style.display = fontsMode ? "" : "none";
     renderList();
     setNavState();
     addressIcon.src = icon(locationIcon(current)).src;
@@ -1392,6 +1431,7 @@ const isDrive = (path) => /^[a-z]:[\\/]?$/i.test(path);
 function locationIcon(path) {
   if (path === DOCS || path === "documents") return "documents";
   if (path === "admintools") return "adminToolsFolder";
+  if (path === "fonts") return "cpFonts";
   if (shellNames[path] && path !== "search") return path === "computer" ? "computer" : path;
   if (isDrive(path))
     return { A: "floppy", D: "cd" }[path[0].toUpperCase()] || "drive";

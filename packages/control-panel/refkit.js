@@ -225,6 +225,7 @@ export const kit = (ox, oy) => ({
   sunken: (x, y, ...a) => sunken(x - ox, y - oy, ...a),
   img: (x, y, ...a) => img(x - ox, y - oy, ...a),
   sprite: (x, y, ...a) => sprite(x - ox, y - oy, ...a),
+  vscroll: (x, y, ...a) => vscroll(x - ox, y - oy, ...a),
   tabs: (o) =>
     tabControl({
       ...o,
@@ -233,3 +234,16 @@ export const kit = (ox, oy) => ({
       tabs: o.tabs.map((t) => ({ ...t, x: t.x - ox })),
     }),
 });
+
+/** Static-looking vertical scroll bar (Windows 2000 style) at screen coords. */
+export const vscroll = (x, y, h, thumbTop, thumbH, { disabled = false } = {}) => {
+  const n = el(
+    "div",
+    { class: "rk-vscroll" + (disabled ? " disabled" : "") },
+    el("span", { class: "sb up" }),
+    el("span", { class: "sb down" }),
+    disabled ? null : el("span", { class: "thumb", style: { top: thumbTop + "px", height: thumbH + "px" } }),
+  );
+  Object.assign(n.style, at(x, y, 16, h));
+  return n;
+};

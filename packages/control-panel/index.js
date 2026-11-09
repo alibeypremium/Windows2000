@@ -9,6 +9,7 @@ import {
 } from "../ui/index.js";
 import { downloadFile, pickFiles, DOCS } from "../core/index.js";
 import { openInternetProperties } from "./inet.js";
+import { openGamingOptions } from "./gaming.js";
 import {
   openAccessibility,
   openAddRemovePrograms,
@@ -82,7 +83,6 @@ export const controlItems = [
     name: "Gaming Options",
     icon: "cpGaming",
     description: "Add, remove, and configure game controllers.",
-    unavailable: true,
   },
   {
     id: "internet",
@@ -237,6 +237,7 @@ export function openControlPanel(ctx, { page = "system" } = {}) {
   if (page === "autoupdate") return openAutomaticUpdates(ctx);
   if (page === "bde") return openBdeAdministrator(ctx);
   if (page === "internet") return openInternetProperties(ctx);
+  if (page === "gaming") return openGamingOptions(ctx);
   const entry =
       controlItems.find((p) => p.id === page) ||
       controlItems.find((p) => p.id === "system"),
