@@ -12,6 +12,7 @@ import {
 } from "../ui/index.js";
 import { DESKTOP, DOCS, joinPath, basename, pickFiles } from "../core/index.js";
 import { openTaskbarProperties } from "../control-panel/dialogs.js";
+import { refWindow, kit } from "../control-panel/refkit.js";
 export { openHelp, openWelcome, openAbout } from "./help.js";
 export class DesktopShell {
   constructor(ctx) {
@@ -940,57 +941,60 @@ export class DesktopShell {
   }
   shutdown() {
     const ctx = this.ctx,
-      w = ctx.wm.create({
-        title: "Shut Down Windows",
-        icon: "shutdown",
-        width: 420,
-        height: 230,
-        dialog: true,
-        resizable: false,
-        minimizable: false,
-        maximizable: false,
-        appId: "shutdown",
-      }),
-      select = el(
-        "select",
-        { "aria-label": "What do you want the computer to do?" },
-        el("option", { text: "Shut down", value: "shutdown" }),
-        el("option", { text: "Restart", value: "restart" }),
-        el("option", { text: "Log off Administrator", value: "logoff" }),
+      k = kit(0, 0),
+      w = refWindow(ctx, { title: "Shut Down Windows", width: 418, height: 270, appId: "shutdown", noIcon: true, x: 302, y: 165 }),
+      choices = [
+        ["Shut down", "shutdown", "Ends your session and shuts down Windows so that\nyou can safely turn off power."],
+        ["Restart", "restart", "Ends your session, shuts down Windows, and starts\nWindows again."],
+        ["Log off Administrator", "logoff", "Ends your session and lets you log on as a different\nuser."],
+      ];
+    let cur = 0;
+    // Real Windows 2000 dims the whole desktop with a black checkerboard while this dialog is up.
+    const dim = el("div", { class: "shutdown-dim" });
+    dim.style.zIndex = Number(w.el.style.zIndex || 1) - 1;
+    w.el.parentElement.append(dim);
+    const close = w.close.bind(w);
+    w.close = (...a) => (dim.remove(), close(...a));
+    const desc = k.text(70, 166, choices[0][2]);
+    const sel = el("span", { class: "dt-sel wide", text: choices[0][0], style: { position: "relative", top: "1px" } });
+    const combo = k.combo(70, 134, 260, 20, "");
+    combo.firstChild.nodeValue = "";
+    combo.prepend(sel);
+    combo.addEventListener("click", () => {
+      const r = combo.getBoundingClientRect();
+      popup(
+        choices.map(([label], i) => ({
+          label,
+          action: () => {
+            cur = i;
+            sel.textContent = label;
+            desc.textContent = choices[i][2];
+          },
+        })),
+        r.left,
+        r.bottom,
       );
-    w.setContent(
-      el(
-        "div",
-        { class: "shutdown-content" },
-        icon("shutdown", 32),
-        el(
-          "div",
-          {},
-          el("p", { text: "What do you want the computer to do?" }),
-          select,
-          el("p", {
-            text: "Closes your programs and saves the virtual desktop.",
-          }),
-        ),
-      ),
-      el(
-        "div",
-        { class: "dialog-buttons" },
-        button("OK", async () => {
-          const action = select.value;
-          await w.close();
-          for (const win of [...ctx.wm.windows])
-            if (!(await win.close())) return;
-          await ctx.fs.queue;
-          if (action === "restart") {
-            location.reload();
-            return;
-          }
-          this.lock(action === "shutdown");
-        }),
-        button("Cancel", () => w.close()),
-        button("Help", () => ctx.launch("help", { topic: "windows" })),
-      ),
+    });
+    const go = async () => {
+      const action = choices[cur][1];
+      await w.close();
+      for (const win of [...ctx.wm.windows]) if (!(await win.close())) return;
+      await ctx.fs.queue;
+      if (action === "restart") {
+        location.reload();
+        return;
+      }
+      this.lock(action === "shutdown");
+    };
+    w.place(
+      k.img(4, 23, "/assets/ui/shutdown/banner.png", 408, 77),
+      k.img(26, 111, "/assets/ui/shutdown/computer.png", 32, 32),
+      k.text(70, 112, "What do you want the computer to do?"),
+      combo,
+      desc,
+      k.btn(168, 233, 75, 22, "OK", { def: true, onclick: go }),
+      k.btn(249, 233, 75, 22, "Cancel", { onclick: () => w.close() }),
+      k.btn(330, 233, 75, 22, "Help", { onclick: () => ctx.launch("help", { topic: "windows" }) }),
     );
     return w;
   }

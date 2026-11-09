@@ -5455,3 +5455,4 @@ button.selected:focus {
 .rg-lang { position: absolute; left: 0; width: 100%; height: 17px; white-space: nowrap; cursor: default; }
 .rg-lang .ia-box { left: 2px; top: 2px; }
 .rg-lang .t { position: absolute; left: 20px; top: 2px; line-height: 14px; }
+.shutdown-dim { position: fixed; inset: 0 0 var(--taskbar-height); background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='2' height='2'><rect x='1' width='1' height='1'/><rect y='1' width='1' height='1'/></svg>"); image-rendering: pixelated; }
