@@ -1,3 +1,4 @@
+import { refWindow } from "../control-panel/refkit.js";
 import { el, button, icon, statusBar, tabs, checkbox, popup } from "../ui/index.js";
 const topics = {
   welcome: {
@@ -317,104 +318,108 @@ export function openHelp(ctx, { topic } = {}) {
 }
 
 export function openWelcome(ctx) {
-  const w = ctx.wm.create({
+  const w = refWindow(ctx, {
     title: "Getting Started with Windows 2000",
     icon: "windows",
-    width: 620,
-    height: 400,
+    width: 484,
+    height: 347,
+    x: 270,
+    y: 196,
     appId: "welcome",
-    resizable: false,
-    maximizable: false,
-    x: Math.max(100, Math.round((innerWidth - 620) / 2) + 48),
-    y: Math.max(40, Math.round((innerHeight - 430) / 2) - 20),
   });
-  const tasks = [
-    [
-      "Take a tour of Windows",
-      "Discover your desktop, programs, and system tools.",
-      "help",
-      { topic: "welcome" },
-      "help",
-    ],
-    [
-      "Connect to the Internet",
-      "Explore the World Wide Web with Internet Explorer.",
-      "ie",
-      {},
-      "ie",
-    ],
-    [
-      "Customize your computer",
-      "Choose a background, colors, and display settings.",
-      "control",
-      { page: "display" },
-      "display",
-    ],
-    [
-      "Start working with your files",
-      "Open My Documents and make yourself at home.",
-      "explorer",
-      { path: "documents" },
-      "documents",
-    ],
+  const SLIDES = [
+    ["s1", "You can access all your documents, programs, and\nsettings from the start button."],
+    ["s2", 'Click "X" to close a window or program.'],
+    ["s3", "Use Control Panel to customize your desktop and\nconfigure your computer."],
+    ["s4", "Click Start, then Help for assistance with Windows\nfeatures."],
   ];
-  w.setContent(
-    el(
-      "div",
-      { class: "welcome-content" },
-      el(
-        "aside",
-        { class: "welcome-brand" },
-        icon("windows", 32),
-        el("div", { class: "welcome-microsoft", text: "Microsoft" }),
-        el("div", { class: "welcome-windows", text: "Windows" }),
-        el("div", { class: "welcome-2000", text: "2000" }),
-        el("div", { class: "welcome-professional", text: "Professional" }),
-        el("div", {
-          class: "welcome-brand-bottom",
-          text: "Built on NT Technology",
-        }),
-      ),
-      el(
-        "div",
-        { class: "welcome-main" },
-        el("h1", { text: "Welcome to Windows 2000" }),
-        el("p", {
-          class: "welcome-intro",
-          text: "A new world of possibilities.",
-        }),
-        el(
-          "div",
-          { class: "welcome-tasks" },
-          ...tasks.map(([title, desc, app, args, ico]) =>
-            button(
-              [
-                icon(ico, 32),
-                el(
-                  "span",
-                  {},
-                  el("b", { text: title }),
-                  el("span", { text: desc }),
-                ),
-              ],
-              () => ctx.launch(app, args),
-              { class: "welcome-task" },
-            ),
-          ),
+  const at = (x, y) => ({ left: x + "px", top: y + "px" });
+  const menuItem = (label, hot, y, onclick) => {
+    const n = el("div", { class: "gs-item", style: at(13, y) });
+    n.append(el("u", { text: label[hot] }), label.slice(hot + 1));
+    if (hot) n.prepend(label.slice(0, hot));
+    n.addEventListener("click", onclick);
+    return n;
+  };
+  const items = [
+    menuItem("Register Now", 0, 120, () => show("start")),
+    menuItem("Discover Windows", 0, 145, () => show("discover")),
+    menuItem("Connect to the Internet", 0, 170, () => show("connect")),
+  ];
+  const pane = el("div", { class: "gs-pane" });
+  let timer = 0,
+    slide = 0;
+  const setItems = (states) =>
+    items.forEach((n, i) => n.classList.toggle("off", !states[i]));
+  const body = (title, lines, ...extra) => [
+    el("div", { class: "gs-title", text: title }),
+    el("div", { class: "gs-text", text: lines }),
+    ...extra,
+  ];
+  const img = (name, x, y, wd, ht) =>
+    el("img", { class: "gs-img", src: `/assets/ui/gs/${name}.png`, alt: "", style: { ...at(x, y), width: wd + "px", height: ht + "px" } });
+  function show(page) {
+    clearInterval(timer);
+    pane.replaceChildren();
+    if (page === "start") {
+      setItems([1, 0, 0]);
+      const draw = () => {
+        const [name, text] = SLIDES[slide];
+        pane.replaceChildren(...body("Getting Started", text, img(name, 190, 184, 230, 130)));
+      };
+      draw();
+      timer = setInterval(() => {
+        slide = (slide + 1) % SLIDES.length;
+        draw();
+      }, 5000);
+    } else if (page === "connect") {
+      setItems([1, 0, 1]);
+      const ie = el("div", { class: "gs-hit", style: { ...at(198, 228), width: "58px", height: "76px" }, title: "Internet Explorer" });
+      ie.addEventListener("dblclick", () => ctx.launch("ie"));
+      const oe = el("div", { class: "gs-hit", style: { ...at(258, 228), width: "62px", height: "76px" }, title: "Outlook Express" });
+      oe.addEventListener("dblclick", () => ctx.launch("mail"));
+      pane.replaceChildren(
+        ...body(
+          "Getting Started",
+          "Use Internet Explorer to find and view information from\nall sources including the Internet.\n\nUse Outlook Express to send and receive e-mail\nmessages.",
+          img("connect", 190, 222, 140, 92),
+          ie,
+          oe,
         ),
-      ),
-    ),
-    el(
-      "div",
-      { class: "welcome-footer" },
-      checkbox(
-        "Show this screen at startup",
-        ctx.settings.get("showWelcome"),
-        (v) => ctx.settings.set("showWelcome", v),
-      ),
-      button("Close", () => w.close(), { class: "default-button" }),
-    ),
+      );
+    } else {
+      setItems([1, 1, 1]);
+      pane.replaceChildren(
+        ...body(
+          "Getting Started",
+          "Click an icon twice quickly (double-click) to open a file,\nfolder, program, or drive.",
+          img("mouse", 280, 180, 110, 120),
+        ),
+      );
+    }
+  }
+  const exit = el("div", { class: "gs-exit", role: "button" }, el("u", { text: "E" }), "xit");
+  exit.addEventListener("click", () => w.close());
+  const box = el("span", { class: "gs-box" + (ctx.settings.get("showWelcome") ? " on" : "") });
+  const startup = el("div", { class: "gs-startup", role: "checkbox", tabindex: 0 }, box, el("span", { class: "gs-startup-label" }, el("u", { text: "S" }), "how this screen at startup"));
+  startup.addEventListener("click", () => {
+    const v = !box.classList.contains("on");
+    box.classList.toggle("on", v);
+    ctx.settings.set("showWelcome", v);
+  });
+  w.place(
+    el("img", { class: "gs-banner", src: "/assets/ui/gs/banner.png", alt: "" }),
+    el("div", { class: "gs-left" }),
+    el("div", { class: "gs-right" }),
+    ...items,
+    pane,
+    startup,
+    exit,
   );
+  w.addCleanup?.(() => clearInterval(timer));
+  const close = w.close.bind(w);
+  w.close = (...a) => (clearInterval(timer), close(...a));
+  show("start");
   return w;
 }
 export function openAbout(ctx) {

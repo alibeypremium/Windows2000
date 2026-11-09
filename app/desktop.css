@@ -5654,3 +5654,23 @@ button.selected:focus {
 .paint-swatch { width: 16px; height: 16px; min-height: 16px; padding: 0 !important; border: 0; box-sizing: border-box; box-shadow: inset 1px 1px #808080, inset 2px 2px #404040, inset -1px -1px #fff, inset -2px -2px #d4d0c8; }
 .paint-status > .status-panel { flex: none; width: 117px; }
 .paint-status > .status-panel:first-child { flex: 1; width: auto; }
+
+/* Getting Started with Windows 2000 (references r9-r14) */
+.ref-dialog .gs-banner { position: absolute; left: 3px; top: 23px; width: 476px; height: 92px; image-rendering: auto; }
+.gs-left { position: absolute; left: 3px; top: 115px; width: 179px; height: 228px; background: #a6caf0; }
+.gs-left::before, .gs-left::after { content: ""; position: absolute; left: 0; width: 100%; height: 1px; background: #336699; top: 24px; box-shadow: 0 25px #336699, 0 50px #336699; }
+.gs-left::after { display: none; }
+.gs-right { position: absolute; left: 183px; top: 115px; width: 297px; height: 228px; background: #fff; }
+.gs-item { padding-left: 4px; position: absolute; height: 24px; width: 170px; line-height: 24px; font: bold 11px Tahoma, "MS Sans Serif", sans-serif; letter-spacing: 0.1px; color: #000; cursor: default; margin-left: -4px; padding-left: 4px; z-index: 1; }
+.gs-item.off { color: #808080; text-shadow: 1px 1px #d6e8f8; }
+.gs-pane { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; }
+.gs-pane > * { pointer-events: auto; }
+.gs-title { position: absolute; left: 198px; top: 126px; font: 19.5px Tahoma, "MS Sans Serif", sans-serif; color: #336699; white-space: nowrap; }
+.gs-text { position: absolute; left: 198px; top: 153px; font: 11px/13px Tahoma, "MS Sans Serif", sans-serif; white-space: pre; letter-spacing: -0.1px; color: #000; }
+.gs-img { position: absolute; image-rendering: auto; }
+.gs-hit { position: absolute; }
+.gs-exit { position: absolute; left: 431px; top: 315px; width: 43px; height: 21px; box-sizing: border-box; border: 1px solid #808080; box-shadow: 1px 1px #fff; background: #fff; color: #808080; text-align: center; line-height: 19px; font: 11px/19px Tahoma, "MS Sans Serif", sans-serif; cursor: default; }
+.gs-startup { position: absolute; left: 11px; top: 324px; height: 14px; display: flex; align-items: center; font: 11px Tahoma, "MS Sans Serif", sans-serif; letter-spacing: -0.2px; z-index: 1; }
+.gs-box { width: 13px; height: 13px; box-sizing: border-box; background: #fff; box-shadow: inset 1px 1px #808080, inset 2px 2px #404040, inset -1px -1px #d4d0c8; position: relative; margin-right: 3px; }
+.gs-box.on::after { content: ""; position: absolute; left: 4px; top: 2px; width: 3px; height: 6px; border: solid #000; border-width: 0 2px 2px 0; transform: rotate(40deg); }
+.gs-startup-label { outline: 1px dotted #404040; padding: 0 1px; }

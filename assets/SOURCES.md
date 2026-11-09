@@ -362,3 +362,5 @@ Assets under `assets/ui/users/`, `assets/ui/power/`, `assets/ui/mouse/`, `assets
 Icons and banners for System Properties, Regional Options, Sounds and Multimedia, Scanners and Cameras, Shut Down Windows and the Scheduled Tasks folder were cropped from user-supplied Windows 2000 reference screenshots (`assets/ui/system`, `assets/ui/sounds`, `assets/ui/shutdown`, `assets/ui/explorer/header-tasks.png`, `assets/icons/w2k/ref-add-task-*`).
 
 Items to Synchronize (`assets/ui/sync/`): header, folder and page icons cropped from the user-supplied Windows 2000 reference screenshot r7.
+
+Address Book (`assets/ui/ab/`), WordPad (`assets/ui/wp/`), Imaging (`assets/ui/img/`), Paint tool icons (`assets/ui/paint/`) and Getting Started with Windows 2000 (`assets/ui/gs/`): cropped from the user-supplied Windows 2000 reference screenshots r1, r4, r6, r8 and r9–r14.
