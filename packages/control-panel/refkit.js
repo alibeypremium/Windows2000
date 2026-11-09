@@ -259,9 +259,10 @@ export const hslider = (x, y, w, value, { ticks = [], onchange, tickY = 15 } = {
     groove = el("div", { class: "groove" }),
     thumb = el("div", { class: "thumb" });
   thumb.innerHTML =
+    '<svg width="11" height="22" viewBox="0 0 11 22" shape-rendering="crispEdges"><polygon points="0,0 11,0 11,13 5.5,20 0,13" fill="#d4d0c8"/><path d="M0.5 0.5V13.5L5.5 19.5M0.5 0.5H9.5" stroke="#fff" fill="none"/><path d="M10.5 0.5V13.5L5.5 19.5" stroke="#404040" fill="none"/><path d="M9.5 1V13L5.5 18" stroke="#808080" fill="none"/></svg>';
     '<svg width="11" height="21" viewBox="0 0 11 21" shape-rendering="crispEdges"><polygon points="0,0 11,0 11,12 5.5,20 0,12" fill="#d4d0c8"/><polyline points="0,12 0,0 10,0" fill="none" stroke="#fff"/><polyline points="10,0 10,12 5,19 4,19" fill="none" stroke="#404040"/><polyline points="9,1 9,12 5,18" fill="none" stroke="#808080"/></svg>';
   Object.assign(n.style, { left: x + "px", top: y + "px", width: w + "px", height: "28px" });
-  groove.style.cssText = `left:0;top:9px;width:${w}px`;
+  groove.style.cssText = `left:0;top:7px;width:${w}px`;
   n.append(groove);
   for (const t of ticks) n.append(el("i", { class: "tick", style: { left: Math.round(t * (w - 1)) + "px", top: tickY + 8 + "px" } }));
   n.append(thumb);

@@ -15,6 +15,7 @@ import { openDateTimeProperties } from "./datetime.js";
 import { openUsersAndPasswords } from "./users.js";
 import { openPowerOptions } from "./power.js";
 import { openMouseProperties } from "./mouse.js";
+import { openKeyboardProperties } from "./keyboard.js";
 import { openFolderOptions } from "./folderopts.js";
 import {
   openAccessibility,
@@ -244,6 +245,7 @@ export function openControlPanel(ctx, { page = "system" } = {}) {
   if (page === "bde") return openBdeAdministrator(ctx);
   if (page === "internet") return openInternetProperties(ctx);
   if (page === "gaming") return openGamingOptions(ctx);
+  if (page === "keyboard") return openKeyboardProperties(ctx);
   if (page === "mouse") return openMouseProperties(ctx);
   if (page === "power") return openPowerOptions(ctx);
   if (page === "users") return openUsersAndPasswords(ctx);

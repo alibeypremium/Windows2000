@@ -5410,3 +5410,13 @@ button.selected:focus {
 .ms-row span { position: absolute; left: 5px; top: 10px; line-height: 13px; }
 .ms-row img { position: absolute; image-rendering: pixelated; }
 .ms-row.sel { background: #0a246a; color: #fff; }
+.kb-caret { position: absolute; width: 3px; height: 13px; background: #000; }
+.kb-row { position: absolute; height: 18px; white-space: nowrap; }
+.kb-row.sel { background: #0a246a; color: #fff; outline: 1px dotted #d4d0c8; outline-offset: -1px; }
+.kb-row .en { position: absolute; left: 11px; top: 2px; background: #fff; color: #000; padding: 0 1px; line-height: 14px; }
+.kb-row .lang { position: absolute; left: 26px; top: 2px; line-height: 14px; }
+.kb-row .lay { position: absolute; right: 3px; top: 2px; line-height: 14px; }
+.kb-hot { position: absolute; height: 20px; white-space: nowrap; }
+.kb-hot span { position: absolute; left: 2px; top: 4px; line-height: 13px; }
+.kb-hot .r { left: auto; right: 3px; }
+.kb-hot.sel { background: #0a246a; color: #fff; }
