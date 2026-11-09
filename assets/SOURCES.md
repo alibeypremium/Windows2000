@@ -381,3 +381,7 @@ Service list, descriptions and start-up types follow the default Windows 2000 Pr
 
 ## Games
 Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the original resources of winmine.exe (Windows 2000 SP4). Window layout constants follow the original client geometry; no reference screenshot was available.
+
+## Pinball (3D Pinball for Windows - Space Cadet)
+- `assets/games/pinball/pinball.dat`, `sound*.wav`, `pinball.mid`: from the Windows 2000 CD (I386).
+- `assets/games/pinball/pinball.wasm`: table logic from the MIT-licensed SpaceCadetPinball reimplementation (`pinball-wasm/`, LICENSE-SpaceCadetPinball), compiled with wasi-sdk (`pinball-wasm/build.sh`). SDL/ImGui are replaced by a small browser layer (`pinball-wasm/src/platform.cpp`, `winmain.cpp`); the JS host is `packages/games/pinball.js`.

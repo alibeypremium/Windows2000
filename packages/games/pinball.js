@@ -1,461 +1,236 @@
-import { el, button, statusBar } from "../ui/index.js";
-import { GraphicsSurface } from "../rendering/index.js";
+// 3D Pinball for Windows - Space Cadet. The table logic is the open-source reimplementation
+// (pinball-wasm/, compiled to WebAssembly); PINBALL.DAT and the sounds come from the Windows 2000 CD.
+import { el, separator } from "../ui/index.js";
+
+const BASE = "/assets/games/pinball/";
+const SOUNDS = "sound1 sound104 sound105 sound108 sound111 sound112 sound12 sound13 sound131 sound136 sound14 sound16 sound17 sound18 sound181 sound19 sound20 sound21 sound22 sound24 sound240 sound243 sound25 sound26 sound27 sound28 sound29 sound3 sound30 sound34 sound35 sound36 sound38 sound39 sound4 sound42 sound43 sound45 sound49 sound49d sound5 sound50 sound528 sound53 sound54 sound55 sound560 sound563 sound57 sound58 sound6 sound65 sound68 sound7 sound713 sound735 sound8 sound827 sound9 sound999".split(" ");
+let shared = null;
+
+async function loadResources() {
+  if (shared) return shared;
+  const fetchBuf = async (n) => (await fetch(BASE + n)).arrayBuffer();
+  const names = ["pinball.dat", ...SOUNDS.map((n) => n + ".wav")];
+  const [wasm, ...bufs] = await Promise.all([
+    fetch(BASE + "pinball.wasm").then((r) => r.arrayBuffer()),
+    ...names.map((n) => fetchBuf(n).catch(() => null)),
+  ]);
+  const files = new Map();
+  names.forEach((n, i) => bufs[i] && files.set(n, new Uint8Array(bufs[i])));
+  shared = { module: await WebAssembly.compile(wasm), files };
+  return shared;
+}
+
 export async function openPinball(ctx) {
-  const w = ctx.wm.create({
-      title: "3D Pinball for Windows",
-      icon: "pinball",
-      width: 700,
-      height: 620,
-      appId: "pinball",
-    }),
-    bitmap = document.createElement("canvas");
-  bitmap.width = 460;
-  bitmap.height = 620;
-  const c = bitmap.getContext("2d");
-  const canvas = el("canvas", {
-      width: 460,
-      height: 620,
-      "aria-label": "Pinball table",
-    }),
-    renderer = new GraphicsSurface(canvas);
-  await renderer.init();
-  let score = 0,
-    balls = 3,
-    ball = { x: 436, y: 565, vx: 0, vy: 0 },
-    launched = false,
-    charge = 0,
-    paused = false,
-    last = 0,
-    accumulator = 0,
-    frame = 0,
-    keys = { left: false, right: false, space: false },
-    leftAngle = 0.45,
-    rightAngle = Math.PI - 0.45;
-  const bumpers = [
-    { x: 180, y: 150, r: 25, value: 100, flash: 0 },
-    { x: 280, y: 170, r: 25, value: 100, flash: 0 },
-    { x: 226, y: 236, r: 28, value: 150, flash: 0 },
-    { x: 125, y: 324, r: 17, value: 50, flash: 0 },
-    { x: 330, y: 332, r: 17, value: 50, flash: 0 },
-  ];
-  const scoreDisplay = el("div", { class: "pinball-score", text: "000000" }),
-    ballDisplay = el("div", {
-      class: "pinball-ball-count",
-      text: "Ball 1 of 3",
-    }),
-    info = el(
-      "div",
-      { class: "pinball-info" },
-      el("div", { class: "pinball-heading", text: "SPACE\nCADET" }),
-      el("div", { class: "pinball-caption", text: "SCORE" }),
-      scoreDisplay,
-      ballDisplay,
-      el("div", {
-        class: "pinball-controls-help",
-        text: "Z / Left Arrow\nLeft flipper\n\n/ / Right Arrow\nRight flipper\n\nHold Space\nLaunch ball\n\nX\nNudge table",
-      }),
-      button("New Game", () => reset()),
-      button("Pause", () => (paused = !paused)),
-    );
-  const launch = () => {
-    if (!launched && balls > 0) {
-      ball.vy = -540 - Math.min(charge, 1) * 500;
-      ball.vx = -25;
-      launched = true;
-      charge = 0;
-      ctx.sound.play("click");
-    }
-  };
-  const reset = () => {
-    score = 0;
-    balls = 3;
-    launched = false;
-    paused = false;
-    ball = { x: 436, y: 565, vx: 0, vy: 0 };
-    scoreDisplay.textContent = "000000";
-    ballDisplay.textContent = "Ball 1 of 3";
-  };
-  const lineCollision = (ax, ay, bx, by, boost = 1) => {
-    const dx = bx - ax,
-      dy = by - ay,
-      t = Math.max(
-        0,
-        Math.min(
-          1,
-          ((ball.x - ax) * dx + (ball.y - ay) * dy) / (dx * dx + dy * dy),
-        ),
-      ),
-      cx = ax + t * dx,
-      cy = ay + t * dy,
-      nx = ball.x - cx,
-      ny = ball.y - cy,
-      len = Math.hypot(nx, ny);
-    if (len < 11 && len > 0.001) {
-      const ux = nx / len,
-        uy = ny / len;
-      ball.x = cx + ux * 11;
-      ball.y = cy + uy * 11;
-      const dot = ball.vx * ux + ball.vy * uy;
-      if (dot < 0) {
-        ball.vx -= 1.7 * dot * ux;
-        ball.vy -= 1.7 * dot * uy;
-      }
-      if (boost > 1) {
-        ball.vx += ux * 150;
-        ball.vy -= 420;
-      }
-    }
-  };
-  const step = (dt) => {
-    if (paused) return;
-    leftAngle += ((keys.left ? -0.5 : 0.45) - leftAngle) * Math.min(1, dt * 24);
-    rightAngle +=
-      ((keys.right ? Math.PI + 0.5 : Math.PI - 0.45) - rightAngle) *
-      Math.min(1, dt * 24);
-    if (!launched) {
-      if (keys.space) charge = Math.min(1, charge + dt);
-      return;
-    }
-    ball.vy += 380 * dt;
-    ball.vx *= 0.9997;
-    ball.vy *= 0.9997;
-    ball.x += ball.vx * dt;
-    ball.y += ball.vy * dt;
-    if (ball.x < 26) {
-      ball.x = 26;
-      ball.vx = Math.abs(ball.vx) * 0.86;
-    }
-    if (ball.x > 446) {
-      ball.x = 446;
-      ball.vx = -Math.abs(ball.vx) * 0.86;
-    }
-    if (ball.y < 29) {
-      ball.y = 29;
-      ball.vy = Math.abs(ball.vy) * 0.82;
-      ball.vx -= 100;
-    }
-    if (ball.x > 414 && ball.y > 120) lineCollision(415, 120, 415, 590);
-    lineCollision(27, 450, 115, 535);
-    lineCollision(398, 450, 315, 535);
-    lineCollision(36, 86, 130, 31);
-    lineCollision(390, 84, 315, 31);
-    lineCollision(
-      125,
-      542,
-      125 + 82 * Math.cos(leftAngle),
-      542 + 82 * Math.sin(leftAngle),
-      keys.left ? 2 : 1,
-    );
-    lineCollision(
-      305,
-      542,
-      305 + 82 * Math.cos(rightAngle),
-      542 + 82 * Math.sin(rightAngle),
-      keys.right ? 2 : 1,
-    );
-    for (const bumper of bumpers) {
-      const dx = ball.x - bumper.x,
-        dy = ball.y - bumper.y,
-        len = Math.hypot(dx, dy),
-        r = bumper.r + 7;
-      if (len < r && len > 0) {
-        const nx = dx / len,
-          ny = dy / len;
-        ball.x = bumper.x + nx * r;
-        ball.y = bumper.y + ny * r;
-        const v = ball.vx * nx + ball.vy * ny;
-        ball.vx -= 2 * v * nx;
-        ball.vy -= 2 * v * ny;
-        ball.vx += nx * 120;
-        ball.vy += ny * 120;
-        score += bumper.value;
-        bumper.flash = 0.16;
-        scoreDisplay.textContent = String(score).padStart(6, "0");
-      }
-      bumper.flash = Math.max(0, bumper.flash - dt);
-    }
-    if (ball.y > 650) {
-      balls--;
-      ballDisplay.textContent = balls
-        ? "Ball " + (4 - balls) + " of 3"
-        : "GAME OVER";
-      if (!balls) {
-        paused = true;
-        ctx.sound.play("error");
-        const best = ctx.settings.get("pinballBest") || 0;
-        if (score > best) ctx.settings.set("pinballBest", score);
-      } else {
-        launched = false;
-        ball = { x: 436, y: 565, vx: 0, vy: 0 };
-      }
-    }
-    const speed = Math.hypot(ball.vx, ball.vy);
-    if (speed > 1200) {
-      ball.vx *= 1200 / speed;
-      ball.vy *= 1200 / speed;
-    }
-  };
-  const draw = () => {
-    c.fillStyle = "#10142c";
-    c.fillRect(0, 0, 460, 620);
-    c.fillStyle = "#17294b";
-    c.beginPath();
-    c.roundRect(14, 15, 397, 590, 60);
-    c.fill();
-    c.strokeStyle = "#8c9bb5";
-    c.lineWidth = 6;
-    c.stroke();
-    c.strokeStyle = "#4a68a0";
-    c.lineWidth = 1;
-    for (let i = 0; i < 14; i++) {
-      c.beginPath();
-      c.moveTo(25, 65 + i * 36);
-      c.lineTo(400, 65 + i * 36);
-      c.stroke();
-    }
-    for (let i = 0; i < 11; i++) {
-      c.beginPath();
-      c.moveTo(20 + i * 38, 30);
-      c.lineTo(20 + i * 38, 600);
-      c.stroke();
-    }
-    c.font = "bold 22px Georgia";
-    c.textAlign = "center";
-    c.fillStyle = "#b2c1e9";
-    c.fillText("SPACE CADET", 220, 76);
-    c.font = "10px Tahoma";
-    c.fillStyle = "#9dc3e9";
-    c.fillText("PINBALL", 220, 95);
-    c.strokeStyle = "#526da3";
-    c.lineWidth = 15;
-    c.beginPath();
-    c.ellipse(215, 242, 164, 118, -0.2, Math.PI, Math.PI * 1.9);
-    c.stroke();
-    c.strokeStyle = "#9ca9c4";
-    c.lineWidth = 2;
-    c.stroke();
-    c.fillStyle = "#282448";
-    c.fillRect(416, 30, 34, 579);
-    c.strokeStyle = "#9da6c1";
-    c.lineWidth = 3;
-    c.beginPath();
-    c.moveTo(416, 125);
-    c.lineTo(416, 600);
-    c.stroke();
-    for (const b of bumpers) {
-      c.shadowBlur = b.flash ? 20 : 0;
-      c.shadowColor = "#a2ecff";
-      c.fillStyle = b.flash ? "#d4f7ff" : "#9b336d";
-      c.beginPath();
-      c.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-      c.fill();
-      c.shadowBlur = 0;
-      c.strokeStyle = "#d6cddb";
-      c.lineWidth = 3;
-      c.stroke();
-      c.fillStyle = "#394371";
-      c.beginPath();
-      c.arc(b.x, b.y, b.r * 0.64, 0, Math.PI * 2);
-      c.fill();
-      c.fillStyle = "#ffd384";
-      c.font = "bold 13px Tahoma";
-      c.fillText("★", b.x, b.y + 5);
-    }
-    const rail = (ax, ay, bx, by, color = "#b87656", width = 9) => {
-      c.lineCap = "round";
-      c.strokeStyle = color;
-      c.lineWidth = width;
-      c.beginPath();
-      c.moveTo(ax, ay);
-      c.lineTo(bx, by);
-      c.stroke();
-    };
-    rail(27, 450, 115, 535);
-    rail(398, 450, 315, 535);
-    rail(36, 86, 130, 31, "#bbc6d4", 5);
-    rail(390, 84, 315, 31, "#bbc6d4", 5);
-    rail(
-      125,
-      542,
-      125 + 82 * Math.cos(leftAngle),
-      542 + 82 * Math.sin(leftAngle),
-      "#f8d18c",
-      16,
-    );
-    rail(
-      305,
-      542,
-      305 + 82 * Math.cos(rightAngle),
-      542 + 82 * Math.sin(rightAngle),
-      "#f8d18c",
-      16,
-    );
-    c.fillStyle = "#a885c2";
-    for (const [x, y] of [
-      [66, 210],
-      [348, 238],
-      [74, 398],
-      [352, 406],
-    ]) {
-      c.fillRect(x, y, 8, 22);
-      c.fillStyle = "#eed477";
-      c.fillRect(x + 1, y + 2, 6, 5);
-      c.fillStyle = "#a885c2";
-    }
-    c.font = "bold 18px Tahoma";
-    c.fillStyle = "#597bae";
-    c.fillText("CADET", 216, 401);
-    c.font = "10px Tahoma";
-    c.fillText("COMPLETE THE MISSION", 216, 419);
-    const gradient = c.createRadialGradient(
-      ball.x - 2,
-      ball.y - 3,
-      1,
-      ball.x,
-      ball.y,
-      8,
-    );
-    gradient.addColorStop(0, "#fff");
-    gradient.addColorStop(0.4, "#dce5ef");
-    gradient.addColorStop(1, "#647386");
-    c.fillStyle = gradient;
-    c.beginPath();
-    c.arc(ball.x, ball.y, 7, 0, Math.PI * 2);
-    c.fill();
-    c.fillStyle = "#d3a355";
-    c.fillRect(425, 594 + charge * 10, 19, 8);
-    if (!launched && !paused) {
-      c.font = "bold 12px Tahoma";
-      c.fillStyle = "#fff";
-      c.fillText("HOLD SPACE TO LAUNCH", 212, 470);
-    }
-    if (paused) {
-      c.fillStyle = "rgba(0,0,0,.5)";
-      c.fillRect(0, 280, 460, 60);
-      c.fillStyle = "#fff";
-      c.font = "bold 20px Tahoma";
-      c.fillText(balls ? "PAUSED" : "GAME OVER", 230, 318);
-    }
-    renderer.draw(bitmap);
-  };
-  const animate = (t) => {
-    if (w.closed) return;
-    if (!last) last = t;
-    accumulator += Math.min(0.05, (t - last) / 1000);
-    last = t;
-    if (!w.minimized && !document.hidden) {
-      while (accumulator >= 1 / 120) {
-        step(1 / 120);
-        accumulator -= 1 / 120;
-      }
-      draw();
-    } else accumulator = 0;
-    frame = requestAnimationFrame(animate);
-  };
-  const key = (e, down) => {
-    if (["ArrowLeft", "z", "Z"].includes(e.key)) {
-      e.preventDefault();
-      keys.left = down;
-    }
-    if (["ArrowRight", "/"].includes(e.key)) {
-      e.preventDefault();
-      keys.right = down;
-    }
-    if (e.code === "Space") {
-      e.preventDefault();
-      keys.space = down;
-      if (!down) launch();
-    }
-    if (down && e.key.toLowerCase() === "x" && launched) {
-      ball.vy -= 80;
-      ball.vx += (Math.random() - 0.5) * 100;
-    }
-    if (down && e.key === "F2") {
-      e.preventDefault();
-      reset();
-    }
-  };
-  w.el.addEventListener("keydown", (e) => key(e, true));
-  w.el.addEventListener("keyup", (e) => key(e, false));
-  const blur = () => {
-    keys = { left: false, right: false, space: false };
-  };
-  window.addEventListener("blur", blur);
-  const touch = el("div", { class: "pinball-touch-controls" });
-  for (const [label, k] of [
-    ["Left", "left"],
-    ["Launch", "space"],
-    ["Right", "right"],
-  ]) {
-    const b = button(label, () => {});
-    b.addEventListener("pointerdown", (e) => {
-      e.preventDefault();
-      b.setPointerCapture(e.pointerId);
-      keys[k] = true;
-    });
-    b.addEventListener("pointerup", () => {
-      keys[k] = false;
-      if (k === "space") launch();
-    });
-    b.addEventListener("pointercancel", () => (keys[k] = false));
-    touch.append(b);
+  const w = ctx.wm.create({ title: "3D Pinball for Windows - Space Cadet", icon: "pinball", width: 608, height: 467, appId: "pinball" });
+  const canvas = el("canvas", { width: 600, height: 416, tabindex: "0", style: "display:block;background:#000;outline:none" });
+  const c2 = canvas.getContext("2d");
+  const root = el("div", { style: "background:#000;width:100%;height:100%;overflow:hidden" }, canvas);
+  w.setContent(root);
+
+  let res;
+  try { res = await loadResources(); } catch (e) {
+    ctx.dialogs.message("Could not load game data.\n" + e.message, { title: "3D Pinball for Windows", icon: "error" });
+    w.close();
+    return w;
   }
+
+  const store = ctx.settings.get("pinball") || {};
+  const save = () => ctx.settings.set("pinball", store);
+  let inst, mem, alive = true, textboxes = [];
+  const dec = new TextDecoder();
+  const cstr = (p) => { const u = new Uint8Array(mem.buffer); let e = p; while (u[e]) e++; return dec.decode(u.subarray(p, e)); };
+  const lower = (s) => s.replace(/^[./]+/, "").toLowerCase();
+
+  // audio
+  const AC = window.AudioContext || window.webkitAudioContext;
+  let ac = null;
+  const sndIds = [], sndBufs = [], channels = [];
+  const audioLoad = (path) => {
+    const name = lower(path);
+    let id = sndIds.indexOf(name);
+    if (id >= 0) return id;
+    const data = res.files.get(name);
+    if (!data) return -1;
+    id = sndIds.push(name) - 1;
+    ac ||= new AC();
+    ac.decodeAudioData(data.slice().buffer).then((b) => (sndBufs[id] = b)).catch(() => {});
+    return id;
+  };
+  const audioPlay = (id, ch) => {
+    const b = sndBufs[id];
+    if (!b || !ac) return;
+    if (ac.state === "suspended") ac.resume();
+    try { channels[ch]?.stop(); } catch {}
+    const s = ac.createBufferSource();
+    s.buffer = b;
+    s.connect(ac.destination);
+    s.start();
+    channels[ch] = s;
+  };
+
+  // WASI: a tiny read-only file system
+  const fds = new Map();
+  let nextFd = 4;
+  const view = () => new DataView(mem.buffer);
+  const wasi = {
+    fd_prestat_get: (fd, buf) => (fd === 3 ? (view().setUint8(buf, 0), view().setUint32(buf + 4, 1, true), 0) : 8),
+    fd_prestat_dir_name: (fd, p, n) => { new Uint8Array(mem.buffer)[p] = 47; return 0; },
+    fd_fdstat_get: (fd, buf) => {
+      const v = view();
+      v.setUint8(buf, fd === 3 ? 3 : fds.has(fd) ? 4 : 2);
+      v.setUint16(buf + 2, 0, true);
+      v.setBigUint64(buf + 8, 0xffffffffffffffffn, true);
+      v.setBigUint64(buf + 16, 0xffffffffffffffffn, true);
+      return 0;
+    },
+    fd_fdstat_set_flags: () => 0,
+    fd_close: (fd) => (fds.delete(fd), 0),
+    path_open: (dir, df, p, n, of, rb, ri, ff, out) => {
+      const name = lower(dec.decode(new Uint8Array(mem.buffer, p, n)));
+      const data = res.files.get(name);
+      if (!data) return 44;
+      fds.set(nextFd, { data, pos: 0 });
+      view().setUint32(out, nextFd++, true);
+      return 0;
+    },
+    fd_read: (fd, iov, cnt, outp) => {
+      const f = fds.get(fd);
+      if (!f) return 8;
+      const v = view(), u = new Uint8Array(mem.buffer);
+      let total = 0;
+      for (let i = 0; i < cnt; i++) {
+        const ptr = v.getUint32(iov + i * 8, true), len = v.getUint32(iov + i * 8 + 4, true);
+        const k = Math.min(len, f.data.length - f.pos);
+        u.set(f.data.subarray(f.pos, f.pos + k), ptr);
+        f.pos += k; total += k;
+        if (k < len) break;
+      }
+      v.setUint32(outp, total, true);
+      return 0;
+    },
+    fd_seek: (fd, off, whence, outp) => {
+      const f = fds.get(fd);
+      if (!f) return 8;
+      const o = Number(off);
+      f.pos = whence === 0 ? o : whence === 1 ? f.pos + o : f.data.length + o;
+      view().setBigUint64(outp, BigInt(f.pos), true);
+      return 0;
+    },
+    fd_write: (fd, iov, cnt, outp) => {
+      const v = view();
+      let total = 0;
+      for (let i = 0; i < cnt; i++) total += v.getUint32(iov + i * 8 + 4, true);
+      v.setUint32(outp, total, true);
+      return 0;
+    },
+    proc_exit: () => {},
+  };
+  const env = {
+    js_audio_load: (p) => audioLoad(cstr(p)),
+    js_audio_play: audioPlay,
+    js_audio_halt: (ch) => { try { channels[ch]?.stop(); } catch {} },
+    js_ticks: () => performance.now(),
+    js_message: (t, m) => ctx.dialogs.message(cstr(m), { title: cstr(t), icon: "error" }),
+    js_setting_get: (k, out, cap) => {
+      const v = store[cstr(k)];
+      if (v == null) return 0;
+      const b = new TextEncoder().encode(String(v));
+      const n = Math.min(b.length, cap - 1);
+      const u = new Uint8Array(mem.buffer);
+      u.set(b.subarray(0, n), out);
+      u[out + n] = 0;
+      return n;
+    },
+    js_setting_set: (k, v) => { store[cstr(k)] = cstr(v); save(); },
+    js_textbox: (id, x, y, ww, hh, t) => textboxes.push({ x, y, w: ww, h: hh, t: cstr(t) }),
+  };
+  inst = await WebAssembly.instantiate(res.module, { env, wasi_snapshot_preview1: wasi });
+  mem = inst.exports.memory;
+  inst.exports._initialize?.();
+  const x = inst.exports;
+  if (x.pb_start(0)) {
+    ctx.dialogs.message("The .dat file is missing.", { title: "Could not load game data", icon: "error" });
+    w.close();
+    return w;
+  }
+  const W = x.pb_state(3), H = x.pb_state(4);
+  canvas.width = W; canvas.height = H;
+  const img = c2.createImageData(W, H);
+
+  const draw = () => {
+    const ptr = x.pb_pixels();
+    if (!ptr) return;
+    const src = new Uint8Array(mem.buffer, ptr, W * H * 4), dst = img.data;
+    for (let i = 0; i < src.length; i += 4) {
+      dst[i] = src[i + 2]; dst[i + 1] = src[i + 1]; dst[i + 2] = src[i]; dst[i + 3] = 255;
+    }
+    c2.putImageData(img, 0, 0);
+    c2.fillStyle = "#fff";
+    c2.font = "bold 13px Tahoma, sans-serif";
+    c2.textBaseline = "top";
+    for (const t of textboxes) c2.fillText(t.t, t.x + 2, t.y + 2, t.w - 4);
+    textboxes = [];
+  };
+
+  const STEP = 1000 / 120;
+  let last = performance.now(), acc = 0;
+  const loop = (now) => {
+    if (!alive) return;
+    acc = Math.min(acc + now - last, STEP * 10);
+    last = now;
+    while (acc >= STEP) { textboxes = []; x.pb_frame(STEP); acc -= STEP; }
+    draw();
+    requestAnimationFrame(loop);
+  };
+  requestAnimationFrame(loop);
+  w.addCleanup(() => { alive = false; for (const ch of channels) try { ch?.stop(); } catch {} ac?.close(); });
+
+  // input
+  const KEYS = { Escape: 27, Enter: 13, " ": 32, ArrowUp: 0x40000052, ArrowDown: 0x40000051, ArrowLeft: 0x40000050, ArrowRight: 0x4000004f, Slash: 47 };
+  const sym = (e) => {
+    if (e.key.length === 1 && e.key !== " ") return e.key.toLowerCase().charCodeAt(0);
+    if (/^F\d+$/.test(e.key)) return 0x40000039 + Number(e.key.slice(1));
+    return KEYS[e.key] ?? 0;
+  };
+  const keyHandler = (down) => (e) => {
+    if (e.key === "F1" || (e.key === "F4" && e.altKey)) return;
+    const s = sym(e);
+    if (!s) return;
+    if (down && e.repeat) return e.preventDefault();
+    if (down && s === 13) x.pb_command(6, 0);
+    else if (s === 0x4000003b || s === 0x4000003c || s === 0x4000003e || s === 0x4000003f) { if (down) { x.pb_command(s === 0x4000003b ? 0 : s === 0x4000003c ? 1 : s === 0x4000003e ? 2 : 3, 0); e.preventDefault(); } return; }
+    x.pb_key(down ? 1 : 0, s);
+    e.preventDefault();
+  };
+  w.el.addEventListener("keydown", keyHandler(true));
+  w.el.addEventListener("keyup", keyHandler(false));
+  const btn = (e) => (e.button === 0 ? 1 : e.button === 1 ? 2 : 3);
+  canvas.addEventListener("mousedown", (e) => { canvas.focus(); x.pb_mouse(1, btn(e)); e.preventDefault(); });
+  canvas.addEventListener("mouseup", (e) => x.pb_mouse(0, btn(e)));
+  canvas.addEventListener("contextmenu", (e) => e.preventDefault());
+  canvas.focus();
+
+  const players = (n) => ({ label: `${n} Player${n > 1 ? "s" : ""}`, checked: x.pb_state(1) === n, action: () => x.pb_command(4, 407 + n) });
   w.setMenu({
     Game: [
-      { label: "New Game", shortcut: "F2", action: reset },
-      { label: "Pause / Resume", action: () => (paused = !paused) },
-      {
-        label: "High Scores...",
-        action: () =>
-          ctx.dialogs.message(
-            "Best score: " + (ctx.settings.get("pinballBest") || 0),
-            { title: "High Scores", icon: "games" },
-          ),
-      },
+      { label: "New Game", shortcut: "F2", action: () => x.pb_command(0, 0) },
+      { label: "Launch Ball", shortcut: "Enter", action: () => x.pb_command(6, 0) },
+      { label: "Pause/Resume Game", shortcut: "F3", action: () => x.pb_command(1, 0) },
+      separator(),
+      { label: "Demo", action: () => x.pb_command(7, 0) },
+      separator(),
       { label: "Exit", action: () => w.close() },
     ],
-    Options: [
-      {
-        label: "Sound",
-        checked: !ctx.settings.get("muted"),
-        action: () => ctx.settings.set("muted", !ctx.settings.get("muted")),
-      },
+    Options: () => [
+      players(1), players(2), players(3), players(4),
+      separator(),
+      { label: "Sounds", shortcut: "F5", checked: !!x.pb_state(0), action: () => x.pb_command(2, 0) },
     ],
     Help: [
-      {
-        label: "Player Controls",
-        action: () =>
-          ctx.dialogs.message(
-            "Z or Left Arrow: left flipper\n/ or Right Arrow: right flipper\nHold and release Space: launch\nX: nudge\nF2: new game\n\nHit bumpers for points. Keep the ball above the drain. Three balls per game.",
-            { title: "Pinball Help", icon: "games" },
-          ),
-      },
-      {
-        label: "About Pinball",
-        action: () =>
-          ctx.dialogs.message(
-            "Pinball\n\nFixed-step ball physics and GPU presentation.\n\nThis browser table is a recreation. Original Space Cadet table artwork, mission scripting, and exact physics are not included.\n\nRendering: " +
-              renderer.backend,
-            { title: "About Pinball", icon: "games" },
-          ),
-      },
+      { label: "Help Topics", shortcut: "F1", action: () => ctx.launch("help", { topic: "pinball" }) },
+      separator(),
+      { label: "About Pinball...", action: () => ctx.openAbout?.("Pinball", "pinball", "") ?? ctx.dialogs.message("3D Pinball for Windows - Space Cadet", { title: "About Pinball", icon: "pinball" }) },
     ],
   });
-  w.setContent(
-    el(
-      "div",
-      { class: "pinball-main" },
-      el("div", { class: "pinball-table" }, renderer.canvas),
-      info,
-    ),
-    touch,
-  );
-  frame = requestAnimationFrame(animate);
-  w.addCleanup(() => {
-    cancelAnimationFrame(frame);
-    renderer.dispose();
-    window.removeEventListener("blur", blur);
-  });
-  w.el.focus();
   return w;
 }
