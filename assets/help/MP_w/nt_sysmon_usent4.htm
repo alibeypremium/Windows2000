@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+
+<META NAME="MS-HAID" CONTENT="a_nt_sysmon_usent4"> 
+<TITLE>Use Windows&nbsp;NT&nbsp;4.0 Performance Monitor settings files</TITLE>
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+</HEAD>
+
+<BODY>
+
+<P CLASS="proclabel">To use Windows&nbsp;NT&nbsp;4.0 Performance Monitor settings files</P>
+<UL>
+<LI>At a command prompt, type
+<P><B>perfmon.exe</B> <I>file_name</I></P>
+<P>where <I>file_name</I> is the name of the settings file you want to use.
+</P>
+
+</LI>
+</UL>
+<P class="note">Notes</P>
+<UL>
+    <LI>
+    This procedure will open a Windows&nbsp;2000 Performance console configured with the settings from the Windows&nbsp;NT&nbsp;4.0 Performance Monitor settings file.
+
+    </LI>
+    <LI>
+    This procedure works for the following types of Windows&nbsp;NT&nbsp;4.0 Performance Monitor settings files: chart (.pmc), report (.pmr), alert (.pma), and log (.pml).
+
+    </LI>
+
+	<LI>
+	To display the Windows&nbsp;NT&nbsp;4.0 settings file in System Monitor, the system temporarily converts the file for use with System Monitor but discards the converted version after the console starts. If you want to save the settings file for permanent use with System Monitor, 
+type the following command: 
+<P><B>perfmon.exe /HTMLFILE:</B><I>converted_file</I> <I>settings_file</I></P> 
+<P>where <I>converted_file</I> is the name you are giving to the converted file and <I>settings_file</I> is the name of the original Windows&nbsp;NT&nbsp;4.0 settings file.</P>	</LI>
+   
+</UL>
+
+</BODY>
+</HTML>
+
+
+

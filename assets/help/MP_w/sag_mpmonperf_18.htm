@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+<META NAME="MS-HAID" CONTENT="a_sag_mpmonperf_18">
+<TITLE>Monitoring processor activity</TITLE>
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+
+</HEAD>
+
+<BODY>
+<H1><A NAME="sag_mpmonperf_dtzx">Monitoring processor activity</A></H1>
+<P>
+Monitoring the Processor and System object counters provides valuable information about the utilization of your processors and helps you determine whether or not a bottleneck exists. You will want to include the following: </P>
+<UL>
+<LI>Processor\ %&nbsp;Processor Time for processor usage.
+<P>Optionally, you can also monitor Processor\ %&nbsp;User Time and %&nbsp;Privileged Time along with %&nbsp;Processor Time for more detail.</P></LI>
+<LI>System\ Processor Queue Length for bottleneck detection.</LI>
+</UL>
+<H2><A NAME="H2_106446094">Observing processor usage values</A></H2>
+<P>
+To gauge the activity of the processor, check the Processor\ %&nbsp;Processor Time counter. This counter shows the percentage of elapsed time that a processor is busy executing a nonidle thread. </P>
+<P>
+When you examine processor usage, consider the role of the computer and the type of work being done. Depending on what the computer is doing, high processor values could mean either that the system is efficiently handling a heavy workload or that it is struggling to keep up. For example, if you are monitoring a user's computer, and that computer is used for computation, the computational program might easily use 100 percent of the processor's time. Even if this causes the performance of other applications on that computer to suffer, this can be addressed by changing workload.</P>
+<P>
+On the other hand, values around 100 percent on a server computer that processes many client requests indicate that processes are queuing up, waiting for processor time, and causing a bottleneck. Such a sustained high level of processor usage is unacceptable for a server.</P>
+
+<H2><A NAME="H2_106447224">Investigating processor bottlenecks</A></H2>
+<P>
+A processor bottleneck develops when threads of a process require more processor cycles than are available. Long processor queues can build up and system response suffers. The two most common causes of processor bottlenecks are CPU-bound programs and drivers or subsystem components (typically disk or network components) that generate excessive interrupts. 
+</P>
+<P>
+To determine whether a processor bottleneck exists due to high levels of demand for processor time, check the value of the System\ Processor Queue Length counter. A queue of two or more items indicates a bottleneck. If more than a few program processes are contending for most of the processor's time, installing a faster processor will improve throughput. An additional processor can help if you are running multithreaded processes, but be aware that scaling to additional processors may have limited benefits. See <A ID="specLoc" HREF="ms-its:mpconcepts.chm::/sag_mpmonperf_18.htm#multiprocessor">Monitoring multiprocessor systems</A> for more information.</P>
+<P>
+In addition, the Server Work Queues\ Queue Length counter, which tracks the current length of the server work queue for the computer, can reveal processor bottlenecks. A sustained queue length greater than 4 indicates possible processor congestion. This counter is a value at a specific time, not an average over time.</P>
+<P>
+To determine whether interrupt activity is causing a bottleneck, watch the values of the Processor\ Interrupts/sec counter, which measures the rate of service requests from input/output (I/O) devices. If this counter value increases dramatically without a corresponding increase in system activity, it can indicate a hardware problem.</P>
+
+<P>You can also monitor Processor\ %&nbsp;Interrupt Time for an indirect indicator of the activity of disk drivers, network adapters, and other devices that generate interrupts.
+</P>
+<P CLASS="note">Note</p>
+<UL>
+<LI>
+To detect hardware problems that may affect processor performance, such as IRQ conflicts, watch the values of System\ File Control Bytes/second.
+</LI>
+</UL>
+
+<H2><A NAME="multiprocessor">Monitoring multiprocessor systems</A></H2>
+<P>
+To observe the efficiency of a multiprocessor computer, use the following additional counters.</P>
+<TABLE>
+<TR>
+<TH>Counter</TH>
+<TH>Description</TH>
+</TR>
+<TR>
+<TD>Process\ %&nbsp;Processor Time</TD>
+<TD>The sum of processor time on each processor for all threads of the process.</TD>
+</TR>
+<TR>
+<TD>Processor(_Total)\ %&nbsp;Processor Time</TD>
+<TD>A measure of processor activity for all processors in the computer.<BR>
+This counter sums the average nonidle time of all processors during the sample interval and divides it by the number of processors.
+<BR>
+For example, if all processors are busy for half of the sample interval, on average, it displays 50%. It also displays 50% if half of the processors are busy for the entire interval, and the others are idle.
+</TD>
+</TR>
+<TR>
+<TD>Thread\ %&nbsp;Processor Time</TD>
+<TD>The amount of processor time for a thread.</TD>
+</TR>
+</TABLE>
+
+<H2><A NAME="H2_106450505">Managing processor affinity on multiprocessor systems</A></H2>
+<P>
+If you want to assign a particular process or program to a single processor to improve its performance at the expense of other processes, in Task Manager, click <B>Set Affinity</B>. This option is available only on multiprocessor systems.</P>
+<P>
+Controlling processor affinity can improve performance by reducing the number of processor cache flushes as threads move from one processor to another. This might be a good option for dedicated file servers. However, be aware that dedicating a program to a particular processor may not allow other program threads to migrate to the least-busy processor.
+</P>
+<P>You may also want to control processor affinity for interrupts generated by disk or network adapters. A tool provided on the <A ID="altLoc" HREF="CHM=NTSHowTo.chm;windows.chm  FILE=w2rk.htm;web_resources.htm">Windows&nbsp;2000 Resource Kit</A> companion disc enables you to manage interrupts in this way. </P>
+
+</BODY>
+</HTML>
+
+

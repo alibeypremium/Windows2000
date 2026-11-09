@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+
+<META NAME="MS-HAID" CONTENT="a_SAG_MPmonperf_25">
+<TITLE>Monitoring legacy programs</TITLE>
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+</HEAD>
+
+<BODY>
+<H1><A NAME="sag_mpmonperf_kgyg"></A>Monitoring legacy programs</H1>
+<P>
+This topic describes how to monitor a 16-bit Windows-based program or an <NOBR>MS-DOS</NOBR>-based program.</P>
+
+<P>In Windows&nbsp;2000, 16-bit Windows-based programs run as separate threads in a multithreaded process called Windows Virtual DOS Machine (NTVDM). The NTVDM process simulates a 16-bit Windows environment. An <NOBR>MS-DOS</NOBR>-based program runs in its own NTVDM process.</P>
+
+<P>You can monitor a 16-bit program or an <NOBR>MS-DOS</NOBR>-based program running on your computer with System Monitor by monitoring the <B>ntvdm</B> instance of the Process performance object. Note that 16-bit programs running in an NTVDM appear only if they are started in a separate memory space.</P>
+<P>
+If you find that your 16-bit programs are not performing well under Windows&nbsp;2000, you can access some of the program's properties by right-clicking the name of the program in Windows Explorer and configuring the properties as follows:</P>
+<UL>
+<LI>If the program is in a window and the display performance is slow, on the <B>Screen</B> tab, click <B>Full-Screen</B>.</LI>
+
+<LI>If the program is in a window and seems to pause periodically, click the <B>Misc</B> tab, and set the <B>Idle Sensitivity</B> slider to <B>Low</B>.</LI></UL>
+
+<P>
+It is possible to turn off Compatible Timer Hardware Emulation for the program if performance does not improve by changing the previously described settings. To do so, right-click <B>_Default.pif</B> or the program name, point to <B>Program</B>, and click <B>Windows&nbsp;NT.</B> In the dialog box that appears, clear the <B>Compatible Timer Hardware Emulation</B> check box. This change typically causes a decrease in performance and should be made only if other efforts fail.</P>
+
+</BODY>
+</HTML>
+
+

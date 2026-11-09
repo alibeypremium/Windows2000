@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+                      "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+<TITLE>Monitoring Internet Information Services</TITLE>
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">  
+
+
+<META NAME="MS-HAID" CONTENT="a_sag_mpmonperf_97">
+ 
+</HEAD>
+
+<BODY>
+<H1>Monitoring Internet Information Services</H1>
+<P>Internet Information Services provides the following counters for monitoring service activity: </P>
+<UL>
+<LI><A ID="specLoc" HREF="ms-its:mpconcepts.chm::/sag_mpmonperf_97.htm#ftp">FTP Service object</A></LI>
+<LI><A ID="specLoc" HREF="ms-its:mpconcepts.chm::/sag_mpmonperf_97.htm#iisglobal">Internet Information Services Global object</A></LI>
+<LI><A ID="specLoc" HREF="ms-its:mpconcepts.chm::/sag_mpmonperf_97.htm#webservice">Web Service object</A></LI>
+<LI><A ID="specLoc" HREF="ms-its:mpconcepts.chm::/sag_mpmonperf_97.htm#asp">Active Server Pages object</A></LI>
+</UL>
+<H2><A NAME="ftp">FTP Service object counters</A></H2>
+<P>The FTP Service object counters show data about the anonymous and nonanonymous connections to the File Transfer Protocol (FTP) Server application. The counters can be reported on a per-site basis.</P>
+<H2><A NAME="iisglobal">Internet Information Services Global object</A></H2>
+<P>The Internet Information Services Global object contains counters that report on bandwidth throttling and on usage of the Internet Information Services (IIS) Object Cache, a cache shared by the IIS services.</P>
+<P>Bandwidth throttling is a feature of Internet Information Services that limits the bandwidth used by the IIS services to a value set by an administrator. If the bandwidth used by the IIS services approaches or exceeds this limit, bandwidth throttling delays or rejects IIS service requests until more bandwidth becomes available. </P>
+<P>The IIS Object Cache stores frequently used objects and objects that would slow performance if they were retrieved repeatedly. The counters provided report on the size and content of the IIS Object Cache as well as its effectiveness, such as cache hits and misses.</P>
+<H2><A NAME="webservice">Web Service object</A></H2>
+<P>The Web Service object provides counters that show data about the anonymous and nonanonymous connections to the Hypertext Transport Protocol (HTTP) service application and HTTP requests, listed by request method, that have been handled since the Web service was started. </P>
+<H2><A NAME="asp">Active Server Pages object</A></H2>
+<P>The Active Server Pages object is provided for monitoring applications running on your Web server that use Active Server Pages. To monitor requests processed by calls to Common Gateway Interface (CGI) applications or Internet Server Application Programming Interface (ISAPI) extensions, use counters on the Web Service object.</P>
+</BODY>
+</HTML>
+
+

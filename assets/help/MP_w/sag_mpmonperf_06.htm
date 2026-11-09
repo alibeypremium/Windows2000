@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+
+<META NAME="MS-HAID" CONTENT="a_sag_mpmonperf_06">
+<TITLE>Performance objects and counters</TITLE>
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+</HEAD>
+
+<BODY>
+
+<H1>Performance objects and counters</H1>
+<P>
+Windows&nbsp;2000 obtains performance data from components in your computer. As a system component performs work on your system, it generates performance data. That data is described as a performance object and is typically named for the component generating the data. For example, the Processor object is a collection of performance data about processors on your system. </P>
+
+<P>A range of <A ID="wPopup" HREF="help=glossary.hlp topic=gls_performance_object">performance objects</A> are built into the operating system, typically corresponding to the major hardware components such as memory, processors, and so on; other programs may install their own performance objects. For example, services such as WINS or server programs such as Microsoft Exchange provide performance objects, and performance graphs and logs can monitor these objects.</P>
+<P>
+Each performance object provides <A ID="wPopup" HREF="help=glossary.hlp topic=gls_performance_counter">counters</A> that represent data on specific aspects of a system or service. For example, the Pages/sec counter provided by the Memory object tracks the rate of memory paging.</P>
+<P>
+Although your system may typically make available many more objects, the default objects you'll use most frequently to monitor system components are:</P>
+<UL>
+<LI>
+Cache</LI>
+<LI>
+Memory</LI>
+<LI>
+Objects</LI>
+<LI>
+Paging File</LI>
+<LI>
+PhysicalDisk</LI>
+<LI>
+Process</LI>
+<LI>
+Processor</LI>
+<LI>
+Server</LI>
+<LI>
+System</LI>
+<LI>
+Thread</LI>
+</UL>
+<P>
+The following services or features of Windows&nbsp;2000 that you may be using in your configuration provide performance objects. </P>
+
+<TABLE>
+<TR>
+<TH>
+Feature or service to monitor</TH>
+<TH>Performance object available</TH>
+</TR>
+<TR>
+<TD>TCP/IP</TD>
+<TD>ICMP, IP, NBT, TCP, and UDP objects</TD>
+</TR>
+<TR>
+<TD>NetBEUI</TD>
+<TD>NetBEUI and NetBEUI resource objects</TD>
+</TR>
+<TR>
+<TD>Browser, Workstation, and Server services</TD>
+<TD>Browser, Redirector, and Server objects</TD>
+</TR>
+<TR>
+<TD>QoS Admission Control</TD>
+<TD>ACS/RSVP Service and Interface objects</TD>
+</TR>
+<TR>
+<TD>Windows Internet Name Service (WINS)</TD>
+<TD>WINS object</TD>
+</TR><TR>
+<TD>Connection Point Services</TD>
+<TD>PBServer Monitor object</TD>
+</TR>
+<TR>
+<TD>Indexing Service</TD>
+<TD>Indexing Service, Indexing Service Filter, and Http Indexing Service objects</TD>
+</TR>
+<TR>
+<TD>Directory service</TD>
+<TD>NTDS object</TD>
+</TR>
+<TR>
+<TD>Print server activity</TD>
+<TD>Print queue object</TD>
+</TR>
+</TABLE>
+
+<P>
+For a description of the data provided by a particular counter associated with a performance object, click <B>Explain</B> in the <B>Add Counters</B> dialog box. For information about adding counters, see <A ID="specLoc" HREF="../mpconcepts/nt_sysmon_addcounters.htm">To add counters to System Monitor</A>.
+</P>
+<P>
+Although some objects (such as Memory and Server) have only a single
+
+<A ID="wPopup" HREF="help=glossary.hlp topic=gls_performance_object_instance">instance</A>, some performance objects can have multiple instances. If an object has multiple instances, you can add counters to track statistics for each instance, or for all instances at once.</P>
+
+<P>
+Depending on how the counter was defined, its value may be:</P>
+<UL>
+<LI>
+The most recent measurement of an aspect of resource utilization. These are also called instantaneous counters.
+<P>
+An example is Process\ Thread Count, which shows the number of threads for a particular process as of the last time this was measured.</P>
+</LI>
+<LI>
+The average of the last two measurements over the period between samples. (Because counters are never cleared, this is actually an average of the difference between the measurements.)
+<P>
+An example is Memory\ Pages/sec, a rate per second based on the average number of memory pages during the last two samples.</P>
+</LI>
+<P>Other counter types can be defined as described in the <I>Platform Software Development Kit</I>.</P>
+</UL>
+<P>The combination of computer name, object, counter, instance, and instance index is known as the <I>counter path.</I> Counter path is typically shown in the tools as follows:</p>
+<P CLASS="indent">
+    <I>Computer_name</I><WBR>\<I>Object_name</I>(<I>Instance_name</I>#<I>Index_Number</I>)<WBR>\<I>Counter_name</I>
+</P>
+</BODY>
+</HTML>
+
+

@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+
+<META NAME="MS-HAID" CONTENT="a_SAG_MPmonperf_00"> 
+<TITLE>Performance tool architecture</TITLE>
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+</HEAD>
+
+<BODY>
+<H1>Performance tool architecture</H1>
+<P>Various levels of the Windows architecture support operation of System Monitor and Performance Logs and Alerts. For example, the performance tools obtain data by default by means of the registry. You may optionally collect data by means of the 
+
+ <A ID="wPopup" HREF="help=glossary.hlp topic=gls_wmi">Windows Management Instrumentation</A> (WMI) interface for hardware resources or applications installed on the system. The Performance Data Helper dynamic-link library (DLL) acts as an intermediary between the WMI and the performance tools to format the data and make calculations, where necessary, to convert raw data for display or reporting. For information about configuring performance tools to collect data using WMI, see <A ID="specLoc" HREF="../mpconcepts/nt_sysmon_usewmi.htm">To collect performance data using WMI</A>.</P>
+<P>
+DLLs supplied by the operating system provide counters for monitoring the behavior of resources such as memory, processors, disks, and network adapters and protocols. In addition, many Windows services and BackOffice applications provide their own DLLs that install counters that you can use to monitor their operation.</P>
+<P>System Monitor and Performance Logs and Alerts use the Remote Registry service process that manages user logon and logoff operations for remote monitoring connections. In addition, they use the Messenger service in Windows for sending users alert notification. (This service must be running for alert notifications to be received.)</P>
+
+</BODY>
+</HTML>
+
+

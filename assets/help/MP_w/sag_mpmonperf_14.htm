@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+
+<META NAME="MS-HAID" CONTENT="a_sag_mpmonperf_14">
+<TITLE>Watching how programs use system resources</TITLE>
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+</HEAD>
+
+<BODY>
+<H1><A NAME="sag_mpmonperf_qlpj"></A>Watching how programs use system resources</H1>
+<P>
+Because processor and memory resources have such a significant influence on the operation of your computer, it is important to understand how programs use these resources. This topic describes how observing certain counters in the System Monitor graph display can help you learn about processor and memory usage by programs. Start by working with the Process\ %&nbsp;Processor Time and Process\ Working Set counters:</P>
+<UL>
+<LI>
+<B>% Processor Time.</B> The percentage of elapsed time that a processor is busy executing all threads for a particular process. (Notice that % Processor Time is high for the Idle process when the system is not busy.)</LI>
+<LI>
+<B>Working Set.</B> The current number of physical memory bytes used by or allocated to a process. This value can be larger than the minimum number of bytes actually needed by the process. It may reflect physical bytes that are shared by multiple processes.</LI>
+</UL>
+<P>
+Using these counters, you can graph some or all of the programs running on a computer, as shown in the following example, charting processor usage by System Monitor (shown as the MMC process).</P>
+
+<span class="webonly">
+<A ID="thumbnail" TITLE="Enlarge figure" HREF="CHM=NTArt.chm FILE=s01ag_mpconcepts.gif">Graph of processor usage by applications</A>
+</span>
+
+<span class="printonly">
+<img src="../ntart/s01ag_mpconcepts.gif">
+</span>
+
+<P>
+Notice that, at program startup, the Process\ %&nbsp;Processor Time values climb sharply for each program, decrease, and then level off. It's important to be aware that processor usage spikes at program startup; you may want to omit temporarily high startup values from your monitoring data to obtain a more accurate picture of typical processor usage by your programs.</P>
+<P>
+After startup, the graph should show increases in processor activity as the programs perform some activity &mdash; for example, as System Monitor reads a new set of counter values. You can observe this by changing the update interval for System Monitor. Notice that, if System Monitor is configured with a short update interval, it will read data more frequently and generate more processor activity by System Monitor. A longer update interval will generate less processor activity. </P>
+<P>
+Monitoring memory-counter values for programs provides a similar illustration of how programs make demands on system resources and how those resources respond. For every program running on a computer, the operating system allocates a portion of physical memory. This is called the working set. Even if the program is not generating any activity, the operating system allocates memory for the program's working set.</P>
+
+
+<P>The working-set value is of particular interest when the Memory\ Available Bytes counter falls below a certain threshold. 
+Windows&nbsp;2000 satisfies the memory requirements of programs by using free (available) bytes. As free bytes fall into short supply, the operating system begins to replenish the shortage by taking memory from the working sets of less active programs. As a result, you will see the values for one program's working set increase while the values for other programs decrease. If there isn't sufficient memory on the system to satisfy the requirements of all active programs, paging occurs and program performance suffers. For information about monitoring paging activity, see <A ID="specLoc" HREF="ms-its:mpconcepts.chm::/sag_mpmonperf_15.htm#excess_page">Checking for excessive paging</A>.</P>
+
+<span class="webonly">
+<A ID="thumbnail" TITLE="Enlarge figure" HREF="CHM=NTArt.chm FILE=s02ag_mpconcepts.gif">Graph of memory usage by applications</A>
+</span>
+
+<span class="printonly">
+<img src="../ntart/s02ag_mpconcepts.gif">
+</span>
+
+<P>
+You can expand sample reports and charts to include more programs and more counters. To understand system activity, watch these and other counter values as you change system activity levels.</P>
+<P>
+For information about how you can monitor processor activity or memory usage, see the following topics:</P>
+<UL>
+<LI><A ID="specLoc" HREF="../mpconcepts/sag_mpmonperf_15.htm">Making sure you have enough memory</A></LI>
+
+<LI><A ID="specLoc" HREF="../mpconcepts/sag_mpmonperf_18.htm">Monitoring processor activity</A></LI>
+</UL>
+</BODY>
+</HTML>
+
+

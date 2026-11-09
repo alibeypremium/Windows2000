@@ -285,64 +285,109 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
   };
   applyVolume();
   w.addCleanup(ctx.bus.on("settings:change", applyVolume));
+  const off = (label, extra = {}) => ({ label, disabled: true, ...extra });
+  let onTop = false, mute = false;
   w.setMenu({
     File: [
-      { label: "Open...", shortcut: "Ctrl+O", action: open },
-      { label: "Import Media...", action: importMedia },
+      { label: "Open...", shortcut: "Ctrl+O", action: importMedia },
+      { label: "Close", disabled: !current, action: () => { video.pause(); video.removeAttribute("src"); video.load(); current = null; } },
+      separator(),
+      { label: "Save As...", shortcut: "Ctrl+S", disabled: true },
+      separator(),
       {
         label: "Properties",
         action: () =>
           ctx.dialogs.message(
-            `File: ${current || "Built-in desktop melody"}\nDuration: ${format(video.duration)}\nPlayback rate: ${video.playbackRate}×\n\nAvailable formats depend on your browser’s media decoders.`,
-            { title: "Media Properties", icon: "media" },
+            `File: ${current || "Built-in desktop melody"}\nDuration: ${format(video.duration)}`,
+            { title: "Properties", icon: "media" },
           ),
       },
+      { label: "More Information", submenu: [off("Show"), off("Clip"), off("Banner")] },
+      separator(),
       { label: "Exit", action: () => w.close() },
     ],
-    View: [{ label: "Statistics", action: () => ctx.launch("systeminfo") }],
+    View: () => [
+      { label: "Standard", shortcut: "Ctrl+1", checked: true, action: () => {} },
+      off("Compact", { shortcut: "Ctrl+2" }),
+      off("Minimal", { shortcut: "Ctrl+3" }),
+      separator(),
+      { label: "Full Screen", shortcut: "Alt+Enter", action: () => w.maximize() },
+      { label: "Zoom", submenu: [off("50%", { shortcut: "Alt+1" }), { label: "100%", shortcut: "Alt+2", checked: true, action: () => {} }, off("200%", { shortcut: "Alt+3" })] },
+      separator(),
+      { label: "Statistics", action: () => ctx.launch("systeminfo") },
+      separator(),
+      off("Settings", { submenu: [] }),
+      separator(),
+      off("Captions"),
+      { label: "Always on Top", shortcut: "Ctrl+T", checked: onTop, action: () => (onTop = !onTop) },
+      off("Options..."),
+    ],
     Play: () => [
-      { label: video.paused ? "Play" : "Pause", action: () => toggle() },
+      { label: "Play/Pause", shortcut: "Space", action: () => toggle() },
+      { label: "Stop", shortcut: "Period", action: () => { video.pause(); video.currentTime = 0; } },
+      separator(),
+      { label: "Skip Back", shortcut: "Page Up", action: () => { if (index > 0) load(playlist[--index], true); else video.currentTime = 0; } },
+      { label: "Skip Forward", shortcut: "Page Down", action: () => { if (index < playlist.length - 1) load(playlist[++index], true); } },
+      { label: "Rewind", shortcut: "Ctrl+Left", action: () => (video.currentTime = Math.max(0, video.currentTime - 5)) },
+      { label: "Fast Forward", shortcut: "Ctrl+Right", action: () => (video.currentTime = Math.min(video.duration || 0, video.currentTime + 5)) },
+      separator(),
+      off("Preview", { shortcut: "Ctrl+V" }),
+      off("Go to...", { shortcut: "Ctrl+G" }),
+      separator(),
+      { label: "Language", submenu: [off("(not available)")] },
       {
-        label: "Stop",
-        action: () => {
-          video.pause();
-          video.currentTime = 0;
-        },
+        label: "Volume",
+        submenu: [
+          { label: "Up", shortcut: "Up Arrow", action: () => ctx.settings.set("volume", Math.min(100, (ctx.settings.get("volume") ?? 65) + 10)) },
+          { label: "Down", shortcut: "Down Arrow", action: () => ctx.settings.set("volume", Math.max(0, (ctx.settings.get("volume") ?? 65) - 10)) },
+          { label: "Mute", shortcut: "Ctrl+M", checked: !!ctx.settings.get("muted"), action: () => ctx.settings.set("muted", !ctx.settings.get("muted")) },
+        ],
       },
-      {
-        label: "Previous",
-        action: () => {
-          if (index > 0) load(playlist[--index], true);
-          else video.currentTime = 0;
-        },
-      },
-      {
-        label: "Next",
-        action: () => {
-          if (index < playlist.length - 1) load(playlist[++index], true);
-        },
-      },
-      { label: "Repeat", checked: repeat, action: () => (repeat = !repeat) },
-      {
-        label: "Playback Speed",
-        submenu: [0.5, 1, 1.5, 2].map((rate) => ({
-          label: rate + "×",
-          checked: video.playbackRate === rate,
-          action: () => (video.playbackRate = rate),
-        })),
-      },
+    ],
+    Favorites: [off("Add to Favorites...")],
+    Go: [
+      off("Back", { shortcut: "Alt+Left" }),
+      off("Forward", { shortcut: "Alt+Right" }),
+      separator(),
+      off("Media Guide", { shortcut: "Ctrl+Home" }),
+      off("Music", { shortcut: "Ctrl+U" }),
+      off("Radio", { shortcut: "Ctrl+F" }),
+      off("Windows Media Player Home Page"),
     ],
     Help: [
-      {
-        label: "Help Topics",
-        action: () =>
-          ctx.dialogs.message(
-            "Open audio or video from your virtual disk, or choose Import Media to add files from your device.\n\nThe spectrum responds to real audio samples. The bundled desktop melody is an original synthesized WAV. CD Player uses imported audio; a physical CD-ROM is not accessible.",
-            { title: "Media Player Help", icon: "media" },
-          ),
-      },
+      { label: "Help Topics", action: () => ctx.launch("help", { topic: "media" }) },
+      separator(),
+      off("Check for Player Upgrade"),
+      { label: "About Windows Media Player", action: () => ctx.dialogs.message("Windows Media Player\nVersion 6.4.09.1129\n\nCopyright © 1992-1999 Microsoft Corp.", { title: "About Windows Media Player", icon: "media" }) },
     ],
   });
+  if (cd)
+    w.setMenu({
+      Disc: [off("Edit Play List..."), separator(), { label: "Exit", action: () => w.close() }],
+      View: [
+        off("Toolbar", { checked: true }),
+        off("Disc/Track Info", { checked: true }),
+        off("Status Bar", { checked: true }),
+        separator(),
+        off("Track Time Elapsed", { checked: true }),
+        off("Track Time Remaining"),
+        off("Disc Time Remaining"),
+        separator(),
+        { label: "Volume Control", action: () => ctx.launch("volume") },
+      ],
+      Options: [
+        { label: "Random Order", checked: false, action: () => {} },
+        { label: "Continuous Play", checked: repeat, action: () => (repeat = !repeat) },
+        off("Intro Play"),
+        separator(),
+        off("Preferences..."),
+      ],
+      Help: [
+        { label: "Help Topics", action: () => ctx.launch("help", { topic: "cdplayer" }) },
+        separator(),
+        { label: "About CD Player", action: () => ctx.dialogs.message("CD Player\nVersion 5.0 (Build 2195: Service Pack 4)\n\nCopyright © 1990-1999 Microsoft Corp.", { title: "About CD Player", icon: "media" }) },
+      ],
+    });
   w.setContent(
     title,
     el("div", { class: "media-display" }, video, visual),
@@ -440,17 +485,15 @@ export function openVolume(ctx) {
     );
   w.setMenu({
     Options: [
-      {
-        label: "Properties",
-        action: () => ctx.launch("control", { page: "sounds" }),
-      },
+      { label: "Properties", action: () => ctx.launch("control", { page: "sounds" }) },
+      { label: "Advanced Controls", disabled: true },
+      separator(),
       { label: "Exit", action: () => w.close() },
     ],
     Help: [
-      {
-        label: "Help Topics",
-        action: () => ctx.launch("help", { topic: "media" }),
-      },
+      { label: "Help Topics", action: () => ctx.launch("help", { topic: "volume" }) },
+      separator(),
+      { label: "About Volume Control", action: () => ctx.dialogs.message("Volume Control\nVersion 5.0 (Build 2195: Service Pack 4)\n\nCopyright © 1991-1999 Microsoft Corp.", { title: "About Volume Control", icon: "media" }) },
     ],
   });
   w.setContent(
@@ -496,7 +539,6 @@ export function openSoundRecorder(ctx) {
   const title = () =>
     w.setTitle(
       (savedPath ? basename(savedPath) : "Sound") +
-        (dirty ? "*" : "") +
         " - Sound Recorder",
     );
   const draw = (t = 0) => {
@@ -698,46 +740,45 @@ export function openSoundRecorder(ctx) {
     length.textContent = "Length: open sound";
     draw();
   };
+  const off = (label, extra = {}) => ({ label, disabled: true, ...extra });
   w.setMenu({
     File: [
       { label: "New", action: newSound },
       { label: "Open...", action: open },
       { label: "Save", action: () => save() },
       { label: "Save As...", action: () => save(true) },
+      off("Revert..."),
+      off("Properties"),
+      separator(),
       { label: "Exit", action: () => w.close() },
     ],
+    Edit: [
+      off("Copy", { shortcut: "Ctrl+C" }),
+      off("Paste Insert", { shortcut: "Ctrl+V" }),
+      off("Paste Mix"),
+      separator(),
+      off("Insert File..."),
+      off("Mix with File..."),
+      separator(),
+      off("Delete Before Current Position"),
+      off("Delete After Current Position"),
+      separator(),
+      off("Audio Properties"),
+    ],
     Effects: [
-      {
-        label: "Increase Playback Speed (100%)",
-        action: () => {
-          playbackRate = 2;
-          if (audio) audio.playbackRate = playbackRate;
-        },
-      },
-      {
-        label: "Decrease Playback Speed",
-        action: () => {
-          playbackRate = 0.5;
-          if (audio) audio.playbackRate = playbackRate;
-        },
-      },
-      {
-        label: "Normal Playback Speed",
-        action: () => {
-          playbackRate = 1;
-          if (audio) audio.playbackRate = playbackRate;
-        },
-      },
+      { label: "Increase Volume (by 25%)", action: () => { if (audio) audio.volume = Math.min(1, audio.volume * 1.25); } },
+      { label: "Decrease Volume", action: () => { if (audio) audio.volume = audio.volume * 0.8; } },
+      separator(),
+      { label: "Increase Speed (by 100%)", action: () => { playbackRate = Math.min(4, playbackRate * 2); if (audio) audio.playbackRate = playbackRate; } },
+      { label: "Decrease Speed", action: () => { playbackRate = Math.max(0.25, playbackRate / 2); if (audio) audio.playbackRate = playbackRate; } },
+      separator(),
+      off("Add Echo"),
+      off("Reverse"),
     ],
     Help: [
-      {
-        label: "Help Topics",
-        action: () =>
-          ctx.dialogs.message(
-            "Record microphone audio, then save it as a PCM WAV file. Your browser asks for microphone access when you start recording. Playback speed affects listening; saved WAV data keeps its original speed.",
-            { title: "Sound Recorder", icon: "speaker" },
-          ),
-      },
+      { label: "Help Topics", action: () => ctx.launch("help", { topic: "sndrec" }) },
+      separator(),
+      { label: "About Sound Recorder", action: () => ctx.dialogs.message("Sound Recorder\nVersion 5.0 (Build 2195: Service Pack 4)\n\nCopyright © 1991-1999 Microsoft Corp.", { title: "About Sound Recorder", icon: "speaker" }) },
     ],
   });
   w.setContent(

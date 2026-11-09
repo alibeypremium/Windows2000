@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+
+<META NAME="MS-HAID" CONTENT="a_nt_smlogcfg_files"> 
+<TITLE>Set file parameters for a log</TITLE>
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+</HEAD>
+
+<BODY>
+
+<P CLASS="proclabel">To set file parameters for a log</P>
+<OL>
+<LI>Open <A ID="shortcut" HREF="exec=,perfmon.msc, /s chm=mmc.chm file=alt_url_snapin.htm">Performance</A>.</LI>
+<LI>Double-click <B>Performance Logs and Alerts</B>.</LI>
+<LI>To set file properties for a counter log, click <B>Counter Logs</B>.
+<P>Or, to set file properties for a trace log, click <B>Trace Logs</B>.</P></LI>
+<LI>In the details pane, double-click the log.</LI>
+<LI>On the <B>Log Files</B> tab, complete the following options:
+<UL>
+<LI><B>Log File Name.</B> Select file-naming parameters using the following options.
+<TABLE>
+<TR>
+<TH>
+Option</TH>
+<TH>Description</TH>
+</TR>
+<TR>
+<TD><B>Location</B></TD>
+<TD>Type the name of the folder where you want the log file created, or click <B>Browse</B> to search for the folder.</TD>
+</TR>
+<TR>
+<TD><B>File name</B></TD>
+<TD>Type a partial or base name for the log file. You can use <B>File name</B> in conjunction with <B>End file names with</B> if appropriate.</TD>
+</TR>
+<TR>
+<TD><B>End file names with</B></TD>
+<TD>Select this and choose the suffix style you want from the list. Use <B>End file names with</B> to distinguish between individual log files with the same log file name that are in a group of logs that have been automatically generated.</TD>
+</TR>
+<TR>
+<TD><B>Start numbering at</B></TD>
+<TD>Set this to the start number for automatic file numbering, when you select <B>nnnnnn</B> as the <B>End file names with</B>.</TD>
+</TR>
+</TABLE></LI>
+<LI><B>Log file type.</B> In the list, select the format you want for this log file.
+
+<TABLE>
+<TR>
+<TH>
+Log file format</TH>
+<TH>Description</TH>
+<TH>Applies to</TH>
+</TR>
+<TR>
+<TD>Text File&mdash;CSV</TD>
+<TD>This option defines a comma-delimited log file (with a .csv extension). Use this format to export the log data to a spreadsheet program.</TD>
+<TD>Counter logs</TD>
+</TR>
+<TR>
+<TD>Text File&mdash;TSV </TD>
+<TD>This option defines a tab-delimited log file (with a .tsv extension). Use this format to export the log data to a spreadsheet program.</TD>
+<TD>Counter logs</TD>
+</TR>
+<TR>
+<TD>Binary File</TD>
+<TD>This option defines a sequential, binary-format log file (with a .blg extension). Use this file format if you want to be able to record data instances that are intermittent&mdash;that is, stopping and resuming after the log has begun running. Nonbinary file formats cannot accommodate instances that are not persistent throughout the duration of the log.</TD>
+<TD>Counter logs</TD>
+</TR>
+<TR><TD>Binary Circular File</TD>
+<TD>This option defines a circular, binary-format log file (with a .blg extension). Use this file format to record data continuously to the same log file, overwriting previous records with new data.</TD>
+<TD>Counter logs</TD> 
+</TR>
+<TR><TD>Circular Trace File</TD>
+<TD>This option defines a circular trace log file (with an .etl extension). Use this file format to record data continuously to the same log file, overwriting previous records with new data.</TD>
+<TD>Trace logs</TD>
+</TR>
+<TR><TD>Sequential Trace File </TD>
+<TD>This option defines a sequential trace log file (with an .etl extension) that collects data until it reaches a user-defined limit and then closes and starts a new file.</TD>
+<TD>Trace logs</TD>
+</TR>
+</TABLE>
+
+</LI>
+<LI><B>Comment.</B> If appropriate, type a comment or description for the log file.</LI>
+
+<LI><B>Log file size.</B> Decide, using the following options, whether or not you want to limit the size of the log file:
+<UL>
+<LI><B>Maximum limit.</B> When you select this option, data is continuously collected in a log file until it reaches limits set by disk quotas or the operating system.</LI>
+
+<LI><B>Limit of.</B> To define a size limit for the log file, specify the maximum size. (For counter logs, specify the maximum size in kilobytes, up to two gigabytes. For trace logs, specify the maximum size in megabytes.) Select this option if you want to do circular logging. There is a </LI>
+
+</UL></LI>
+
+</UL></LI>
+</OL>
+<P CLASS="note">Notes</P>
+<UL>
+<LI>To open Performance, click <B>Start</B>, point to <B>Programs</B>, point to <B>Administrative Tools</B>, and then click <B>Performance</B>.</LI>
+
+<LI>Windows generates an error message if available disk space falls below a specified minimum. If you choose to allow the file to grow to its maximum size, consider the available space on your disk and any quotas that may be in effect. An error might occur if you run out of disk space due to logging. The <B>Log file size</B> option works in conjunction with the <B>When the log file is full</B> option on the <B>Schedule</B> tab.</LI>
+
+<LI>When you select a log file&ndash;size limit, the stop option <B>When the log file is full</B> reflects the size limit typed here.</LI>
+<LI>The <B>File name</B> can identify a group of log files with similar parameters.</LI>
+
+<LI>The <B>End file names with</B> suffix can be a numeric sequence or a character string indicating the date and time the log was started. For example, you might define the <B>File name</B> &quot;DailyLog&quot; and the Performance Logs and Alerts service would append the date as a suffix for each file so that you might have a series of files named as follows: DailyLog_010198, DailyLog_010298, for each day the log is run.</LI>
+<LI>
+The comment text and the file name appear in the details pane in the Performance Logs and Alerts console window.</LI></UL>
+
+<P><A ID="relTopics" HREF="#" data-haid="a_nt_smlogcfg_addcounter;a_nt_smlogcfg_tracegenl;a_nt_smlogcfg_schedule;a_nt_smlogcfg_tracebuffer">Related Topics</A></P>
+
+</BODY>
+</HTML>
+
+

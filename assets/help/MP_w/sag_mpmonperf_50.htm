@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+
+<META NAME="MS-HAID" CONTENT="SAG_MPmonperf_50"> 
+<TITLE>Monitoring Fax Service</TITLE>
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+</HEAD>
+
+<BODY>
+
+<H1>Monitoring Fax Service</H1>
+
+<P>The Fax Service object tracks activity of Fax Service while the service is running. It is recommended that you use the counters in conjunction with event log data about fax events to assess service performance.</P>
+<P>The following counters can indicate a system problem, such as installation of the wrong modem driver, which prevents the fax from being sent or received:</P>
+<UL>
+<LI><B>Inbound Failed Receptions</B>. This counter indicates the number of faxes that were not received.  This would be a call that was answered without a fax being received.  </LI>
+<LI>
+<B>Outbound Failed Connections</B>. This counter indicates the number of faxes that were not sent, for example, because there was no dial tone, no answer, a busy line, or another unknown error.  </LI>
+<LI>
+<B>Outbound Failed Transmissions</B>. This counter indicates the number of faxes that could not be sent.  
+</LI>
+</UL>
+<P>If you see values for these counters, check the event log for details; no dial tone, no answer, or busy lines will be noted. An unknown error could indicate a system problem.  In this case, check the phone line for line noise and check the sending and receiving fax devices for an incorrect modem driver.</P>
+
+</BODY>
+</HTML>
+
+

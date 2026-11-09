@@ -4,7 +4,7 @@ usage: build-help.py <chm-extract-dir> <out-dir>"""
 import sys, re, json, shutil
 from pathlib import Path
 src, out = Path(sys.argv[1]), Path(sys.argv[2])
-SEL = "getstart howto concepts tshoot glossary notepad calc mspaint wordpad freecell sol winmine pinball regedit taskmgr charmap clipbrd display access common iexplore mplayer soundrec sndvol32 find folderop fonts recycle printing hardware keyb mouse datetime cpanel sounds nthelp msoe".split()
+SEL = "getstart howto concepts tshoot glossary notepad calc mspaint wordpad freecell sol winmine pinball regedit taskmgr charmap clipbrd display access common iexplore mplayer soundrec sndvol32 find folderop fonts recycle printing hardware keyb mouse datetime cpanel sounds nthelp msoe dialer hypertrm mobsync osk deluxcd wab MP_w".split()
 BOOK_NAMES = {"getstart":"Getting Started","howto":"How To...","concepts":"Concepts","tshoot":"Troubleshooting","glossary":"Glossary"}
 if out.exists(): shutil.rmtree(out)
 out.mkdir(parents=True)

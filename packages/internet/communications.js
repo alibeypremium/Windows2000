@@ -190,58 +190,58 @@ export function openHyperTerminal(ctx) {
     else if (transport === "websocket") socket.send(text);
     else await writer.write(new TextEncoder().encode(text));
   };
+  const off = (label, extra = {}) => ({ label, disabled: true, ...extra });
+  const captureText = async () => {
+    const p = await ctx.dialogs.file({ mode: "save", name: "Capture.txt" });
+    if (p) await ctx.fs.writeFile(p, log);
+  };
   w.setMenu({
     File: [
-      { label: "New Connection...", action: setup },
-      {
-        label: "Save Log As...",
-        action: () => downloadFile("HyperTerminal.log", log),
-      },
-      { label: "Exit", action: () => w.close() },
+      { label: "New Connection", action: setup },
+      off("Open..."),
+      off("Save"),
+      { label: "Save As...", action: () => downloadFile("HyperTerminal.log", log) },
+      separator(),
+      off("Page Setup..."),
+      { label: "Print...", action: () => ctx.printText(log, "HyperTerminal") },
+      separator(),
+      { label: "Properties", action: setup },
+      separator(),
+      { label: "Exit", shortcut: "Alt+F4", action: () => w.close() },
     ],
     Edit: [
-      {
-        label: "Copy",
-        action: () =>
-          ctx.clipboard.setText(window.getSelection()?.toString() || log),
-      },
-      {
-        label: "Paste",
-        action: async () => (input.value = await ctx.clipboard.getText()),
-      },
-      {
-        label: "Clear Screen",
-        action: () => {
-          log = "";
-          output.textContent = "";
-        },
-      },
+      { label: "Copy", shortcut: "Ctrl+C", action: () => ctx.clipboard.setText(window.getSelection()?.toString() || log) },
+      { label: "Paste to Host", shortcut: "Ctrl+V", action: async () => (input.value = await ctx.clipboard.getText()) },
+      separator(),
+      { label: "Select All", action: () => { const r = document.createRange(); r.selectNodeContents(output); window.getSelection().removeAllRanges(); window.getSelection().addRange(r); } },
     ],
-    Call: [
-      { label: "Connect", action: setup },
-      { label: "Disconnect", action: disconnect },
+    View: [
+      off("Tool Bar", { checked: true }),
+      off("Status Bar", { checked: true }),
+      separator(),
+      off("Font..."),
+      separator(),
+      off("Snap"),
+    ],
+    Call: () => [
+      { label: "Call", disabled: connected, action: setup },
+      off("Wait for a Call"),
+      off("Stop Waiting"),
+      separator(),
+      { label: "Disconnect", disabled: !connected, action: disconnect },
     ],
     Transfer: [
-      {
-        label: "Capture Text...",
-        action: async () => {
-          const p = await ctx.dialogs.file({
-            mode: "save",
-            name: "Session.log",
-          });
-          if (p) await ctx.fs.writeFile(p, log);
-        },
-      },
+      off("Send File..."),
+      off("Receive File..."),
+      { label: "Capture Text...", action: captureText },
+      off("Send Text File..."),
+      separator(),
+      off("Capture to Printer"),
     ],
     Help: [
-      {
-        label: "Help Topics",
-        action: () =>
-          ctx.dialogs.message(
-            "Connect to a browser-accessible serial port or an existing WebSocket terminal gateway. Local loopback can test input and capture.\n\nNative modem dialing and raw Telnet sockets require a gateway or an OS emulator.",
-            { title: "HyperTerminal Help", icon: "cmd" },
-          ),
-      },
+      { label: "Help Topics", action: () => ctx.launch("help", { topic: "hyperterminal" }) },
+      separator(),
+      { label: "About HyperTerminal", action: () => ctx.dialogs.message("HyperTerminal\nCopyright © 1996-2000 Hilgraeve, Inc.", { title: "About HyperTerminal", icon: "cmd" }) },
     ],
   });
   w.setContent(
@@ -304,24 +304,61 @@ export function openPhoneDialer(ctx) {
         () => (number.value += digit),
       ),
     );
+  const offd = (label, extra = {}) => ({ label, disabled: true, ...extra });
+  const dialNow = async () => {
+    const v = await ctx.dialogs.prompt("Number to dial:", number.value, { title: "Dial" });
+    if (v != null) { number.value = v; try { dial(); } catch (e) { ctx.dialogs.error(e); } }
+  };
   w.setMenu({
-    File: [{ label: "Exit", action: () => w.close() }],
+    File: [
+      offd("Properties..."),
+      separator(),
+      offd("Hide Phone Dialer Window"),
+      { label: "Exit Phone Dialer", action: () => w.close() },
+    ],
     Edit: [
-      { label: "Clear", action: () => (number.value = "") },
-      {
-        label: "Paste",
-        action: async () => (number.value = await ctx.clipboard.getText()),
-      },
+      offd("Add to Speed Dial List..."),
+      offd("Speed Dial List..."),
+      separator(),
+      offd("Add User..."),
+      offd("Add Directory..."),
+      { label: "Delete", shortcut: "Del", action: () => (number.value = "") },
+      separator(),
+      offd("Options..."),
+    ],
+    View: [
+      offd("Call Log..."),
+      separator(),
+      offd("Toolbars", { checked: true }),
+      offd("Text Labels", { checked: true }),
+      offd("Status Bar", { checked: true }),
+      offd("Hide When Minimized"),
+      separator(),
+      offd("Show Names With Conference Video"),
+      offd("Full Size Conference Video"),
+      offd("Selected Conference Video Scale", { submenu: [] }),
+      separator(),
+      { label: "Refresh", shortcut: "F5", action: () => {} },
+    ],
+    Phone: [
+      { label: "Dial...", action: dialNow },
+      offd("Redial", { submenu: [] }),
+      offd("Speed Dial", { submenu: [] }),
+      separator(),
+      offd("New Conference..."),
+      offd("Join Conference..."),
+      offd("Leave Conference"),
+    ],
+    Windows: [
+      offd("Hide Call Windows"),
+      offd("Call Windows", { submenu: [] }),
+      separator(),
+      offd("Windows"),
     ],
     Help: [
-      {
-        label: "Help Topics",
-        action: () =>
-          ctx.dialogs.message(
-            "Enter a number and choose Dial to open your device’s phone application. Modem voice calls are not available directly in the browser.",
-            { title: "Phone Dialer", icon: "network" },
-          ),
-      },
+      { label: "Content and Index", action: () => ctx.launch("help", { topic: "dialer" }) },
+      separator(),
+      { label: "About Phone Dialer...", action: () => ctx.dialogs.message("Phone Dialer\nVersion 5.0 (Build 2195: Service Pack 4)\n\nCopyright © 1996-1999 Microsoft Corp.", { title: "About Phone Dialer", icon: "network" }) },
     ],
   });
   w.setContent(

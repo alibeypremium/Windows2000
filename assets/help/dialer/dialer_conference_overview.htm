@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+<HEAD><meta charset="utf-8">
+
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+
+
+
+
+
+<META NAME="MS-HAID" CONTENT="a_dialer_conference_overview">
+
+<TITLE>Video and voice conference calls</TITLE>
+
+
+
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css"><LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+</HEAD>
+
+<BODY>
+
+
+
+<H1><A NAME="dialer_conference_overview"></A>Video and voice conference calls</H1>
+
+<P>Phone Dialer supports video conferencing, voice conferencing, or a combination of both.</P>
+
+<P>You can schedule your own conference call or join a conference call already in progress. By connecting to an Internet directory server, you can join conference calls on other companies' networks or on the Internet. To use Phone Dialer to talk with individuals, you do not need to connect to an Internet directory.</P>
+
+<P>During a video conference call, you can see an image of each participant who has a video connection. You can still participate in a video conference call without a camera. In this case, you can view the participants that have cameras, but you will only be heard. If you have speakers but do not have a microphone, you can view and hear a conference, but you cannot participate </P>
+
+<p>During the conferencing process, audio and video data must be compressed and decompressed. Phone Dialer uses the following <A ID="wPopup" HREF="help=glossary.hlp topic=gls_codec">codec</A> compression and decompression protocols:
+<UL>
+    <LI>
+    Video: H.261, H.263
+    </LI>
+	<li>Audio: G.711, GSM 6.10</li>
+</UL>
+By default, Phone Dialer creates a conference using the H.263 and G.711 codecs. Audio and video data is sent using the RTP/RTCP protocol. Phone Dialer interoperates with the MBone (IP Multicast) tool VIC (Video Conferencing). Phone Dialer interoperates with the MBone tool RAT (Robust Audio Tool), in conjunction with the G.711 codec.</p>
+<p>If you are a user in an enterprise environment, and you want to use multicast conferencing, your system administrator needs to install IP multicast video conferencing on Windows&nbsp;2000 Server. This ensures that Phone Dialer uses the correct IP multicast address. For more information, see <A ID="altLoc" HREF="CHM=tapiconcepts.chm;nofts.chm  FILE=sag_tapichecklist_ipmvc.htm;server_specific.htm">Checklist: Installing IP multicast video conferencing</A>. To support creating and joining multicast conferences, Phone Dialer needs the location of the Site Server ILS server on your network. For more information, see <A ID="altLoc" HREF="CHM=tapiconcepts.chm;nofts.chm  FILE=sag_tapiconcepts_213.htm;server_specific.htm">Using Phone Dialer for telephony</A>.</p>
+
+<P><A ID="relTopics" HREF="#" data-haid="a_dialer_join_conference;a_dialer_new_conference;a_dialer_add_server;a_view_caller_on_video;a_preview_sound_video">Related Topics</A></P>
+
+</BODY>
+</HTML>
+
+
+

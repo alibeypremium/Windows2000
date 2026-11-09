@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+
+<META NAME="MS-HAID" CONTENT="a_SAG_MPmonperf_28">
+<TITLE>Solving performance problems</TITLE>
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+</HEAD>
+
+<BODY>
+<H1><A NAME="sag_mpmonperf_yjkj">Solving performance problems</A></H1>
+<P>
+Analysis of your monitoring data may reveal problems such as excessive demand on certain resources resulting in bottlenecks. This section discusses common causes for bottlenecks and a recommended strategy for tuning and testing.</P>
+
+<H2><A NAME="H2_106446347">Causes of bottlenecks</A></H2>
+<P>
+Demand may become extreme enough to cause resource bottlenecks for the following reasons:</P>
+<UL>
+<LI>
+Resources are insufficient and additional or upgraded components are required.</LI>
+<LI>
+Resources are not sharing workloads evenly and need to be balanced.</LI>
+<LI>
+A resource is malfunctioning and needs to be replaced.</LI>
+<LI>
+A program is monopolizing a particular resource; this may require substituting another program, having a developer rewrite the program, adding or upgrading resources, or running the program during periods of low demand.</LI>
+<LI>
+A resource is incorrectly configured and configuration settings should be changed.</LI>
+</UL>
+
+<H2><A NAME="H2_106447069">Strategy for tuning and testing</A></H2>
+<P>
+The table of threshold values that is presented in <A ID="specLoc" HREF="sag_mpmonperf_13a.htm">Determining acceptable values for counters</A> helps to isolate the performance problem by resource. Find the tuning and upgrade discussion related to your specific problem in one of the following topics:</P>
+<UL>
+<LI><A ID="specLoc" HREF="/sag_mpmonperf_memtop.htm">Monitoring and tuning memory usage</A></LI>
+<LI><A ID="specLoc" HREF="sag_mpmonperf_18.htm">Monitoring processor activity</A></LI>
+<LI><A ID="specLoc" HREF="sag_mpmonperf_19.htm">Monitoring disk activity</A></LI>
+<LI><A ID="specLoc" HREF="sag_mpmonperf_21.htm">Monitoring network activity</A></LI>
+<LI><A ID="specLoc" HREF="/sag_mpmonperf_ntsvctop.htm">Monitoring Windows&nbsp;2000 services</A></LI>
+<LI><A ID="specLoc" HREF="sag_mpmonperf_25.htm">Monitoring legacy programs</A></LI>
+</UL>
+<P>
+Lack of memory is by far the most common cause of serious performance problems in computer systems. If you suspect other problems, check memory counters to rule out a memory shortage. Poor response time on a workstation is most likely to result from memory and processor problems; servers are more susceptible to disk and network problems.</P>
+
+<P>
+Before you start tuning, consider the following recommendations:</P>
+<UL>
+<LI>Make one change at a time. In some cases, a problem that appears to relate to a single component may be the result of bottlenecks involving multiple components. For this reason, it is important to address problems individually. 
+<P>
+Making multiple changes simultaneously may make it impossible to assess the impact of each individual change.</P></LI>
+
+<LI>Repeat monitoring after every change. This is important for understanding the effect of the change and to determine whether additional changes are required. Proceed methodically, making one change to the identified resource at a time and then testing the effects of the changes on performance. Because tuning changes can affect other resources, it's important to keep records of the changes you make and to remonitor after you make a change.</LI>
+
+<LI>
+In addition to monitoring, review event logs, because some performance problems generate output you can display in Event Viewer. For information about using Event Viewer, see <A ID="altLoc" HREF="CHM=EVconcepts.chm;ELS.chm  FILE=event_overview.htm;event_overview.htm">Event Viewer Help</A>.</LI>
+
+<LI>To see whether network components are playing a part in performance problems, compare the performance of programs that run over the network with locally run programs.</LI>
+</UL>
+
+<H2><A NAME="TUNING_TIPS">Tuning and upgrade tips by component</A></H2>
+<P>
+This section lists tuning tips for resources you are monitoring:</P>
+<UL>
+<LI>Memory:</LI>
+<UL>
+<LI>Increase physical memory above the minimum required.</LI>
+<LI>Create multiple paging files.</LI>
+<LI>Determine the correct size for the paging file.</LI>
+<LI>Ensure that memory settings are properly configured as described in
+
+<A ID="specLoc" HREF="/sag_mpmonperf_15.htm">Making sure you have enough memory</A>.</LI>
+<LI>Run memory-intensive programs on your highest-performing computers or when system workload is light.</LI>
+</UL>
+<LI>Disk:</LI>
+<UL>
+<LI>Upgrade to a higher-speed disk, or add disks. When you do this, upgrade the disk controller and the bus. </LI>
+<LI>On servers, use Disk Management to create striped volumes on multiple physical disks. This solution increases throughput because I/O commands can be issued concurrently.</LI>
+
+<LI>Distribute programs among servers. Distributed File System (Dfs) can be used to balance workload.</LI>
+<LI>Isolate tasks that heavily utilize disk I/O on separate physical disks or disk controllers.</LI>
+<LI>Use Disk Defragmenter to optimize disk space.</LI>
+<LI>If you want to improve the efficiency of disk access, consider installing the latest driver software for your host adapters. Contact your adapter manufacturer for information.</LI>
+</UL>
+<LI>Processor:</LI>
+<UL>
+<LI>Add a processor (especially for multithreaded programs), or upgrade to a faster processor.</LI>
+<LI>On multiprocessor computers, manage the processor affinity with respect to process threads and interrupts.</LI>
+</UL>
+<LI>Network:</LI>
+<UL>
+<LI>Configure your network so that systems shared by the same group of people are on the same subnet.</LI>
+<LI>
+Unbind infrequently used network adapters. See <A ID="specLoc" HREF="../netcfg/howto_mod_bindings_order.htm">To modify the protocol bindings order
+</A> for more information.</LI>
+<LI>
+If you are using more than one protocol, you can set the order in which the workstation and NetBIOS software bind to each protocol. See Network and Dial-up Connections Help for more information. Some reasons for changing the list order are:
+<UL>
+<LI>
+If the protocol you use most frequently is first in the binding list, average connection time decreases.</LI>
+<LI>
+Some protocols are faster than others for certain network topologies. If you are optimizing a client computer, putting the faster protocol first in the bindings list improves performance. Because the server accepts incoming connections using the protocol chosen by the client computer, there is no reason to reorder server computer bindings.</LI></UL></LI>
+<LI>Install a high-performance network adapter in the server. If your server uses a 16-bit adapter, you can significantly increase performance by replacing it with a high-performance 32-bit adapter.</LI>
+<LI>
+Use multiple network adapters. Windows&nbsp;2000 supports multiple adapters for a given protocol and multiple protocols for a given adapter. Although this configuration can create distinct networks that cannot communicate with one another, it is a way to increase file-sharing throughput.</LI>
+</UL>
+</UL>
+<P>Solving performance problems includes:</P>
+<UL>
+<LI><A ID="specLoc" HREF="/sag_mpmonperf_memtop.htm">Monitoring and tuning memory usage</A></LI>
+<LI><A ID="specLoc" HREF="sag_mpmonperf_18.htm">Monitoring processor activity</A></LI>
+<LI><A ID="specLoc" HREF="sag_mpmonperf_19.htm">Monitoring disk activity</A></LI>
+<LI><A ID="specLoc" HREF="sag_mpmonperf_21.htm">Monitoring network activity</A></LI>
+<LI><A ID="specLoc" HREF="/sag_mpmonperf_ntsvctop.htm">Monitoring Windows&nbsp;2000 services</A></LI>
+<LI><A ID="specLoc" HREF="sag_mpmonperf_25.htm">Monitoring legacy programs</A></LI>
+</UL>
+</BODY>
+</HTML>
+
+

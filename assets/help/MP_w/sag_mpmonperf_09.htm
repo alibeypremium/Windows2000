@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+
+<META NAME="MS-HAID" CONTENT="a_sag_mpmonperf_09">
+<TITLE>Best practices</TITLE>
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+</HEAD>
+
+<BODY>
+<H1>Best practices</H1>
+<UL>
+<LI>
+<B>Setting up a monitoring configuration.</B> Configure Performance Logs and Alerts to report data for the recommended counters at regular intervals, such as every 10 to 15 minutes. Retain logs over extended periods of time, store data in a database, and query the data to report on and analyze the data as needed for overall performance assessment, trend analysis, and capacity planning.
+<P>For best results, do the following before starting System Monitor or Performance Logs and Alerts on the computer you want to monitor for diagnostic purposes:</P>
+<UL>
+<LI>Stop screen-saver programs.</LI>
+<LI>Turn off services that are not essential or relevant to monitoring.</LI>
+<LI>Increase the paging file to physical memory size plus 100 MB.</LI>
+<LI>Using Registry Editor, view the settings for the following and make note of all keys that have nonzero values:</LI>
+<UL>
+<LI>HKEY_LOCAL_MACHINE<WBR>\SYSTEM<WBR>\CurrentControlSet<WBR>\Control<WBR>\SessionManager<WBR>\Memory Management</LI>
+<LI>HKEY_LOCAL_MACHINE<WBR>\SYSTEM<WBR>\CurrentControlSet<WBR>\Services<WBR>\LanmanServer<WBR>\Parameters</LI></UL>
+<P class="caution">Caution</P>
+<UL>
+    <LI>
+Incorrectly editing the registry may severely damage your system. Before making changes to the registry, you should back up any valued data on the computer.
+    </LI>
+</UL>
+<P>
+Some of these registry values can be adjusted for better performance. For information about modifying the registry, see <A ID="specLoc" HREF="../regedt32/under_stand_reged.htm">Registry Editor Help</A>.</P>
+
+<LI>If the server in question has halted or is not responding, run System Monitor from another computer.</LI>
+
+</UL>
+<LI><B>Keeping monitoring overhead low.</B> In general, the performance tools are designed for minimal overhead. However, you may find the overhead increases under each of the following conditions:</LI>
+<UL>
+<LI>You are running System Monitor in graph view.</LI>
+<LI>You have selected an option other than the default (current value) for a report view.</LI>
+<LI>You are sampling at very frequent intervals (less than three seconds apart).</LI>
+<LI>
+Many different objects and counters are selected.</LI>
+</UL>
+<P>
+Other aspects of performance tool operation that affect performance include file size and disk space taken up by log files. To reduce file size and related disk space usage, extend the update interval. Also, log to a disk other than the one you are monitoring. Frequent logging also adds demand on disk input and output (I/O).</P>
+<P>
+If monitoring overhead is a concern, run only the Performance Logs and Alerts service and do not monitor using a System Monitor graph.</P>
+<P>
+During remote logging, frequent updating can slow performance due to network transport. In this case, it is recommended that you log continuously on remote computers but upload logs infrequently &mdash; for example, once a day.</P>
+</LI>
+<LI>
+<B>Analyzing performance results and establishing a performance baseline.</B> Review logged data by graphing it using the System Monitor display or exporting it for printing. Compare the values against the counter thresholds shown in <A ID="specLoc" HREF="sag_mpmonperf_13.htm">Analyzing performance</A> to verify that resource usage or other activity is within acceptable limits. Set your baseline according to the level of performance that you consider satisfactory for your typical workload.</LI>
+<LI><B>Setting alerts.</B> Set alerts according to the counter values you consider to be unacceptable, as defined by baseline evaluation.</LI>
+<LI>
+<B>Performance tuning.</B> Tune system settings and workload to improve performance and repeat monitoring to examine tuning results.
+
+See <A ID="specLoc" HREF="../mpconcepts/sag_mpmonperf_28.htm">Solving performance problems</A> for instructions covering how to change configurations or other steps to improve performance.</LI>
+<LI>
+
+<B>Planning.</B> Monitor trends for capacity planning and add or upgrade components as needed. Maintain logged data in a database and observe changes to identify changes in resource requirements. After you observe changes in activity or resource demand, you can identify where you may require additional resources.</LI>
+</UL>
+
+</BODY>
+</HTML>
+
+

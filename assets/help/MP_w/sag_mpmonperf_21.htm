@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+
+<META NAME="MS-HAID" CONTENT="a_sag_mpmonperf_21">
+<TITLE>Monitoring network activity</TITLE>
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+</HEAD>
+
+<BODY>
+<H1><A NAME="sag_mpmonperf_unpl">Monitoring network activity</A></H1>
+<P>
+Network monitoring typically consists of observing server resource utilization and measuring overall network traffic. With System Monitor you can handle both of these activities, although for in-depth traffic analysis, you should use Network Monitor.</P>
+<P>
+Start by tracking the counters that are described in the topic
+
+<A ID="specLoc" HREF="sag_mpmonperf_10.htm">Setting up a monitoring configuration</A> to observe resource usage on your server. To concentrate on network-related resource usage, add the counters that correspond to the various layers of your network configuration. Abnormal network counter values often indicate problems with a server's memory, processor, or disks. For that reason, the best approach to monitoring a server is to watch network counters in conjunction with Processor\ %&nbsp;Processor Time, PhysicalDisk\ %&nbsp;Disk Time, and Memory\ Pages/sec.</P>
+<P>
+For example, if a dramatic increase in Pages/sec is accompanied by a decrease in Bytes Total/sec handled by a server, the computer is probably running short of physical memory for network operations. Most network resources, including network adapters and protocol software, use nonpaged memory. If a computer is paging excessively, it could be because most of its physical memory has been allocated to network activities, leaving a small amount of memory for processes that use paged memory. To verify this situation, check the computer's system event log for entries indicating that it has run out of paged or nonpaged memory.</P>
+
+<P CLASS="note">Note</p>
+<UL>
+<LI>
+The operating system automatically sets a default limit for allocable nonpaged pool memory. This default value is approximately 80 percent of installed memory. If the system reaches this limit as a result of network activity, problems can result. To change this limit, modify the registry under:
+<P CLASS="indent">
+HKEY_LOCAL_MACHINE<WBR>\SYSTEM<WBR>\CurrentControlSet<WBR>\Services<WBR>\LanmanServer<WBR>\MaxNonpagedMemoryUsage</P>
+
+<P>For information about modifying the registry, see <A ID="specLoc" HREF="../regedt32/under_stand_reged.htm">Registry Editor Help</A>.</P>
+
+<P class="caution">Caution</P>
+<UL>
+    <LI>
+Incorrectly editing the registry may severely damage your system. Before making changes to the registry, you should back up any valued data on the computer.
+    </LI>
+</UL></LI></UL>
+<P>
+If you enable Network Monitor, you can use network-related objects with System Monitor to analyze overall network performance. For information on monitoring overall network traffic, see
+
+<A ID="specLoc" HREF="sag_mpmonperf_21.htm#overall_traffic">Monitoring overall network traffic</A>.</P>
+
+<H2><A NAME="H2_106448574">Observing throughput across network layers</A></H2>
+<P>
+Investigating network performance includes monitoring activity at different network layers:</P>
+<UL>
+<LI>
+<B>Data-link layer.</B> This includes the network adapter. Use the Network Interface object counters: <UL><LI>Bytes total/sec</LI><LI>Bytes sent/sec</LI><LI>Bytes received/sec.</LI></UL></LI>
+
+<LI>
+<B>Network layer.</B> Use the IP object counters:<UL><LI>Datagrams Forwarded/sec</LI><LI>Datagrams Received/sec</LI><LI>Datagrams/sec</LI><LI>Datagrams Sent/sec.</LI></UL></LI>
+
+<LI><B>Transport layer.</B> Varies with network protocol in use. For TCP/IP, use the TCP object counters:
+
+<UL><LI>Segments Received/sec</LI><LI>Segments Retransmitted/sec</LI><LI>Segments/sec</LI><LI>Segments Sent/sec.</LI></UL>
+
+<P>If the retransmission rate is high, there may be a hardware problem.</P>
+<P>
+The ICMP and UDP object counters are also provided and are useful for more extensive monitoring of TCP/IP network transmissions. The ICMP performance object consists of counters that measure the rates at which Internet Control Message Protocol (ICMP) messages are sent and received by using the ICMP protocol. It also includes counters that monitor ICMP protocol errors.The UDP performance object consists of counters that measure the rates at which User Data Protocol (UDP) datagrams are sent and received using the UDP. It includes counters that monitor UDP errors. </P>
+
+<P>
+If you are using the NetBEUI protocol, use the following counters:</P>
+<UL>
+<LI>NetBEUI\ Frame Bytes Received/sec</LI>
+<LI>NetBEUI\ Frames Received/sec</LI>
+<LI>NetBEUI\ Frames Rejected/sec</LI>
+<LI>NetBEUI Resource\ Times Exhausted</LI>
+</UL>
+<P>
+If you are using the NWLink protocol, three objects are available:
+NWLink IPX and NWLink NetBIOS for computers communicating over the IPX protocol; and NWLink SPX for computers connecting over the SPX protocol. Note that frame-related counters for these objects report only zeroes.</P></LI>
+<LI><B>Presentation/program layer.</B> Use the Server object counters if you are monitoring a server, or the Redirector object counters if you are monitoring a user's client computer. (Some program-layer processes, such as Web servers, may have their own object counters, which you would use for monitoring transmissions across this layer.)
+<P>
+The Redirector object counters collect data about requests transmitted by the Workstation service; the Server object counters collect data about requests received and interpreted by the Server service.</P>
+<P>
+At a minimum, include the Bytes total/sec counter for both the Redirector object (for client computers that you monitor) and the Server object (for server computers).</P>
+<P>
+Each of these objects provides several other counters you may want to monitor if you suspect problems with either the Workstation or Server services:</P>
+<UL>
+<LI>Redirector\ Current Commands</LI>
+<LI>Redirector\ Network Errors/sec</LI>
+<LI>Redirector\ Reads Denied/sec</LI>
+<LI>Redirector\ Writes Denied/sec</LI>
+<LI>Redirector\ Server Sessions Hung</LI>
+<LI>Server\ Sessions Errored Out</LI>
+<LI>Server\ Work Item Shortages</LI>
+<LI>Server\ Pool Paged Peak</LI>
+<LI>Server\ Nonpaged Pool Failures</LI>
+</UL>
+<P>If the Work Item Shortages counter value is increasing, consider changing the registry values <B>InitWorkItems</B> or <B>MaxWorkItems</B> under HKEY_LOCAL_MACHINE<WBR>\SYSTEM<WBR>\CurrentControlSet<WBR>\Services<WBR>\LanmanServer.</P>
+<P>The Sessions Errored Out counter reports automatic disconnections along with errored-out sessions. To get a more accurate value for errored-out sessions, obtain the value for Sessions Timed Out and reduce the Sessions Errored Out value by that amount. See
+
+<A ID="specLoc" HREF="sag_mpmonperf_33.htm">Resources</A> for more information.</P>
+</LI></UL>
+<H2><A NAME="overall_traffic">Monitoring overall network traffic</A></H2>
+<P>
+
+If network traffic exceeds local area network (LAN) capacity, performance typically suffers across the network. To prevent this situation, it is important to monitor network-wide traffic levels, particularly on larger networks with bridges and routers, using the Network Segment object. When monitoring network traffic, three Network Segment object counters are of special interest.</P>
+<TABLE>
+<TR>
+<TH>Counter</TH>
+<TH>Description</TH>
+</TR>
+<TR>
+<TD>Network Segment\ Broadcast frames received/second</TD>
+<TD>Can be used to establish a baseline if monitored over time. Large variations from the baseline can be investigated to determine the cause of the problem. Because each computer processes every broadcast, high broadcast levels mean lower performance.</TD>
+</TR>
+<TR>
+<TD>Network Segment\ %&nbsp;Network utilization</TD>
+<TD>Indicates how close the network is to full capacity. The threshold depends on your network infrastructure and topology. If the value of the counter is above 30 to 40 percent, collisions can cause problems.</TD>
+</TR>
+<TR>
+<TD>Network Segment\ Total frames received/second</TD>
+<TD>Indicates when bridges and routers might be flooded.</TD>
+</TR>
+</TABLE>
+<P>
+To analyze these statistics for your network segment, install Network Monitor. For information about Network Monitor, see <A ID="altLoc" HREF="CHM=NETMNconcepts.chm;nofts.chm  FILE=sag_netmntopnode.htm;server_specific.htm">Network Monitor Help</A>.</P>
+<P>
+For instructions on installing the Network Monitor driver that provides the counters for monitoring network utilization, see
+
+<A ID="specLoc" HREF="nt_sysmon_netmonstart.htm">Enabling Network Segment counters</A>.</P>
+</BODY>
+</HTML>
+
+

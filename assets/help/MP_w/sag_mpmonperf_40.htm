@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+
+<META NAME="MS-HAID" CONTENT="a_SAG_MPmonperf_40">
+<TITLE>Finding disk bottlenecks</TITLE>
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+</HEAD>
+
+<BODY>
+
+<H1>Finding disk bottlenecks</H1>
+<P>
+Use the following counters to identify bottlenecked disk resources:</P>
+<UL>
+<LI>PhysicalDisk\ %&nbsp;Disk Time and %&nbsp;Idle Time</LI>
+<LI>PhysicalDisk\ Disk Reads/sec and Disk Writes/sec</LI>
+<LI>PhysicalDisk\ Avg. Disk Queue Length</LI>
+<LI>LogicalDisk\ %&nbsp;Free Space</LI>
+</UL>
+
+<P>Also monitor memory counters to determine whether excessive paging is putting a strain on the disk.</P>
+
+<P>See <A ID="specLoc" HREF="../mpconcepts/sag_mpmonperf_13.htm">Analyzing performance</A> for counter threshold values that should not be exceeded and see <A ID="specLoc" HREF="../mpconcepts/sag_mpmonperf_28.htm">Solving performance problems</A> for tuning techniques that may alleviate performance problems.</P>
+
+<P CLASS="note">Note</P>
+<UL>
+<LI>Unlike physical-disk counter data, logical-disk counter data is not collected by the operating system by default. To obtain performance counter data for logical drives or storage volumes, you must type <B>diskperf -yv</B> at the command prompt. This causes the disk performance statistics driver used for collecting disk performance data to report data for logical drives or storage volumes. By default, the operating system uses the <B>diskperf -yd</B> command to obtain physical drive data. For more information about using the <B>diskperf</B> command, type <B>diskperf -?</B> at the command prompt. </LI>
+</UL>
+
+</BODY>
+</HTML>
+

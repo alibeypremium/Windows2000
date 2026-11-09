@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+                      "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+					  
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+<TITLE>Define trace log providers and events</TITLE>
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">  
+
+
+<META NAME="MS-HAID" CONTENT="a_nt_smlogcfg_tracegenl"> 
+
+</HEAD>
+
+<BODY>
+
+<P CLASS="procLabel">To define trace log providers and events</P>
+<OL>
+<LI>Open <A ID="shortcut" HREF="exec=,perfmon.msc, chm=mmc.chm file=alt_url_snapin.htm">Performance</A>.</LI>
+<LI>Double-click <B>Performance Logs and Alerts</B>, and then click <B>Trace Logs</B>.</LI>
+
+<LI>In the details pane, double-click the log.</LI>
+<LI>For a list of the installed providers and their status (enabled or not), click <B>Provider Status</B>. By default, the <B>Nonsystem providers</B> option is selected to keep trace-logging overhead to a minimum.</LI>
+<LI>If you click <B>Events logged by system provider</B>, a default provider (the Windows kernel trace provider) is used to monitor processes, threads, and other activity. To define events for logging, click the check boxes as appropriate.</LI>
+<LI>If you click <B>Nonsystem providers</B>, you can select the data providers you want &mdash;for example, if you have written your own providers. Use the <B>Add</B> or <B>Remove</B> buttons as needed.</LI>
+
+</OL>
+
+<P CLASS="note">Notes</P>
+<UL>
+<LI>To open Performance, click <B>Start</B>, point to <B>Programs</B>, point to <B>Administrative Tools</B>, and then click <B>Performance</B>.</LI>
+<LI>Trace logging of file details and page faults can generate an extremely large amount of data. It is recommended that you limit trace logging using the file details and page fault options to a maximum of two hours.</LI>
+<LI>Only one instance of each trace provider can be enabled at any given time.</LI>
+</UL>
+
+</BODY>
+</HTML>
+
+

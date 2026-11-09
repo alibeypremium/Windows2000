@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+
+<META NAME="MS-HAID" CONTENT="a_sag_mpmonperf_10">
+<TITLE>Setting up a monitoring configuration</TITLE>
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+</HEAD>
+
+<BODY>
+<H1>Setting up a monitoring configuration</H1>
+<P>
+Setting up a monitoring configuration is the first step in evaluating your system's performance. To monitor your Windows&nbsp;2000 installation, you can choose to view data in a graph or collect the data in log files for use in other applications.</P>
+<P class="note">Note</P>
+<UL>
+    <LI>
+For best results, read the following sections for setting up your monitoring configuration. However, to get started quickly, you can use the predefined log settings under <B>Counter Logs</B>. These settings, named System Overview, are configured to create a binary log that, after manual start-up, updates every 15 seconds and logs continuously until it achieves a maximum size. If you start logging with these settings, data is saved to the Perflogs folder on the root directory and includes the counters: Memory\ Pages/sec, PhysicalDisk(_Total)\Avg. Disk Queue Length, and Processor(_Total)\ %&nbsp;Processor Time.
+    </LI>
+</UL><P>
+</P>
+
+<H2><A NAME="H2_106446224">Choosing the monitoring method</A></H2>
+<P>
+Graphs are useful for short-term, real-time monitoring of a local or remote computer &mdash; for example, when you want to observe a system event while it's happening. Choose the update interval so as to capture the type of activity you are interested in. Logs are useful for record keeping and for extended monitoring, especially of a remote computer; logged data can be exported for report generation and presented as graphs or histograms using System Monitor. Logging is the most practical way to monitor multiple computers.</P>
+
+<H2><A NAME="H2_106446809">Choosing how often to monitor</A></H2>
+
+<P>For routine monitoring, start by logging activity over 15-minute intervals. If you are monitoring for a specific problem, you might want to vary the interval. If you are monitoring activity of a specific process at a specific time, set a frequent update interval; however, if you are monitoring a problem that manifests itself slowly, such as a memory leak, use a longer interval.</P>
+<P>
+Also consider the overall length of time you want to monitor when choosing this interval. Updating every 15 seconds is reasonable if you'll be monitoring for no more than four hours. If you'll be monitoring a system for eight hours or more, don't set an interval shorter than 300 seconds (five minutes). Setting the update interval to a frequent rate (low value) can cause the system to generate a large amount of data, which can be difficult to work with and can increase the overhead of running Performance Logs and Alerts.</P>
+<P>
+Monitoring a large number of objects and counters can also generate large amounts of data and consume disk space. Try to strike a balance between the number of objects you monitor and the sampling frequency to keep log file size within manageable limits.</P>
+
+If you prefer to maintain a long update interval when logging, you can still view data fluctuations that occur between those intervals. To do so, see <A ID="specLoc" HREF="../mpconcepts/nt_sysmon_workwithlogfiles.htm">To use logged data</A> for information about manipulating time ranges within logs.
+
+<H2><A NAME="H2_106448367">Choosing what data to monitor</A></H2>
+<P>
+Start by monitoring the activity of the following components in order:</P>
+
+<UL>
+<LI>Memory</LI>
+<LI>Processors</LI>
+<LI>Disks</LI>
+<LI>Network </LI>
+</UL>
+
+<P>The following table shows the minimum counters recommended for server monitoring. When examining specific resources, you should include other counters for the associated performance object.</P>
+
+<TABLE>
+<TR>
+<TH>
+Component</TH>
+<TH>Performance aspect being monitored</TH>
+<TH>Counters to monitor</TH>
+</TR>
+<TR>
+<TD>Disk</TD>
+<TD>Usage</TD>
+
+<TD>Physical Disk\ Disk Reads/sec
+<BR>Physical Disk\ Disk Writes/sec
+<BR>LogicalDisk\ %&nbsp;Free Space
+<BR>Interpret the %&nbsp;Disk Time counter carefully. Because the _Total instance of this counter may not accurately reflect utilization on multiple-disk systems, it is important to use the % Idle Time counter as well. Note that these counters cannot display a value exceeding 100%. 
+</TD>
+</TR>
+<TR>
+<TD>Disk</TD>
+<TD>Bottlenecks</TD>
+<TD>Physical Disk\ Avg. Disk Queue Length (all instances) 
+</TD>
+</TR>
+<TR>
+<TD>Memory</TD>
+<TD>Usage</TD>
+<TD>Memory\ Available Bytes
+<BR>Memory\ Cache Bytes
+</TD>
+</TR>
+<TR>
+<TD>Memory</TD>
+<TD>Bottlenecks or leaks</TD>
+<TD>Memory\ Pages/sec
+<BR>Memory\ Page Reads/sec
+<BR>Memory\ Transition Faults/sec
+<BR>Memory\ Pool Paged Bytes
+<BR>Memory\ Pool Nonpaged Bytes
+<BR>Although not specifically Memory object counters, the following are also useful for memory analysis:
+<BR>Paging File\ % Usage object (all instances)
+<BR>Cache\ Data Map Hits %
+<BR>Server\ Pool Paged Bytes and Server\Pool Nonpaged Bytes</TD>
+</TR>
+<TR>
+<TD>Network</TD>
+<TD>Usage</TD>
+<TD>Network Segment\ % Net Utilization
+<BR>Note that you must install the Network Monitor driver for Network Monitor in order to use this counter.</TD>
+</TR>
+<TR>
+<TD>Network</TD>
+<TD>Throughput</TD>
+<TD>Protocol transmission counters (varies with networking protocol); for TCP/IP:
+<BR>Network Interface\ Bytes total/sec
+<BR>Network Interface\ Packets/sec
+<BR>Server\ Bytes Total/sec or Server\ Bytes Transmitted/sec and Server\ Bytes Received/sec
+<BR>You may want to monitor other objects for network and server throughput as described in
+
+<A ID="specLoc" HREF="../mpconcepts/sag_mpmonperf_21.htm">Monitoring network activity</A>.
+</TD></TR>
+<TR>
+<TD>Processor</TD>
+<TD>Usage</TD>
+<TD>Processor\ % Processor Time (all instances)</TD>
+</TR>
+<TR><TD>Processor</TD>
+<TD>Bottlenecks</TD>
+<TD>System\ Processor Queue Length (all instances)
+<BR>Processor\ Interrupts/sec
+<BR>System\Context switches/sec</TD>
+</TR>
+</TABLE>
+<P>If some of the counters listed in the preceding table are not available on your computer, verify that you have installed the necessary services or activated the counters. See <A ID="specLoc" HREF="../mpconcepts/nt_sysmon_netmonstart.htm">To enable Network Segment counters</A> for instructions for activating the Network Segment object counters provided by Network Monitor.</P>
+
+<P CLASS="note">Note</P>
+<UL>
+<LI>Unlike physical-disk counter data, logical-disk counter data is not collected by the operating system by default. To obtain performance counter data for logical drives or storage volumes, you must type <B>diskperf -yv</B> at the command prompt. This causes the disk performance statistics driver used for collecting disk performance data to report data for logical drives or storage volumes. By default, the operating system uses the <B>diskperf -yd</B> command to obtain physical drive data. For more information about using the <B>diskperf</B> command, type <B>diskperf -?</B> at the command prompt. </LI>
+</UL>
+
+<H2><A NAME="H2_106451775">Choosing the computer to use for monitoring</A></H2>
+<P>When monitoring computers remotely, you have some options for how to collect data. For example, you could run performance logging on the administrator's computer, drawing data continuously from each remote computer. In another case, you could have each computer running the service to collect data and, at regular intervals, run a batch program to transfer the data to the administrator's computer for analysis and archiving.</P>
+
+<P>Centralized data collection (that is, collection on a local computer from remote computers that you are monitoring) is simple to implement because only one logging service is running. You can collect data from multiple systems into a single <I>log file</I>. However, it causes additional network traffic and may be restricted by available memory on the administrator's computer. To do centralized data collection, use the <B>Add Counters</B> dialog box to select a remote computer while running System Monitor on your local computer.</P>
+<P>Distributed data collection (that is, data collection that occurs on the remote computers you are monitoring) does not incur the memory and network traffic problems of centralized collection. However, it does result in delayed availability of the data, requiring that the collected data be transferred to the administrator's computer for review. To do distributed data collection, use Computer Management on a local computer to select a remote computer on which to collect data.</P>
+<A NAME="remote_monitoring"></A><P>When monitoring remote computers, note that the remote computer will only allow access to user accounts that have permission to access it. In order to monitor remote systems from your computer, you must start the Performance Logs and Alerts service using an account that has permission to access the remote computers you want to monitor. By default, the service is started under the local computer's &quot;system&quot; account, which generally has permission only to access services and resources on the local computer. To start this under a different account, use Services under Computer Management and update the properties of the Performance Logs and Alerts service.</P>
+
+<H2><A NAME="H2_106453709">Keeping records of performance data</A></H2>
+<P>
+When you retain your logged data in a database, you can query the information and include it in reports. Using database analysis tools, you can query results and examine the results in detail using a variety of parameters. You can also use logs for trend analysis and capacity planning.</P>
+
+<H2><A NAME="H2_106454058">Exporting your monitoring configuration</A></H2>
+<P>After configuring the performance tools with the counters, update intervals, and other settings you want, you can save those settings on your local computer or for export to another computer. If you save the settings under the name Perfmon.msc, note that you are permanently changing the configuration of the tools on the computer. Therefore, it is recommended that you save the file under another name.</P>
+<P>In addition to saving monitoring settings, you can add other tools or add multiple copies of System Monitor, for example, if you want to monitor graph and report views simultaneously. For information about adding tools to a console, see <A ID="specLoc" HREF="../mpconcepts/nt_sysmon_customconsole.htm">To create a custom monitoring console</A>.</P>
+</BODY>
+</HTML>
+
+

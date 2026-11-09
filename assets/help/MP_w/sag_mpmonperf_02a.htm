@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+
+<META NAME="MS-HAID" CONTENT="a_SAG_MPmonperf_02a"> 
+<TITLE>Performance Logs and Alerts overview</TITLE>
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+</HEAD>
+
+<BODY>
+<H1>Performance Logs and Alerts overview</H1>
+<P>
+With Performance Logs and Alerts you can collect performance data automatically from local or remote computers. You can view logged counter data using System Monitor or export the data to spreadsheet programs or databases for analysis and report generation. Performance Logs and Alerts offers the following capabilities:</P>
+<UL>
+<LI>
+Performance Logs and Alerts collects data in a comma-separated or tab-separated format for easy import to spreadsheet programs. A binary log-file format is also provided for circular logging or for logging instances such as threads or processes that may begin after the log starts collecting data. (Circular logging is the process of continuously logging data to a single file, overwriting previous data with new data.)</LI>
+
+<LI>Counter data collected by Performance Logs and Alerts can be viewed during collection as well as after collection has stopped.</LI>
+<LI>Because logging runs as a service, data collection occurs regardless of whether any user is logged on to the computer being monitored.</LI> 
+<LI>You can define start and stop times, file names, file sizes, and other parameters for automatic log generation.</LI>
+<LI>You can manage multiple logging sessions from a single console window.</LI>
+<LI>You can set an 
+
+<A ID="wPopup" HREF="help=glossary.hlp topic=gls_perf_alert">alert</A> on a counter, thereby defining that a message be sent, a program be run, or a log be started when the selected counter's value exceeds or falls below a specified setting. </LI>
+</UL><P>Similar to System Monitor, Performance Logs and Alerts supports defining
+
+<A ID="wPopup" HREF="help=glossary.hlp topic=gls_performance_object">performance objects</A>,
+
+<A ID="wPopup" HREF="help=glossary.hlp topic=gls_performance_counter">performance counters</A>, and
+
+<A ID="wPopup" HREF="help=glossary.hlp topic=gls_performance_object_instance">object instances</A>, and setting sampling intervals for monitoring data about hardware resources and system services. Performance Logs and Alerts also offers other options related to recording performance data:</P>
+<UL>
+<LI><B>Start and stop logging</B> either manually on demand, or automatically based on a user-defined schedule.</LI>
+
+<LI><B>Configure additional settings</B> for automatic logging, such as automatic file renaming, and set parameters for stopping and starting a log based on the elapsed time or the file size.</LI>
+<LI>Create trace <A ID="wPopup" HREF="help=glossary.hlp topic=gls_log_files">logs</A>. Using the default system data provider or another provider, trace logs record data when certain activities such as a disk I/O operation or a page fault occur. When the event occurs, the provider sends the data to the Performance Logs and Alerts service. This differs from the operation of counter logs; when counter logs are in use, the service obtains data from the system when the update interval has elapsed, rather than waiting for a specific event. A parsing tool is required to interpret the trace log output. Developers can create such a tool using application programming interfaces (APIs) provided on the <A ID="extUrl" HREF="http://www.microsoft.com/isapi/redir.dll?prd=msdn&pver=6.0&ar=library" TITLE="http://www.microsoft.com/" TARGET="_new">Microsoft Web site</A><SPAN CLASS="printOnly"> (http://msdn.microsoft.com/)</SPAN>. 
+
+</LI>
+<LI>Define a program that runs when a log is stopped.</LI>
+
+</UL>
+
+<P CLASS="note">Notes</p>
+<UL>
+<LI>
+If you want to export log data to Microsoft Excel, the Performance Logs and Alerts service must be stopped because Microsoft Excel requires exclusive access to the log file. Other programs are not known to require this exclusive access; therefore, in general you can work with data from a log file while the service is collecting data to that file.</LI>
+
+<LI>For more information about the Performance Logs and Alerts user interface, see <A ID="specLoc" HREF="../mpconcepts/nt_smlogcfg_window.htm">Performance Logs and Alerts interface</A>.</LI>
+</UL>
+
+</BODY>
+</HTML>
+
+

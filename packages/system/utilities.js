@@ -1022,27 +1022,46 @@ export function openClipboardViewer(ctx) {
     (content.textContent = ctx.clipboard.files.length
       ? ctx.clipboard.mode.toUpperCase() + "\n" + ctx.clipboard.files.join("\n")
       : ctx.clipboard.text || "(The clipboard is empty.)");
+  const off = (label, extra = {}) => ({ label, disabled: true, ...extra });
   w.setMenu({
     File: [
-      {
-        label: "Save As...",
-        action: () => downloadFile("Clipboard.txt", ctx.clipboard.text),
-      },
+      off("Open..."),
+      { label: "Save As...", action: () => downloadFile("Clipboard.txt", ctx.clipboard.text) },
+      separator(),
+      off("Share..."),
+      off("Stop Sharing"),
+      separator(),
+      off("Connect..."),
+      off("Disconnect"),
+      separator(),
       { label: "Exit", action: () => w.close() },
     ],
     Edit: [
-      { label: "Delete", action: () => ctx.clipboard.setText("") },
-      { label: "Refresh", action: render },
+      { label: "Copy", shortcut: "Ctrl+C", action: () => ctx.clipboard.setText(content.textContent) },
+      off("Paste...", { shortcut: "Ctrl+V" }),
+      off("Paste to Page", { shortcut: "Ctrl+G" }),
+      { label: "Delete", shortcut: "Del", action: () => ctx.clipboard.setText("") },
+    ],
+    Security: [off("Permissions..."), off("Auditing..."), off("Owner...")],
+    View: [
+      off("Toolbar", { checked: true }),
+      off("Status Bar", { checked: true }),
+      separator(),
+      off("Table of Contents"),
+      off("Thumbnails"),
+      off("Full Page"),
+    ],
+    Window: [
+      off("Cascade", { shortcut: "Shift+F5" }),
+      off("Tile Horizontally"),
+      off("Tile Vertically", { shortcut: "Shift+F4" }),
+      off("Arrange Icons"),
+      { label: "Refresh", shortcut: "F5", action: render },
     ],
     Help: [
-      {
-        label: "About ClipBook Viewer",
-        action: () =>
-          ctx.dialogs.message(
-            "Displays the shared clipboard used by this desktop.",
-            { title: "ClipBook Viewer" },
-          ),
-      },
+      { label: "Contents", action: () => ctx.launch("help", { topic: "clipbook" }) },
+      separator(),
+      { label: "About ClipBook Viewer...", action: () => ctx.dialogs.message("ClipBook Viewer\nVersion 5.0 (Build 2195: Service Pack 4)\n\nCopyright © 1990-1999 Microsoft Corp.", { title: "About ClipBook Viewer", icon: "document" }) },
     ],
   });
   w.setContent(content);
@@ -1164,6 +1183,37 @@ export function openKeyboard(ctx) {
         ),
       ),
     );
+  }
+  {
+    const off = (label, extra = {}) => ({ label, disabled: true, ...extra });
+    w.setMenu({
+      File: [off("Add to Utility Manager"), separator(), { label: "Exit", action: () => w.close() }],
+      Keyboard: [
+        { label: "Enhanced Keyboard", checked: true, action: () => {} },
+        off("Standard Keyboard"),
+        separator(),
+        { label: "Regular Layout", checked: true, action: () => {} },
+        off("Block Layout"),
+        separator(),
+        { label: "101 keys", checked: true, action: () => {} },
+        off("102 keys"),
+        off("106 keys"),
+      ],
+      Settings: [
+        { label: "Always on Top", checked: true, action: () => {} },
+        separator(),
+        off("Use Click Sound"),
+        separator(),
+        off("Typing Mode ..."),
+        separator(),
+        off("Font ..."),
+      ],
+      Help: [
+        { label: "Contents", action: () => ctx.launch("help", { topic: "osk" }) },
+        separator(),
+        { label: "About On-Screen Keyboard...", action: () => ctx.dialogs.message("On-Screen Keyboard\nVersion 5.0 (Build 2195: Service Pack 4)\n\nCopyright © 1999 Microsoft Corp.", { title: "About On-Screen Keyboard", icon: "keyboard" }) },
+      ],
+    });
   }
   w.setContent(root);
   render();

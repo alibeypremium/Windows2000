@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+
+<META NAME="MS-HAID" CONTENT="a_nt_sysmon_workwithlogfiles"> 
+<TITLE>Use logged data</TITLE>
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+</HEAD>
+
+<BODY>
+
+<P CLASS="PROCLABEL"><A NAME="nt_sysmon_workwithlogfiles">To use logged data</A></P>
+
+<OL>
+<LI>Open <A ID="shortcut" HREF="exec=,perfmon.msc, chm=mmc.chm file=alt_url_snapin.htm">Performance</A>.</LI>
+<LI> Right-click the System Monitor details pane and click <B>Properties</B>.</LI>
+<LI>Click the <B>Source</B> tab.</LI>
+<LI>Under <B>Data Source</B>, click <B>Log File</B>, and type the path to the file or click <B>Browse</B> to browse for the log file you want. </LI>
+<LI> Click <B>Time Range</B>. To specify the time range in the log file that you want to view, drag the bar or its handles for the appropriate starting and ending times. </LI>
+
+<LI>
+Click the <B>Data</B> tab and click <B>Add</B> to open the <B>Add Counters</B> dialog box. The counters you selected during log configuration are shown. You can include all or some of these in your graph.</LI>
+</OL>
+
+<P CLASS="note">Notes</P>
+<UL>
+<LI>To open Performance, click <B>Start</B>, point to <B>Programs</B>, point to <B>Administrative Tools</B>, and then click <B>Performance</B>.</li>
+<LI>Unless you specifically want to monitor start-up events, you should exclude times that include such events from your time window because these temporary high values tend to skew overall performance results.
+</LI>
+<LI>The <IMG SRC="../ntart/s04ag_mpconcepts.gif " ALT="Clear Display"> button on the toolbar is disabled when you are viewing log data.</LI> 
+<LI>You can also view counter-log data by opening files that have been saved in comma-separated or tab-separated format using Microsoft Excel.</LI>
+</UL>
+
+</BODY>
+</HTML>
+

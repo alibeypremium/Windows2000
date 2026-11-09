@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+
+<META NAME="MS-HAID" CONTENT="a_sag_mpmonperf_19">
+<TITLE>Monitoring disk activity</TITLE>
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+</HEAD>
+
+<BODY>
+<H1><A NAME="sag_mpmonperf_esvr"></A>Monitoring disk activity</H1>
+<P>
+Disk-usage statistics help you balance the workload of network servers. System Monitor provides <I>physical disk counters</I> for troubleshooting, capacity planning, and for measuring activity on a physical volume.</P>
+<P>
+At a minimum you should monitor the following counters:</P>
+<UL>
+<LI>Physical Disk\ Disk Reads/sec and Disk Writes/sec</LI>
+<LI>Physical Disk\ Current Disk Queue Length</LI>
+<LI>Physical Disk\ %&nbsp;Disk Time</LI>
+<LI>LogicalDisk\ %&nbsp;Free Space</LI>
+</UL>
+<P>
+When testing disk performance, log performance data to another disk or computer so that it does not interfere with the disk you are testing.</P>
+<P>
+Additional counters you may want to observe include Physical Disk\ Avg. Disk sec/Transfer, Avg. Disk Bytes/Transfer, and Disk Bytes/sec. </P>
+
+<P>The Avg. Disk sec/Transfer counter reflects how much time a disk takes to fulfill requests. A high value might indicate that the disk controller is continually retrying the disk because of failures.
+These misses increase average disk transfer time. For most disks, high average disk transfer times correspond to values greater than 0.3 seconds. </P>
+<P>
+You can also check the value of Avg. Disk Bytes/Transfer. A value greater than 20 KB indicates that the disk drive is generally performing well; low values result if an application is accessing a disk inefficiently. For example, applications that access a disk at random raise Avg. Disk sec/Transfer times because random transfers require increased seek time. </P>
+<P>Disk Bytes/sec gives you the throughput rate of your disk system.</P>
+<P>
+Because disk counters can cause a modest increase in disk access time, Windows&nbsp;2000 does not automatically activate the counters at system startup.</P>
+
+<P CLASS="note">Note</P>
+<UL>
+<LI>Unlike physical-disk counter data, logical-disk counter data is not collected by the operating system by default. To obtain performance counter data for logical drives or storage volumes, you must type <B>diskperf -yv</B> at the command prompt. This causes the disk performance statistics driver used for collecting disk performance data to report data for logical drives or storage volumes. By default, the operating system uses the <B>diskperf -yd</B> command to obtain physical drive data. For more information about using the <B>diskperf</B> command, type <B>diskperf -?</B> at the command prompt. </LI>
+</UL>
+
+
+<H2><A NAME="sag_mpmonperf_zimw"></A>Determining workload balance</H2>
+<P>
+To balance loads on network servers, you need to know how busy the server disk drives are. Use the Physical Disk\ %&nbsp;Disk Time counter, which indicates the percentage of time a drive is active. If %&nbsp;Disk Time is high (over 90 percent), check the Physical Disk\ Current Disk Queue Length counter to see how many system requests are waiting for disk access. The number of waiting I/O requests should be sustained at no more than 1.5 to 2 times the number of spindles making up the physical disk.</P>
+
+<P>Most disks have one spindle, although Redundant Array of Inexpensive Disks (RAID) devices usually have more. A hardware RAID device appears as one physical disk in System Monitor; RAID devices created through software appear as multiple drives (instances). You can either monitor the Physical Disk counters for each physical drive (other than RAID), or you can use the _Total instance to monitor data for all the computer's drives.</P>
+<P>
+Use the values of the Current Disk Queue Length and %&nbsp;Disk Time counters to detect bottlenecks with the disk subsystem. If Current Disk Queue Length and %&nbsp;Disk Time values are consistently high, consider upgrading the disk drive or moving some files to an additional disk or&nbsp;server.</P>
+<P CLASS="note">Notes</p>
+<UL>
+<LI>The LogicalDisk object counters have been removed. The system maps physical drives to logical drives using the same instance name. Therefore, if you have a dynamic volume that consists of multiple physical disks, instances might appear as &quot;Disk 0 C:,&quot; &quot;Disk 1 C:,&quot; and &quot;Disk 2 D:,&quot; where C: is made up of physical drives 0 and 1. If you have two logical partitions on a disk, the instance appears as &quot;0 C: D:.&quot;</LI>
+<LI>For hardware-enabled stripe sets, per-disk statistics are not available. You can obtain this data only when monitoring stripe sets enabled in software. </LI>
+<LI>
+If you are using a RAID device, the %&nbsp;Disk Time counter can indicate a value greater than 100 percent. If it does, use the Avg. Disk Queue Length counter to determine how many system requests on average are waiting for disk access.</LI>
+</UL>
+
+</BODY>
+</HTML>
+
+

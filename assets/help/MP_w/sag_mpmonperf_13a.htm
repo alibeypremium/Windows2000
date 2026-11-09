@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+
+<META NAME="MS-HAID" CONTENT="a_SAG_MPmonperf_13a"> 
+<TITLE>Determining acceptable values for counters</TITLE>
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+</HEAD>
+
+<BODY>
+
+<H1><A NAME="determiningacceptablevalues">Determining acceptable values for counters</A></H1>
+<P>
+In general, deciding whether or not performance is acceptable is a subjective judgment that varies significantly with variations in user environments. The values you establish as the baselines for your organization are the best basis for comparison. Nevertheless, the following table containing threshold values for specific counters can help you determine whether values reported by your computer indicate a problem. If System Monitor consistently reports these values, it is likely that bottlenecks exist on your system and you should take action to tune or upgrade the affected resource. 
+</P>
+
+<TABLE>
+<TR>
+<TH>Resource</TH>
+<TH>Object\ Counter</TH>
+<TH>Suggested threshold</TH>
+<TH>Comments</TH>
+</TR>
+<TR>
+<TD>Disk</TD>
+<TD>PhysicalDisk\ % Disk Time</TD>
+<TD>90%</TD>
+<TD></TD>
+</TR>
+<TR>
+<TD>Disk</TD>
+<TD>PhysicalDisk\ Disk Reads/sec, PhysicalDisk\ Disk Writes/sec</TD>
+<TD>Depends on manufacturer's specifications</TD>
+<TD>Check the specified transfer rate for your disks to verify that this rate doesn't exceed the specifications. In general, Ultra Wide SCSI disks can handle 50 I/O operations per second.</TD>
+</TR>
+<TR>
+<TD>Disk</TD>
+<TD>Physical Disk\ Current Disk Queue Length</TD>
+<TD>Number of spindles plus 2</TD>
+<TD>This is an instantaneous counter; observe its value over several intervals. For an average over time, use Physical Disk\ Avg. Disk Queue Length.</TD>
+</TR>
+<TR>
+<TD>Memory</TD>
+<TD>Memory\ Available Bytes</TD>
+<TD>Less than 4 MB</TD>
+<TD>Research memory usage and add memory if needed.</TD>
+</TR>
+<TR>
+<TD>Memory</TD>
+<TD>Memory\ Pages/sec</TD>
+<TD>20</TD>
+<TD>Research paging activity.</TD>
+</TR>
+<TR>
+<TD>Network</TD>
+<TD>Network Segment\ % Net Utilization</TD>
+<TD>Depends on type of network</TD>
+<TD>You must determine the threshold based on the type of network you are running. For Ethernet networks, for example, 30% is the recommended threshold.</TD>
+</TR>
+<TR>
+<TD>Paging File</TD>
+<TD>Paging File\ % Usage</TD>
+<TD>99%</TD>
+<TD>Review this value in conjunction with Available Bytes and Pages/sec to understand paging activity on your computer.</TD>
+</TR>
+
+<TR>
+<TD>Processor</TD>
+<TD>Processor\ % Processor Time</TD>
+<TD>85%</TD>
+<TD>Find the process that is using a high percentage of processor time. Upgrade to a faster processor or install an additional processor.</TD>
+</TR>
+<TR>
+<TD>Processor</TD>
+<TD>Processor\ Interrupts/sec </TD>
+<TD>Depends on processor.</TD>
+<TD>A dramatic increase in this counter value without a corresponding increase in system activity indicates a hardware problem. Identify the network adapter causing the interrupts.</TD>
+</TR>
+<TR>
+<TD>Server</TD>
+<TD>Server\ Bytes Total/sec</TD>
+<TD></TD>
+<TD>If the sum of Bytes Total/sec for all servers is roughly equal to the maximum transfer rates of your network, you may need to segment the network.</TD>
+</TR>
+<TR>
+<TD>Server</TD>
+<TD>Server\ Work Item Shortages</TD>
+<TD>3</TD>
+<TD>If the value reaches this threshold, consider tuning <B>InitWorkItems</B> or <B>MaxWorkItems</B> in the registry (under <NOBR>HKEY_LOCAL_MACHINE<WBR>\SYSTEM<WBR>\CurrentControlSet<WBR>\Services<WBR>\LanmanServer</NOBR>). For information about modifying the registry, see <A ID="specLoc" HREF="../regedt32/under_stand_reged.htm">Registry Editor Help</A><BR><P class="caution">Caution</P>
+<UL>
+<LI>Incorrectly editing the registry may severely damage your system. Before making changes to the registry, you should back up any valued data on the computer.
+</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD>Server</TD>
+<TD>Server\ Pool Paged Peak</TD>
+<TD>Amount of physical RAM</TD>
+<TD>This value is an indicator of the maximum paging file size and the amount of physical memory.</TD>
+</TR>
+<TR>
+<TD>Server</TD>
+<TD>Server Work Queues\ Queue Length</TD>
+<TD>4</TD>
+<TD>If the value reaches this threshold, there may be a processor bottleneck. This is an instantaneous counter; observe its value over several intervals. </TD>
+</TR>
+<TR>
+<TD>Multiple Processors</TD>
+<TD>System\ Processor Queue Length</TD>
+<TD>2</TD>
+<TD>This is an instantaneous counter; observe its value over several intervals.</TD>
+</TR>
+</TABLE>
+<P>For tuning and upgrade suggestions, see <A ID="specLoc" HREF="ms-its:mpconcepts.chm::/sag_mpmonperf_28.htm#sag_mpmonperf_yjkj">Solving performance problems</A>.</P>
+
+</BODY>
+</HTML>
+
+

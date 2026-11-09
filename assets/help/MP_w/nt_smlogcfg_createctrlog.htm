@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+                      "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+					  
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+<TITLE>Create a counter log</TITLE>
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">  
+
+
+<META NAME="MS-HAID" CONTENT="a_nt_smlogcfg_createctrlog"> 
+
+</HEAD>
+
+<BODY>
+<P CLASS="PROCLABEL">To create a counter log</P>
+<OL>
+<LI>Open <A ID="shortcut" HREF="exec=,perfmon.msc, /s chm=mmc.chm file=alt_url_snapin.htm">Performance</A>.</LI>
+<LI>Double-click <B>Performance Logs and Alerts</B>, and then click <B>Counter Logs</B>.</LI>
+<P>Any existing logs will be listed in the details pane. A green icon indicates that a log is running; a red icon indicates that a log has been stopped.</P>
+<LI>Right-click a blank area of the details pane, and click <B>New Log Settings</B>.</LI>
+<LI>In <B>Name</B>, type the name of the log, and then click <B>OK</B>.</LI>
+<LI>On the <B>General</B> tab, click <B>Add</B>. Select the counters you want to log.</LI>
+<LI>If you want to change the default file and schedule information, make the changes on the <B>Log Files</B> tab and the <B>Schedule</B> tab.</LI>
+
+
+</OL>
+<P CLASS="note">Notes</P>
+<UL>
+<LI>To open Performance, click <B>Start</B>, point to <B>Programs</B>, point to <B>Administrative Tools</B>, and then click <B>Performance</B>.</LI>
+<LI>To save the counter settings for a log file or alert file, right-click the file in the details pane and click <B>Save Settings As</B>.  You can then specify an .htm file in which to save the settings. To reuse the saved settings for a new log or alert, right-click the details pane, and then click <B>New Log Settings From</B> or <B>New Alert Settings From</B>. This is an easy way to generate log settings from an alert configuration. </LI>
+<LI>To create or modify a log, you must have Full Control permission for the following registry key, which controls the Performance Logs and Alerts service:
+
+<P> <B>HKEY_LOCAL_MACHINE<WBR>\SYSTEM<WBR>\CurrentControlSet<WBR>\Services<WBR>\SysmonLog<WBR>\Log Queries</B></P>
+
+Administrators usually have this permission by default. Administrators can grant permission to users by using the <B>Security</B> menu in Regedt32.exe. 
+<P>To run the service (which runs in the background when you configure a log), you must have permission to start or otherwise configure services on the system. Administrators have this right by default and can grant it to users by using Group Policy.</P>
+<P>To log data on a remote computer, the Performance Logs and Alerts service must run under an account that has access to the remote system.</P>
+<P CLASS="caution">Caution</P>
+<UL>
+<LI>Incorrectly editing the registry may severely damage your system. Before making changes to the registry, you should back up any valued data on the computer. For more information, see <A ID="specLoc" HREF="../regedt32/under_stand_reged.htm">Registry Editor Help</A>.</LI>
+</UL>
+</LI>
+</UL>
+
+<P><A ID="relTopics" HREF="#" data-haid="a_nt_sysmon_savehtml;a_nt_smlogcfg_addcounter;a_nt_smlogcfg_files;a_nt_smlogcfg_schedule;a_nt_smlogcfg_createtracelog;a_nt_smlogcfg_createanalert">Related Topics</A></P>
+
+</BODY>
+</HTML>
+
+

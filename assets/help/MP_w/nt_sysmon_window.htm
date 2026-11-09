@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+
+<META NAME="MS-HAID" CONTENT="a_nt_sysmon_window"> 
+<TITLE>System Monitor interface</TITLE>
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+</HEAD>
+
+<BODY>
+<H1>System Monitor interface
+</H1>
+<P>When you open Performance, the graph view and a toolbar appear by default and the graph area is blank. When you have added counters to the graph, after a short delay (depending on the time you select for the update interval), System Monitor will begin charting counter values in this graph area. You can choose to have data updated automatically or on demand; for updating on-demand, use the <IMG SRC="../ntart/s17ag_mpconcepts.gif" ALT="Update Data"> button to start and stop the collection intervals. Click the <IMG SRC="../ntart/s04ag_mpconcepts.gif" ALT="Clear Display"> button to remove all data from the display.</P>
+<P>The names and associated information for the counters you select are shown in the columns beneath the graph. This is called the <I>legend</I>. The legend shows the following information:</P>
+<UL>
+<LI>Computer on which System Monitor is running.
+</LI>
+
+<LI>
+
+<A ID="wPopup" HREF="help=glossary.hlp topic=gls_performance_object">Performance object</A>.
+
+</LI>
+<LI>
+
+<A ID="wPopup" HREF="help=glossary.hlp topic=gls_performance_counter">Performance counter</A>.</LI>
+<LI>
+
+<A ID="wPopup" HREF="help=glossary.hlp topic=gls_performance_object_instance">Performance object instance</A>. Note that by default counter instances are listed by name and numerical index. This index appears after the instance name, represented by a pound sign (#) and a number. This index makes it easier to monitor multiple instances, for example, when you are monitoring threads of a process. To turn off the index display, right-click the graph, click <B>Properties</B>, and clear the <b>Allow duplicate counter instances</b> check box.</LI>
+<LI>Graphical properties of each counter.</LI>
+</UL>
+<P CLASS="note">Note</P>
+<UL>
+<LI>
+To match a line in a graph with the counter for which it is charting values, double-click a position in the line. The counter will be selected in the legend. If chart lines are close together, try to find a point in the graph where they diverge. Otherwise, System Monitor may not be able to pinpoint the value you are interested in.
+</LI>
+</UL>
+
+<P>Above the columns is the <I>value bar</I>, where you see the last, minimum, maximum, and average values for the counter that is currently selected. These values are calculated over the time period and number of samples displayed in the graph (reflected by the <B>Duration</B> value), not over the time that has elapsed since monitoring was started. The <B>Duration</B> value in the value bar indicates the total elapsed time displayed in the graph (based on the update interval). The movement of the <I>timer bar</I> across the graph indicates the passing of each update interval. Regardless of the update interval, the view will show up to 100 samples. System Monitor compresses log data as necessary to fit it in the display. To see the compressed data in a log, right-click the graph, click <B>Properties</B>, and select a shorter time range on the <B>Source</B> tab. Shorter time ranges contain less data, so it is less likely that data points will be eliminated.
+</P>
+<P>You can define the attributes of the graph:</P>
+<UL>
+<LI>Type of display, with options for graph, histogram, or report</LI>
+<LI>Background color of the detail pane and of the data-display area</LI>
+<LI>Size, type, and style of font used to show text in the display</LI>
+<LI>Color, width, and style of line used to chart data</LI>
+</UL>
+<P>To draw attention to a particular counter's data, use the highlighting feature. To do so, press CTRL+H or click the <IMG SRC="../ntart/s12ag_mpconcepts.gif" ALT="Highlight"> button on the toolbar. When highlighting is in effect, the bar or line representing data for the selected counter changes color to white for most background colors (including the default color) or black for white or light-colored backgrounds. </P>
+<P CLASS="note">Note</P>
+<UL>
+<LI>
+Default key settings in Microsoft Word may conflict with the CTRL+H combination used for System Monitor highlighting. You may need to change these to support highlighting when the System Monitor control (Sysmon.ocx in the <I>system_root</I>\System32 folder) is used in Microsoft Word.
+</LI>
+</UL>
+<P>Clicking <B>Object</B>, <B>Counter</B>, <B>Instance</B>, or <B>Computer</B> in the counter legend sorts entries in ascending or descending order for that category. For example, to sort all counters by name, click <B>Counter</B>.</P>
+<P>For more information, see <A ID="specLoc" HREF="../mpconcepts/nt_sysmon_change_props.htm">Quick reference to System Monitor settings</A></P>
+
+</BODY>
+</HTML>
+

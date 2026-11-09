@@ -1,0 +1,193 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+                      "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+<TITLE>Troubleshooting</TITLE>
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">  
+
+
+<META NAME="MS-HAID" CONTENT="a_SAG_MPmonperf_35">
+ 
+</HEAD>
+
+<BODY>
+<H1>Troubleshooting</H1>
+
+<P CLASS="uatshoot">What problem are you having?</P>
+
+<TABLE CLASS="uatshoot">
+<TR>
+	<TD>
+	<P><A ID="expand" CLASS="uatshoot" HREF="#">Counter values consistently equal zero.</A></P>
+
+	<DIV CLASS="expand">
+
+	<P><B>Cause:</B>&nbsp;&nbsp;The process being monitored has stopped so there is no data for the process in the performance tools.</P>
+	
+	<P><B>Solution:</B>&nbsp;&nbsp;If you stopped the process manually, restart it to see the process in System Monitor. Otherwise, check Event Viewer for concurrent entries. You may find an error associated with this process.</P>
+	
+	<P><B>Cause:</B>&nbsp;&nbsp;The counter DLL was disabled after you selected the corresponding counters in a log or display. The performance tools will not detect that the counter was removed or disabled but will report the counter data as zeroes.</P>
+	
+	<P><B>Solution:</B>&nbsp;&nbsp;Enable the corresponding counter DLL.</P>
+	
+	<P><B>Cause:</B>&nbsp;&nbsp;You lack permissions on the computer being monitored. If you don't have appropriate permissions to monitor the computer, an error message will be displayed when you attempt to select the counter but the counter will still appear in the histogram or graph legend without any data or any graph line.</P>
+	
+	<P><B>Solution:</B>&nbsp;&nbsp;An administrator must ensure that your user account has permissions to use the performance tools.</P>
+	
+	</DIV>
+	</TD>
+</TR>
+<TR>
+	<TD>
+	<P><A ID="expand" CLASS="uatshoot" HREF="#">System Monitor shows gaps in its line graphs.</A></P>
+
+	<DIV CLASS="expand">
+
+	<P><B>Cause:</B>&nbsp;&nbsp;This could be because data collection was subordinated to higher priority processing activity on a system with a heavy load. When the system has adequate resources to continue with data collection, the graphing will resume as usual. A message appears describing this.</P>
+	
+	<P><B>Solution:</B>&nbsp;&nbsp;Reduce the performance overhead of system monitoring.</P>
+	
+<P><B>See also:</B>&nbsp;&nbsp;<A ID="specLoc" HREF="../mpconcepts/sag_mpmonperf_09.htm">Best practices</A></P>	
+
+	</DIV>
+	</TD>
+</TR>
+<TR>
+	<TD>
+	<P><A ID="expand" CLASS="uatshoot" HREF="#">Values recorded in a log don't appear in the graph view.</A></P>
+
+	<DIV CLASS="expand">
+
+	<P><B>Cause:</B>&nbsp;&nbsp;The graph is limited to 100 samples.</P>
+	
+	<P><B>Solution:</B>&nbsp;&nbsp;Reduce the selected time range.</P>
+	
+<P><B>See also:</B>&nbsp;&nbsp;<A ID="specLoc" HREF="../mpconcepts/nt_sysmon_workwithlogfiles.htm">To use logged data</A></P>	
+
+	</DIV>
+	</TD>
+</TR>
+
+<TR>
+	<TD>
+	<P><A ID="expand" CLASS="uatshoot" HREF="#">Objects, counters, or instances seem to be missing or invalid.</A></P>
+
+	<DIV CLASS="expand">
+	
+	<P><B>Cause:</B>&nbsp;&nbsp;Test routines that run when you start Performance have detected a problem with installed counters and have disabled the counters automatically to prevent the counters from slowing the system. Disabled objects and counters do not appear in the <B>Add Counters</B> dialog box.</P>
+	
+	<P><B>Solution:</B>&nbsp;&nbsp;Using Registry Editor, change the value under <NOBR><B>HKEY_LOCAL_MACHINE<WBR>\SYSTEM<WBR>\CurrentControlSet<WBR>\Services<WBR>\</B><I>Service_name</I><B><WBR>\Performance<WBR>\Disable Performance Counters</B></NOBR> from <B>1</B> for disable to <B>0</B> for enable. Note that counters that have been disabled after initial testing are likely to contain errors and may cause system problems. For information about debugging problems with counter DLLs, see the <A ID="extUrl" HREF="http://www.microsoft.com/isapi/redir.dll?prd=msdn&pver=6.0&ar=library" TITLE="http://www.microsoft.com/" TARGET="_new">Microsoft Web site</A><SPAN CLASS="printOnly"> (http://msdn.microsoft.com/)</SPAN>.</P>
+
+<P class="caution">Caution</P>
+<UL>
+    <LI>
+Incorrectly editing the registry may severely damage your system. Before making changes to the registry, you should back up any valued data on the computer.
+    </LI>
+</UL>
+
+	<P><B>Cause:</B>&nbsp;&nbsp;The process that starts the object counters is not started or installed.</P>
+	
+	<P><B>Solution:</B>&nbsp;&nbsp;Use Task Manager to verify that the process is running. If so, use Exctrlst.exe on the <A ID="altLoc" HREF="CHM=ntshowto.chm;windows.chm FILE=w2rk.htm;web_resources.htm">Windows&nbsp;2000 Resource Kit</A> companion CD to verify that the counter DLL is enabled.</P>
+	
+	
+
+	<P><B>Cause:</B>&nbsp;&nbsp;The counters haven't been enabled (such as with the Network Segment object counters).</P>
+	
+	<P><B>Solution:</B>&nbsp;&nbsp;Make sure that the service or feature that provides the counter has been installed or configured.</P>
+	
+	<P><B>Cause:</B>&nbsp;&nbsp;The DLL that installs the counters is generating errors. An example is if the counter does not handle localization functions correctly.</P>
+	
+	<P><B>Solution:</B>&nbsp;&nbsp;Check Event Viewer to see whether the counter DLL or the Performance Data Helper reported any errors. If necessary, you can disable counter DLLs that are causing errors by using Exctrlst.exe on the <A ID="altLoc" HREF="CHM=ntshowto.chm;windows.chm FILE=w2rk.htm;web_resources.htm">Windows&nbsp;2000 Resource Kit</A> companion CD.</P>
+	
+	
+
+	<P><B>Cause:</B>&nbsp;&nbsp;You are trying to monitor a 16-bit or <NOBR>MS-DOS</NOBR> application. Only 32-bit processes appear in the instances list. Active 16-bit processes appear as threads running in a Windows Virtual DOS Machine (NTVDM) process.</P>
+	
+	<P><B>Solution:</B>&nbsp;&nbsp;Monitor the application via the NTVDM process.</P>
+	
+<P><B>See also:</B>&nbsp;&nbsp;<A ID="specLoc" HREF="../mpconcepts/sag_mpmonperf_25.htm">Monitoring legacy programs</A></P>	
+
+	<P><B>Cause:</B>&nbsp;&nbsp;The instance you want to monitor is not currently active. If you are configuring System Monitor to collect real-time data, you can only select active instances for data collection. (If you are viewing logged data, you can select inactive instances for which the log contains data.) If you select the process and it stops after you've selected it, it will continue to appear in the list box but the reported data will be zeroes.</P>
+	
+	<P><B>Solution:</B>&nbsp;&nbsp;Make sure the instance is active.</P>
+	
+	</DIV>
+	</TD>
+</TR>
+<TR>
+	<TD>
+	<P><A ID="expand" CLASS="uatshoot" HREF="#">You sometimes see an extremely high value for one instance and not the other when you are monitoring processes of the same name.</A></P>
+
+	<DIV CLASS="expand">
+
+	<P><B>Cause:</B>&nbsp;&nbsp;The performance tools sometimes misrepresent data for separate instances of processes with the same name by reporting the combined values of the instances as the value of a single instance.</P>
+	
+	<P><B>Solution:</B>&nbsp;&nbsp; Use the instance index and track the Process\ ID Process and Process\ Creating Process ID counters.</P>
+	
+
+	</DIV>
+	</TD>
+</TR>
+<TR>
+	<TD>
+	<P><A ID="expand" CLASS="uatshoot" HREF="#">When monitoring several threads, if one thread stops its data appears to be reported for another.</A></P>
+
+	<DIV CLASS="expand">
+
+	<P><B>Cause:</B>&nbsp;&nbsp;This is because of the way threads are numbered. For example, assume you are monitoring three threads, numbered 0, 1, and 2. If thread 0 stops, the remaining threads get renumbered. The original thread 0 is now gone and the original thread 1 is renamed to 0. As a result data for the stopped thread 0 could be reported along with data for the running thread 1 because old thread 1 is now old thread 0.</P>
+	
+	<P><B>Solution:</B>&nbsp;&nbsp;Use the instance index with Thread ID to track these threads.</P>
+	
+	</DIV>
+	</TD>
+</TR>
+<TR>
+	<TD>
+	<P><A ID="expand" CLASS="uatshoot" HREF="#">An error message is displayed if you try to export log data to Microsoft Excel while the Performance Logs and Alerts service is actively collecting data to that log.</A></P>
+
+	<DIV CLASS="expand">
+
+	<P><B>Cause:</B>&nbsp;&nbsp;Microsoft Excel requires exclusive access to the log file. Other programs are not known to require this exclusive access; therefore, in general, you can work with data from a log file while the  service is collecting data to that file.</P>
+	
+	<P><B>Solution:</B>&nbsp;&nbsp;Stop the Performance Logs and Alerts service before trying to use it with Microsoft Excel.</P>
+	
+	</DIV>
+	</TD>
+</TR>
+<TR>
+	<TD>
+	<P><A ID="expand" CLASS="uatshoot" HREF="#">I lost my connection to a remote computer from which I was logging data and I cannot resume logging.</A></P>
+
+	<DIV CLASS="expand">
+
+	<P><B>Cause:</B>&nbsp;&nbsp;Logging data from a remote computer requires the use of Remote Registry Service. If the service stops due to failure, by default the system restarts it automatically only once.</P>
+	
+	<P><B>Solution:</B>&nbsp;&nbsp;If Remote Registry Service stops more than once, you must restart the service manually on the second and any subsequent failures. To change this default behavior, use Computer Management or Services (on the <B>Administrative Tools</B> menu) to modify the properties for Remote Registry Service.</P>
+	
+	</DIV>
+	</TD>
+</TR>
+<TR>
+	<TD>
+	<P><A ID="expand" CLASS="uatshoot" HREF="#"> Help for System Monitor does not appear in MMC Help; only Performance Logs and Alerts is displayed.</A></P>
+
+	<DIV CLASS="expand">
+
+	<P><B>Cause:</B>&nbsp;&nbsp;Because System Monitor is designed as an ActiveX control, its behavior differs from other MMC snap-ins. For example, System Monitor Help is not available when you right-click System Monitor and then click <b>Help</b> on the shortcut menu, or when you click <b>Help Topics</b> on the <b>Help</b> menu.</P>
+
+	<P><B>Solution:</B>&nbsp;&nbsp;Click the <b>Help</b> button on the System Monitor toolbar.</P>
+	
+	</DIV>
+	</TD>
+</TR>
+
+</TABLE>
+
+</BODY>
+</HTML>

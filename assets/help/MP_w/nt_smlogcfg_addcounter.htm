@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+ 
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+
+<META NAME="MS-HAID" CONTENT="a_nt_smlogcfg_addcounter"> 
+<TITLE>Add counters to a log</TITLE>
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+</HEAD>
+
+<BODY>
+
+<P CLASS="proclabel">To add counters to a log</P>
+<OL>
+<LI>Open <A ID="shortcut" HREF="exec=,perfmon.msc, /s chm=mmc.chm file=alt_url_snapin.htm">Performance</A>.</LI>
+<LI>Double-click <B>Performance Logs and Alerts</B>, and then click <B>Counter Logs</B>.</LI>
+<LI>In the details pane, double-click the log you want to modify.</LI>
+<LI>On the <B>General</B> tab, click <B>Add</B>. For each counter or group of counters that you want to add to the log, perform the following steps:</LI>
+
+<OL><LI>To log counters from the computer on which the Performance Logs and Alerts service will run, click <B>Use local computer counters</B>.
+<P>Or, to log counters from a specific computer regardless of where the service is run, click <B>Select counters from computer</B> and specify the name of the computer you want to monitor.</P></LI>
+<LI>In <B>Performance object</B>, click an object to monitor.</LI>
+<LI>In <B>Performance counters</B>, click one or more counters to monitor.
+</LI>
+<LI>To monitor all instances of the selected counters, click <B>All Instances</B>. (Binary logs can include instances that are not available at log startup but subsequently become available.)
+<P>Or, to monitor particular instances of the selected counters, click <B>Select Instances From List</B>, and then click an instance or instances to monitor.</P></LI>
+<LI>Click <B>Add</B>.</LI></OL></OL>
+<P CLASS="note">Notes</P>
+<UL>
+<LI>To open Performance, click <B>Start</B>, point to <B>Programs</B>, point to <B>Administrative Tools</B>, and then click <B>Performance</B>.</LI>
+<LI>When creating a monitoring console for export, make sure to select <B>Use local computer counters</B>. Otherwise, counter logs will obtain data from the computer named in the text box, regardless of where the console file is installed.
+</LI>
+<LI>For a description of a counter, click the counter in <B>Performance counters</B> and then click <B>Explain</B>.</LI>
+<LI>To start network monitoring counters, see <A ID="specLoc" HREF="../mpconcepts/nt_sysmon_netmonstart.htm">Enabling Network Segment counters</A>.</LI>
+<LI>Some object types have several instances. For example, if a system has multiple processors, the Processor object type will have multiple instances. The PhysicalDisk object type has two instances if a system has two disks. Some object types, such as Memory and Server, have only a single instance. If an object type has multiple instances, you can add counters to track statistics for each instance, or in many cases, for all instances at once. By default, counters are shown with both the instance name and an instance index. To turn off this feature, right-click the System Monitor graph, click <B>Properties</B>, and clear the <B>Allow duplicate counter instances</B> check box.</LI>
+</UL>
+
+<P><A ID="relTopics" HREF="#" data-haid="a_nt_smlogcfg_schedule;a_nt_smlogcfg_files;a_nt_smlogcfg_removecounters">Related Topics</A></P>
+</BODY>
+</HTML>
+
+

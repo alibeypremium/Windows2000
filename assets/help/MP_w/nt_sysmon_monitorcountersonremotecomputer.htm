@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+
+<TITLE>Monitor a different computer</TITLE>
+<META NAME="MS-HAID" CONTENT="a_nt_sysmon_monitorcountersonremotecomputer">
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+</HEAD>
+
+<BODY>
+
+<P CLASS="proclabel"><A NAME="nt_sysmon_monitorcountersonremotecomputer">To monitor a different computer</A></P>
+
+<OL>
+<LI>Open <A ID="shortcut" HREF="exec=,perfmon.msc, chm=mmc.chm file=alt_url_snapin.htm">Performance</A>.</LI>
+<LI> Right-click the System Monitor details pane and click <B>Add Counters</B>.</LI>
+<LI> Click <B>Select counters from computer</B>, and type the computer name in the text box. 
+<P>
+System Monitor will obtain counters from the computer you specify, regardless of where System Monitor is running. </P></LI>
+<LI> In <B>Performance object</B>, click an object to monitor.</LI>
+<LI> In <B>Performance counters</B>, click one or more counters.</LI>
+<LI>To use all counter instances available when System Monitor is in use, click <B>All instances</B>. <P>Or, to use only selected counter instances, click <B>Select instances from list</B> and select the instances you want to use.</P></LI>
+</OL>
+<P class="note">Notes</P><UL>
+<LI>To open Performance, click <B>Start</B>, point to <B>Programs</B>, point to <B>Administrative Tools</B>, and then click <B>Performance</B>.</li>
+<LI>
+If you don't have appropriate permissions to monitor the computer, an error message will be displayed but the counter will still appear in the histogram or graph legend without any data or any graph line.</LI>
+<LI>If you select an object on a remote computer, you may notice a short delay as System Monitor refreshes the list to reflect objects present on that computer. </LI>
+<LI>
+If you don't see a counter that you want to monitor, it could be because the service or feature that provides the counter object is not installed or enabled on that computer and you may need to add it before you can monitor related data.</LI>
+</UL>
+
+</BODY>
+</HTML>
+
