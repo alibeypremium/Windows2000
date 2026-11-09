@@ -30,6 +30,7 @@ const shellNames = {
   control: "Control Panel",
   admintools: "Administrative Tools",
   printers: "Printers",
+  tasks: "Scheduled Tasks",
   fonts: "Fonts",
   search: "Search Results",
 };
@@ -52,9 +53,9 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
   const w = ctx.wm.create({
     title: title || shellNames[path] || basename(path),
     icon: locationIcon(path),
-    width: path === "fonts" ? 675 : path === "printers" ? 678 : 721,
-    height: path === "fonts" ? 455 : path === "printers" ? 456 : 537,
-    ...(path === "fonts" ? { x: 218, y: 33 } : path === "printers" ? { x: 220, y: 47 } : {}),
+    width: path === "fonts" ? 675 : path === "printers" ? 678 : path === "tasks" ? 679 : 721,
+    height: path === "fonts" ? 455 : path === "printers" ? 456 : path === "tasks" ? 515 : 537,
+    ...(path === "fonts" ? { x: 218, y: 33 } : path === "printers" ? { x: 220, y: 47 } : path === "tasks" ? { x: 219, y: 47 } : {}),
     appId: "explorer",
   });
   w.el.classList.add("explorer-window");
@@ -113,7 +114,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     };
   const goUp = () => {
     if (current === "computer") return;
-    if (["admintools", "printers", "fonts"].includes(current)) navigate("control");
+    if (["admintools", "printers", "fonts", "tasks"].includes(current)) navigate("control");
     else if (shellNames[current] || current.length === 3) navigate("computer");
     else navigate(dirname(current));
   };
@@ -186,6 +187,8 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
           icon: "addPrinter",
         },
       ];
+    if (current === "tasks")
+      return [{ name: "Add Scheduled Task", path: "tasks:add", type: "special", icon: "addTask" }];
     if (current === "network")
       return [
         {
@@ -223,7 +226,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
       if (id === "administrative") navigate("admintools");
       else if (id === "printers") ctx.launch("explorer", { path: "printers" });
       else if (id === "fonts") ctx.launch("explorer", { path: "fonts" });
-      else if (id === "tasks") ctx.launch("tasks");
+      else if (id === "tasks") ctx.launch("explorer", { path: "tasks" });
       else if (n.unavailable)
         ctx.dialogs.message(
           `${n.name} is not available in this browser simulation.`,
@@ -240,7 +243,8 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
           { title: n.name, icon: "info" },
         );
     } else if (n.path === "printers:add") ctx.launch("control", { page: "printers" });
-    else if (n.path === "tasks") ctx.launch("tasks");
+    else if (n.path === "tasks:add") ctx.launch("taskwizard");
+    else if (n.path === "tasks") ctx.launch("explorer", { path: "tasks" });
     else if (n.path === "network:all" || n.path === "network:near")
       ctx.launch("control", { page: "network" });
     else if (n.path === "network:add")
@@ -551,6 +555,17 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
         action: () => ctx.launch("control", { page: "folder" }),
       },
     ],
+    ...(path === "tasks"
+      ? {
+          Advanced: [
+            { label: "Stop Using Task Scheduler", disabled: true },
+            { label: "Pause Task Scheduler", disabled: true },
+            { label: "Notify Me of Missed Tasks", action: () => {} },
+            { label: "View Log", action: () => {} },
+            { label: "AT Service Account...", action: () => {} },
+          ],
+        }
+      : {}),
     Help: [
       { label: "Windows Help", action: () => ctx.launch("help") },
       { label: "About Windows", action: () => ctx.launch("about") },
@@ -970,6 +985,12 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
         ),
         (selectP().classList.add("side-next"), descEl),
         link("Windows 2000 Support", () => ctx.launch("help"), "side-far"),
+      );
+    else if (current === "tasks")
+      side.append(
+        p("This folder contains tasks you've scheduled for Windows. Windows automatically performs each task at the scheduled time."),
+        el("p", { class: "side-next" }, "For example, you can schedule a time for Windows to clean up your hard disk by deleting unnecessary files."),
+        (selectP().classList.add("side-next"), descEl),
       );
     else if (current === "recycle") {
       side.append(
@@ -1432,6 +1453,7 @@ function locationIcon(path) {
   if (path === DOCS || path === "documents") return "documents";
   if (path === "admintools") return "adminToolsFolder";
   if (path === "fonts") return "cpFonts";
+  if (path === "tasks") return "scheduledTasks";
   if (shellNames[path] && path !== "search") return path === "computer" ? "computer" : path;
   if (isDrive(path))
     return { A: "floppy", D: "cd" }[path[0].toUpperCase()] || "drive";
@@ -1440,7 +1462,7 @@ function locationIcon(path) {
 function headerArt(path) {
   if (path === DOCS) return "documents";
   if (path === "admintools") return "admin";
-  if (["computer", "control", "recycle", "network", "printers"].includes(path))
+  if (["computer", "control", "recycle", "network", "printers", "tasks"].includes(path))
     return path;
   if (isDrive(path)) return "disk";
   return "folder";

@@ -356,3 +356,7 @@ Assets under `assets/ui/inet/`, `assets/ui/folderopts/`, `assets/ui/display/`, `
 ## Fifth reference set (Users and Passwords, Power Options, Mouse, Keyboard, Location Information, LAN status, Java Plug-in, Internet Properties Programs/Advanced, Printers)
 
 Assets under `assets/ui/users/`, `assets/ui/power/`, `assets/ui/mouse/`, `assets/ui/keyboard/`, `assets/ui/net/` and the new `assets/ui/inet/` icons were cropped from the user-supplied Windows 2000 screenshots (p1–p20) and background-keyed to alpha where needed.
+
+## Sixth reference set (q1–q19)
+
+Icons and banners for System Properties, Regional Options, Sounds and Multimedia, Scanners and Cameras, Shut Down Windows and the Scheduled Tasks folder were cropped from user-supplied Windows 2000 reference screenshots (`assets/ui/system`, `assets/ui/sounds`, `assets/ui/shutdown`, `assets/ui/explorer/header-tasks.png`, `assets/icons/w2k/ref-add-task-*`).

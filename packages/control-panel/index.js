@@ -20,6 +20,8 @@ import { openLocationInformation, openLanStatus } from "./netdlg.js";
 import { openJavaPlugin } from "./java.js";
 import { openSystemProperties } from "./sysprops.js";
 import { openRegionalOptions } from "./regional.js";
+import { openSoundsProperties } from "./sounds.js";
+import { openScannersProperties } from "./scanners.js";
 import { openFolderOptions } from "./folderopts.js";
 import {
   openAccessibility,
@@ -156,7 +158,6 @@ export const controlItems = [
     name: "Scanners and Cameras",
     icon: "cpScanners",
     description: "Add, remove, and configure scanners and cameras.",
-    unavailable: true,
   },
   {
     id: "tasks",
@@ -247,6 +248,8 @@ export function openControlPanel(ctx, { page = "system" } = {}) {
   if (page === "bde") return openBdeAdministrator(ctx);
   if (page === "internet") return openInternetProperties(ctx);
   if (page === "gaming") return openGamingOptions(ctx);
+  if (page === "scanners") return openScannersProperties(ctx);
+  if (page === "sounds") return openSoundsProperties(ctx);
   if (page === "regional") return openRegionalOptions(ctx);
   if (page === "system") return openSystemProperties(ctx);
   if (page === "java") return openJavaPlugin(ctx);

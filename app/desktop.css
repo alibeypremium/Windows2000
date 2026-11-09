@@ -5456,3 +5456,14 @@ button.selected:focus {
 .rg-lang .ia-box { left: 2px; top: 2px; }
 .rg-lang .t { position: absolute; left: 20px; top: 2px; line-height: 14px; }
 .shutdown-dim { position: fixed; inset: 0 0 var(--taskbar-height); background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='2' height='2'><rect x='1' width='1' height='1'/><rect y='1' width='1' height='1'/></svg>"); image-rendering: pixelated; }
+.sm-row { position: absolute; left: 0; width: 100%; height: 16px; white-space: nowrap; cursor: default; }
+.sm-row img { position: absolute; image-rendering: pixelated; }
+.sm-row span, .sm-row em { position: absolute; top: 2px; padding: 0 1px; line-height: 13px; font-style: normal; }
+.sm-row.dev span, .sm-row.dev em { top: 2px; line-height: 14px; }
+.sm-row span.sel { background: #0a246a; color: #fff; }
+.sm-hdr { position: absolute; height: 17px; box-sizing: border-box; background: #d4d0c8; border: 1px solid; border-color: #fff #404040 #404040 #fff; box-shadow: inset -1px -1px #808080; padding: 1px 0 0 8px; line-height: 14px; }
+.sm-play { position: absolute; left: 8px; top: 6px; border-left: 4px solid #000; border-top: 4px solid transparent; border-bottom: 4px solid transparent; }
+.rk-btn.disabled .sm-play, .disabled .sm-play { border-left-color: #808080; }
+.sm-row span, .sm-row em { letter-spacing: -0.35px; }
+.sm-row.dev.on::before { content: ""; position: absolute; left: 19px; right: 0; top: 0; height: 16px; background: #0a246a; }
+.sm-row.dev.on span, .sm-row.dev.on em { color: #fff; }

@@ -294,6 +294,13 @@ ctx.apps = [
     icon: "scheduledTasks",
     aliases: ["tasks"],
     singleton: true,
+    open: (ctx) => ctx.launch("explorer", { path: "tasks" }),
+  },
+  {
+    id: "taskwizard",
+    name: "Add Scheduled Task",
+    icon: "scheduledTasks",
+    singleton: true,
     open: openTasks,
   },
   {
