@@ -300,49 +300,64 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
     tbButton("media", "Media", () => ctx.launch("wmplayer")),
     tbButton("history", "", () => navigate("about:history"), { title: "History" }),
     sep(),
-    tbButton("mail", "", () => ctx.launch("mail"), { title: "Mail" }),
+    tbButton("mail", "", () => ctx.launch("outlook"), { title: "Mail" }),
     tbButton("print", "", () => ctx.printText(viewport.innerText, current), { title: "Print" }),
   );
   w.setMenu({
-    File: [
+    File: () => [
       {
-        label: "New Window",
-        shortcut: "Ctrl+N",
-        action: () => ctx.launch("ie", { url: current }),
+        label: "New",
+        submenu: [
+          { label: "Window", shortcut: "Ctrl+N", action: () => ctx.launch("ie", { url: current }) },
+          { label: "Message", action: () => ctx.launch("outlook", { compose: true }) },
+          { label: "Post", disabled: true },
+          { label: "Contact", action: () => ctx.launch("address") },
+          { label: "Internet Call", disabled: true },
+        ],
       },
       {
         label: "Open...",
         shortcut: "Ctrl+O",
         action: async () => {
-          const p = await ctx.dialogs.prompt(
-            "Type an Internet address:",
-            current,
-            { title: "Open" },
-          );
+          const p = await ctx.dialogs.prompt("Type the Internet address of a document or folder, and Internet Explorer will open it for you.", current, { title: "Open" });
           if (p) navigate(p);
         },
       },
+      { label: "Edit", disabled: true },
+      { label: "Save", shortcut: "Ctrl+S", disabled: true },
       {
-        label: "Open Local File...",
-        action: async () => {
-          const p = await ctx.dialogs.file({
-            filter: (n) => /\.html?$/i.test(n.name),
-          });
-          if (p) navigate(p);
-        },
+        label: "Save As...",
+        action: () => downloadFile((w.title.replace(" - Microsoft Internet Explorer", "") || "index") + ".htm", `<html>${viewport.innerHTML}</html>`, "text/html"),
       },
-      { label: "Open in Browser", action: external },
+      separator(),
+      { label: "Page Setup...", disabled: true },
+      { label: "Print...", shortcut: "Ctrl+P", action: () => ctx.printText(viewport.innerText, current) },
       separator(),
       {
-        label: "Print...",
-        action: () => ctx.printText(viewport.innerText, current),
+        label: "Send",
+        submenu: [
+          { label: "Page by E-mail", disabled: true },
+          { label: "Link by E-mail", action: () => (location.href = "mailto:?subject=" + encodeURIComponent(w.title) + "&body=" + encodeURIComponent(current)) },
+          { label: "Shortcut to Desktop", disabled: true },
+        ],
       },
+      { label: "Import and Export...", disabled: true },
+      separator(),
+      {
+        label: "Properties",
+        action: () => ctx.dialogs.message(`Address (URL): ${current}`, { title: "Properties", icon: "ie" }),
+      },
+      { label: "Work Offline", checked: !!ctx.settings.get("ieOffline"), action: () => ctx.settings.set("ieOffline", !ctx.settings.get("ieOffline")) },
       { label: "Close", action: () => w.close() },
     ],
     Edit: [
-      { label: "Copy Address", action: () => ctx.clipboard.setText(current) },
+      { label: "Cut", shortcut: "Ctrl+X", disabled: true },
+      { label: "Copy", shortcut: "Ctrl+C", action: () => document.execCommand("copy") },
+      { label: "Paste", shortcut: "Ctrl+V", disabled: true },
+      separator(),
       {
         label: "Select All",
+        shortcut: "Ctrl+A",
         action: () => {
           const range = document.createRange();
           range.selectNodeContents(viewport);
@@ -350,6 +365,8 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
           window.getSelection().addRange(range);
         },
       },
+      separator(),
+      { label: "Find (on This Page)...", shortcut: "Ctrl+F", disabled: true },
     ],
     View: () => [
       {
@@ -425,13 +442,6 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
               : viewport.innerHTML,
           }),
       },
-      {
-        label: "Privacy Report...",
-        action: () =>
-          ctx.dialogs.message("No privacy information is available for this page.", {
-            title: "Privacy Report",
-          }),
-      },
       { label: "Full Screen", shortcut: "F11", action: () => w.maximize() },
     ],
     Favorites: () => [
@@ -463,22 +473,32 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
     ],
     Tools: [
       {
-        label: "Internet Options...",
-        action: () => ctx.launch("control", { page: "internet" }),
+        label: "Mail and News",
+        submenu: [
+          { label: "Read Mail", action: () => ctx.launch("outlook") },
+          { label: "New Message...", action: () => ctx.launch("outlook", { compose: true }) },
+          { label: "Send a Link...", action: () => (location.href = "mailto:?body=" + encodeURIComponent(current)) },
+          { label: "Send Page...", disabled: true },
+          separator(),
+          { label: "Read News", disabled: true },
+        ],
       },
+      { label: "Synchronize...", disabled: true },
+      { label: "Windows Update", disabled: true },
+      separator(),
+      { label: "Internet Options...", action: () => ctx.launch("control", { page: "internet" }) },
     ],
     Help: [
-      {
-        label: "Contents and Index",
-        action: () => ctx.launch("help", { topic: "internet" }),
-      },
+      { label: "Contents and Index", action: () => ctx.launch("help", { topic: "internet" }) },
+      { label: "Tip of the Day", disabled: true },
+      { label: "For Netscape Users", disabled: true },
+      { label: "Tour", disabled: true },
+      { label: "Online Support", disabled: true },
+      { label: "Send Feedback", disabled: true },
+      separator(),
       {
         label: "About Internet Explorer",
-        action: () =>
-          ctx.dialogs.message(
-            "Microsoft Internet Explorer\nVersion: 5.01 — Browser recreation\n\nUses your browser engine for web pages. ActiveX, VBScript, legacy plugins, and unrestricted cross-origin access are not supported.",
-            { title: "About Internet Explorer", icon: "ie" },
-          ),
+        action: () => ctx.dialogs.message("Microsoft Internet Explorer\nVersion: 5.01\n\nCopyright © 1995-1999 Microsoft Corp.", { title: "About Internet Explorer", icon: "ie" }),
       },
     ],
   });

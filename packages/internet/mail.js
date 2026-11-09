@@ -122,48 +122,69 @@ export function openAddressBook(ctx) {
     }
   };
   let render;
+  const has = () => !!contacts.find((c) => c.id === selected);
+  const exportBook = () => downloadFile("Address-Book.json", JSON.stringify(contacts, null, 2), "application/json");
+  const mailTo = () => {
+    const c = contacts.find((c) => c.id === selected);
+    if (c) openMail(ctx, { compose: true, to: c.email });
+  };
+  const off = (label, extra = {}) => ({ label, disabled: true, ...extra });
   w.setMenu({
-    File: [
+    File: () => [
       { label: "New Contact...", shortcut: "Ctrl+N", action: () => edit() },
-      {
-        label: "Export Contacts...",
-        action: () =>
-          downloadFile(
-            "Address-Book.json",
-            JSON.stringify(contacts, null, 2),
-            "application/json",
-          ),
-      },
-      { label: "Close", action: () => w.close() },
+      off("New Group...", { shortcut: "Ctrl+G" }),
+      off("New Folder...", { shortcut: "Ctrl+R" }),
+      separator(),
+      { label: "Properties", shortcut: "Alt+Enter", disabled: !has(), action: () => edit(contacts.find((c) => c.id === selected)) },
+      { label: "Delete", disabled: !has(), action: remove },
+      separator(),
+      { label: "Import", submenu: [off("Address Book (WAB)..."), off("Business Card (vCard)..."), off("Other Address Book...")] },
+      { label: "Export", submenu: [{ label: "Address Book (WAB)...", action: exportBook }, off("Business Card (vCard)..."), off("Other Address Book...")] },
+      separator(),
+      { label: "Print...", shortcut: "Ctrl+P", action: () => ctx.printText(contacts.map((c) => `${c.name}\t${c.email || ""}\t${c.phone || ""}`).join("\n"), "Address Book") },
+      separator(),
+      off("Switch Identity..."),
+      off("Show All Contents"),
+      separator(),
+      { label: "Exit", action: () => w.close() },
     ],
-    Edit: [
-      {
-        label: "Properties",
-        action: () => edit(contacts.find((c) => c.id === selected)),
-      },
-      { label: "Delete", action: remove },
+    Edit: () => [
+      off("Copy", { shortcut: "Ctrl+C" }),
+      off("Paste", { shortcut: "Ctrl+V" }),
+      separator(),
+      off("Select All", { shortcut: "Ctrl+A" }),
+      separator(),
+      off("Profile..."),
+      separator(),
+      off("Find People...", { shortcut: "Ctrl+F" }),
     ],
-    View: [
-      { label: "Status Bar", action: () => countEl.classList.toggle("hidden") },
+    View: () => [
+      off("Toolbar", { checked: true }),
+      { label: "Status Bar", checked: !countEl.classList.contains("hidden"), action: () => countEl.classList.toggle("hidden") },
+      off("Folders and Groups", { checked: true }),
+      separator(),
+      off("Large Icon"),
+      off("Small Icon"),
+      off("List"),
+      off("Details", { checked: true }),
+      separator(),
+      { label: "Sort By", submenu: [off("Name", { checked: true }), off("E-Mail Address"), off("Business Phone"), off("Home Phone"), separator(), off("First Name"), off("Last Name", { checked: true }), separator(), off("Ascending", { checked: true }), off("Descending")] },
+      separator(),
+      { label: "Refresh", shortcut: "F5", action: () => render() },
     ],
-    Tools: [
-      {
-        label: "Send Mail",
-        action: () => {
-          const c = contacts.find((c) => c.id === selected);
-          if (c) openMail(ctx, { compose: true, to: c.email });
-        },
-      },
+    Tools: () => [
+      off("Accounts..."),
+      separator(),
+      off("Options..."),
+      separator(),
+      { label: "Action", submenu: [{ label: "Send Mail", disabled: !has(), action: mailTo }, off("Send Mail To", { submenu: [] }), off("Dial..."), off("Internet Call")] },
+      separator(),
+      off("Synchronize Now"),
     ],
     Help: [
-      {
-        label: "About Address Book",
-        action: () =>
-          ctx.dialogs.message(
-            "Address Book\nContacts are saved to My Documents\\Address Book.json.",
-            { title: "Address Book", icon: "address" },
-          ),
-      },
+      { label: "Contents and Index", shortcut: "F1", action: () => ctx.launch("help", { topic: "outlook" }) },
+      separator(),
+      { label: "About Address Book", action: () => ctx.dialogs.message("Microsoft Windows Address Book\nVersion 5.50.4807.1700\n\nCopyright © 1981-2000 Microsoft Corp.", { title: "About Address Book", icon: "address" }) },
     ],
   });
   const current = () => contacts.find((c) => c.id === selected);

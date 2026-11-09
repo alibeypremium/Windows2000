@@ -385,3 +385,8 @@ Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the origi
 ## Pinball (3D Pinball for Windows - Space Cadet)
 - `assets/games/pinball/pinball.dat`, `sound*.wav`, `pinball.mid`: from the Windows 2000 CD (I386).
 - `assets/games/pinball/pinball.wasm`: table logic from the MIT-licensed SpaceCadetPinball reimplementation (`pinball-wasm/`, LICENSE-SpaceCadetPinball), compiled with wasi-sdk (`pinball-wasm/build.sh`). SDL/ImGui are replaced by a small browser layer (`pinball-wasm/src/platform.cpp`, `winmain.cpp`); the JS host is `packages/games/pinball.js`.
+
+## Menus and dialogs from the ISO (second pass)
+- `scripts/dump-menus.py` reads RT_MENU/RT_STRING from any PE file. Outlook Express menus: msoeres.dll (`assets/oe/menus.json`).
+- Notepad/WordPad Find, Replace, Go To, Page Setup: notepad.exe + comdlg32.dll templates (`packages/accessories/notepad-data.js`).
+- Paint Flip/Rotate, Stretch/Skew, Custom Zoom: mspaint.exe (`paint-data.js`). Menus of Notepad, WordPad, Paint, Calculator, Imaging (kodakimg.exe), Address Book (wab32res.dll) follow the real resources. IE 5.01 menus follow the real browser menu order (they are not stored as RT_MENU in the ISO).

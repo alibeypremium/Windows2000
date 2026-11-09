@@ -1,3 +1,5 @@
+import { dialogFromTemplate } from "../ui/dlg.js";
+import { PAINT_DIALOGS } from "./paint-data.js";
 import { basename, extension, downloadFile } from "../core/index.js";
 import {
   el,
@@ -699,6 +701,84 @@ export async function openPaint(ctx, { path = null } = {}) {
     setDirty();
     render();
   };
+  const resample = (fn) => {
+    record();
+    const temp = document.createElement("canvas");
+    temp.width = bitmap.width;
+    temp.height = bitmap.height;
+    temp.getContext("2d").drawImage(bitmap, 0, 0);
+    fn(temp);
+    surface.resize(bitmap.width, bitmap.height);
+    setDirty();
+    render();
+  };
+  const rotateBy = (deg) => resample((temp) => {
+    const swap = deg === 90 || deg === 270;
+    bitmap.width = swap ? temp.height : temp.width;
+    bitmap.height = swap ? temp.width : temp.height;
+    c.save();
+    c.translate(bitmap.width / 2, bitmap.height / 2);
+    c.rotate((deg * Math.PI) / 180);
+    c.drawImage(temp, -temp.width / 2, -temp.height / 2);
+    c.restore();
+  });
+  const flipRotateDialog = () => {
+    const d = dialogFromTemplate(ctx, PAINT_DIALOGS.flip, {
+      appId: "flip",
+      checked: { 1087: true, 1090: true },
+      groups: [[1087, 1088, 1089]],
+      on: {
+        1: () => {
+          if (d.on(1087)) transform("horizontal");
+          else if (d.on(1088)) transform("vertical");
+          else rotateBy(d.on(1090) ? 90 : d.on(1091) ? 180 : 270);
+          d.close();
+        },
+        2: () => d.close(),
+      },
+    });
+    d.on(1090);
+  };
+  const stretchSkewDialog = () => {
+    const d = dialogFromTemplate(ctx, PAINT_DIALOGS.stretch, {
+      appId: "stretch",
+      values: { 1019: "100", 1020: "100", 1021: "0", 1022: "0" },
+      on: {
+        1: () => {
+          const sx = (parseFloat(d.ctl[1019].value) || 100) / 100, sy = (parseFloat(d.ctl[1020].value) || 100) / 100;
+          const kx = Math.tan(((parseFloat(d.ctl[1021].value) || 0) * Math.PI) / 180), ky = Math.tan(((parseFloat(d.ctl[1022].value) || 0) * Math.PI) / 180);
+          d.close();
+          resample((temp) => {
+            bitmap.width = Math.max(1, Math.round(temp.width * sx + Math.abs(kx) * temp.height * sy));
+            bitmap.height = Math.max(1, Math.round(temp.height * sy + Math.abs(ky) * temp.width * sx));
+            c.fillStyle = "#fff";
+            c.fillRect(0, 0, bitmap.width, bitmap.height);
+            c.save();
+            c.transform(sx, ky * sx, kx * sy, sy, kx < 0 ? -kx * temp.height * sy : 0, ky < 0 ? -ky * temp.width * sx : 0);
+            c.drawImage(temp, 0, 0);
+            c.restore();
+          });
+        },
+        2: () => d.close(),
+      },
+    });
+  };
+  const customZoom = () => {
+    const d = dialogFromTemplate(ctx, PAINT_DIALOGS.zoom, {
+      appId: "zoom",
+      labels: { 1081: zoom * 100 + "%" },
+      checked: { [{ 1: 1082, 2: 1083, 4: 1084, 6: 1085, 8: 1086 }[zoom] || 1082]: true },
+      groups: [[1082, 1083, 1084, 1085, 1086]],
+      on: {
+        1: () => {
+          zoom = d.on(1083) ? 2 : d.on(1084) ? 4 : d.on(1085) ? 6 : d.on(1086) ? 8 : 1;
+          d.close();
+          render();
+        },
+        2: () => d.close(),
+      },
+    });
+  };
   w.setMenu({
     File: [
       {
@@ -730,18 +810,16 @@ export async function openPaint(ctx, { path = null } = {}) {
       { label: "Save", shortcut: "Ctrl+S", action: () => save() },
       { label: "Save As...", action: () => save(true) },
       separator(),
-      {
-        label: "Download PNG",
-        action: () =>
-          downloadFile(
-            file ? basename(file) : "untitled.png",
-            bitmap.toDataURL("image/png"),
-            "image/png",
-          ),
-      },
-      { label: "Print...", action: () => ctx.printImage(bitmap.toDataURL()) },
+      { label: "Print Preview", action: () => ctx.printImage(bitmap.toDataURL()) },
+      { label: "Page Setup...", disabled: true },
+      { label: "Print...", shortcut: "Ctrl+P", action: () => ctx.printImage(bitmap.toDataURL()) },
       separator(),
-      { label: "Exit", action: () => w.close() },
+      { label: "Send...", disabled: true },
+      separator(),
+      { label: "Set As Wallpaper (Tiled)", disabled: true },
+      { label: "Set As Wallpaper (Centered)", disabled: true },
+      separator(),
+      { label: "Exit", shortcut: "Alt+F4", action: () => w.close() },
     ],
     Edit: () => [
       {
@@ -791,36 +869,35 @@ export async function openPaint(ctx, { path = null } = {}) {
           render();
         },
       },
+      separator(),
+      { label: "Copy To...", disabled: true },
+      { label: "Paste From...", disabled: true },
     ],
     View: () => [
-      {
-        label: "Tool Box",
-        checked: !toolbox.hidden,
-        action: () => (toolbox.hidden = !toolbox.hidden),
-      },
-      {
-        label: "Color Box",
-        checked: !palette.hidden,
-        action: () => (palette.hidden = !palette.hidden),
-      },
+      { label: "Tool Box", shortcut: "Ctrl+T", checked: !toolbox.hidden, action: () => (toolbox.hidden = !toolbox.hidden) },
+      { label: "Color Box", shortcut: "Ctrl+L", checked: !palette.hidden, action: () => (palette.hidden = !palette.hidden) },
+      { label: "Status Bar", checked: true, disabled: true },
+      { label: "Text Toolbar", disabled: true },
+      separator(),
       {
         label: "Zoom",
-        submenu: [1, 2, 4, 8].map((n) => ({
-          label: n * 100 + "%",
-          checked: zoom === n,
-          action: () => {
-            zoom = n;
-            render();
-          },
-        })),
+        submenu: [
+          { label: "Normal Size", shortcut: "Ctrl+PgUp", action: () => { zoom = 1; render(); } },
+          { label: "Large Size", shortcut: "Ctrl+PgDn", action: () => { zoom = 4; render(); } },
+          { label: "Custom...", action: customZoom },
+          separator(),
+          { label: "Show Grid", shortcut: "Ctrl+G", disabled: true },
+          { label: "Show Thumbnail", disabled: true },
+        ],
       },
+      { label: "View Bitmap", shortcut: "Ctrl+F", action: () => ctx.printImage(bitmap.toDataURL()) },
     ],
     Image: [
-      { label: "Flip Horizontal", action: () => transform("horizontal") },
-      { label: "Flip Vertical", action: () => transform("vertical") },
-      { label: "Rotate 90°", action: () => transform("rotate") },
+      { label: "Flip/Rotate...", shortcut: "Ctrl+R", action: flipRotateDialog },
+      { label: "Stretch/Skew...", shortcut: "Ctrl+W", action: stretchSkewDialog },
       {
         label: "Invert Colors",
+        shortcut: "Ctrl+I",
         action: () => {
           record();
           const d = c.getImageData(0, 0, bitmap.width, bitmap.height);
@@ -837,6 +914,7 @@ export async function openPaint(ctx, { path = null } = {}) {
       { label: "Attributes...", shortcut: "Ctrl+E", action: attributes },
       {
         label: "Clear Image",
+        shortcut: "Ctrl+Shift+N",
         action: () => {
           record();
           c.fillStyle = background;
@@ -845,26 +923,7 @@ export async function openPaint(ctx, { path = null } = {}) {
           render();
         },
       },
-      {
-        label: "Crop to Selection",
-        action: () => {
-          if (!selection) return;
-          record();
-          const d = c.getImageData(
-            selection.x,
-            selection.y,
-            selection.width,
-            selection.height,
-          );
-          bitmap.width = selection.width;
-          bitmap.height = selection.height;
-          c.putImageData(d, 0, 0);
-          surface.resize(bitmap.width, bitmap.height);
-          selection = null;
-          setDirty();
-          render();
-        },
-      },
+      { label: "Draw Opaque", checked: true, disabled: true },
     ],
     Colors: [
       {

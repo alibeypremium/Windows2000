@@ -839,18 +839,17 @@ export function openImaging(ctx, { path = null } = {}) {
     });
     if (p) load(p);
   };
+  const off = (label, extra = {}) => ({ label, disabled: true, ...extra });
+  const rot = (deg) => ({ label: deg === 90 ? "Right" : deg === 270 ? "Left" : "180°", action: () => ((rotation += deg), update()) });
+  const zs = (label, z) => ({ label, action: () => ((zoom = z), update()) });
   w.setMenu({
-    File: [
-      { label: "Open...", action: open },
+    File: () => [
+      off("New...", { shortcut: "Ctrl+N" }),
+      { label: "Open...", shortcut: "Ctrl+O", action: open },
+      off("Save", { shortcut: "Ctrl+S" }),
       {
-        label: "Import Image...",
-        action: async () => {
-          const [file] = await pickFiles({ accept: "image/*" });
-          if (file) load(await ctx.fs.importFile(file, DOCS + "/My Pictures"));
-        },
-      },
-      {
-        label: "Download",
+        label: "Save As...",
+        disabled: !current,
         action: () => {
           if (current) {
             const n = ctx.fs.stat(current);
@@ -858,69 +857,104 @@ export function openImaging(ctx, { path = null } = {}) {
           }
         },
       },
+      separator(),
       {
-        label: "Print...",
-        action: () => {
-          if (current) ctx.printImage(image.src);
+        label: "Acquire Image...",
+        action: async () => {
+          const [file] = await pickFiles({ accept: "image/*" });
+          if (file) load(await ctx.fs.importFile(file, DOCS + "/My Pictures"));
         },
       },
+      off("Select Device..."),
+      separator(),
+      { label: "Properties", disabled: !current, action: () => ctx.dialogs.message(`Name: ${ctx.fs.stat(current).name}`, { title: "Properties", icon: "imagingApp" }) },
+      separator(),
+      { label: "Print...", shortcut: "Ctrl+P", disabled: !current, action: () => ctx.printImage(image.src) },
+      off("Color Management..."),
+      off("Send..."),
+      separator(),
       { label: "Exit", action: () => w.close() },
     ],
     Edit: [
-      {
-        label: "Edit in Paint",
-        action: () => {
-          if (current) ctx.launch("paint", { path: current });
-        },
-      },
+      off("Undo", { shortcut: "Ctrl+Z" }),
+      off("Redo", { shortcut: "Ctrl+Y" }),
+      separator(),
+      off("Cut", { shortcut: "Ctrl+X" }),
+      off("Copy", { shortcut: "Ctrl+C" }),
+      off("Copy Page"),
+      off("Paste", { shortcut: "Ctrl+V" }),
+      off("Clear", { shortcut: "Del" }),
+      off("Delete Page"),
+      separator(),
+      { label: "Drag", checked: true, action: () => {} },
+      off("Select Image", { shortcut: "Ctrl+Space" }),
+      off("Select Annotations"),
     ],
     View: [
-      {
-        label: "Zoom In",
-        action: () => {
-          zoom = Math.min(5, zoom + 0.25);
-          update();
-        },
-      },
-      {
-        label: "Zoom Out",
-        action: () => {
-          zoom = Math.max(0.25, zoom - 0.25);
-          update();
-        },
-      },
-      {
-        label: "Actual Size",
-        action: () => {
-          zoom = 1;
-          update();
-        },
-      },
-      {
-        label: "Rotate Right",
-        action: () => {
-          rotation += 90;
-          update();
-        },
-      },
+      off("Scale to Gray"),
+      separator(),
+      { label: "One Page", checked: true, action: () => {} },
+      off("Thumbnails"),
+      off("Page and Thumbnails"),
+      separator(),
+      { label: "Full Screen", shortcut: "Ctrl+F", action: () => w.maximize() },
+      separator(),
+      off("Toolbars..."),
     ],
-    Page: [{ label: "Rotate Right", action: () => ((rotation += 90), update()) }],
+    Page: [
+      off("Previous", { shortcut: "Ctrl+Page Up" }),
+      off("Next", { shortcut: "Ctrl+Page Down" }),
+      off("First"),
+      off("Last"),
+      separator(),
+      off("Go To..."),
+      off("Go Back"),
+      separator(),
+      { label: "Print Page", disabled: !current, action: () => ctx.printImage(image.src) },
+      separator(),
+      { label: "Rotate Page", submenu: [rot(270), rot(90), rot(180)] },
+      { label: "Rotate All Pages", submenu: [rot(270), rot(90), rot(180)] },
+      separator(),
+      { label: "Insert", submenu: [off("Acquire Image..."), off("Existing Page...")] },
+      { label: "Append", submenu: [off("Acquire Image..."), off("Existing Page...")] },
+      separator(),
+      off("Reacquire..."),
+      separator(),
+      off("Properties"),
+    ],
     Zoom: [
-      { label: "Zoom In", action: () => ((zoom = Math.min(5, zoom + 0.25)), update()) },
-      { label: "Zoom Out", action: () => ((zoom = Math.max(0.25, zoom - 0.25)), update()) },
+      { label: "Zoom In", shortcut: "Ctrl+Up", action: () => ((zoom = Math.min(5, zoom + 0.25)), update()) },
+      { label: "Zoom Out", shortcut: "Ctrl+Down", action: () => ((zoom = Math.max(0.25, zoom - 0.25)), update()) },
+      off("Zoom to Selection"),
+      separator(),
+      off("Fit to Height"),
+      off("Fit to Width"),
       { label: "Best Fit", action: () => ((zoom = 1), update()) },
+      { label: "Actual Size", action: () => ((zoom = 1), update()) },
+      separator(),
+      zs("25%", 0.25), zs("50%", 0.5), zs("75%", 0.75), zs("100%", 1), zs("200%", 2), zs("400%", 4),
+      off("Custom..."),
     ],
-    Tools: [{ label: "Edit in Paint", action: () => current && ctx.launch("paint", { path: current }) }],
-    Annotation: [{ label: "Show Annotation Toolbar", action: () => {} }],
+    Tools: [off("General Options..."), off("Scan Options..."), off("Thumbnail Size...")],
+    Annotation: [
+      off("Show Annotations"),
+      off("Make Annotations Permanent"),
+      separator(),
+      off("Select Annotations"),
+      off("Freehand Line"),
+      off("Highlighter"),
+      off("Straight Line"),
+      off("Hollow Rectangle"),
+      off("Filled Rectangle"),
+      off("Typed Text"),
+      off("Attach-a-Note"),
+      off("Text From File"),
+      off("Rubber Stamps..."),
+    ],
     Help: [
-      {
-        label: "Help Topics",
-        action: () =>
-          ctx.dialogs.message(
-            "View imported pictures and open them in Paint for editing. Use the toolbar to rotate or zoom the view.",
-            { title: "Imaging Help", icon: "paint" },
-          ),
-      },
+      { label: "Help Topics", action: () => ctx.launch("help", { topic: "imaging" }) },
+      separator(),
+      { label: "About Imaging", action: () => ctx.dialogs.message("Imaging for Windows\nVersion 2.0\n\nCopyright © 1992-1999 Eastman Software, Inc.", { title: "About Imaging", icon: "imagingApp" }) },
     ],
   });
   const hit = (x, y, wd, title, action) => {

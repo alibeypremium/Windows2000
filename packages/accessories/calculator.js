@@ -25,7 +25,9 @@ export function openCalculator(ctx) {
     }),
     mem = el("div", { class: "calculator-memory inset", text: "" }),
     history = el("div", { class: "calculator-operation", text: "" });
-  const fmt = (v) => (/^-?\d+$/.test(v) ? v + "." : v);
+  let grouping = !!ctx.settings.get("calcGrouping");
+  const group = (v) => (grouping ? v.replace(/^(-?)(\d+)/, (_, s_, d) => s_ + d.replace(/\B(?=(\d{3})+(?!\d))/g, ",")) : v);
+  const fmt = (v) => group(/^-?\d+$/.test(v) ? v + "." : v);
   const press = (key) => {
     if (["sin", "cos", "tan"].includes(key)) engine.unary(key, degrees);
     else engine.key(key);
@@ -134,17 +136,28 @@ export function openCalculator(ctx) {
         checked: scientific,
         action: () => setScientific(true),
       },
+      separator(),
+      {
+        label: "Digit grouping",
+        checked: grouping,
+        action: () => {
+          grouping = !grouping;
+          ctx.settings.set("calcGrouping", grouping);
+          display.value = fmt(engine.display);
+        },
+      },
     ],
     Help: [
       {
         label: "Help Topics",
         action: () => ctx.launch("help", { topic: "calculator" }),
       },
+      separator(),
       {
         label: "About Calculator",
         action: () =>
           ctx.dialogs.message(
-            "Calculator\nStandard and scientific arithmetic.\n\nUse your keyboard or the buttons. Memory is shared between both views.",
+            "Microsoft Calculator\nVersion 5.0 (Build 2195: Service Pack 4)\n\nCopyright © 1985-1999 Microsoft Corp.",
             { title: "About Calculator", icon: "calculator" },
           ),
       },

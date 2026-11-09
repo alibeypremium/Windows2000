@@ -1,4 +1,6 @@
 import { DOCS, basename, extension, downloadFile } from "../core/index.js";
+import { dialogFromTemplate } from "../ui/dlg.js";
+import { NOTEPAD_DIALOGS } from "./notepad-data.js";
 import {
   el,
   button,
@@ -78,7 +80,6 @@ export function openNotepad(ctx, { path = null, text = "" } = {}) {
   const dirty = () => input.value !== saved,
     update = () =>
       w.setTitle(
-        (dirty() ? "*" : "") +
           (filename ? basename(filename) : "Untitled") +
           " - Notepad",
       );
@@ -143,91 +144,99 @@ export function openNotepad(ctx, { path = null, text = "" } = {}) {
     else if (action === "undo") undoText();
   };
   const timeDate = () => {
-    replaceText(new Date().toLocaleString());
+    { const n = new Date(); replaceText(n.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) + " " + n.toLocaleDateString("en-US")); }
     input.focus();
   };
-  let lastFind = "";
+  let lastFind = "", lastCase = false, lastWhole = false, lastUp = false;
+  const isWordCh = (ch) => !!ch && /[\w]/.test(ch);
+  const findNext = async (parent) => {
+    if (!lastFind) return false;
+    const v = lastCase ? input.value : input.value.toLowerCase(),
+      q = lastCase ? lastFind : lastFind.toLowerCase();
+    const ok = (i) => i >= 0 && (!lastWhole || (!isWordCh(v[i - 1]) && !isWordCh(v[i + q.length])));
+    let index = -1;
+    if (lastUp) {
+      for (let i = v.lastIndexOf(q, input.selectionStart - 1); i >= 0; i = v.lastIndexOf(q, i - 1)) if (ok(i)) { index = i; break; }
+    } else {
+      for (let i = v.indexOf(q, input.selectionEnd); i >= 0; i = v.indexOf(q, i + 1)) if (ok(i)) { index = i; break; }
+    }
+    if (index < 0) {
+      await ctx.dialogs.message(`Cannot find "${lastFind}"`, { title: "Notepad", icon: "info" });
+      return false;
+    }
+    input.setSelectionRange(index, index + q.length);
+    input.focus();
+    input.scrollTop = input.value.slice(0, index).split("\n").length * 16 - input.clientHeight / 2;
+    return true;
+  };
   const find = (replace = false) => {
-    const d = ctx.wm.create({
-        title: replace ? "Replace" : "Find",
-        icon: "notepad",
-        width: 400,
-        height: replace ? 212 : 178,
-        dialog: true,
-        resizable: false,
-        minimizable: false,
-        maximizable: false,
-        appId: "find",
-      }),
-      needle = el("input", { value: lastFind, "aria-label": "Find what" }),
-      replacement = el("input", { "aria-label": "Replace with" });
-    let matchCase = false;
-    const findNext = async () => {
-      lastFind = needle.value;
-      if (!lastFind) return false;
-      const value = matchCase ? input.value : input.value.toLowerCase(),
-        q = matchCase ? lastFind : lastFind.toLowerCase();
-      let index = value.indexOf(q, input.selectionEnd);
-      if (index < 0) index = value.indexOf(q);
-      if (index < 0) {
-        await ctx.dialogs.message(`Cannot find “${needle.value}”`, {
-          title: "Notepad",
-        });
-        return false;
-      }
-      input.setSelectionRange(index, index + q.length);
-      input.focus();
-      input.scrollTop =
-        input.value.slice(0, index).split("\n").length * 16 -
-        input.clientHeight / 2;
-      return true;
-    };
-    const fields = el(
-      "div",
-      { class: "find-fields" },
-      field("Find what:", needle),
-      replace ? field("Replace with:", replacement) : null,
-      checkbox("Match case", false, (v) => (matchCase = v)),
-    );
-    const actions = el(
-      "div",
-      { class: "find-actions" },
-      button("Find Next", findNext, { class: "default-button" }),
-      replace
-        ? button("Replace", async () => {
-            const selection = input.value.slice(
-              input.selectionStart,
-              input.selectionEnd,
-            );
-            if (
-              (matchCase ? selection : selection.toLowerCase()) ===
-                (matchCase ? needle.value : needle.value.toLowerCase()) &&
-              needle.value
-            ) {
-              replaceText(replacement.value);
-            }
-            await findNext();
-          })
-        : null,
-      replace
-        ? button("Replace All", () => {
-            if (!needle.value) return;
-            const escaped = needle.value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-            recordText();
-            input.value = input.value.replace(
-              new RegExp(escaped, matchCase ? "g" : "gi"),
-              () => replacement.value,
-            );
-            update();
-          })
-        : null,
-      button("Cancel", () => d.close()),
-    );
-    d.setContent(el("div", { class: "find-dialog" }, fields, actions));
-    needle.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") findNext();
+    const d = dialogFromTemplate(ctx, replace ? NOTEPAD_DIALOGS.replace : NOTEPAD_DIALOGS.find, {
+      appId: "find",
+      values: { 1152: lastFind },
+      checked: { 1040: lastWhole, 1041: lastCase, 1056: lastUp, 1057: !lastUp },
+      groups: [[1056, 1057]],
+      on: {
+        1: () => {
+          lastFind = d.ctl[1152].value;
+          lastCase = d.on(1041);
+          lastWhole = d.on(1040);
+          lastUp = !replace && d.on(1056);
+          findNext();
+        },
+        2: () => d.close(),
+        1024: () => {
+          lastFind = d.ctl[1152].value;
+          lastCase = d.on(1041);
+          const sel = input.value.slice(input.selectionStart, input.selectionEnd);
+          if (lastFind && (lastCase ? sel === lastFind : sel.toLowerCase() === lastFind.toLowerCase())) replaceText(d.ctl[1153].value);
+          findNext();
+        },
+        1025: () => {
+          const needle = d.ctl[1152].value;
+          if (!needle) return;
+          recordText();
+          input.value = input.value.replace(new RegExp(needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), d.on(1041) ? "g" : "gi"), () => d.ctl[1153].value);
+          update();
+        },
+        1038: () => ctx.launch("help", { topic: "notepad" }),
+      },
     });
-    queueMicrotask(() => needle.focus());
+    if (replace) d.ctl[1153].value = "";
+    d.ctl[1152].focus();
+    d.ctl[1152].addEventListener("keydown", (e) => e.key === "Enter" && d.ctl[1]?.click?.());
+    return d;
+  };
+  const gotoLine = async () => {
+    const d = dialogFromTemplate(ctx, NOTEPAD_DIALOGS.goto, {
+      appId: "goto",
+      values: { 258: String(input.value.slice(0, input.selectionStart).split("\n").length) },
+      on: {
+        1: () => {
+          const n = parseInt(d.ctl[258].value, 10);
+          const lines = input.value.split("\n");
+          if (!(n >= 1 && n <= lines.length)) {
+            ctx.dialogs.message("The line number is beyond the total number of lines", { title: "Notepad - Goto Line", icon: "info" });
+            return;
+          }
+          const pos = lines.slice(0, n - 1).reduce((t, l) => t + l.length + 1, 0);
+          input.setSelectionRange(pos, pos);
+          input.focus();
+          d.close();
+        },
+        2: () => d.close(),
+      },
+    });
+    d.ctl[258].focus();
+    d.ctl[258].select();
+  };
+  const pageSetup = () => {
+    const d = dialogFromTemplate(ctx, NOTEPAD_DIALOGS.pagesetup, {
+      appId: "pagesetup",
+      values: { 1155: "0.75", 1157: "0.75", 1156: "1", 1158: "1", 30: "&f", 31: "Page &p" },
+      checked: { 1056: true },
+      groups: [[1056, 1057]],
+      on: { 1: () => d.close(), 2: () => d.close() },
+    });
   };
   const font = () => {
     const d = ctx.wm.create({
@@ -302,14 +311,7 @@ export function openNotepad(ctx, { path = null, text = "" } = {}) {
       { label: "Save", shortcut: "Ctrl+S", action: () => save() },
       { label: "Save As...", action: () => save(true) },
       separator(),
-      {
-        label: "Download",
-        action: () =>
-          downloadFile(
-            filename ? basename(filename) : "Untitled.txt",
-            input.value,
-          ),
-      },
+      { label: "Page Setup...", action: pageSetup },
       {
         label: "Print...",
         shortcut: "Ctrl+P",
@@ -331,7 +333,9 @@ export function openNotepad(ctx, { path = null, text = "" } = {}) {
       { label: "Delete", shortcut: "Del", action: () => edit("delete") },
       separator(),
       { label: "Find...", shortcut: "Ctrl+F", action: () => find() },
+      { label: "Find Next", shortcut: "F3", action: () => (lastFind ? findNext() : find()) },
       { label: "Replace...", shortcut: "Ctrl+H", action: () => find(true) },
+      { label: "Go To...", shortcut: "Ctrl+G", disabled: wrap, action: gotoLine },
       separator(),
       {
         label: "Select All",
@@ -372,7 +376,15 @@ export function openNotepad(ctx, { path = null, text = "" } = {}) {
   w.el.addEventListener(
     "keydown",
     safely(async (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "g" && !wrap) {
+        e.preventDefault();
+        gotoLine();
+      }
       if (!(e.ctrlKey || e.metaKey)) {
+        if (e.key === "F3") {
+          e.preventDefault();
+          lastFind ? findNext() : find();
+        }
         if (e.key === "F5") {
           e.preventDefault();
           timeDate();
@@ -446,7 +458,6 @@ export function openWordPad(ctx, { path = null } = {}) {
   const update = () => {
     changed = editor.innerHTML !== saved;
     w.setTitle(
-      (changed ? "*" : "") +
         (filename ? basename(filename) : "Document") +
         " - WordPad",
     );
@@ -616,98 +627,91 @@ export function openWordPad(ctx, { path = null } = {}) {
     wb(268, 4, "datetime", "Date/Time", () => command("insertText", new Date().toLocaleString())),
   );
   tools.addEventListener("mousedown", (e) => e.preventDefault());
+  const stamp = () => { const n = new Date(); return n.toLocaleDateString("en-US") + " " + n.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }); };
+  let wpFind = "";
+  const wpFindNext = () => {
+    if (!wpFind) return;
+    if (!window.find(wpFind, false, false, true)) ctx.dialogs.message(`WordPad has finished searching the document.`, { title: "WordPad", icon: "info" });
+  };
+  const wpFindDialog = (replace) => {
+    const d = dialogFromTemplate(ctx, replace ? NOTEPAD_DIALOGS.replace : NOTEPAD_DIALOGS.find, {
+      appId: "find",
+      values: { 1152: wpFind },
+      checked: { 1057: true },
+      groups: [[1056, 1057]],
+      on: {
+        1: () => { wpFind = d.ctl[1152].value; wpFindNext(); },
+        2: () => d.close(),
+        1024: () => { if (window.getSelection().toString()) command("insertText", d.ctl[1153].value); wpFind = d.ctl[1152].value; wpFindNext(); },
+        1025: () => { wpFind = d.ctl[1152].value; for (let i = 0; i < 1000 && wpFind && window.find(wpFind, false, false, false); i++) command("insertText", d.ctl[1153].value); },
+        1038: () => ctx.launch("help", { topic: "wordpad" }),
+      },
+    });
+    d.ctl[1152].focus();
+  };
+  const bars = { Toolbar: tools, "Format Bar": formatting, Ruler: null, "Status Bar": null };
+  const barOn = {};
+  const toggleBar = (name) => {
+    const el_ = { Toolbar: tools, "Format Bar": formatting, Ruler: ruler, "Status Bar": status }[name];
+    barOn[name] = barOn[name] === false;
+    el_.hidden = !barOn[name];
+    el_.style.display = barOn[name] ? "" : "none";
+  };
+  const isOn = (n) => barOn[n] !== false;
   w.setMenu({
     File: [
-      { label: "New", shortcut: "Ctrl+N", action: newDoc },
+      { label: "New...", shortcut: "Ctrl+N", action: newDoc },
       { label: "Open...", shortcut: "Ctrl+O", action: open },
       { label: "Save", shortcut: "Ctrl+S", action: () => save() },
       { label: "Save As...", action: () => save(true) },
       separator(),
-      {
-        label: "Download as HTML",
-        action: () =>
-          downloadFile(
-            "Document.html",
-            '<!doctype html><meta charset="utf-8"><title>Document</title>' +
-              sanitizeDocument(editor.innerHTML),
-            "text/html",
-          ),
-      },
-      {
-        label: "Print...",
-        action: () => ctx.printText(editor.innerText, filename || "Document"),
-      },
+      { label: "Print...", shortcut: "Ctrl+P", action: () => ctx.printText(editor.innerText, filename || "Document") },
+      { label: "Print Preview", action: () => ctx.printText(editor.innerText, filename || "Document") },
+      { label: "Page Setup...", disabled: true },
+      separator(),
+      { label: "Send...", disabled: true },
       separator(),
       { label: "Exit", action: () => w.close() },
     ],
     Edit: [
-      { label: "Undo", action: () => command("undo") },
-      { label: "Redo", action: () => command("redo") },
+      { label: "Undo", shortcut: "Ctrl+Z", action: () => command("undo") },
       separator(),
-      { label: "Cut", action: () => command("cut") },
-      { label: "Copy", action: () => command("copy") },
-      {
-        label: "Paste",
-        action: async () =>
-          command("insertText", await ctx.clipboard.getText()),
-      },
-      { label: "Select All", action: () => command("selectAll") },
+      { label: "Cut", shortcut: "Ctrl+X", action: () => command("cut") },
+      { label: "Copy", shortcut: "Ctrl+C", action: () => command("copy") },
+      { label: "Paste", shortcut: "Ctrl+V", action: async () => command("insertText", await ctx.clipboard.getText()) },
+      { label: "Paste Special...", disabled: true },
+      { label: "Clear", shortcut: "Del", action: () => command("delete") },
+      { label: "Select All", shortcut: "Ctrl+A", action: () => command("selectAll") },
+      separator(),
+      { label: "Find...", shortcut: "Ctrl+F", action: () => wpFindDialog(false) },
+      { label: "Find Next", shortcut: "F3", action: () => (wpFind ? wpFindNext() : wpFindDialog(false)) },
+      { label: "Replace...", shortcut: "Ctrl+H", action: () => wpFindDialog(true) },
+      separator(),
+      { label: "Links...", disabled: true },
+      { label: "Object Properties", shortcut: "Alt+Enter", disabled: true },
     ],
-    View: [
-      {
-        label: "Zoom In",
-        action: () =>
-          (editor.style.zoom = String(
-            Math.min(2, (Number(editor.style.zoom) || 1) + 0.1),
-          )),
-      },
-      {
-        label: "Zoom Out",
-        action: () =>
-          (editor.style.zoom = String(
-            Math.max(0.5, (Number(editor.style.zoom) || 1) - 0.1),
-          )),
-      },
+    View: () => [
+      { label: "Toolbar", checked: isOn("Toolbar"), action: () => toggleBar("Toolbar") },
+      { label: "Format Bar", checked: isOn("Format Bar"), action: () => toggleBar("Format Bar") },
+      { label: "Ruler", checked: isOn("Ruler"), action: () => toggleBar("Ruler") },
+      { label: "Status Bar", checked: isOn("Status Bar"), action: () => toggleBar("Status Bar") },
+      separator(),
+      { label: "Options...", disabled: true },
     ],
     Insert: [
-      {
-        label: "Date and Time...",
-        action: () => command("insertText", new Date().toLocaleString()),
-      },
-      {
-        label: "Image...",
-        action: async () => {
-          const p = await ctx.dialogs.file({
-            filter: (n) => n.mime?.startsWith("image/"),
-          });
-          if (p) {
-            const data = ctx.fs.readFile(p);
-            if (data.startsWith("data:image/")) command("insertImage", data);
-          }
-        },
-      },
+      { label: "Date and Time...", action: () => command("insertText", stamp()) },
+      { label: "Object...", disabled: true },
     ],
     Format: [
-      { label: "Bold", action: () => command("bold") },
-      { label: "Italic", action: () => command("italic") },
-      { label: "Underline", action: () => command("underline") },
+      { label: "Font...", action: () => ctx.dialogs.message("Use the Font and Size boxes on the Format Bar.", { title: "WordPad", icon: "info" }) },
       { label: "Bullet Style", action: () => command("insertUnorderedList") },
-      { label: "Increase Indent", action: () => command("indent") },
-      { label: "Decrease Indent", action: () => command("outdent") },
+      { label: "Paragraph...", disabled: true },
+      { label: "Tabs...", disabled: true },
     ],
     Help: [
-      {
-        label: "Help Topics",
-        action: () => ctx.launch("help", { topic: "wordpad" }),
-      },
-      {
-        label: "About WordPad",
-        action: () =>
-          ctx.dialogs.message(
-            "WordPad\nFormatted text, images, printing, and portable documents.\n\nUse .wdoc to preserve formatting; .txt saves plain text.",
-            { title: "About WordPad", icon: "wordpad" },
-          ),
-      },
+      { label: "Help Topics", action: () => ctx.launch("help", { topic: "wordpad" }) },
+      separator(),
+      { label: "About WordPad", action: () => ctx.dialogs.message("Microsoft WordPad\nVersion 5.0 (Build 2195: Service Pack 4)\n\nCopyright © 1981-1999 Microsoft Corp.", { title: "About WordPad", icon: "wordpad" }) },
     ],
   });
   const ruler = el("div", { class: "wp-ruler" });
