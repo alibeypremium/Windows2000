@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+
+<TITLE>Printing permissions assigned to groups</TITLE>
+<META NAME="MS-HAID" CONTENT="a_print_security_permissions_groups">
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+</HEAD>
+
+<BODY>
+<H1><A NAME="print_security_permissions_groups">Printing permissions assigned to groups</A></H1>
+
+<P>Windows&nbsp;2000 assigns printing permissions to six groups of users. These groups include Administrators, Creator Owner, Everyone, Power Users, Print Operators, and Server Operators. By default, each group is assigned a combination of the Print, Manage Documents, and Manage Printers permissions as shown in the following table.</P>
+
+<TABLE>
+<TR>
+<TH>Group</TH>
+<TH>Print</TH>
+<TH>Manage Documents</TH>
+<TH>Manage Printers</TH>
+</TR>
+
+<TR>
+<TD>Administrators</TD>
+<TD ALIGN="center"><B>x</B></TD>
+<TD ALIGN="center"><B>x</B></TD>
+<TD ALIGN="center"><B>x</B></TD>
+</TR>
+
+<TR>
+<TD>Creator Owner</TD>
+<TD></TD>
+<TD ALIGN="center"><B>x</B></TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Everyone</TD>
+<TD ALIGN="center"><B>x</B></TD>
+<TD></TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Power Users</TD>
+<TD ALIGN="center"><B>x</B></TD>
+<TD ALIGN="center"><B>x</B></TD>
+<TD ALIGN="center"><B>x</B></TD>
+</TR>
+
+<TR>
+<TD>Print Operators</TD>
+<TD ALIGN="center"><B>x</B></TD>
+<TD ALIGN="center"><B>x</B></TD>
+<TD ALIGN="center"><B>x</B></TD>
+</TR>
+
+<TR>
+<TD>Server Operators</TD>
+<TD ALIGN="center"><B>x</B></TD>
+<TD ALIGN="center"><B>x</B></TD>
+<TD ALIGN="center"><B>x</B></TD>
+</TR>
+
+</TABLE>
+
+<P>The Print Operators and Server Operators groups are located only on Windows&nbsp;2000 Server <A ID="wPopup" HREF="help=glossary.hlp topic=gls_domain_controller">domain controllers</A>.</P>
+
+<P>Each permission consists of a group of special accesses which allow the user to perform specific tasks. The following table summarizes the level of access associated with each of the printing security permissions.</P>
+
+<P>
+<TABLE>
+<TR>
+<TH>Tasks permitted</TH>
+<TH>Print</TH>
+<TH>Manage Documents<BR>(applies to documents only)</TH>
+<TH>Manage Printers</TH>
+</TR>
+
+<TR>
+<TD>Print</TD>
+<TD ALIGN="center"><B>x</B></TD>
+<TD></TD>
+<TD ALIGN="center"><B>x</B></TD>
+</TR>
+
+<TR>
+<TD>Manage Printers</TD>
+<TD></TD>
+<TD></TD>
+<TD ALIGN="center"><B>x</B></TD>
+</TR>
+
+<TR>
+<TD>Manage Documents</TD>
+<TD></TD>
+<TD ALIGN="center"><B>x</B></TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Read Permissions</TD>
+<TD ALIGN="center"><B>x</B></TD>
+<TD ALIGN="center"><B>x</B></TD>
+<TD ALIGN="center"><B>x</B></TD>
+</TR>
+
+<TR>
+<TD>Change Permissions</TD>
+<TD></TD>
+<TD ALIGN="center"><B>x</B></TD>
+<TD ALIGN="center"><B>x</B></TD>
+</TR>
+
+<TR>
+<TD>Take Ownership</TD>
+<TD></TD>
+<TD ALIGN="center"><B>x</B></TD>
+<TD ALIGN="center"><B>x</B></TD>
+</TR>
+</TABLE>
+</P>
+
+<P>For information on setting printing permissions, see Related Topics.</P>
+
+<P><A ID="relTopics" HREF="#" data-haid="a_print_limit_access;a_print_security_permissions;a_windows_security_group_membership;a_workstation_security">Related Topics</A></P>
+
+</BODY>
+</HTML>

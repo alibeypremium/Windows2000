@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+                      "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+<HEAD><meta charset="utf-8">
+
+<TITLE>Using Recovery Console</TITLE>
+
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="coua_gs.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">  
+
+
+
+</HEAD>
+
+<BODY SCROLL="NO">
+<DIV ID="nav">getstart.lst</DIV>
+<DIV ID="text">
+<H3><A NAME="wgs_gs_05018"></A>Using Recovery Console</H3>
+
+<P class="indent"></p>
+
+<P class="note"><B>Notes</B></p>
+
+<P class="indent">This feature should be used only by the most advanced users.</p>
+
+<P class="indent">It is recommended that you backup your information on a tape drive before using Recovery Console. Your local hard drives may be formatted as part of the recovery.</p>
+
+
+
+
+
+<P>Recovery Console provides a command line during startup from which you can make system changes when Windows&nbsp;2000 doesn't start.</p>
+
+
+
+<P>You can use Recovery Console to perform many tasks without starting Windows&nbsp;2000, including: starting and stopping services, reading and writing information on a local disk drive (including NTFS file system drives), formatting drives, and so on. Recovery Console is particularly useful if you need to repair your system by copying a file from a floppy disk or <NOBR>CD-ROM</NOBR> to your hard drive or if you need to modify a service that prevents your computer from starting properly.</p>
+
+
+
+<P>There are two ways to start the Recovery Console:</p>
+
+<UL>
+	<LI>If you are unable to start your computer, you can run the Recovery Console from your Windows&nbsp;2000 Setup disks.</li>
+
+	<LI>As an alternative, you can install the Recovery Console on your computer to make it available in case you are unable to restart Windows&nbsp;2000. You can then choose the Windows&nbsp;2000 Recovery Console option from the boot menu.
+
+
+
+</li>
+</UL>
+
+<P>After you start the Recovery Console, you choose which drive you want to log on to (if you have a dual-boot computer) and you log on with your administrator password.</p>
+
+
+
+<P>If Recovery Console isn't listed, you need to install it. You should install Recovery Console to make it available as a startup option in case your computer can't restart.</p>
+
+<P class="proclabel"><B>To install Recovery Console as a startup option</B></p>
+
+<OL>
+	<LI>Log on to Windows&nbsp;2000 as an administrator or as a user with administrator rights.
+<P>If your computer is connected to a network, network policy settings may also prevent you from completing this procedure.</p>
+</li>
+
+	<LI>Insert the Windows&nbsp;2000 Professional CD into your <NOBR>CD-ROM</NOBR> drive. If you're prompted to upgrade to Windows&nbsp;2000, click <B>No</B>.</li>
+
+	<LI>From the command prompt&mdash;or from the <B>Run</B> command in Windows&nbsp;2000&mdash;type the path to the appropriate Winnt32.exe file (on your Windows&nbsp;2000 CD), followed by a space and the<B> /cmdcons</B> switch. For example:
+<P><B>e:\\i386\winnt32.exe /cmdcons</B></p>
+</li>
+
+	<LI>Follow the instructions that appear.
+
+</li>
+</OL>
+
+<P class="proclabel"><B>To run Recovery Console on a system that does not start</B></p>
+
+<OL>
+	<LI>Restart your computer, and then click <B>Windows</B>&nbsp;<B>2000 Recovery Console </B>from the list of operating systems.</li>
+
+	<LI>Follow the instructions that appear.
+<P>Recovery Console displays a command prompt.</p>
+</li>
+
+	<LI>Make the required changes to your system.
+<P>To see the commands available on the Recovery Console, type <B>help</B> at the command prompt.</p>
+</li>
+</OL>
+
+<P>Or click <A ID="shortcut" HREF="exec=,hh.exe,ms-its:asr.chm::/recovery_console_cmds.htm chm=ntshared.chm file=alt_url_windows_component.htm">here</A>.</P>
+<P>To restart your computer, type <B>exit </B>to close the command prompt window.</p>
+
+
+
+<P class="proclabel"><B>To delete Recovery Console</B></p>
+
+<OL>
+	<LI>Delete the \Cmdcons folder from the root folder.</li>
+
+	<LI>Delete the file Cmldr from the same folder.</li>
+
+	<LI>In the Boot.ini file, delete the entry for Recovery Console.</li>
+</OL>
+</DIV></BODY>
+</HTML>

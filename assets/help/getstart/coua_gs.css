@@ -1,0 +1,88 @@
+/* last updated 2/24/99 */
+
+@IMPORT url(MS-ITS:ntshared.chm::/coUA.css);
+
+
+h1
+		{ font-size: 135%; 
+		margin-bottom: .5em; }
+
+h2
+		{ font-size: 135%;  
+		margin-bottom: .5em; }
+
+h3
+		{ font-size: 135%; 
+		margin-bottom: .5em; }
+
+
+p.proclabel	{ font-size: 100%;
+		color: #990033 	
+		font-weight: bold; clear: both;
+		margin-top: 2em }
+			
+
+
+table
+		{ font-size: 100%;
+		margin-top: 1em; 
+		margin-bottom: 1em; 
+		cellpadding: 1em; }
+		
+th
+		{ text-align: left;
+		background: #DDDDDD;
+		vertical-align: bottom;}
+		
+tr
+		{ vertical-align: top; }
+
+td
+		{ background: #EEEEEE;
+		vertical-align: top; }	
+
+		
+p.note,p.tip, p.important, p.caution, p.warning 
+		{ font-weight:bold; clear:both;
+		 margin-top:"1em"; 
+		 margin-bottom:"-.25em";
+		 margin-left:"1.5em"; }
+
+ol
+		{ margin-top: ".5em"; 
+		margin-bottom: "1.5em"; 
+		margin-left: "2.1em"; 
+		padding-left: "0em"; }
+	
+ul
+		{ margin-top: ".6em"; 	
+		margin-bottom: "1.5em";
+		list-style-type: disc;
+		margin-left: "1.5em";
+		padding-left: "0em"; }
+		
+p.indent	{ margin-left: "1.5em" }
+		
+
+
+/*********************************/				
+/*  this class is for print only content    */
+
+.erase		{ display:none }
+		   
+
+
+/*********************************/				
+/*  this class is for the top level book graphic     */
+
+img.book		{ border:0; position:absolute; 
+		margin-top:140px; margin-left:20px;
+		z-index: -2;  }
+
+
+/*********************************/				
+/* removes grey background from navigation bar     */
+
+#nav td		{background-color: #FFFFFF;  }
+			  
+

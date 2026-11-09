@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+
+<TITLE>Connect to a printer using a browser</TITLE>
+<META NAME="MS-HAID" CONTENT="a_print_connect_internet_printer">
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+</HEAD>
+
+<BODY>
+<P CLASS="proclabel"><A NAME="print_connect_internet_printer">To connect to a printer using a browser</A></P>
+
+<OL>
+<LI>Open <A ID="shortcut" HREF="exec=,iexplore.exe, chm=ntshared.chm file=alt_url_windows_component.htm">Internet Explorer</A>.</LI>
+<P>You can also use any other window or folder with an address bar, such as the Printers folder, Windows Explorer, or My Computer.</P>
+
+<LI>In the <B>Address</B> bar, type one of the following:</LI>
+<UL>
+<LI>If you don't know the printer's name, type using the format:  <B>http://</B><I>PrintServerName</I><B>/printers/</B></LI>
+<P>For example type <B>http://W2KPrintSrv1/printers</B> to receive a page listing all the printers located on print server W2KPrinterSrv1, and then click the printer you want to use.</P>
+
+<LI>If you know the printer's name, type its URL using the format: <B>http://</B><I>PrintServerName/PrinterName/</I></LI>
+<P>For example type <B>http://W2KPrintSrv1/HPColor5/</B> to go directly to that printer page.</P>
+</UL>
+
+<LI>When viewing the printer's page, click <B>Connect</B> under <B>Printer Actions</B> to connect to that printer.</LI>
+<P>Windows&nbsp;2000 automatically copies the appropriate printer driver to your computer and the icon for the printer appears in your Printers folder.</P>
+</OL>
+
+<P CLASS="note">Notes</P>
+
+<UL>
+<LI><SPAN CLASS="reuse" ID="printing6"></SPAN></LI>
+
+<LI>If you know the printer's URL you can use the Add Printer wizard to add the printer using its URL rather than typing its name in the Uniform Naming Convention (UNC) format: <B>\\</B><I>printserver_name</I><B>\</B><I>share_name</I>. When the wizard prompts for the printer name, just enter the printer's URL, in the format, <B><I>http://PrintServerName/PrinterName</I></B>.</LI>
+
+<LI>From the printer's URL page, you can view information such as the printer model, the printer's location, and the number of documents waiting to print, as well as properties such as print speed and whether the printer supports color printing. You can pause, resume, and cancel printing of any document you have sent to the printer. If you have the Manage Printers permission for the printer, you can also pause or resume operation of the printer. For information about printing security permissions, see Related Topics.</LI>
+
+<LI>For Internet printing, you must have IIS installed on the server [or Peer Web Services (PWS) on Windows&nbsp;2000&nbsp;Professional].</LI>
+
+<LI>You must use Internet Explorer (IE) version 4.0 or higher to connect to a printer.</LI>
+
+<LI>After you connect to a shared printer from a Web browser, you can use it as if it were attached to your computer. You can also add it to your browser Favorites.</LI>
+</UL>
+
+<P><A ID="relTopics" HREF="#" data-haid="a_print_connect_local_printer;a_print_connect_net_printer;a_print_security_permissions;a_sag_printconcepts_12">Related Topics</A></P>
+
+</BODY>
+</HTML>

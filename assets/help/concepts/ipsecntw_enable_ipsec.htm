@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" 
+"http://www.w3.org/TR/REC-html40/strict.dtd">
+
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+
+<META NAME="MS-HAID" CONTENT="a_ipsecntw_enable_ipsec"> 
+<TITLE>Select an IPSec policy for a workstation</TITLE>
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+
+</HEAD>
+
+<BODY>
+
+<P CLASS="proclabel">To select an IPSec policy for a workstation</P>
+
+<OL>
+<LI>Open <A ID="shortcut" HREF="exec=,rundll32.exe,shell32.dll,control_rundll ncpa.cpl chm=ntshared.chm file=alt_url_windows_component.htm"><B>Network and Dial-up Connections</B></A>.
+</LI>
+
+<LI>
+Click <b>Local Area Connection</b>, and on the <b>File</b> menu, click <b>Properties</b>.
+</LI>
+
+<LI>
+In the <b>Local Area Connection Properties</b> dialog box, under <b>Components checked are used by this connection</b>, click <b>Internet Protocol (TCP/IP)</b>, and then click <b>Properties</b>.
+</LI>
+
+<li>Click <b>Advanced</b>, and then click the <b>Options</b> tab.</li>
+
+<li>Under <b>Optional settings</b>, click <b>IP security</b>, and then click <b>Properties</b>.</li>
+
+<li>Click <b>Use this IP security policy</b>, and then select the IPSec policy you want from the drop-down list.</li>
+
+</OL>
+
+<P CLASS="note">Notes</p>
+<UL>
+<li>You must be a member of the Administrators group to set Internet Protocol security (IPSec) policies. If the computer participates in a Windows&nbsp;2000 domain, the computer may receive the IPSec policy from Active Directory, overriding the local IPSec policy. In this case, the options are disabled and you cannot change them from the local computer.</li>
+
+<li><SPAN CLASS="reuse" ID="para8"></SPAN></li>
+
+<LI>
+There are three predefined security policies: Client (Respond Only), Server (Request Security), and Secure Server (Require Security).</li>
+
+<LI>Activating the Client (Respond Only) policy will not secure traffic unless the destination computer requests it. A server policy may need to be customized to work transparently with some programs and networks.
+</LI>
+
+<LI>
+For in-depth information about IP Security and the predefined security policies, open the IP Security Policy Management snap-in, and then on the <b>Help</b> menu, click <b>Help Topics</b>.</li>
+
+<LI>For information about adding and opening the IP Security Policy Management snap-in, see Related Topics.</LI>
+
+<LI>IPSec, IKE and related services for Windows&nbsp;2000 are jointly developed by Microsoft Corporation and Cisco Systems, Inc.</LI> 
+
+</UL>
+
+<P><A ID="relTopics" HREF="#" data-haid="a_snap_ipsec;a_ras_overview">Related Topics</A></P>
+
+</BODY>
+</HTML>
+
+

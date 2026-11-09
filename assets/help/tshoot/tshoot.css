@@ -1,0 +1,49 @@
+@IMPORT url(MS-ITS:ntshared.chm::/coUA.css);
+
+body		{ 	color: #000000;
+			background: #FFFFFF;  	
+			font-size: 70%;    		
+			margin: 3pt;
+			font-family: Verdana, Arial, Helvetica, Sans Serif  }
+
+
+a:link		{font-size: 100%;   
+			background: transparent;	
+			color: #0000FF;} 
+
+
+h1		{ font-size: 125%;  }
+			
+h4		{  font-weight: bold;
+		font-size: 110%;
+		margin-bottom: .6em;  }
+
+pre		{ font-family: Courier; }
+
+table	{ margin: 0pt;
+		   font-size: 100% }
+		   
+td		{ margin: .25em;
+		vertical-align: top;
+		background: #eeeeee }		   
+		
+th		{ vertical-align: bottom; }
+			
+object	{  margin-top: 0pt;
+		line-height: 11.3em;  }
+
+
+/*	MISC. TAGS	*/
+			
+td.answer 	{	font-size: 100%;    		
+				font-family: Verdana, Arial, Helvetica;
+				margin-top: 0pt;
+				margin-bottom: 0pt}
+				
+input.standard	{font-size: 100%;
+                       font-family: Verdana, Arial, Helvetica, Sans Serif;
+					   margin: 0.2em }
+
+#expand {font-weight:bold;text-decoration:none;}
+#expand:link, #expand:visited {color:black;} 
+#expand:hover, #expand:active {color:blue;}

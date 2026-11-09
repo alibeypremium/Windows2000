@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+                      "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+<HEAD><meta charset="utf-8">
+
+<TITLE>Stop Error 0x00000079</TITLE>
+
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="coua_gs.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">  
+
+
+
+</HEAD>
+
+<BODY SCROLL="NO">
+<DIV ID="nav">getstart.lst</DIV>
+<DIV ID="text">
+<H1><A NAME="wgs_gs_ab015"></A>Stop Error 0x00000079</H1>
+
+
+
+<TABLE>
+
+<TR>
+<TD><B>Stop error number:</B></TD>
+<TD>(0x00000079)</TD>
+</TR>
+
+<TR>
+<TD><B>Descriptive text:</B></TD>
+<TD>MISMATCHED_HAL</TD>
+</TR>
+
+<TR>
+<TD><B>Usual cause:</B></TD>
+<TD>Hardware Abstraction Layer and the kernel or the machine type do not match (usually when single-processor and multiprocessor configuration files are mixed on the same system).</TD>
+</TR>
+</TABLE><BR>
+
+
+
+<P class="proclabel"><B>To troubleshoot Stop error 0x00000079</B></p>
+
+<UL>
+	<LI>To resolve this error, use the Command Console to replace the incorrect system files on your computer.
+<P>The kernel file Ntoskrnl.exe is for single-processor systems and Ntkrnlmp.exe is for multiprocessor systems. However, these filenames correspond to the file on the installation media; after Windows&nbsp;2000 has been installed, the file is renamed to Ntoskrnl.exe, regardless of the source file used. The HAL file also uses the name Hal.dll after installation, but there are several possible HAL files on the installation media.</p>
+</li>
+</UL>
+</DIV></BODY>
+</HTML>

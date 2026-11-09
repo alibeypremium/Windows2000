@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+<TITLE>Security overview</TITLE>
+<META NAME="MS-HAID" CONTENT="a_workstation_security">
+
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+
+</HEAD>
+
+<BODY>
+<H1>Security overview</H1>
+<P>It is important to keep your computer secure, not only to protect data on the computer itself, but on the network as well. A good security system confirms the identity of the people who are attempting to access the resources on your computer, protects specific resources from inappropriate access by users, and provides a simple, efficient way to set up and maintain security on your computer.</P>
+
+<P>To help you accomplish these goals, Windows&nbsp;2000 Professional offers these security features:</P>
+
+<P><A ID="expand" HREF="#" CLASS="expandToggle">
+User Accounts
+</A></P>
+
+<DIV CLASS="expand">	
+<P>
+To use a computer that is running Windows&nbsp;2000, you must have a user account, which consists of a unique user name and a password. Windows&nbsp;2000 verifies your user name and password when you press CTRL+ALT+DEL and then type your user name and your password. If your user account has been disabled or deleted, Windows&nbsp;2000 prevents you from accessing the computer, ensuring that only valid users have access to the computer. Double-click <B>Users and Passwords</B> in Control Panel to create users, add or remove users from existing groups, and change user passwords.</P>
+
+<P><A ID="relTopics" HREF="#" data-haid="a_usercpl_all;a_windows_password_tips;a_windows_security_whynot_admin">Related Topics</A></P>
+</DIV>
+
+<P><A ID="expand" HREF="#" CLASS="expandToggle">
+Group Accounts
+</A></P>
+
+<DIV CLASS="expand">	
+<P>
+Users must have certain user rights and permissions to perform tasks on a computer running Windows&nbsp;2000. Group accounts help you efficiently assign those user rights and permissions to users. Windows&nbsp;2000 Professional comes with many built-in groups based on the tasks users commonly perform, such as the Administrators, Backup Operators, or Users groups. Assigning users to one or more of the built-in groups gives most users all of the user rights and permissions they need to perform their jobs. Double-click <B>Users and Passwords</B> in Control Panel to add or remove users from existing groups.</P>
+
+<P><A ID="relTopics" HREF="#" data-haid="a_usercpl_change_group;a_snap_localmgr;a_windows_security_whynot_admin">Related Topics</A></P>
+</DIV>
+
+<P><A ID="expand" HREF="#" CLASS="expandToggle">
+Encryption (NTFS drives only)
+</A></P>
+
+<DIV CLASS="expand">	
+<P>
+Encrypting files and folders makes them unreadable to unauthorized users. If a user attempting to access an encrypted file has the private key to that file (that is, if the user either encrypted the file personally or is a registered recovery agent), the user will be able to open the file and work with it transparently as a normal document. A user without the private key to the file is denied access. Encryption is available only on <A ID="wPopup" HREF="help=glossary.hlp topic=gls_ntfs">NTFS</A> drives.</P>
+
+<P><A ID="relTopics" HREF="#" data-haid="a_encrypt_overview;a_encrypt_to_encrypt_file">Related Topics</A></P>
+
+</DIV>
+
+
+<P><A ID="expand" HREF="#" CLASS="expandToggle">
+File and Folder Permissions (NTFS drives only)
+</A></P>
+
+<DIV CLASS="expand">	
+<P>
+When you set permissions on a file or folder, you specify the groups and users whose access you want to restrict or allow, and then select the type of access. It is more efficient to specify group accounts when you assign permissions to objects, so that you can simply add users to the appropriate group when you need to allow or restrict access for those users. For example, you can give managers Full Control of a folder that contains electronic timesheets, and then give employees Write access so that they can copy timesheets to that folder, but not read the contents of the folder. File and folder permissions can be set only on <A ID="wPopup" HREF="help=glossary.hlp topic=gls_ntfs">NTFS</A> drives.
+</P>
+
+<P><A ID="relTopics" HREF="#" data-haid="a_acl_set_permissions;a_file_permissions;a_folder_permissions">Related Topics</A></P>
+</DIV>
+
+<P><A ID="expand" HREF="#" CLASS="expandToggle">
+Shared Folder Permissions
+</A></P>
+
+<DIV CLASS="expand">	
+<P>
+If you are a member of the Administrators or Power Users group, you can share folders on your local computer so that users on other computers can access those folders. By assigning shared folder permissions to any NTFS, FAT, or FAT32 shared folder, you can restrict or allow access to those folders over the network. Use NTFS folder permissions if the shared folder is located on an NTFS drive. NTFS permissions are effective on the local computer and over the network.</P>
+
+
+<P><A ID="relTopics" HREF="#" data-haid="a_ntshrui_share_perm;a_ntshrui_permissions">Related Topics</A></P>
+
+</DIV>
+
+<P><A ID="expand" HREF="#" CLASS="expandToggle">
+Printer Permissions
+</A></P>
+
+<DIV CLASS="expand">	
+<P>
+Because shared printers are available to all users on the network, you might want to limit access for some users by assigning printer permissions. For example, you could give all nonadministrative users in a department the Print permission and all managers the Print and Manage Documents permissions. By doing this, all users and managers can print documents, but managers can change the status of any print job submitted by any user.
+</P>
+
+<P><A ID="relTopics" HREF="#" data-haid="a_print_limit_access;a_print_security_permissions">Related Topics</A></P>
+</DIV>
+
+<P><A ID="expand" HREF="#" CLASS="expandToggle">
+Auditing
+</A></P>
+
+<DIV CLASS="expand">	
+<P>
+You can use auditing to track which user account was used to access files or other objects, as well as logon attempts, system shutdowns or restarts, and similar events. Before any auditing takes place, you must use Group Policy to specify the types of events you want to audit. For example, to audit a folder, you first enable <B>Audit Object Access</B> in the Auditing policy in Group Policy. Next, you set up auditing like you do permissions: You choose the object, such as a file or folder, then select the users and groups whose actions you want to audit. Finally, you choose the actions you want to audit, such as attempts to open or delete the restricted folder. You can audit both successful and failed attempts. You track auditing activity by using Event Viewer to view the Security log.
+</P>
+
+<P><A ID="relTopics" HREF="#" data-haid="a_audit_file_dir;a_snap_gpe;a_snap_event_viewer">Related Topics</A></P>
+
+</DIV>
+
+<P><A ID="expand" HREF="#" CLASS="expandToggle">
+User Rights
+</A></P>
+
+<DIV CLASS="expand">	
+<P>
+User rights are rules that determine the actions a user can perform on a computer. In addition, user rights control whether a user can log on to a computer directly (locally) or over the network, add users to local groups, delete users, and so on. Built-in groups have sets of user rights already assigned. Administrators usually assign user rights by adding a user account to one of the built-in groups or by creating a new group and assigning specific user rights to that group. Users who are subsequently added to a group are automatically granted all user rights assigned to the group account. User rights are managed using Group Policy.
+</P>
+
+<P><A ID="relTopics" HREF="#" data-haid="a_snap_gpe">Related Topics</A></P>
+</DIV>
+
+
+<P><A ID="expand" HREF="#" CLASS="expandToggle">
+Group Policy
+</A></P>
+
+<DIV CLASS="expand">	
+<P>
+Use Group Policy to set a variety of software, computer, and user policies. For example, you can define the various components of the user's desktop environment, such as the programs that are available to users, the icons that appear on the user's desktop, the <B>Start</B> menu options, which users can modify their desktops and which cannot, and so on. You also use Group Policy set user rights.
+</P>
+<P><A ID="relTopics" HREF="#" data-haid="a_snap_gpe">Related Topics</A></P>
+</DIV>
+<P><A ID="relTopics" HREF="#" data-haid="a_security_ht_comp;a_windows_password_change;a_windows_password_protect;a_windows_password_tips;a_protect_ff_c_virus;a_windows_security_default_settings">Related Topics</A></P>
+
+</BODY>
+</HTML>
+
+

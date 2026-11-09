@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+<TITLE>Printer drivers overview</TITLE>
+<META NAME="MS-HAID" CONTENT="a_print_c_drivers"> 
+
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+
+</HEAD>
+
+<BODY>
+<H1><A NAME="print_c_drivers">Printer drivers overview</A></H1>
+
+<P>A printer driver is a software program used by computer programs to communicate with printers and plotters. Printer drivers translate the information you send from the computer into commands that the printer understands. Usually, printer drivers are not compatible across platforms, so various drivers must be installed on the <A ID="wPopup" HREF="help=glossary.hlp topic=gls_print_server">print server</A> to support different hardware and operating systems. For example, if you are running Windows&nbsp;2000 and you <A ID="wPopup" HREF="help=glossary.hlp topic=gls_share">share</A> a printer with users running Windows&nbsp;3.1, you might want to install additional drivers so the users won't be prompted to install the missing drivers.</P>
+
+<P>In general, printer drivers are made up of three types of files:</P>
+
+<P><A ID="expand" HREF="#" CLASS="expandToggle">Configuration or printer interface file</A></P>
+
+<DIV CLASS="expand">
+<P>Displays the <B>Properties</B> and <B>Preferences</B> dialog boxes when you configure a printer. This file has a .dll extension.</p>
+</DIV>
+
+<P><A ID="expand" HREF="#" CLASS="expandToggle">Data file</A></P>
+
+<DIV CLASS="expand">
+<P>Provides information about the capabilities of a specific printer, including its resolution capability, whether it can print on both sides of the page, and what size paper it can accept. This file could have a .dll, .pcd, .gpd, or .ppd extension.</p>
+</DIV>
+
+<P><A ID="expand" HREF="#" CLASS="expandToggle">Printer graphics driver file</A></P>
+
+<DIV CLASS="expand">
+<P>Translates device driver interface (DDI) commands into commands that a printer can understand. Each driver translates a different printer language. For example, the file Pscript.dll translates the <A ID="wPopup" HREF="help=glossary.hlp topic=gls_postscript">PostScript</A> printer language. This file has a .dll extension.</P>
+</DIV>
+
+<P>These files, which are usually accompanied by a help file, work together to make printing possible. For example, when you set up a new printer, the configuration file queries the data file and displays the available printer options. When you print, the graphics driver file queries the configuration file about your selections so that it can create the proper printer commands.</P>
+
+<P>For information about installing printer drivers, see Related Topics.</P>
+
+<P><A ID="relTopics" HREF="#" data-haid="a_print_drivers_install_update;a_print_drivers_install_additional;a_print_connect_local_printer;a_print_sharing;a_print_connect_net_printer">Related Topics</A></P>
+
+</BODY>
+</HTML>

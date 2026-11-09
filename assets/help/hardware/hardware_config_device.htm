@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+<HEAD><meta charset="utf-8">
+
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+
+
+<META NAME="MS-HAID" CONTENT="a_hardware_config_device">
+<TITLE>Configuring devices</TITLE>
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css"><LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+</HEAD>
+<BODY>
+
+<H1><A NAME="hardware_config_device">
+Configuring devices
+</A></h1>
+<P>
+When you <A ID="wPopup" HREF="help=glossary.hlp topic=gls_install">install</A> a <A ID="wPopup" HREF="help=glossary.hlp topic=gls_plug_and_play">Plug and Play</A> <A ID="wPopup" HREF="help=glossary.hlp topic=gls_device">device</A>, Windows&nbsp;2000 automatically configures the device so it will work properly with the other devices that are installed on your computer. As part of that configuration process, Windows&nbsp;2000 assigns a unique set of system <A ID="wPopup" HREF="help=glossary.hlp topic=gls_resource">resources</A> to the device you are installing. These resources can include one or more of the following:</P>
+<UL>
+<LI>
+<A ID="wPopup" HREF="help=glossary.hlp topic=gls_interrupt_line">Interrupt request (IRQ)</A> line numbers.
+</LI>
+<LI>
+<A ID="wPopup" HREF="help=glossary.hlp topic=gls_direct_memory_access">Direct memory access (DMA)</A> channels.
+</LI>
+<LI>
+<A ID="wPopup" HREF="help=glossary.hlp topic=gls_input_output_port">Input/output (I/O) port</A> addresses.
+</LI>
+<LI>
+<A ID="wPopup" HREF="help=glossary.hlp topic=gls_memory_address">Memory address</A> ranges.
+</LI>
+</UL>
+<P>
+Each resource that is assigned to your device must be unique or the device does not function properly. For Plug and Play devices, Windows&nbsp;2000 automatically ensures that these resources are configured properly.</P>
+<p>Occasionally, two devices require the same resources, resulting in a <A ID="wPopup" HREF="help=glossary.hlp topic=gls_device_conflict">device conflict</A>. If this occurs, you can manually change the resource settings to be sure that each setting is unique. However, sometimes two devices can be shared, such as interrupts on PCI devices, depending on the drivers and computer.
+</P>
+<P>
+When you install a non-Plug and Play device, the resource settings for the device are not automatically configured. Depending on the type of device you are installing, you may have to manually configure these settings, which should be supplied in the instruction manual that came with your device.</P>
+
+<P>
+Generally, you should not change resource settings manually, because when you do so, the settings become fixed, and Windows&nbsp;2000 will then have less flexibility when allocating resources to other devices. If too many resources become fixed, Windows&nbsp;2000 may not be able to install new Plug and Play devices. 
+</P>
+<P>
+You can configure devices using the Add/Remove Hardware wizard in Control Panel or the <A ID="wPopup" HREF="help=glossary.hlp topic=gls_device_manager">Device Manager</A>.
+</P>
+<p class="important">Important</p>
+<UL>
+<LI>
+Changing resource settings improperly can disable your hardware and cause your computer to malfunction or be inoperable. Resource settings should only be changed if you are certain the new settings do not conflict with other hardware, or if a hardware manufacturer has provided you with specific resource settings for a device. </LI>
+</UL>
+<A ID="relTopics" HREF="#" data-haid="a_hardware_overview;a_app_start_hardware_wizard;a_snap_dev_mgr">Related Topics</A>
+</BODY>
+</HTML>
+
+
+
+

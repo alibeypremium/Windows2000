@@ -6,7 +6,11 @@ const args = process.argv.slice(2);
 const index = args.findIndex((a) => a === "--port");
 const port = Number(index >= 0 ? args[index + 1] : process.env.PORT || 4173);
 const mime = {
-  ".html": "text/html",
+  ".html": "text/html; charset=utf-8",
+  ".htm": "text/html; charset=utf-8",
+  ".gif": "image/gif",
+  ".jpg": "image/jpeg",
+  ".cur": "image/x-icon",
   ".js": "text/javascript",
   ".mjs": "text/javascript",
   ".css": "text/css",

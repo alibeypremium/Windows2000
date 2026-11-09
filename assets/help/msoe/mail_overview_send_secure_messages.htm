@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML DIR="ltr">
+<HEAD><meta charset="utf-8">
+" l comment "RSACi North America Server" by "inet@microsoft.com <mailto:inet@microsoft.com>" r (n 0 s 0 v 0 l 0))'>
+
+<META NAME="MS.LOCALE" CONTENT="EN-US"> 
+ 
+
+	
+	<!-- THE FOLLOWING META TAG IS THE RELATED TOPIC TARGET -->
+	<META NAME="MS-HAID" CONTENT="mail_overview_send_secure_messages"> 
+	<title>Sending secure messages</title>
+	<link rel="stylesheet" type="text/css" href="ie40.css">
+</HEAD>
+<BODY>
+<h5 class=topich><a name="mail_overview_send_secure_messages"></a>
+Sending secure messages</h5>
+<p>
+As more people send confidential information by e-mail, it is increasingly important to be sure that documents sent in e-mail are not forged, and to be certain that messages you send cannot be intercepted and read by anyone other than your intended recipient.
+</p>
+<p>By using &quot;digital IDs&quot; with Outlook Express, you can prove your identity in electronic transactions in a  way similar to showing your driver's license when you cash a check. You can also a digital ID to encrypt messages, keeping them private.  Digital IDs incorporate the S/MIME specification for secure electronic mail.  
+</p>
+<h5 class=subh>How do digital IDs work?</h5>
+<p>
+A digital ID is composed of a &quot;public key,&quot; a &quot;private key,&quot; and a &quot;digital signature.&quot;  When you digitally sign your messages, you are adding your digital signature and public key to the message. The combination of a digital signature and public key is called a &quot;certificate.&quot; With Outlook Express, you can specify a certificate to be used by others to send encrypted messages to you. This certificate can be different from your signing certificate.</p>
+
+<p>Recipients can use your digital signature to verify your identity; they can use your public key to send you encrypted mail that only you can read by using your private key. To send encrypted messages, your address book must contain digital IDs for the recipients. That way, you can use their public keys to encrypt the messages. When a recipient gets an encrypted message, their private key is used to decrypt the message for reading.
+</p>
+
+<p>
+Before you can start sending digitally signed messages, you must obtain a digital ID. If you are sending encrypted messages, your address book must contain a digital ID for each recipient. 
+</p>
+
+<h5 class=subh>Where do you get digital IDs?</h5>
+<p>
+Digital IDs are issued by independent certification authorities. When you apply for a digital ID at a certification authority's Web site, they verify your identity before issuing an ID. There are different classes of digital IDs, each certifying to a different level of trustworthiness. For more information, use the Help at the certification authority's Web site.</P>
+
+<h5 class=subh>How do you verify a digital signature?</h5>
+
+<p>With &quot;revocation checking,&quot; you can verify the validity of a digitally signed message. When you make such a check, Outlook Express requests information on the digital ID from the appropriate certification authority. The certification authority sends back information on the status of the digital ID, including whether the ID has been revoked. Certification authorities keep track of certificates that have been revoked due to loss or termination.</p> 
+
+ <h5 class=relh>Related Topics</h5>
+
+<div class=reltopics>
+
+	<p>
+	<a href="mail_certificate_obtain.htm">Obtain a digital ID and add it to your mail account </a> </p>
+	<p>
+ <a href="../wab/wab_certificate_add_to_wab.htm">Add a contact's digital ID to your Address Book</a>
+	</P>
+	<p>
+	<a href="mail_send_message_with_certificate.htm">Send a digitally signed and/or encrypted message</a>
+	</p>
+<p>
+	<a href="mail_setup_multiple_certificates.htm">Set up Outlook Express to use multiple certificates</a>
+	</p>
+	<p><a href="mail_revocation_check.htm">Use revocation checking</a>
+		<p>
+	<A HREF="mail_advanced_smime.htm">Advanced security information</A>
+	</p>
+</div>
+
+</BODY>
+</HTML>

@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+                      "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+<HEAD><meta charset="utf-8">
+
+<TITLE>Winnt32.exe Command Syntax</TITLE>
+
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="coua_gs.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">  
+
+
+
+</HEAD>
+
+<BODY SCROLL="NO">
+<DIV ID="nav">getstart.lst</DIV>
+<DIV ID="text">
+<H3><A NAME="wgs_gs_03016"></A>Winnt32.exe Command Syntax</H3>
+
+
+
+<P>Running Winnt32.exe installs or upgrades Windows&nbsp;2000. You can run the Winnt32 command at a Windows&nbsp;95, Windows&nbsp;98, or Windows&nbsp;NT command prompt.</p>
+
+
+	<p>The syntax of the Winnt32 command is as follows:</p>
+	<UL>
+<PRE><CODE><B>winnt32</B> [<B>/s:</B><I>sourcepath</I>] [<B>/tempdrive:</B><I>drive_letter</I>] 
+    [<B>/unattend</B>[<I>num</I>]<B>:</B>[<I>answer_file</I>]] [<B>/copydir:</B><I>folder_name</I>] 
+    [<B>/copysource:</B><I>folder_name</I>] [<B>/cmd:</B><I>command_line</I>]
+    [<B>/debug</B>[<I>level</I>]<B>:</B>[<I>filename</I>]] [<B>/udf:</B><I>id</I>[,<I>UDF_file</I>]] 
+    [<B>/syspart:</B><I>drive_letter</I>] [<B>/checkupgradeonly</B>] 
+    [<B>/cmdcons</B>] [<B>/m:</B><I>folder_name</I>] [<B>makelocalsource</B>] 
+    [<B>/noreboot</B>]
+</CODE></PRE>
+
+</UL>
+
+<P>where:</p>
+
+<UL>
+<LI><B>/s:</B><I>sourcepath</I>
+
+<P>Specifies the source location of the Windows&nbsp;2000 files. To simultaneously copy files from multiple servers, specify multiple <B>/s</B> sources. If you use multiple <B>/s</B> switches, the first specified server must be available or Setup fails.</P></LI>
+
+<LI><B>/tempdrive:</B><I>drive_letter</I>
+
+<P>Directs Setup to place temporary files on the specified partition and to install Windows&nbsp;2000 on that partition.</P></LI>
+
+<LI><B>/unattend</B>&nbsp;
+
+<P>Upgrades your previous version of Windows&nbsp;2000, Windows&nbsp;NT 4.0, Windows&nbsp;NT&nbsp;3.51,  Windows&nbsp;95, or Windows&nbsp;98 in unattended Setup mode. All user settings are taken from the previous installation, so no user intervention is required during Setup. Using the <B>/unattend</B> switch to automate Setup affirms that you have read and accepted the Microsoft License Agreement for Windows&nbsp;2000. Before using this switch to install Windows&nbsp;2000 on behalf of an organization other than your own, you must confirm that the end user (whether an individual, or a single entity) has received, read and accepted the terms of the Windows&nbsp;2000 Microsoft License Agreement. OEMs may not specify this key on machines being sold to end users.</P></LI>
+
+<LI><B>/unattend</B>[<I>num</I>]<B>:</B>[<I>answer_file</I>]
+
+<P>Performs a fresh installation in unattended Setup mode. The answer file provides Setup with your custom specifications.<I> Num</I> is the number of seconds between the time that Setup finishes copying the files and when it restarts your computer. You can use <I>num</I> on any computer running Windows&nbsp;NT or Windows&nbsp;2000.<I> Answer_file</I> is the name of the answer file.</P></LI>
+
+<LI><B>/copydir:</B><I>folder_name</I>
+
+<P>Creates an aPitional folder within the folder in which the Windows&nbsp;2000 files are installed. For example, if the source folder contains a folder called Private_drivers that has modifications just for your site, you can type <B>/copydir:Private_drivers</B> to instruct Setup to copy that folder to your installed Windows&nbsp;2000 folder. So then the new folder location would be C:\Winnt\Private_drivers. You can use <B>/copydir</B> to create as many aPitional folders as you want.</P></LI>
+
+<LI><B>/copysource:</B><I>folder_name</I>
+
+<P>Creates a temporary aPitional folder within the folder in which the Windows&nbsp;2000 files are installed. For example, if the source folder contains a folder called Private_drivers that has modifications just for your site, you can type <B>/copysource:Private_drivers</B> to have Setup copy that folder to your installed Windows&nbsp;2000 folder and use its files during Setup. So then the temporary folder location would be C:\Winnt\Private_drivers. Unlike the folders <B>/copydir</B> creates, <B>/copysource</B> folders are deleted after Setup completes.</P></LI>
+
+<LI><B>/cmd:</B><I>command_line</I>
+
+<P>Instructs Setup to carry out a specific command before the final phase of Setup. This occurs after your computer has restarted twice and after Setup has collected the necessary configuration information, but before Setup is complete.</P></LI>
+
+<LI><B>/debug</B><I>[level]<B>:</B>[filename]</I>
+
+<P>Creates a debug log at the level specified, for example, <B>/debug4:C:\Win2000.log</B>. The default log file is C:\<I>%windir%</I>\Winnt32.log, with the debug level set to 2. The log levels are as follows: 0-severe errors, 1-errors, 2-warnings, 3-information, and 4-detailed information for debugging. Each level includes the levels below it.</P></LI>
+
+<LI><B>/udf:</B><I>id[,UDF_file]</I>
+
+<P>Indicates an identifier (<I>id</I>) that Setup uses to specify how a Uniqueness Database File (UDF) modifies an answer file (see the <B>/unattend</B> entry). The UDF overrides values in the answer file, and the identifier determines which values in the UDF are used. For example, <B>/udf:RAS_user,Our_company.udb</B> overrides settings specified for the RAS_user identifier in the Our_company.udb file. If no <I>UDF_file</I> is specified, Setup prompts the user to insert a disk that contains the $Unique$.udb file.</P></LI>
+
+<LI><B>/syspart:</B><I>drive_letter</I>
+
+<P>Specifies that you can copy Setup startup files to a hard disk, mark the disk as active, and then install the disk into another computer. When you start that computer, it automatically starts with the next phase of the Setup. You must always use the <B>/tempdrive</B> parameter with the <B>/syspart</B> parameter.</P></LI>
+
+<LI><B>/checkupgradeonly</B>
+
+<P>Checks your computer for upgrade compatibility with Windows&nbsp;2000. For Windows&nbsp;95 or Windows&nbsp;98 upgrades, Setup creates a report named Upgrade.txt in the Windows installation folder. For Windows&nbsp;NT&nbsp;3.51 or 4.0 upgrades, it saves the report to the Winnt32.log in the installation folder.</P></LI>
+
+<LI><B>/cmdcons</B>
+
+<P>APs to the operating system selection screen a Recovery Console option for repairing a failed installation. It is only used post-Setup.</P></LI>
+
+<LI><B>/m:</B><I>folder_name</I>
+
+<P>Specifies that Setup copies replacement files from an alternate location. Instructs Setup to look in the alternate location first and if files are present, use them instead of the files from the default location.</P></LI>
+
+<LI><B>/makelocalsource</B>
+
+<P>Instructs Setup to copy all installation source files to your local hard disk. Use <B>/makelocalsource</B> when installing from a CD to provide installation files when the CD is not available later in the installation.</P></LI>
+
+<LI><B>/noreboot</B>
+
+<P>Instructs Setup to not restart the computer after the file copy phase of Winnt32 is completed so that you can execute another command.</P></LI>
+</UL>
+</DIV></BODY>
+</HTML>

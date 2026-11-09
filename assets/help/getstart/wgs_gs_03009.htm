@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+                      "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+<HEAD><meta charset="utf-8">
+
+<TITLE>Converting vs. Reformatting Existing Disk Partitions</TITLE>
+
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="coua_gs.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">  
+
+
+
+</HEAD>
+
+<BODY SCROLL="NO">
+<DIV ID="nav">getstart.lst</DIV>
+<DIV ID="text">
+<H3><A NAME="wgs_gs_03009"></A>Converting vs. Reformatting Existing Disk Partitions</H3>
+
+
+
+<P>Before you run Setup, decide whether you want to keep, convert, or reformat an existing partition. The default option for an existing partition is to keep the existing file system intact, thus preserving all files on that partition.</p>
+
+
+
+<P>If you decide to convert or reformat, you need to select an appropriate file system (NTFS, FAT, or FAT32). The following guidelines should help you decide.</p>
+
+
+
+<p class="important"><b>Important</b></p>
+<P class="indent">Before you change file systems on a partition, you should back up the information on the partition because reformatting the partition deletes the existing data.</p>
+
+
+
+<H4>Should I convert my existing partition to NTFS?</H4>
+
+
+
+<P class="indent">You can convert an existing partition to NTFS during Setup to make use of Windows&nbsp;2000 security. You can also convert file systems from FAT to NTFS at any time after Setup by using Convert.exe from the command prompt.</p>
+
+<P>This option preserves your existing files, but only if Windows&nbsp;2000 has access to files on that partition. Use this option if:</p>
+
+<UL>
+	<LI>You want to take advantage of NTFS features such as security, disk compression, and so on.</li>
+
+	<LI>You aren't dual booting with another operating system&mdash;other than Windows&nbsp;NT&nbsp;4.0 Service Pack&nbsp;4 (SP4) or later, which can use a Windows&nbsp;2000 NTFS partition.
+
+</li>
+</UL>
+
+<P>
+For more information about dual booting, see <A ID="specLoc" HREF="../getstart/wgs_gs_03010.htm">Dual-Boot Configuration</A>, later in this chapter.</p>
+
+<H4>Should I always use NTFS for my file system?</H4>
+
+
+
+<P>NTFS is the recommended file system for Windows&nbsp;2000. However, there are specific reasons that you might want to use another file system. If you format a partition with NTFS, only Windows&nbsp;2000 can gain access to files subsequently created on that partition. If you plan to access files from other operating systems (including <NOBR>MS-DOS</NOBR>), you should choose to install a FAT file system.</p>
+
+<P>
+For more information, see <A ID="specLoc" HREF="../getstart/wgs_gs_03003.htm">File Systems</A>, earlier in this chapter.</p>
+
+<H4>What happens if I reformat my existing partition?</H4>
+
+
+
+<P>Reformatting a partition erases all existing files on that partition. Make sure to back up your files before you reformat a partition.</p>
+
+<P class="indent"></p>
+<p class="important"><b>Important</b></p>
+
+<P class="indent">To convert an NTFS partition to FAT, you must first back up all of your files, reformat the partition as FAT (which erases all the files), and then restore the files from backup. You can't restore an NTFS partition created in Windows&nbsp;NT after you convert it to the version of NTFS used in Windows&nbsp;2000.</p>
+
+<P class="indent">To convert a FAT partition to FAT32, you must first back up all your files, reformat the partition as FAT32 (which erases all the files), and then restore the files from backup.</p>
+
+
+</DIV></BODY>
+</HTML>

@@ -5444,6 +5444,9 @@ button.selected:focus {
 .hh-right { position: absolute; left: 253px; right: 0; top: 41px; bottom: 0; background: #fff; border: 1px solid; border-color: #808080 #fff #fff #808080; box-shadow: inset 1px 1px #404040; overflow: hidden; }
 .hh-body { position: absolute; left: 1px; top: 1px; right: 17px; bottom: 0; overflow: auto; font: 11px/14px Verdana, Tahoma, sans-serif; }
 .hh-orange { position: absolute; left: 0; right: 0; top: 0; height: 13px; background: #ff3300; }
+.hh-frame { position: absolute; left: 0; top: 13px; width: 100%; height: calc(100% - 13px); border: 0; background: #fff; }
+.hh-root.page .hh-body { right: 0; overflow: hidden; }
+.hh-root.page .hh-sb { display: none; }
 .hh-sb { position: absolute; right: 0; top: 0; bottom: 0; width: 16px; }
 .hh-starth { position: absolute; left: 128px; top: 199px; font: bold 19px/22px Arial, sans-serif; color: #ff3300;  }
 .hh-start-link { position: absolute; left: 128px; width: 230px; font: bold 12px/13px Verdana, Tahoma, sans-serif; letter-spacing: .85px; color: #003366; cursor: var(--cur-pointer); }

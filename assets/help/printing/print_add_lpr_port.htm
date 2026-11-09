@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+
+<TITLE>Add an LPR port</TITLE>
+<META NAME="MS-HAID" CONTENT="a_print_add_lpr_port">
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+</HEAD>
+
+<BODY>
+<P CLASS="proclabel"><A NAME="print_add_lpr_port">To add an LPR port</A></P>
+
+<OL>
+<LI>Open <A ID="shortcut" HREF="exec=,control.exe, printers chm=ntshared.chm file=alt_url_windows_component.htm">Printers</A>.</LI>
+
+<LI>Double-click <B>Add Printer</B>, and then click <B>Next</B>.</LI>
+
+<LI>Click <B>Local printer</B>, clear the <B>Automatically detect my printer</b> check box, and then click <B>Next</b>.</LI>
+
+<LI>Click <B>Create a new port</B>, and then click <B>LPR Port</B>.</LI>
+
+<LI>Click <b>Next</b>, and then provide the following information:</LI>
+
+<P>In <B>Name or address of server providing LPD</B>, type the <A ID="wPopup" HREF="help=glossary.hlp topic=gls_domain_namesystem">Domain Name System (DNS)</A> name or <A ID="wPopup" HREF="help=glossary.hlp topic=gls_ip_address">Internet Protocol (IP) address</A> of the host for the printer you are adding.</P>
+
+<P>In <B>Name of printer or print queue on that server</B>, type the name of the printer as it is identified by the host, which is either the direct-connect printer itself or the UNIX computer.</P>
+
+<LI>Follow the instructions on the screen to finish installing the TCP/IP printer.</LI>
+</OL>
+
+<P CLASS="note">Notes</p>
+
+<UL>
+<LI><SPAN CLASS="reuse" ID="printing6"></SPAN></LI>
+
+<LI> You can also add <A ID="wPopup" HREF="help=glossary.hlp topic=gls_port">ports</A> using the <b>Print Server Properties</b> dialog box.</LI>
+
+<li>If <B>LPR Port</B> is not available, click <B>Cancel</b> to stop the wizard. To add the LPR port, you need to install <B>Print Services for Unix</b>, see Related Topics.</li>
+
+<LI>The <A ID="wPopup" HREF="help=glossary.hlp topic=gls_line_printer_remote_lpr">LPR</A> port is best suited to servers that need to communicate with host computers such as UNIX or VAX machines by way of RFC 1179. For computers that need to submit print jobs to host computers, the standard TCP/IP port should be used in most cases.</LI>
+
+<LI> <B>Name or address of server providing LPD</B> can be the DNS name or IP address of the direct-connect TCP/IP printing device or the UNIX computer to which the printing device is connected. The DNS name can be the name specified for the host in the Hosts file.</LI>
+
+<LI>A network-connected printer must have a card that supports <A ID="wPopup" HREF="help=glossary.hlp topic=gls_line_printer_daemon_lpd">LPD</A> for TCP/IP printing to work properly.</LI>
+</UL>
+
+<P><A ID="relTopics" HREF="#" data-haid="a_print_delete_port;a_sag_setup_direct_printer;a_print_add_tcpip_port;a_print_add_local_port;a_print_add_port;a_sag_add_hp_port;a_sag_add_appletalk_port;a_howto_optional_nw_components">Related Topics</A></P>
+
+</BODY>
+</HTML>

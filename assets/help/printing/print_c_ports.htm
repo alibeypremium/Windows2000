@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+
+<TITLE>Choosing and configuring a port</TITLE>
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+<META NAME="MS-HAID" CONTENT="a_print_c_ports">
+
+</HEAD>
+
+<BODY>
+<H1><A NAME="print_c_ports">Choosing and configuring a port</A></H1>
+
+<P>Print monitor is a term used to describe two types of print monitors:
+language monitor and port monitor. A language monitor is needed if the printer supports bidirectional printing, which is															 a two-way communication between the printer and the <A ID="wPopup" HREF="help=glossary.hlp topic=gls_print_spooler">spooler</A> running on the <A ID="wPopup" HREF="help=glossary.hlp topic=gls_print_server">print server</A>. The spooler can then access configuration and status information from the printer. The port monitor controls the <A ID="wPopup" HREF="help=glossary.hlp topic=gls_input_output_port">I/O port</A> to the printer. A printer port is the interface through which a printer communicates with the computer. You can add printer ports while adding a printer (using the Add Printer wizard), from the <B>Ports</B> tab in the printer's property page, or through the print server property page.</P>
+
+<P>If the printer is physically attached to the print server, select the appropriate local port. LPT1 through LPT3 represent parallel ports; COM1 through COM4 represent <A ID="wPopup" HREF="help=glossary.hlp topic=gls_serial_port">serial ports</A>. When a <A ID="wPopup" HREF="help=glossary.hlp topic= gls_client_only">client</A> prints to a printer port denoted as FILE, the client is prompted for the file name, and the output is stored as a .prn file on the client computer. If you decide to add a new local port you can enter one of the following:</P>
+<UL>
+<LI>A file name, such as <I>C:\Dir\Filename</I>. All jobs sent to this port are written to the named file, and each new job overwrites the last one.</LI>
+<LI>The share name of a printer, such as <I>\\Server\Printer</I> (URLs are not accepted). Jobs sent to this port are transferred over the network to the named share by the network redirector.</LI>
+<LI>NUL. This specifies the null port, which you can use to test whether network clients can send jobs. Jobs sent to NUL are deleted without wasting paper or delaying real print jobs.</LI>
+<LI>IR. Use this port to connect to infrared-enabled printers meeting <A ID="wPopup" HREF="help=glossary.hlp topic=gls_infrared_data_association">Infrared Data Association (IrDA)</A> specifications. If your hardware does not support IR, it will not be listed on the <B>Ports</B> tab.</LI>
+</UL>
+
+<P>Certain ports are not listed in the <B>Ports</B> tab unless a printer that requires one of them is installed. <A ID="wPopup" HREF="help=glossary.hlp topic=gls_universal_serial_bus">Universal serial bus (USB)</A> and <A ID="wPopup" HREF="help=glossary.hlp topic=gls_firewire">IEEE 1394</A> printers support Plug and Play so when you plug a printer into the correct physical port (USB or IEEE 1394), the correct port monitor is installed automatically. Windows&nbsp;2000 will detect the device and display its settings on the screen, prompting you to approve. You might be required to insert a <nobr>CD-ROM</nobr> containing driver files, as described in <A ID="specLoc" HREF="../printing/print_add_local_port.htm">To add a local port</A>.</P>
+
+
+<P>If the printer is attached directly to the network, add a port when prompted by the Add Printer wizard for a port selection. The following table shows the port options available and explains under what conditions the port is available. You must have Administrator privileges to add a port.</P>
+
+<TABLE>
+<TR>
+<TH>Additional port</TH>
+<TH>Enables clients to print to</TH>
+<TH>Available</TH>
+</TR>
+<TR>
+<TD></TD>
+</TR>
+<TR>
+<TD>Local port</TD>
+<TD> Printers connected to a parallel port, serial port, specific file name, universal naming convention (UNC) name, or the NUL port</TD>
+<TD>By default</TD>
+</TR>
+<TR>
+<TD></TD>
+</TR>
+<TR>
+<TD>Standard TCP/IP port</TD>
+<TD>TCP/IP printers connected directly to the network</TD>
+<TD>By default</TD>
+</TR>
+<TR>
+<TD>LPR port</TD>
+<TD>TCP/IP printers connected to a UNIX (or VAX) server</TD>
+<TD>When Print services for UNIX is installed</TD>
+</TR>
+</TABLE>
+
+<P>The port you need might not appear in the wizard if its prerequisite network protocol or services are not installed. For more information on adding a network protocol or service, see Related Topics.</P>
+
+<P><A ID="relTopics" HREF="#" data-haid="a_print_add_local_port;a_print_add_tcpip_port;a_print_add_lpr_port;A_HOWTO_ADD_COMPONENT">Related Topics</A></P>
+</BODY>
+</HTML>

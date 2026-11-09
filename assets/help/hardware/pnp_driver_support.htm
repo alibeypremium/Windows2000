@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+<HEAD><meta charset="utf-8">
+
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+
+
+
+<META NAME="MS-HAID" CONTENT="a_pnp_driver_support">
+
+<TITLE>Plug and Play device driver support</TITLE>
+
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css"><LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+</HEAD>
+
+<BODY>
+
+<H1><A NAME="pnp_driver_support">Plug and Play device driver support</A></H1>
+
+<P>Windows&nbsp;2000 installs a Plug and Play <A ID="wPopup" HREF="help=glossary.hlp topic=gls_device">device</A> and its <A ID="wPopup" HREF="help=glossary.hlp topic=gls_device_driver">driver</A> automatically. If you choose to install an older driver or hardware device, however, you may have limited Plug and Play support or none at all.</P>
+		
+<P>Using a Plug and Play driver to install a non-Plug and Play device may provide some Plug and Play support. Although the system cannot recognize the hardware and load the appropriate drivers on its own, Plug and Play can oversee the installation by allocating resources, interacting with Power Options in Control Panel, and recording any issues in the <A ID="wPopup" HREF="help=glossary.hlp topic=gls_event_logging">Event Log</A>.</P>
+
+<P>Generally, you cannot install non-Plug and Play hardware without performing some manual setup. Use the Add/Remove Hardware wizard in Control Panel or <A ID="wPopup" HREF="help=glossary.hlp topic=gls_device_manager">Device Manager</A> to change the settings for these older devices.</P>
+
+<P>Before uninstalling a Plug and Play device, you must use either the Add/Remove Hardware wizard or Device Manager to notify Windows&nbsp;2000 that you want to remove the device. Once you notify Windows&nbsp;2000, the drivers for the device are no longer loaded when you start your computer.</P>
+<P class="important">Important</P>
+<UL>
+    <LI>
+    You must be logged on as an administrator or a member of the Administrators group in order to install a device using Add/Remove Hardware wizard in Control Panel or Device Manager. If your computer is connected to a network, network policy settings may also prevent you from installing hardware. If an administrator has already loaded the drivers for a device, you can install the device without administrator privileges.
+    </LI>
+</UL>
+
+<P><A ID="relTopics" HREF="#" data-haid="a_hardware_install_device;a_devmgr_changing_drivers;a_hardware_overview;a_hardware_install_pnp_device;a_devmgr_start_stop_nonplugplay_drivers">Related Topics</A></P>
+
+</BODY>
+</HTML>
+
+
+
+

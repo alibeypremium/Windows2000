@@ -160,23 +160,12 @@ const topics = {
   },
 };
 const HH = "/assets/ui/help/";
-const BOOKS = [
-  ["Introducing Windows 2000 Professional", ["welcome", "windows"]],
-  ["Files and Folders", ["files"]],
-  ["Internet, E-mail, and Communications", ["internet"]],
-  ["Working with Programs", ["notepad", "wordpad", "paint", "calculator", "games"]],
-  ["Personalizing Your Computer", ["shortcuts"]],
-  ["Hardware", ["media"]],
-  ["Printing", []],
-  ["Troubleshooting and Maintenance", ["system", "updates"]],
-  ["Networking", []],
-  ["Accessibility for Special Needs", []],
-  ["Mobile Users", []],
-  ["Security", []],
-  ["Control Panel", []],
-  ["Glossary", []],
-  ["Reference", ["architecture"]],
-];
+const HELP = "/assets/help/";
+let HELP_DATA = null;
+const loadHelp = () => (HELP_DATA ? Promise.resolve(HELP_DATA) : fetch(HELP + "help.json").then((r) => r.json()).then((d) => (HELP_DATA = d)));
+const BOOK_ORDER = ["getstart", "howto", "concepts", "tshoot", "cpanel", "display", "access", "hardware", "printing", "folderop", "find", "fonts", "recycle", "keyb", "mouse", "datetime", "sounds", "notepad", "wordpad", "mspaint", "calc", "charmap", "clipbrd", "mplayer", "soundrec", "sndvol32", "freecell", "sol", "winmine", "pinball", "regedit", "taskmgr", "iexplore", "msoe", "nthelp", "glossary"];
+const TOPIC_BOOK = { notepad: "notepad", wordpad: "wordpad", paint: "mspaint", calculator: "calc", media: "mplayer", internet: "iexplore", system: "tshoot", games: "sol", shortcuts: "folderop" };
+const walk = (nodes, fn, path = []) => nodes.forEach((n, i) => (fn(n, [...path, i]), n.c && walk(n.c, fn, [...path, i])));
 
 export function openHelp(ctx, { topic } = {}) {
   const w = ctx.wm.create({
@@ -188,7 +177,7 @@ export function openHelp(ctx, { topic } = {}) {
     y: 30,
     appId: "help",
   });
-  let current = topic in topics ? topic : "start",
+  let current = topic in topics && !(topic in TOPIC_BOOK) ? topic : "start",
     hist = [],
     fwd = [],
     tab = 0,
@@ -253,6 +242,8 @@ export function openHelp(ctx, { topic } = {}) {
       );
       return;
     }
+    if (key.includes("/")) return showPage(key);
+    root.classList.remove("page");
     const t = topics[key];
     body.replaceChildren(
       el("div", { class: "hh-orange" }),
@@ -267,6 +258,54 @@ export function openHelp(ctx, { topic } = {}) {
       ),
     );
   };
+  const titleOf = (path) => HELP_DATA?.pages.find((p) => p[0] === path)?.[1] ?? path;
+  function showPage(path) {
+    root.classList.add("page");
+    const f = el("iframe", { class: "hh-frame", src: HELP + path });
+    f.addEventListener("load", () => {
+      const d = f.contentDocument;
+      if (!d) return;
+      const st = d.createElement("style");
+      st.textContent = [...document.styleSheets].flatMap((sh) => { try { return [...sh.cssRules]; } catch { return []; } }).filter((r) => r.cssText.includes("scrollbar")).map((r) => r.cssText).join("\n") + "\nbody{margin:8px 14px 8px 20px;font-family:Verdana,Tahoma,Arial,sans-serif}";
+      d.head.append(st);
+      d.addEventListener("click", (e) => {
+        const a = e.target.closest?.("a");
+        if (!a) return;
+        const ha = a.getAttribute("data-haid"), href = a.getAttribute("href") || "";
+        if (ha) {
+          e.preventDefault();
+          const hits = ha.split(";").map((h) => HELP_DATA.haid[h]).filter(Boolean);
+          const r = f.getBoundingClientRect();
+          if (hits.length === 1) go(hits[0]);
+          else if (hits.length) popup(hits.map((h) => ({ label: titleOf(h), action: () => go(h) })), r.left + e.clientX, r.top + e.clientY);
+        } else if (href && !href.startsWith("#")) {
+          e.preventDefault();
+          if (/^[a-z]+:/i.test(href)) return ctx.launch("ie", { url: href });
+          const u = new URL(href, f.contentWindow.location.href), i = u.pathname.indexOf("assets/help/");
+          if (i >= 0) go(u.pathname.slice(i + 12));
+        }
+      });
+    });
+    body.replaceChildren(el("div", { class: "hh-orange" }), f);
+  }
+  function bookNodes() {
+    const books = [];
+    BOOK_ORDER.forEach((k) => HELP_DATA.toc[k]?.forEach((n) => books.push([k, n])));
+    return books;
+  }
+  function firstLeaf(nodes) {
+    let r = null;
+    walk(nodes, (n) => !r && n.l && (r = n.l));
+    return r;
+  }
+  function revealCurrent() {
+    if (!HELP_DATA || !current.includes("/")) return;
+    bookNodes().forEach(([k, n], bi) =>
+      walk([n], (x, path) => {
+        if (x.l === current) path.slice(0, -1).forEach((_, j) => open.add(k + "." + bi + "." + path.slice(0, j + 1).join(".")));
+      }),
+    );
+  }
   function renderTree() {
     const row = (ico, text, { x = 0, sel = false, onclick } = {}) => {
       const r = el("div", { class: "hh-row" }, img(ico), el("span", { text, class: sel ? "sel" : "" }));
@@ -275,23 +314,43 @@ export function openHelp(ctx, { topic } = {}) {
       return r;
     };
     const rows = [row("start", "Start Here", { sel: current === "start", onclick: () => go("start") })];
-    BOOKS.forEach(([name, kids]) => {
-      rows.push(row("book", name, { onclick: () => (open.has(name) ? open.delete(name) : open.add(name), renderTree()) }));
-      if (open.has(name))
-        (kids.length ? kids : null)?.forEach((k) => rows.push(row("start", topics[k].title, { x: 16, sel: current === k, onclick: () => go(k) })));
-    });
+    if (HELP_DATA) {
+      revealCurrent();
+      const add = (k, bi, n, path, depth) => {
+        const id = k + "." + bi + "." + path.join("."), kids = n.c?.length;
+        rows.push(
+          row(kids ? "book" : "start", n.n, {
+            x: depth * 16,
+            sel: !!n.l && current === n.l,
+            onclick: () => {
+              if (kids) open.has(id) ? open.delete(id) : open.add(id);
+              if (n.l && n.l !== current) go(n.l);
+              else renderTree();
+            },
+          }),
+        );
+        if (kids && open.has(id)) n.c.forEach((c, i) => add(k, bi, c, [...path, i], depth + 1));
+      };
+      bookNodes().forEach(([k, n], bi) => add(k, bi, n, [0], 0));
+    }
+    const mine = "Windows2000 Notes";
+    rows.push(row("book", mine, { onclick: () => (open.has(mine) ? open.delete(mine) : open.add(mine), renderTree()) }));
+    if (open.has(mine)) Object.entries(topics).forEach(([k, t]) => rows.push(row("start", t.title, { x: 16, sel: current === k, onclick: () => go(k) })));
     tree.replaceChildren(...rows);
   }
   const panel = el("div", { class: "hh-panel" });
   const list = el("div", { class: "hh-list" });
   const input = el("input", { class: "hh-input", oninput: () => fillList() });
   function fillList() {
-    const q = input.value.toLowerCase();
-    list.replaceChildren(
-      ...Object.entries(topics)
-        .filter(([, t]) => tab === 1 ? !q || t.title.toLowerCase().includes(q) : q && (t.title + " " + t.paragraphs.join(" ")).toLowerCase().includes(q))
-        .map(([k, t]) => el("div", { class: "hh-row", onclick: () => go(k) }, img("start"), el("span", { text: t.title }))),
-    );
+    const q = input.value.toLowerCase().trim();
+    if (!HELP_DATA) return list.replaceChildren();
+    let items = [];
+    if (tab === 1) items = HELP_DATA.index.filter(([n]) => !q || n.toLowerCase().includes(q)).slice(0, 400).map(([n, l]) => [n, l]);
+    else if (q) {
+      const sets = q.split(/\s+/).map((w) => new Set(HELP_DATA.words[w] || []));
+      items = [...sets[0]].filter((i) => sets.every((st) => st.has(i))).slice(0, 300).map((i) => HELP_DATA.pages[i].slice().reverse());
+    }
+    list.replaceChildren(...items.map(([t, l]) => el("div", { class: "hh-row", onclick: () => go(l) }, img("start"), el("span", { text: t }))));
   }
   const tabs = ["Contents", "Index", "Search", "Favorites"].map((t, i) => {
     const n = el("div", { class: "hh-tab t" + i, onclick: () => setTab(i) });
@@ -314,6 +373,15 @@ export function openHelp(ctx, { topic } = {}) {
   w.setContent(root);
   setTab(0);
   show(current);
+  loadHelp().then(() => {
+    if (topic in TOPIC_BOOK) {
+      const l = firstLeaf(HELP_DATA.toc[TOPIC_BOOK[topic]] || []);
+      if (l) current = l;
+    }
+    renderTree();
+    if (tab !== 0) fillList();
+    if (current.includes("/")) show(current);
+  });
   return w;
 }
 

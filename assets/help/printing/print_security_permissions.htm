@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+<TITLE>Printing security permissions</TITLE>
+<META NAME="MS-HAID" CONTENT="a_print_security_permissions">
+ 
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+
+</HEAD>
+
+<BODY>
+<H1><A NAME="print_security_permissions">Printing security permissions</A></H1>
+
+<P>When a printer is installed on a network, default permissions are assigned that allow all users to print, and allow select groups to manage the printer, the documents sent to it, or both. Because the printer is available to all users on the network, you might want to limit access for some users by assigning specific printer permissions. For example, you could give all nonadministrative users in a department the Print permission and give all managers the Print and Manage Documents permissions. In this way, all users and managers can print documents, but managers can also change the print status of any document sent to the printer. </P>
+
+<P>Windows&nbsp;2000 provides three levels of printing security permissions: Print, Manage Printers, and Manage Documents. When multiple permissions are assigned to a group of users, the least restrictive permissions apply. However, when Deny is applied, it takes precedence over any permission. The following is a brief explanation of the types of tasks a user can perform at each permission level.</P>
+
+<P><A ID="expand" HREF="#" CLASS="expandToggle">Print</A></P>
+
+<DIV CLASS="expand">
+<P>The user can connect to a printer and send documents to the printer. By default, the Print permission is assigned to all members of the Everyone group.</p>
+</DIV>
+
+<P><A ID="expand" HREF="#" CLASS="expandToggle">Manage Printers</A></P>
+
+<DIV CLASS="expand">
+<P>The user can perform the tasks associated with the Print permission and has complete administrative control of the printer. The user can pause and restart the printer, change spooler settings, share a printer, adjust printer permissions, and change printer properties. By default, the Manage Printers permission is assigned to members of the Administrators and Power Users groups.</P>
+
+<P>By default, members of the Administrators and Power Users groups have full access, which means that the users are assigned the Print, Manage Documents, and Manage Printers permissions.</P>
+</DIV>
+
+<P><A ID="expand" HREF="#" CLASS="expandToggle">Manage Documents</A></P>
+
+<DIV CLASS="expand">
+<P>The user can pause, resume, restart, and cancel documents submitted by all other users. The user cannot, however, send documents to the printer or control the status of the printer. By default, the Manage Documents permission is assigned to members of the Creator Owner group.</P>
+
+<P>When a user is assigned the Manage Documents permission, the user cannot access existing documents currently waiting to print. The permission will only apply to documents sent to the printer after the permission is assigned to the user.</P>
+</DIV>
+
+<P><A ID="expand" HREF="#" CLASS="expandToggle">Deny</A></P>
+
+<DIV CLASS="expand">
+<P>Any or all of the preceding permissions are denied for the printer. When access is denied, the user cannot use or manage the printer, manipulate documents sent to the printer, or adjust any of the permissions.</P>
+</DIV>
+
+<P>For more information about printing security permissions, see Related Topics.</P>
+
+<P><A ID="relTopics" HREF="#" data-haid="a_print_limit_access;a_print_security_permissions_groups;a_windows_security_group_membership;a_workstation_security">Related Topics</A></P>
+
+</BODY>
+</HTML>

@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+
+<TITLE>Choosing a printer name</TITLE>
+<META NAME="MS-HAID" CONTENT="a_print_choosing_a_printer_name">
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+</HEAD>
+
+<BODY>
+<H1><A NAME="print_choosing_a_printer_name">Choosing a printer name</A></H1>
+
+<P>Windows&nbsp;2000 supports the use of long printer names. This allows you to create printer names that contain spaces and special characters. However, if you share a printer over a network, some <A ID="wPopup" HREF="help=glossary.hlp topic=gls_client_only">clients</A> will not recognize or correctly handle the long names, and users may experience problems printing. Also, some programs cannot print to printers with names longer than 32 characters.</P>
+
+<P>For printers that are shared, the entire qualified name (including the server name, \\PRINTER2\PSCRIPT, for example) must be less than 32 characters.</P>
+
+<UL>
+<LI>If you share a printer with a variety of clients on a network, use 31 or fewer characters for printer names, and do not include spaces or special characters in these names.</LI>
+
+<LI>If you share a printer with <NOBR>MS-DOS</NOBR> computers, do not use more than eight characters for the printer's share name. You can lengthen the name by adding a period followed by no more than three characters, but you cannot use spaces in the name.</LI>
+</UL>
+
+<P>Several Windows version 3.<I>x</I> programs cannot print to a printer if its name contains more than the specified number of characters, and will generate a general protection fault error message if printing is attempted. Other programs may not print to any printer, even printers with short names, if the <A ID="wPopup" HREF="help=glossary.hlp topic=gls_default_printer">default printer's</A> name is too long. To resolve these problems, rename the printers used by these programs with shorter names and make one of the renamed printers the default printer.</P>
+
+<P>For information about adding or sharing a printer, see  Related Topics.</P>
+
+<P><A ID="relTopics" HREF="#" data-haid="a_print_connect_local_printer;a_print_sharing">Related Topics</A></P>
+
+</BODY>
+</HTML>

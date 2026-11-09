@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+                      "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+<HEAD><meta charset="utf-8">
+
+<TITLE>Winnt.exe Command Syntax</TITLE>
+
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="coua_gs.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">  
+
+
+
+</HEAD>
+
+<BODY SCROLL="NO">
+<DIV ID="nav">getstart.lst</DIV>
+<DIV ID="text">
+<H3><A NAME="wgs_gs_03015"></A>Winnt.exe Command Syntax</H3>
+
+
+
+<P>Running Winnt.exe installs Windows&nbsp;2000. You can run the Winnt command at the command prompt for <NOBR>MS-DOS</NOBR>, Windows&nbsp;3.1, or Windows for Workgroups&nbsp;3.11.</p>
+
+
+
+<P>The syntax of the Winnt command is as follows:</p>
+
+<PRE><CODE><B>winnt</B> [<B>/s:</B><I>sourcepath</I>] [<B>/t:</B><I>tempdrive</I>] 
+    [<B>/u:</B><I>answer file</I>][<B>/udf:</B><I>id [,UDF_file]</I>] 
+    [<B>/r:</B><I>folder</I>][<B>/rx:</B><I>folder</I>][<B>/e:</B><I>command</I>][<B>/a</B>]</CODE></PRE>
+
+
+
+<P>where:</p>
+
+<UL>
+<LI><B>/s:</B><I>sourcepath</I>
+
+<p>Specifies the source location of the Windows&nbsp;2000 files. The location must be a full path of the form <B>x:\[path]</B> or <B>\\server\share[\path].</B></p></LI>
+
+<LI><B>/t:</B><I>tempdrive</I>
+
+<p>Directs Setup to place temporary files on the specified drive and to install Windows&nbsp;2000 on that drive. If you don't specify a location, Setup attempts to locate a drive for you.</p></LI>
+
+<LI><B>/u:</B><I>answer file</I>
+
+<p>Performs an unattended Setup using an answer file. The answer file provides answers to some or all of the prompts that the end user normally responds to during Setup. You must also use <B>/s</B>.</p></LI>
+
+<LI><B>/udf:</B><I>id</I> [,<I>UDF_file</I>]
+
+<p>Indicates an identifier (<I>id</I>) that Setup uses to specify how a Uniqueness Database File (UDF) modifies an answer file (see <B>/u</B>). The <B>/udf</B> parameter overrides values in the answer file, and the identifier determines which values in the UDF are used. If no <I>UDF_file</I> is specified, Setup prompts you to insert a disk that contains the $Unique$.udb file.</p></LI>
+
+<LI><B>/r:</B><I>folder</I>
+
+<p>Specifies an optional folder to be installed. The folder remains after Setup finishes.</p></LI>
+
+<LI><B>/rx:</B><I>folder</I>
+
+<p>Specifies an optional folder to be copied. The folder is deleted after Setup finishes.</p></LI>
+
+<LI><B>/e:</B><I>command</I>
+
+<p>Specifies a command to be executed at the end of GUI-mode Setup.</p></LI>
+
+<LI><B>/a</B>
+
+<p>Enables accessibility options.</p></LI>
+</UL>
+</DIV></BODY>
+</HTML>

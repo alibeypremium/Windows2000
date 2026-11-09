@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+
+<HEAD><meta charset="utf-8">
+
+
+<META NAME="MS.LOCALE" CONTENT="EN-US">
+
+
+<META NAME="MS-HAID" CONTENT="a_computer_maint_perf_mgmt">
+<TITLE>Managing your computer's performance</TITLE>
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="../ntshared/coua.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">
+
+</HEAD>
+
+<BODY>
+<H1>
+<A NAME="computer_maint_perf_mgmt">Managing your computer's performance</A></H1>
+<P>
+Windows&nbsp;2000 allocates resources according to its settings and manages devices according to what your system needs. However, you can adjust Windows&nbsp;2000 to improve its performance, particularly by changing the way Windows&nbsp;2000 uses processor time and memory.</P>
+<H2>
+Managing processor time</H2>
+<P>
+System processing is managed directly by Windows&nbsp;2000, which can allocate tasks between processors while also managing multiple processes on a single processor. However, you <I>can</I> set Windows&nbsp;2000 to give a greater proportion of processor time to the application in which you are currently working. This can result in faster response time from the programs and applications you use while you work. Or, if you have <A ID="wPopup" HREF="help=glossary.hlp topic=gls_background_application">background processes</A> such as printing or disk backup that you want to run while you work, you may prefer to have Windows&nbsp;2000 share processor resources equally between background and foreground programs.</P>
+
+<H2>Managing Computer Memory</H2>
+<P>
+When your computer is running low on RAM and more is needed immediately to complete your current task, Windows&nbsp;2000 uses hard drive space to simulate system RAM. In Windows&nbsp;2000, this is known as <A ID="wPopup" HREF="help=glossary.hlp topic=gls_virtual_memory">Virtual Memory</A>, and often called the <A ID="wPopup" HREF="help=glossary.hlp topic=gls_paging_file">pagefile</A>. This is similar to the UNIX <I>swapfile</I>. The default size of the virtual memory pagefile (appropriately named <I>pagefile.sys</I>) created during installation is 1.5 times the amount of RAM on your computer.</P>
+<P>
+You can optimize virtual memory use by dividing the space between multiple drives and especially by removing it from slower or heavily accessed drives. To best optimize your virtual memory space, divide it across as many physical hard drives as possible.  When selecting drives, keep the following guidelines in mind:</P>
+<UL>
+<LI>
+Try to avoid having a pagefile on the same drive as the system files.</LI>
+<LI>
+Avoid putting a pagefile on a fault-tolerant drive, such as a <A ID="wPopup" HREF="help=glossary.hlp topic=gls_mirrored_volume">mirrored volume</A> or a <A ID="wPopup" HREF="help=glossary.hlp topic=gls_raid5_volume">RAID-5 volume</A>. Pagefiles don't need fault-tolerance, and some fault-tolerant systems suffer from slow data writes because they write data to multiple locations.</LI>
+<LI>
+Don't place multiple pagefiles on different partitions on the same physical disk drive.</LI>
+</UL>
+
+<P>
+<A ID="relTopics" HREF="#" data-haid="a_sysdm_advancd_perform_usage_assign_resources;a_sysdm_advancd_perform_change_vmpagefile">Related Topics</A></P>
+
+</BODY>
+</HTML>
+
+

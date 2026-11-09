@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+                      "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+<HEAD><meta charset="utf-8">
+
+<TITLE>Using the Emergency Repair Disk</TITLE>
+
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="coua_gs.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">  
+
+
+
+</HEAD>
+
+<BODY SCROLL="NO">
+<DIV ID="nav">getstart.lst</DIV>
+<DIV ID="text">
+<H3><A NAME="wgs_gs_05019"></A>Using the Emergency Repair Disk</H3>
+
+
+
+<P>The Emergency Repair Disk (ERD) can help you to repair or recover a system that can't load Windows&nbsp;2000. The ERD helps you repair problems with system files and the partition boot sector. This situation occurs when your hard disk fails or when some of your system files are corrupted or accidentally deleted. <I>System files</I> are the files Windows&nbsp;2000 uses to load, configure, and run the operating system. If some system files are missing or corrupted, you can use the ERD to repair those files.</p>
+
+
+
+<P>The <I>partition boot sector</I> contains information about the file system structure and instructions for loading the operating system. If you have a dual-boot system, the ERD contains information about the settings that specify which operating system to start and how to start it.</p>
+
+
+
+<P>You should regularly update your ERD in order to record your latest system settings. The ERD is designed for restarting your computer or repairing system files &mdash; it doesn't back up any of your files or programs.</p>
+
+<p class="important"><b>Important</b></p>
+<P class="indent">You shouldn't use the ERD to repair registry problems. The copy of the registry that the ERD restores is the original registry from Setup.</p>
+
+
+
+
+
+<P class="proclabel"><B>To create an Emergency Repair Disk</B></p>
+
+<OL>
+	<LI>Click the <B>Start</B> button, point to <B>Programs</B>, point to <B>Accessories</B>, point to <B>System Tools</B>, and then click <B>Backup</B>.</li>
+
+	<LI>On the <B>General tab</B>, click the <B>Create an Emergency Repair Disk </B>button.</li>
+
+	<LI>When prompted, insert a blank, formatted 1.44-MB disk in your floppy disk drive, and then click <B>OK</B>.</li>
+
+	<LI>When the process is complete, remove the disk, label it &quot;Emergency Repair Disk,&quot; and then store it in a safe location.
+
+
+
+</li>
+</OL>
+
+<P>To restore your settings from the ERD, you need your Windows&nbsp;2000 CD, the Windows&nbsp;2000 Setup disks, and the ERD. During the restoration process, you can press F1 for more information about your options.</p>
+<p class="important"><b>Important</b></p>
+<P class="indent">Because missing or corrupted files are replaced with files from the Windows&nbsp;2000 CD, any changes you made to the system after the original installation are lost.</p>
+
+
+
+
+
+<P class="proclabel"><B>To restore your settings from the Emergency Repair Disk</B></p>
+
+<OL>
+	<LI>For Intel-based computers, use the Windows&nbsp;2000 Setup disks or the Windows&nbsp;2000 Professional CD to start your computer.
+
+<P>After Setup finishes copying files from the Setup disks, the system restarts, and text-based installation mode starts.</p>
+</li>
+
+	<LI>At the Welcome to Setup screen, press R to select the option to repair or recover a Windows&nbsp;2000 installation.</li>
+
+	<LI>When prompted to enter the type of repair or recovery option required, press R to repair a damaged Windows&nbsp;2000 installation.</li>
+
+	<LI>Click either <B>Fast repair</B> or <B>Manual repair</B>.
+<UL>
+	<LI>Press M for Manual repair if you want Setup to selectively repair system files, the partition boot sector, or the startup environment. Manual repair doesn't repair the registry.</li>
+
+	<LI>Press F for Fast repair if you want Setup to automatically attempt to repair system files, the partition boot sector, and the startup environment. The registry Setup restores is the one created when you first installed Windows&nbsp;2000. Fast repair doesn't require additional user interaction.</li>
+</UL>
+</li>
+
+	<LI>Follow the instructions that appear and insert the ERD when prompted. If you have the original Windows&nbsp;2000 CD, you can have Setup verify your disk (check for corruption).
+
+
+<P>When the repair process is complete, your computer restarts and Windows&nbsp;2000 runs.</p>
+</li>
+</OL>
+</DIV></BODY>
+</HTML>

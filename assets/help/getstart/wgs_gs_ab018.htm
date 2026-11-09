@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+                      "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+<HEAD><meta charset="utf-8">
+
+<TITLE>Stop Error 0xC0000221</TITLE>
+
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="coua_gs.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">  
+
+
+
+</HEAD>
+
+<BODY SCROLL="NO">
+<DIV ID="nav">getstart.lst</DIV>
+<DIV ID="text">
+<H1><A NAME="wgs_gs_ab018"></A>Stop Error 0xC0000221</H1>
+
+
+
+<TABLE>
+
+<TR>
+<TD><B>Stop error number:</B></TD>
+<TD>(0xC0000221)</TD>
+</TR>
+
+<TR>
+<TD><B>Descriptive text:</B></TD>
+<TD>STATUS_IMAGE_CHECKSUM_MISMATCH</TD>
+</TR>
+
+<TR>
+<TD><B>Usual cause:</B></TD>
+<TD>A driver or a system DLL has been corrupted.</TD>
+</TR>
+</TABLE><BR>
+
+
+
+<P class="proclabel"><B>To troubleshoot Stop error 0xC0000221</B></p>
+
+<OL>
+	<LI>If the computer is formatted with NTFS, restart your computer, and then run <B>Chkdsk /f /r</B> on the system partition. If you cannot start the system due to the error, use the Command Console and run <B>Chkdsk /r</B>.</li>
+
+	<LI>Run Recovery Console and allow the system to repair any errors that it detects.</li>
+<P>For more information, see <A ID="specLoc" HREF="../getstart/wgs_gs_05016.htm">Starting and Recovering Your System</A> in Chapter&nbsp;5.</P>
+<li>If the error occurred immediately after RAM was added to the computer, the paging file might be corrupted or the new RAM might be either faulty or incompatible. Delete the Pagefile.sys and return the system to the original RAM configuration.</li>
+
+	<LI>Run any system diagnostics supplied by your computer manufacturer, especially the memory check.</li>
+</ol>
+</DIV></BODY>
+</HTML>

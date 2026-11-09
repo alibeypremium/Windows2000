@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+                      "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+<HEAD><meta charset="utf-8">
+
+<TITLE>Stop Error 0x0000002E</TITLE>
+
+<LINK REL="stylesheet" MEDIA="screen" TYPE="text/css" HREF="coua_gs.css">
+<LINK REL="stylesheet" MEDIA="print" TYPE="text/css" HREF="../ntshared/couaprint.css">  
+
+
+
+</HEAD>
+
+<BODY SCROLL="NO">
+<DIV ID="nav">getstart.lst</DIV>
+<DIV ID="text">
+<H1><A NAME="wgs_gs_ab008"></A>Stop Error 0x0000002E</H1>
+
+
+
+<TABLE>
+
+<TR>
+<TD><B>Stop error number:</B></TD>
+<TD>(0x0000002E)</TD>
+</TR>
+
+<TR>
+<TD><B>Descriptive text:</B></TD>
+<TD>DATA_BUS_ERROR</TD>
+</TR>
+
+<TR>
+<TD><B>Usual cause:</B></TD>
+<TD>System memory has a parity error, typically due to a hardware problem.</TD>
+</TR>
+</TABLE><BR>
+
+
+
+
+
+<P class="proclabel"><B>To troubleshoot Stop error 0x0000002E</B></p>
+
+<OL>
+	<LI>Remove any newly installed hardware (RAM, adapters, hard disks, modems, and so on).</li>
+
+	<LI>Run the system diagnostics supplied by your computer manufacturer, especially hardware diagnostics.</li>
+
+	<LI>Verify that your hardware devices drivers and your system BIOS are the latest available versions.
+<P>Your hardware manufacturers can help you determine whether you have the latest versions or help you obtain them.</p>
+</li>
+
+	<LI>Use the system diagnostics supplied by your hardware vendor to run a memory check for faulty or mismatched memory.</li>
+
+	<LI>Disable BIOS memory options such as caching or shadowing.</li>
+
+	<LI>At startup, when the list of available operating systems appears, press F8. On the Windows&nbsp;2000 Advanced Options Menu screen, select <B>Enable VGA Mode</B>, and then press ENTER. If this doesn't resolve the problem, you may need to change to a different video adapter. For a list of supported video adapters, see the Hardware Compatibility List.
+
+
+
+<P><A ID="extUrl" HREF="http://www.microsoft.com/isapi/redir.dll?prd=Win2000HCL&pver=1" TITLE="http://www.microsoft.com/" TARGET="_new">Microsoft Hardware Compatibility List Web site</A></P></li>
+<li>If the computer is formatted with NTFS, restart your computer, and then run <B>Chkdsk /f /r</B> on the system partition. If you cannot start the system due to the error, use the Command Console and run <B>Chkdsk /r</B>.</li>
+</ol>
+
+
+
+</DIV></BODY>
+</HTML>
