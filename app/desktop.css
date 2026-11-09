@@ -5450,3 +5450,8 @@ button.selected:focus {
 .ia-row .lbl { position: absolute; left: 40px; top: 1px; line-height: 14px; }
 .sp-row { position: absolute; height: 14px; background: #d4d0c8; white-space: nowrap; }
 .sp-row span { position: absolute; top: 0; line-height: 14px; }
+.rg-field { position: absolute; box-sizing: border-box; background: #d4d0c8; border: 1px solid; border-color: #808080 #fff #fff #808080; box-shadow: inset 1px 1px #404040; padding: 3px 3px; line-height: 13px; white-space: nowrap; overflow: hidden; }
+.rg-field.dis { color: #808080; }
+.rg-lang { position: absolute; left: 0; width: 100%; height: 17px; white-space: nowrap; cursor: default; }
+.rg-lang .ia-box { left: 2px; top: 2px; }
+.rg-lang .t { position: absolute; left: 20px; top: 2px; line-height: 14px; }

@@ -8,6 +8,38 @@ const OX = 389,
   OY = 75;
 const ticks = (n) => Array.from({ length: n }, (_, i) => i / (n - 1));
 
+export function localesTab({ k, ctx, state, dirty }) {
+    const sel1 = el("div", { class: "kb-row sel" }, el("span", { class: "en", text: "EN" }), el("span", { class: "lang", text: "English (United States)" }), el("span", { class: "lay", text: "US" }));
+    Object.assign(sel1.style, { left: "36px", top: "99px", width: "333px" });
+    const hot = (label, y, on) => {
+      const r = el("div", { class: "kb-hot" + (on ? " sel" : "") }, el("span", { text: label }), el("span", { class: "r", text: "(None)" }));
+      Object.assign(r.style, { left: "38px", top: y + "px", width: "331px" });
+      return r;
+    };
+    return [
+      k.group(25, 70, 355, 156, "Installed input locales", 9),
+      k.text(35, 81, "Input language"),
+      k.text(268, 81, "Keyboard layout/IME", { w: 100, align: "right" }),
+      k.sunken(35, 98, 335, 61),
+      sel1,
+      k.btn(35, 167, 104, 22, "Add...", { onclick: () => ctx.dialogs.message("Adding input locales is not available in this virtual desktop.", { title: "Add Input Locale" }) }),
+      k.btn(152, 167, 104, 22, "Remove", { disabled: true }),
+      k.btn(268, 167, 104, 22, "Properties...", { onclick: () => ctx.dialogs.message("Input locale properties are not available in this virtual desktop.", { title: "Input Locale Properties" }) }),
+      k.btn(268, 195, 104, 22, "Set as Default", { disabled: true }),
+      k.group(25, 241, 355, 34, "To turn off Caps Lock", 9),
+      k.radio(36, 253, "Press CAPS LOCK key", { checked: state.caps === 0, onchange: () => ((state.caps = 0), dirty()) }),
+      k.radio(201, 253, "Press SHIFT key", { checked: state.caps === 1, onchange: () => ((state.caps = 1), dirty()) }),
+      k.group(25, 288, 355, 113, "Hot keys for input locales", 9),
+      k.text(35, 300, "Item"),
+      k.text(300, 300, "Key sequence", { w: 70, align: "right" }),
+      k.sunken(35, 315, 335, 43),
+      hot("Switch between input locales", 317, true),
+      hot("Switch to English (United States) - US", 337, false),
+      k.btn(242, 374, 129, 22, "Change Key Sequence..."),
+      k.check(25, 412, "Enable indicator on taskbar", { disabled: true }),
+    ];
+}
+
 export function openKeyboardProperties(ctx, { tab = 0 } = {}) {
   const k = kit(0, 0),
     w = refWindow(ctx, {
@@ -71,37 +103,7 @@ export function openKeyboardProperties(ctx, { tab = 0 } = {}) {
     ];
   };
 
-  const locales = () => {
-    const sel1 = el("div", { class: "kb-row sel" }, el("span", { class: "en", text: "EN" }), el("span", { class: "lang", text: "English (United States)" }), el("span", { class: "lay", text: "US" }));
-    Object.assign(sel1.style, { left: "36px", top: "99px", width: "333px" });
-    const hot = (label, y, on) => {
-      const r = el("div", { class: "kb-hot" + (on ? " sel" : "") }, el("span", { text: label }), el("span", { class: "r", text: "(None)" }));
-      Object.assign(r.style, { left: "38px", top: y + "px", width: "331px" });
-      return r;
-    };
-    return [
-      k.group(25, 70, 355, 156, "Installed input locales", 9),
-      k.text(35, 81, "Input language"),
-      k.text(268, 81, "Keyboard layout/IME", { w: 100, align: "right" }),
-      k.sunken(35, 98, 335, 61),
-      sel1,
-      k.btn(35, 167, 104, 22, "Add...", { onclick: () => ctx.dialogs.message("Adding input locales is not available in this virtual desktop.", { title: "Add Input Locale" }) }),
-      k.btn(152, 167, 104, 22, "Remove", { disabled: true }),
-      k.btn(268, 167, 104, 22, "Properties...", { onclick: () => ctx.dialogs.message("Input locale properties are not available in this virtual desktop.", { title: "Input Locale Properties" }) }),
-      k.btn(268, 195, 104, 22, "Set as Default", { disabled: true }),
-      k.group(25, 241, 355, 34, "To turn off Caps Lock", 9),
-      k.radio(36, 253, "Press CAPS LOCK key", { checked: state.caps === 0, onchange: () => ((state.caps = 0), dirty()) }),
-      k.radio(201, 253, "Press SHIFT key", { checked: state.caps === 1, onchange: () => ((state.caps = 1), dirty()) }),
-      k.group(25, 288, 355, 113, "Hot keys for input locales", 9),
-      k.text(35, 300, "Item"),
-      k.text(300, 300, "Key sequence", { w: 70, align: "right" }),
-      k.sunken(35, 315, 335, 43),
-      hot("Switch between input locales", 317, true),
-      hot("Switch to English (United States) - US", 337, false),
-      k.btn(242, 374, 129, 22, "Change Key Sequence..."),
-      k.check(25, 412, "Enable indicator on taskbar", { disabled: true }),
-    ];
-  };
+  const locales = () => localesTab({ k, ctx, state, dirty, tc: () => tc });
 
   const hardware = () => {
     const row = el("div", { class: "up-row sel" }, el("img", { src: IMG + "kbd16.png", alt: "", draggable: "false" }), el("span", { class: "n", text: "PC/AT Enhanced PS/2 Keyboard (101/102-K..." }), el("span", { class: "g", text: "Keyboards" }));
