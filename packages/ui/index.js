@@ -470,6 +470,9 @@ export class WindowManager {
     maximizable = true,
     dialog = false,
     owner = null,
+    help = false,
+    noIcon = false,
+    className = "",
   } = {}) {
     if (dialog && !owner) owner = this.active;
     const id = this.nextId++,
@@ -515,6 +518,13 @@ export class WindowManager {
       { class: "caption-controls" },
       minimizable ? minimize : null,
       maximizable ? maximize : null,
+      help
+        ? button("", () => w.onHelp?.(), {
+            class: "caption-button help-button",
+            "aria-label": "Help",
+            title: "Help",
+          })
+        : null,
       close,
     );
     const caption = el("span", { class: "window-caption", text: title });
@@ -538,7 +548,11 @@ export class WindowManager {
     w.el = el(
       "section",
       {
-        class: "window" + (dialog ? " dialog-window" : ""),
+        class:
+          "window" +
+          (dialog ? " dialog-window" : "") +
+          (noIcon ? " no-caption-icon" : "") +
+          (className ? " " + className : ""),
         role: dialog ? "dialog" : "region",
         "aria-label": title,
         "data-window-id": id,
