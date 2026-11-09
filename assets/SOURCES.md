@@ -352,3 +352,7 @@ Fifteen further screenshots supplied by the project owner (Control Panel items, 
 ## Fourth reference set (Internet Properties, Gaming Options, Fonts, Folder Options, Display Properties, Date/Time)
 
 Assets under `assets/ui/inet/`, `assets/ui/folderopts/`, `assets/ui/display/`, `assets/ui/explorer/fonts-views.png`, `assets/ui/dialogs/gaming-pad.png`, and the `ref-font-*` / `cpGaming` icons were cropped from the user-supplied Windows 2000 screenshots (m1–m20) and background-keyed to alpha where needed. The Display Properties monitor frame, appearance preview, energy-star logo, colour bar, slider, wallpaper-list icons, desktop-icon crops and the Date/Time world map come from the same screenshots.
+
+## Fifth reference set (Users and Passwords, Power Options, Mouse, Keyboard, Location Information, LAN status, Java Plug-in, Internet Properties Programs/Advanced, Printers)
+
+Assets under `assets/ui/users/`, `assets/ui/power/`, `assets/ui/mouse/`, `assets/ui/keyboard/`, `assets/ui/net/` and the new `assets/ui/inet/` icons were cropped from the user-supplied Windows 2000 screenshots (p1–p20) and background-keyed to alpha where needed.

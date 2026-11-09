@@ -52,9 +52,9 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
   const w = ctx.wm.create({
     title: title || shellNames[path] || basename(path),
     icon: locationIcon(path),
-    width: path === "fonts" ? 675 : 721,
-    height: path === "fonts" ? 455 : 537,
-    ...(path === "fonts" ? { x: 218, y: 33 } : {}),
+    width: path === "fonts" ? 675 : path === "printers" ? 678 : 721,
+    height: path === "fonts" ? 455 : path === "printers" ? 456 : 537,
+    ...(path === "fonts" ? { x: 218, y: 33 } : path === "printers" ? { x: 220, y: 47 } : {}),
     appId: "explorer",
   });
   w.el.classList.add("explorer-window");
@@ -221,7 +221,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     if (n.path.startsWith("control:")) {
       const id = n.path.slice(8);
       if (id === "administrative") navigate("admintools");
-      else if (id === "printers") navigate("printers");
+      else if (id === "printers") ctx.launch("explorer", { path: "printers" });
       else if (id === "fonts") ctx.launch("explorer", { path: "fonts" });
       else if (id === "tasks") ctx.launch("tasks");
       else if (n.unavailable)
