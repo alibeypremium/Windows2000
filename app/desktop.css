@@ -1,4 +1,16 @@
 @font-face {
+  font-family: W2KSans;
+  src: url("/assets/fonts/ms-sans-serif.ttf") format("truetype");
+  font-weight: 400;
+  font-display: block;
+}
+@font-face {
+  font-family: W2KSans;
+  src: url("/assets/fonts/ms-sans-serif-bold.ttf") format("truetype");
+  font-weight: 700;
+  font-display: block;
+}
+@font-face {
   font-family: DesktopTahoma;
   src: url("/assets/fonts/tahoma.ttf") format("truetype");
   font-weight: 400;
@@ -18,11 +30,12 @@
   --active: #0a246a;
   --active-gradient: #a6caf0;
   --text: #000;
-  --ui-font-size: 11px;
+  --ui-font-size: 13px;
   --taskbar-height: 28px;
   color-scheme: light;
   font:
-    var(--ui-font-size) DesktopTahoma,
+    var(--ui-font-size) W2KSans,
+    DesktopTahoma,
     Tahoma,
     Arial,
     sans-serif;
@@ -148,7 +161,7 @@ h3 {
   margin: 0 0 12px;
 }
 h3 {
-  font-size: 12px;
+  font-size: 13px;
 }
 fieldset {
   border: 1px solid #808080;
@@ -223,7 +236,7 @@ a,
   text-decoration: underline;
 }
 .small-note {
-  font-size: 10px;
+  font-size: 13px;
   color: #444;
 }
 .selected {
@@ -385,6 +398,7 @@ button.selected:focus {
   color: #fff;
 }
 .window-caption {
+  font: bold 11px DesktopTahoma, Tahoma, sans-serif;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -712,7 +726,7 @@ button.selected:focus {
 }
 .menu-shortcut {
   padding-left: 20px;
-  font-size: 11px;
+  font-size: 13px;
 }
 .menu-arrow,
 .start-arrow {
@@ -755,7 +769,7 @@ button.selected:focus {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 11px;
+  font-size: 13px;
   padding: 0 4px 0 3px !important;
 }
 .start-button .icon {
@@ -845,7 +859,7 @@ button.selected:focus {
   width: 18px;
 }
 .tray-button.language {
-  font-size: 10px;
+  font-size: 13px;
   padding: 0 3px !important;
   width: 23px;
 }
@@ -1035,7 +1049,7 @@ button.selected:focus {
 }
 .classic-table {
   width: 100%;
-  font-size: 11px;
+  font-size: 13px;
   white-space: nowrap;
   background: #fff;
   color: #000;
@@ -1227,7 +1241,7 @@ button.selected:focus {
   margin: 14px -2px;
 }
 .explorer-side p {
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.45;
 }
 .explorer-side .side-note {
@@ -1374,7 +1388,7 @@ button.selected:focus {
   text-overflow: ellipsis;
 }
 .empty-folder {
-  font-size: 11px;
+  font-size: 13px;
   color: #777;
   grid-column: 1/-1;
   padding: 20px 10px;
@@ -1413,7 +1427,7 @@ button.selected:focus {
 }
 .tree-expand {
   font-family: monospace;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 14px;
   width: 10px;
   flex: none;
@@ -1438,14 +1452,12 @@ button.selected:focus {
 }
 .welcome-microsoft {
   font-size: 14px;
-  letter-spacing: -0.6px;
   margin-bottom: 1px;
 }
 .welcome-windows {
   font-family: Arial, sans-serif;
   font-size: 29px;
   font-weight: 700;
-  letter-spacing: -1px;
   line-height: 30px;
 }
 .welcome-2000 {
@@ -1453,7 +1465,6 @@ button.selected:focus {
   font-size: 47px;
   font-weight: 400;
   line-height: 50px;
-  letter-spacing: -2px;
 }
 .welcome-professional {
   font-size: 14px;
@@ -1465,7 +1476,7 @@ button.selected:focus {
   bottom: 14px;
   left: 15px;
   color: #b4c5df;
-  font-size: 10px;
+  font-size: 13px;
   white-space: nowrap;
 }
 .welcome-main {
@@ -1479,11 +1490,10 @@ button.selected:focus {
   font-size: 22px;
   font-weight: 700;
   margin: 0 0 8px;
-  letter-spacing: -0.45px;
 }
 .welcome-intro {
   color: #555;
-  font-size: 12px;
+  font-size: 13px;
   margin: 0 0 19px;
 }
 .welcome-tasks {
@@ -1518,11 +1528,11 @@ button.selected:focus {
 }
 .welcome-task b {
   color: #173c70;
-  font-size: 12px;
+  font-size: 13px;
   text-decoration: underline;
 }
 .welcome-task span span {
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.35;
   color: #555;
 }
@@ -1551,17 +1561,16 @@ button.selected:focus {
   border-bottom: 2px solid #a6caf0;
 }
 .about-banner > div > span {
-  font-size: 12px;
+  font-size: 13px;
 }
 .about-banner h1 {
   font:
     700 29px Arial,
     sans-serif;
-  letter-spacing: -1.5px;
   margin: 0 0 0;
 }
 .about-banner b {
-  font-size: 12px;
+  font-size: 13px;
 }
 .about-content {
   padding: 9px 18px 0 64px;
@@ -1569,7 +1578,7 @@ button.selected:focus {
 }
 .about-content p {
   margin: 7px 0;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.5;
 }
 .help-toolbar {
@@ -1641,7 +1650,7 @@ button.selected:focus {
   margin-bottom: 20px;
 }
 .help-article p {
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.65;
   margin: 0 0 16px;
 }
@@ -1653,7 +1662,7 @@ button.selected:focus {
   gap: 8px;
 }
 .help-related .text-link {
-  font-size: 12px;
+  font-size: 13px;
 }
 .notepad-editor {
   flex: 1;
@@ -1738,7 +1747,7 @@ button.selected:focus {
 }
 .wordpad-ruler span {
   flex: 1;
-  font-size: 10px;
+  font-size: 13px;
   padding: 1px 2px;
 }
 .wordpad-workspace {
@@ -1769,15 +1778,15 @@ button.selected:focus {
 .wordpad-page p {
   margin: 0;
 }
-.calculator { position: relative; margin-top: -3px; flex: 1; min-height: 0; background: #d4d0c8; font: 11px/13px Tahoma, "Wine Tahoma", sans-serif; }
+.calculator { position: relative; margin-top: -3px; flex: 1; min-height: 0; background: #d4d0c8; font: 13px/13px W2KSans, Tahoma, sans-serif; }
 .calculator > * { position: absolute; }
-.calculator-display { left: 7px; top: 0; width: 239px; height: 26px; box-sizing: border-box; text-align: right; font: 11px Tahoma, "Wine Tahoma", sans-serif !important; padding: 0 5px !important; border: 0 !important; background: #fff; box-shadow: inset 1px 1px #808080, inset 2px 2px #404040, inset -1px -1px #fff !important; }
+.calculator-display { left: 7px; top: 0; width: 239px; height: 26px; box-sizing: border-box; text-align: right; font: 13px W2KSans, Tahoma, sans-serif !important; padding: 0 5px !important; border: 0 !important; background: #fff; box-shadow: inset 1px 1px #808080, inset 2px 2px #404040, inset -1px -1px #fff !important; }
 .calculator-operation { display: none; }
-.calculator-memory { left: 11px; top: 39px; width: 27px; height: 26px; box-sizing: border-box; text-align: center; padding: 6px 1px; font-size: 12px; }
+.calculator-memory { left: 11px; top: 39px; width: 27px; height: 26px; box-sizing: border-box; text-align: center; padding: 6px 1px; font-size: 13px; }
 .calc-keyboards { left: 0; top: 0; right: 0; bottom: 0; pointer-events: none; }
 .calc-keyboards > * { pointer-events: auto; }
 .calculator-pad { position: absolute; inset: 0; pointer-events: none; }
-.calculator-pad button, .calculator > button { position: absolute; padding: 0; text-align: center; font: 11px Tahoma, "Wine Tahoma", sans-serif; min-width: 0; min-height: 0; pointer-events: auto; }
+.calculator-pad button, .calculator > button { position: absolute; padding: 0; text-align: center; font: 13px W2KSans, Tahoma, sans-serif; min-width: 0; min-height: 0; pointer-events: auto; }
 .calculator-pad button:active, .calculator > button:active, .calculator-scientific button:active { padding: 1px 0 0 1px !important; }
 .calc-red { color: #f00 !important; }
 .calc-blue { color: #00f !important; }
@@ -1785,7 +1794,7 @@ button.selected:focus {
 .calculator.sci .calculator-pad { left: 186px; }
 .calculator.sci .calculator-display { width: 429px; }
 .calculator-scientific button { min-width: 36px; padding: 4px 3px; }
-.calc-units { grid-column: 1/-1; display: flex; align-items: center; justify-content: space-between; gap: 4px; font-size: 10px; }
+.calc-units { grid-column: 1/-1; display: flex; align-items: center; justify-content: space-between; gap: 4px; font-size: 13px; }
 .calc-units label { display: flex; align-items: center; }
 .paint-main {
   display: flex;
@@ -1829,11 +1838,11 @@ button.selected:focus {
   min-height: 95px;
 }
 .paint-tool-options label {
-  font-size: 10px;
+  font-size: 13px;
 }
 .paint-tool-options select {
   width: 44px;
-  font-size: 10px;
+  font-size: 13px;
   padding: 2px 0;
 }
 .paint-workspace {
@@ -1937,7 +1946,6 @@ button.selected:focus {
   height: 28px;
   min-width: 42px;
   text-align: center;
-  letter-spacing: -2px;
   background: #160000;
   color: #ff170d;
   padding: 0 2px 0 0;
@@ -2194,7 +2202,6 @@ button.selected:focus {
     bold 16px/14px "Times New Roman",
     serif;
   text-align: center;
-  letter-spacing: -1px;
 }
 .card-corner b {
   display: block;
@@ -2317,7 +2324,7 @@ button.selected:focus {
   margin: 4px 0 8px;
 }
 .pinball-caption {
-  font: bold 10px Tahoma;
+  font: bold 13px W2KSans, Tahoma;
   letter-spacing: 2px;
   color: #8893ac;
 }
@@ -2338,12 +2345,12 @@ button.selected:focus {
 .pinball-controls-help {
   white-space: pre;
   line-height: 1.4;
-  font-size: 10px;
+  font-size: 13px;
   color: #abb0c4;
   flex: 1;
 }
 .pinball-info button {
-  font-size: 11px;
+  font-size: 13px;
   min-height: 25px;
 }
 .pinball-touch-controls {
@@ -2531,7 +2538,7 @@ button.selected:focus {
   background: #000;
   color: #c0c0c0;
   font:
-    bold 12px/12px "Lucida Console",
+    bold 13px/12px "Lucida Console",
     "Courier New",
     monospace;
   letter-spacing: calc(8px - 1ch);
@@ -2737,7 +2744,7 @@ button.selected:focus {
 .disk-report {
   background: white;
   padding: 10px;
-  font: 11px/1.5 "Courier New";
+  font: 13px/1.5 "Courier New";
   white-space: pre-wrap;
   flex: 1;
   overflow: auto;
@@ -2773,11 +2780,10 @@ button.selected:focus {
     sans-serif;
   color: #133663;
   margin: 0;
-  letter-spacing: -0.8px;
 }
 .ie-home-header p {
   margin: 5px 0 0;
-  font-size: 12px;
+  font-size: 13px;
   color: #4c5b6c;
 }
 .ie-home-nav {
@@ -2787,7 +2793,7 @@ button.selected:focus {
   padding: 7px 25px;
 }
 .ie-home-nav .text-link {
-  font: 12px Arial;
+  font: 13px Arial;
 }
 .ie-home-body {
   padding: 22px 28px;
@@ -2795,7 +2801,6 @@ button.selected:focus {
 .ie-home-body h2 {
   font: bold 23px Arial;
   color: #173e6f;
-  letter-spacing: -0.5px;
 }
 .ie-home-body p {
   font: 13px/1.5 Arial;
@@ -2812,7 +2817,7 @@ button.selected:focus {
 }
 .ie-search-box legend {
   color: #173e6f;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: bold;
 }
 .search-line {
@@ -2831,10 +2836,10 @@ button.selected:focus {
   display: flex;
   align-items: center;
   gap: 5px;
-  font: 12px Arial;
+  font: 13px Arial;
 }
 .ie-browser-note {
-  font-size: 11px !important;
+  font-size: 13px !important;
   color: #666;
   margin-top: 23px;
 }
@@ -2852,7 +2857,7 @@ button.selected:focus {
   gap: 8px;
   background: #ffffe1;
   border-bottom: 1px solid #999;
-  font: 11px Tahoma;
+  font: 13px W2KSans, Tahoma;
   flex: none;
 }
 .ie-frame-notice button {
@@ -2929,7 +2934,7 @@ button.selected:focus {
   background: #eee;
   padding: 9px 10px;
   line-height: 1.6;
-  font-size: 11px;
+  font-size: 13px;
   border-bottom: 1px solid #bbb;
 }
 .mail-preview pre {
@@ -2960,7 +2965,7 @@ button.selected:focus {
 .media-now-playing {
   background: #000;
   color: #b7c9a5;
-  font: 11px Tahoma;
+  font: 13px W2KSans, Tahoma;
   padding: 7px 11px;
   flex: none;
   border-bottom: 1px solid #333;
@@ -3001,7 +3006,7 @@ button.selected:focus {
 }
 .media-time {
   margin: 0 auto 0 10px;
-  font: 11px "Courier New";
+  font: 13px "Courier New";
   white-space: nowrap;
 }
 .media-buttons > input {
@@ -3137,7 +3142,6 @@ button.selected:focus {
 }
 .lock-brand b {
   font: 700 24px Arial;
-  letter-spacing: -1px;
 }
 .lock-brand span {
   font-size: 13px;
@@ -3213,7 +3217,7 @@ button.selected:focus {
     font-size: 42px;
   }
   .welcome-brand-bottom {
-    font-size: 8px;
+    font-size: 13px;
     left: 10px;
   }
   .welcome-main {
@@ -3226,10 +3230,10 @@ button.selected:focus {
     gap: 8px;
   }
   .welcome-task b {
-    font-size: 11px;
+    font-size: 13px;
   }
   .welcome-task span span {
-    font-size: 10px;
+    font-size: 13px;
   }
   .welcome-intro {
     margin-bottom: 10px;
@@ -3252,7 +3256,7 @@ button.selected:focus {
     font-size: 22px;
   }
   .pinball-controls-help {
-    font-size: 9px;
+    font-size: 13px;
   }
   .toolbar {
     gap: 0;
@@ -3260,7 +3264,7 @@ button.selected:focus {
   }
   .tool-button {
     padding: 3px 5px;
-    font-size: 10px;
+    font-size: 13px;
   }
   .task-button {
     flex-basis: 130px;
@@ -3289,7 +3293,7 @@ button.selected:focus {
   .tray-button.clock {
     min-width: 55px;
     padding: 0 3px !important;
-    font-size: 10px;
+    font-size: 13px;
   }
   .task-button {
     max-width: 110px;
@@ -3318,7 +3322,7 @@ button.selected:focus {
     padding: 7px;
   }
   .explorer-address {
-    font-size: 10px;
+    font-size: 13px;
   }
   .toolbar .tool-button {
     padding: 3px 5px;
@@ -3339,17 +3343,17 @@ button.selected:focus {
     min-height: 56px;
   }
   .welcome-task b {
-    font-size: 12px;
+    font-size: 13px;
   }
   .welcome-task span span {
-    font-size: 11px;
+    font-size: 13px;
   }
   .welcome-footer {
     gap: 5px;
     padding: 7px;
   }
   .welcome-footer .check-field {
-    font-size: 10px;
+    font-size: 13px;
   }
   .welcome-footer button {
     min-width: 65px;
@@ -3358,7 +3362,7 @@ button.selected:focus {
     width: 132px;
   }
   .help-topic {
-    font-size: 10px;
+    font-size: 13px;
     gap: 3px;
   }
   .help-article {
@@ -3368,7 +3372,7 @@ button.selected:focus {
     font-size: 19px;
   }
   .help-article p {
-    font-size: 12px;
+    font-size: 13px;
   }
   .dialog-buttons {
     padding: 7px;
@@ -3384,7 +3388,7 @@ button.selected:focus {
   }
   .tab {
     padding: 4px 6px;
-    font-size: 10px;
+    font-size: 13px;
   }
   .tab.active {
     padding: 5px 8px 6px;
@@ -3436,14 +3440,14 @@ button.selected:focus {
     width: 148px;
   }
   .registry-tree .tree-item {
-    font-size: 10px;
+    font-size: 13px;
   }
   .systeminfo-tree {
     width: 125px;
   }
   .task-metrics {
     grid-template-columns: 1fr;
-    font-size: 10px;
+    font-size: 13px;
   }
   .character-grid {
     grid-template-columns: repeat(16, 1fr);
@@ -3460,15 +3464,15 @@ button.selected:focus {
     font-size: 18px;
   }
   .pinball-controls-help {
-    font-size: 9px;
+    font-size: 13px;
   }
   .pinball-info button {
-    font-size: 10px;
+    font-size: 13px;
     padding: 3px;
   }
   .mail-folders {
     width: 113px;
-    font-size: 10px;
+    font-size: 13px;
   }
   .mail-folders .tree-item {
     padding-left: 10px;
@@ -3491,7 +3495,7 @@ button.selected:focus {
     padding: 7px 18px;
   }
   .media-time {
-    font-size: 10px;
+    font-size: 13px;
     margin-left: 4px;
   }
   .media-control {
@@ -3504,11 +3508,11 @@ button.selected:focus {
   }
   .file-dialog-top > button:last-child {
     max-width: 70px;
-    font-size: 10px;
+    font-size: 13px;
     padding: 4px;
   }
   .keyboard-key {
-    font-size: 9px;
+    font-size: 13px;
     min-width: 17px;
     padding: 3px 1px;
   }
@@ -3577,7 +3581,7 @@ button.selected:focus {
   font: 17px Arial;
 }
 .dialer-keys small {
-  font-size: 8px;
+  font-size: 13px;
 }
 .sync-items {
   background: #fff;
@@ -3816,7 +3820,7 @@ button.selected:focus {
 }
 .explorer-window .explorer-side p {
   margin: 15px -9px 0 12px;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 13px;
 }
 .explorer-window .explorer-side p.side-description {
@@ -3897,7 +3901,7 @@ button.selected:focus {
   min-height: 13px;
   line-height: 13px;
   color: #0000ff;
-  font-size: 11px;
+  font-size: 13px;
   width: max-content;
   max-width: 170px;
 }
@@ -3924,7 +3928,7 @@ button.selected:focus {
   align-items: center;
   height: 13px;
   margin: 12px 0 0 28px;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 13px;
 }
 .explorer-window .side-legend .swatch {
@@ -3981,7 +3985,7 @@ button.selected:focus {
 }
 .explorer-window .file-details-header .sort-arrow {
   margin-left: 8px;
-  font-size: 8px;
+  font-size: 13px;
   color: #808080;
 }
 .explorer-window .details-view.recycle-cols .file-item,
@@ -4009,10 +4013,8 @@ button.selected:focus {
 }
 .explorer-window .explorer-side p,
 .explorer-window .explorer-side span.text-link {
-  letter-spacing: -0.08px;
 }
 .explorer-window .icons-view .file-item .file-name {
-  letter-spacing: -0.08px;
 }
 .explorer-window .explorer-side .side-far {
   margin-top: 40px;
@@ -4027,7 +4029,7 @@ button.selected:focus {
 /* Reference-faithful dialogs: help button and absolutely positioned layers */
 .help-button::before {
   content: "?";
-  font: bold 11px/12px Arial, sans-serif;
+  font: bold 13px/12px Arial, sans-serif;
   left: 5px;
   top: 1px;
 }
@@ -4049,7 +4051,7 @@ button.selected:focus {
   top: 0;
   width: 100%;
   height: 100%;
-  font: 11px/13px Tahoma, "Wine Tahoma", sans-serif;
+  font: 13px/13px W2KSans, Tahoma, sans-serif;
   color: #000;
   pointer-events: none;
 }
@@ -4602,7 +4604,7 @@ button.selected:focus {
   left: 3px;
   top: 21px;
   width: 666px;
-  font: 11px/13px Tahoma, "Wine Tahoma", sans-serif;
+  font: 13px/13px W2KSans, Tahoma, sans-serif;
   pointer-events: auto;
 }
 .bde-panel {
@@ -4723,7 +4725,7 @@ button.selected:focus {
   box-sizing: border-box;
   border-top: 1px solid #fff;
   border-bottom: 1px solid #808080;
-  font: 11px/13px Tahoma, "Wine Tahoma", sans-serif;
+  font: 13px/13px W2KSans, Tahoma, sans-serif;
 }
 .ie-toolbar {
   height: 24px;
@@ -4911,7 +4913,7 @@ button.selected:focus {
   box-sizing: border-box;
   padding: 2px 0 0;
   gap: 2px;
-  font: 11px/13px Tahoma, "Wine Tahoma", sans-serif;
+  font: 13px/13px W2KSans, Tahoma, sans-serif;
 }
 .ie-status[hidden] {
   display: none;
@@ -4966,7 +4968,7 @@ button.selected:focus {
   border: 0;
   outline: 0;
   background: #fff;
-  font: 11px/13px Tahoma, "Wine Tahoma", sans-serif;
+  font: 13px/13px W2KSans, Tahoma, sans-serif;
   padding: 1px 3px;
   box-shadow:
     inset 1px 1px #808080,
@@ -5353,7 +5355,7 @@ button.selected:focus {
 .kb-hot .r { left: auto; right: 3px; }
 .kb-hot.sel { background: #0a246a; color: #fff; }
 .ns-bar { position: absolute; background: #808080; }
-.jv-root { position: absolute; inset: 0; pointer-events: none; font: bold 11px/13px Arial, "Liberation Sans", sans-serif; color: #000; }
+.jv-root { position: absolute; inset: 0; pointer-events: none; font: bold 13px/13px Arial, "Liberation Sans", sans-serif; color: #000; }
 .jv-root > * { position: absolute; }
 .jv-root > * { pointer-events: auto; }
 .jv-body { inset: 0; pointer-events: none !important; }
@@ -5366,11 +5368,11 @@ button.selected:focus {
 .jv-text.purple { color: #666699; }
 .jv-text.center { width: 100%; text-align: center; }
 .jv-check { position: absolute; display: flex; gap: 4px; align-items: center; white-space: nowrap; cursor: default; }
-.jv-check .b { width: 12px; height: 12px; box-sizing: border-box; background: #ccc; border: 1px solid; border-color: #666 #fff #fff #666; box-shadow: inset 1px 1px #333; display: inline-block; margin-right: 6px; font-size: 11px; line-height: 9px; text-align: center; }
-.jv-check.on .b::after { content: "\2714"; font-size: 9px; }
-.jv-field { position: absolute; box-sizing: border-box; background: #fff; border: 1px solid; border-color: #666 #fff #fff #666; font: 11px Arial, sans-serif; padding: 2px 4px; }
+.jv-check .b { width: 12px; height: 12px; box-sizing: border-box; background: #ccc; border: 1px solid; border-color: #666 #fff #fff #666; box-shadow: inset 1px 1px #333; display: inline-block; margin-right: 6px; font-size: 13px; line-height: 9px; text-align: center; }
+.jv-check.on .b::after { content: "\2714"; font-size: 13px; }
+.jv-field { position: absolute; box-sizing: border-box; background: #fff; border: 1px solid; border-color: #666 #fff #fff #666; font: 13px Arial, sans-serif; padding: 2px 4px; }
 .jv-box { position: absolute; box-sizing: border-box; background: #fff; border: 1px solid; border-color: #666 #fff #fff #666; font-weight: normal; padding: 4px; }
-.jv-btn { position: absolute; box-sizing: border-box; background: #ccc; border: 1px solid #333; border-color: #fff #333 #333 #fff; box-shadow: inset -1px -1px #999; font: bold 11px Arial, sans-serif; }
+.jv-btn { position: absolute; box-sizing: border-box; background: #ccc; border: 1px solid #333; border-color: #fff #333 #333 #fff; box-shadow: inset -1px -1px #999; font: bold 13px Arial, sans-serif; }
 .jv-btn:disabled { color: #999; border-color: #999; box-shadow: none; }
 .jv-sep { position: absolute; border-top: 1px solid #999; }
 .ia-row { position: absolute; left: 0; width: 100%; height: 16px; white-space: nowrap; cursor: default; }
@@ -5396,12 +5398,12 @@ button.selected:focus {
 .sm-hdr { position: absolute; height: 17px; box-sizing: border-box; background: #d4d0c8; border: 1px solid; border-color: #fff #404040 #404040 #fff; box-shadow: inset -1px -1px #808080; padding: 1px 0 0 8px; line-height: 14px; }
 .sm-play { position: absolute; left: 8px; top: 6px; border-left: 4px solid #000; border-top: 4px solid transparent; border-bottom: 4px solid transparent; }
 .rk-btn.disabled .sm-play, .disabled .sm-play { border-left-color: #808080; }
-.sm-row span, .sm-row em { letter-spacing: -0.35px; }
+.sm-row span, .sm-row em {  }
 .sm-row.dev.on::before { content: ""; position: absolute; left: 19px; right: 0; top: 0; height: 16px; background: #0a246a; }
 .sm-row.dev.on span, .sm-row.dev.on em { color: #fff; }
 
 /* Windows 2000 HTML Help viewer */
-.hh-root { position: relative; width: 100%; height: 100%; flex: 1; min-height: 0; background: #d4d0c8; font: 11px/13px Tahoma, "Wine Tahoma", sans-serif; overflow: hidden; }
+.hh-root { position: relative; width: 100%; height: 100%; flex: 1; min-height: 0; background: #d4d0c8; font: 13px/13px W2KSans, Tahoma, sans-serif; overflow: hidden; }
 .hh-toolbar { position: absolute; left: -1px; top: 0; right: 0; height: 41px; border-bottom: 1px solid #fff; box-shadow: 0 -1px 0 #808080 inset; }
 .hh-tb { position: absolute; top: 0; width: 56px; height: 40px; text-align: center; cursor: default; }
 .hh-tb img { position: absolute; left: 50%; top: 5px; transform: translateX(-50%); image-rendering: pixelated; }
@@ -5418,7 +5420,7 @@ button.selected:focus {
 .hh-tree, .hh-list { position: absolute; left: 7px; right: 7px; top: 6px; bottom: 6px; background: #fff; border: 1px solid; border-color: #808080 #fff #fff #808080; box-shadow: inset 1px 1px #404040; overflow: auto; padding-top: 1px; }
 .hh-row { height: 16px; display: flex; align-items: center; gap: 3px; padding-left: 0; white-space: nowrap; cursor: default; }
 .hh-row img { margin-left: 1px; image-rendering: pixelated; }
-.hh-row span { line-height: 14px; padding: 0 2px; letter-spacing: -.3px; }
+.hh-row span { line-height: 14px; padding: 0 2px;  }
 .hh-row span.sel { background: #0a246a; color: #fff; outline: 1px dotted #fff; outline-offset: -1px; }
 .has-input .hh-list { top: 50px; }
 .hh-lbl { position: absolute; left: 8px; top: 6px; }
@@ -5427,7 +5429,7 @@ button.selected:focus {
 .hh-body { position: absolute; left: 1px; top: 1px; right: 17px; bottom: 0; overflow: auto; font: 11px/14px Verdana, Tahoma, sans-serif; }
 .hh-orange { position: absolute; left: 0; right: 0; top: 0; height: 13px; background: #ff3300; }
 .hh-sb { position: absolute; right: 0; top: 0; bottom: 0; width: 16px; }
-.hh-starth { position: absolute; left: 128px; top: 199px; font: bold 19px/22px Arial, sans-serif; color: #ff3300; letter-spacing: -.2px; }
+.hh-starth { position: absolute; left: 128px; top: 199px; font: bold 19px/22px Arial, sans-serif; color: #ff3300;  }
 .hh-start-link { position: absolute; left: 128px; width: 230px; font: bold 12px/13px Verdana, Tahoma, sans-serif; letter-spacing: .85px; color: #003366; cursor: pointer; }
 .hh-start-link i { position: absolute; left: 0; top: 2px; width: 7px; height: 7px; background: #ff3300; }
 .hh-start-link span { margin-left: 15px; display: block; }
@@ -5438,7 +5440,7 @@ button.selected:focus {
 .hh-rel { margin-top: 14px; } .hh-rel a { display: block; color: #003366; text-decoration: underline; cursor: pointer; margin-top: 4px; }
 
 /* Outlook Express main window (Windows 2000 / OE 6) */
-.oe-root { position: relative; width: 100%; height: 100%; flex: 1; min-height: 0; background: #d4d0c8; font: 11px/13px Tahoma, "Wine Tahoma", sans-serif; overflow: hidden; }
+.oe-root { position: relative; width: 100%; height: 100%; flex: 1; min-height: 0; background: #d4d0c8; font: 13px/13px W2KSans, Tahoma, sans-serif; overflow: hidden; }
 .oe-root > * { position: absolute; box-sizing: border-box; }
 .oe-toolbar { left: 0; right: 2px; top: 5px; height: 45px; border-top: 1px solid #808080; border-bottom: 1px solid #fff; box-shadow: inset 0 1px #fff, inset 0 -1px #808080; }
 .oe-tb { position: absolute; top: 0; width: 80px; height: 44px; text-align: center; cursor: default; }
@@ -5460,10 +5462,10 @@ button.selected:focus {
 .oe-phead { position: absolute; left: 0; right: 0; top: 0; height: 17px; background: #d4d0c8; line-height: 15px; padding-left: 5px; border-bottom: 1px solid #808080; }
 .oe-x { position: absolute; right: 5px; top: 0; font: bold 13px/15px Arial, sans-serif; }
 .oe-dd { position: absolute; left: 53px; top: 6px; border: 3px solid transparent; border-top: 4px solid #000; border-bottom: 0; }
-.oe-cbody { position: absolute; left: 5px; right: 0; top: 24px; letter-spacing: -.3px; }
+.oe-cbody { position: absolute; left: 5px; right: 0; top: 24px;  }
 .oe-fl { position: absolute; left: 0; right: 0; height: 18px; white-space: nowrap; cursor: default; }
 .oe-fl img { position: absolute; image-rendering: pixelated; }
-.oe-fl span { position: absolute; line-height: 14px; padding: 0 2px; top: 2px; letter-spacing: -.3px; }
+.oe-fl span { position: absolute; line-height: 14px; padding: 0 2px; top: 2px;  }
 .oe-fl em { position: absolute; font-style: normal; color: #0000ff; top: 2px; left: 57px; white-space: pre; }
 .oe-root-f { top: 16px; } .oe-root-f img { left: 1px; top: 1px; } .oe-root-f span { left: 18px; }
 .oe-local { top: 34px; } .oe-local img { left: 15px; top: 0; } .oe-local span { left: 36px; }
@@ -5490,7 +5492,7 @@ button.selected:focus {
 .oe-preview { left: 202px; right: 2px; bottom: 19px; height: 248px; background: #fff; border: 1px solid; border-color: #808080 #fff #fff #808080; box-shadow: inset 1px 1px #404040; overflow: hidden; }
 .oe-pvhead { position: absolute; left: 0; right: 0; top: 0; height: 37px; background: #d4d0c8; padding: 3px 2px; line-height: 15px; border-bottom: 1px solid #808080; white-space: pre; }
 .oe-pvbody { position: absolute; left: 0; right: 16px; top: 38px; bottom: 0; overflow: hidden; }
-.oe-pvbody pre { margin: 6px; font: 12px/15px "Courier New", monospace; white-space: pre-wrap; }
+.oe-pvbody pre { margin: 6px; font: 13px/15px "Courier New", monospace; white-space: pre-wrap; }
 .oe-vs { position: absolute; right: 0; top: 38px; bottom: 0; width: 16px; }
 .oe-welcome { position: relative; font: 11px/13px Verdana, Tahoma, sans-serif; letter-spacing: .5px; }
 .oe-banner { position: absolute; left: 0; top: 0; }
@@ -5500,7 +5502,7 @@ button.selected:focus {
 .oe-welcome li { position: relative; height: 20px; line-height: 20px; padding-left: 15px; white-space: nowrap; }
 .oe-welcome li i { position: absolute; left: 0; top: 7px; width: 7px; height: 7px; border-radius: 50%; background: #000; }
 .oe-msn { position: absolute; left: 507px; top: 49px; width: 170px; height: 220px; border-left: 8px solid #003399; padding-left: 5px; }
-.oe-msn p { margin: -3px 0 0; white-space: nowrap; letter-spacing: .6px; line-height: 13px; font-size: 11px; }
+.oe-msn p { margin: -3px 0 0; white-space: nowrap; letter-spacing: .6px; line-height: 13px; font-size: 13px; }
 .oe-msn u { color: #0099ff; }
 .oe-status { left: 0; right: 0; bottom: 0; height: 19px; }
 .oe-status > div { position: absolute; top: 0; height: 19px; border: 1px solid; border-color: #808080 #fff #fff #808080; line-height: 17px; white-space: nowrap; }
@@ -5522,8 +5524,7 @@ button.selected:focus {
   box-shadow: inset -1px 0 #808080, inset 0 -1px #808080, inset 1px 1px #fff;
   padding: 2px 5px;
   line-height: 13px;
-  font-size: 11px;
-  letter-spacing: -0.3px;
+  font-size: 13px;
 }
 .sync-head:nth-child(2) {
   text-align: right;
@@ -5535,8 +5536,7 @@ button.selected:focus {
   left: 2px;
   display: flex;
   align-items: center;
-  font-size: 11px;
-  letter-spacing: -0.3px;
+  font-size: 13px;
   white-space: nowrap;
 }
 .sync-folder {
@@ -5576,27 +5576,26 @@ button.selected:focus {
   transform: rotate(40deg);
 }
 .rk-layer > .rk-text {
-  letter-spacing: -0.1px;
 }
 
 /* Address Book (reference r1) */
-.ab-root { position: relative; width: 100%; height: 100%; flex: 1; min-height: 0; font-size: 11px; }
+.ab-root { position: relative; width: 100%; height: 100%; flex: 1; min-height: 0; font-size: 13px; }
 .ab-toolbar { position: absolute; left: 0; right: 0; top: -1px; height: 44px; box-shadow: inset 0 1px #808080, inset 0 2px #fff, inset 0 -1px #808080; border-bottom: 1px solid #fff; }
 .ab-tb { position: absolute; top: 2px; height: 40px; text-align: center; cursor: default; }
 .ab-tb img { position: absolute; left: 50%; top: 5px; transform: translateX(-50%); image-rendering: pixelated; }
-.ab-tb span { position: absolute; left: 0; right: 0; top: 24px; white-space: nowrap; letter-spacing: -0.2px; }
+.ab-tb span { position: absolute; left: 0; right: 0; top: 24px; white-space: nowrap;  }
 .ab-tb.off span { color: #808080; text-shadow: 1px 1px #fff; }
 .ab-tree { position: absolute; left: 2px; top: 49px; bottom: 21px; width: 186px; background: #fff; box-shadow: inset 1px 1px #808080, inset -1px -1px #fff, inset 2px 2px #404040, inset -2px -2px #d4d0c8; box-sizing: border-box; padding: 3px 0 0 6px; overflow: auto; }
-.ab-node { position: absolute; left: 17px; top: -1px; height: 16px; display: flex; align-items: center; white-space: nowrap; letter-spacing: -0.2px; }
+.ab-node { position: absolute; left: 17px; top: -1px; height: 16px; display: flex; align-items: center; white-space: nowrap;  }
 .ab-node img { margin-right: 4px; }
 .ab-tree::before { content: ""; position: absolute; left: 12px; top: 9px; width: 8px; height: 16px; border-left: 1px dotted #808080; border-bottom: 1px dotted #808080; }
 .ab-node.sel span { background: #d4d0c8; padding: 1px 2px; }
 .ab-searchrow { position: absolute; left: 192px; right: 0; top: 46px; height: 24px; }
-.ab-searchrow label { position: absolute; left: 0; top: 8px; letter-spacing: -0.2px; }
+.ab-searchrow label { position: absolute; left: 0; top: 8px;  }
 .ab-searchrow input { position: absolute; left: 205px; top: 0; width: 202px; height: 20px; box-sizing: border-box; }
 .ab-list { position: absolute; left: 192px; right: 2px; top: 70px; bottom: 21px; background: #fff; box-shadow: inset 1px 1px #808080, inset -1px -1px #fff, inset 2px 2px #404040, inset -2px -2px #d4d0c8; box-sizing: border-box; padding: 2px; overflow: auto; }
 .ab-head { display: flex; height: 17px; position: sticky; top: 0; background: #d4d0c8; }
-.ab-th { box-sizing: border-box; height: 17px; padding: 2px 5px; line-height: 13px; position: relative; box-shadow: inset -1px 0 #808080, inset 0 -1px #808080, inset 1px 1px #fff; white-space: nowrap; letter-spacing: -0.2px; }
+.ab-th { box-sizing: border-box; height: 17px; padding: 2px 5px; line-height: 13px; position: relative; box-shadow: inset -1px 0 #808080, inset 0 -1px #808080, inset 1px 1px #fff; white-space: nowrap;  }
 .ab-sort { position: absolute; left: 47px; top: 6px; width: 0; height: 0; border: 4px solid transparent; border-bottom: 5px solid #808080; border-top: 0; }
 .ab-row { display: flex; height: 17px; align-items: center; white-space: nowrap; }
 .ab-row > div { overflow: hidden; padding-left: 3px; box-sizing: border-box; display: flex; align-items: center; }
@@ -5605,17 +5604,17 @@ button.selected:focus {
 .ab-status.hidden { display: none; }
 
 /* WordPad (reference r8) */
-.wp-root { position: relative; width: 100%; height: 100%; flex: 1; min-height: 0; font-size: 11px; background: #d4d0c8; }
+.wp-root { position: relative; width: 100%; height: 100%; flex: 1; min-height: 0; font-size: 13px; background: #d4d0c8; }
 .wp-tools, .wp-format { position: absolute; left: 0; right: 0; top: 0; height: 0; }
 .wp-btn { position: absolute; width: 23px; height: 22px; background-repeat: no-repeat; image-rendering: pixelated; cursor: default; }
 .wp-btn.on::after { content: ""; position: absolute; inset: 2px; background: repeating-conic-gradient(#fff 0 25%, #d4d0c8 0 50%) 0 0 / 2px 2px; opacity: .55; pointer-events: none; }
-.wp-sel { position: absolute; height: 22px; box-sizing: border-box; appearance: none; -webkit-appearance: none; border: 0; border-radius: 0; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='18'%3E%3Crect width='16' height='18' fill='%23d4d0c8'/%3E%3Cpath d='M0 0h15v1H1v16H0z' fill='%23fff'/%3E%3Cpath d='M15 0h1v18H0v-1h15z' fill='%23404040'/%3E%3Cpath d='M4 7h7l-3.5 4z'/%3E%3C/svg%3E") right 2px center no-repeat; box-shadow: inset 1px 1px #808080, inset -1px -1px #fff, inset 2px 2px #404040, inset -2px -2px #d4d0c8; padding: 0 20px 0 3px; font: 11px Tahoma, "MS Sans Serif", sans-serif; color: #000; letter-spacing: -0.2px; }
+.wp-sel { position: absolute; height: 22px; box-sizing: border-box; appearance: none; -webkit-appearance: none; border: 0; border-radius: 0; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='18'%3E%3Crect width='16' height='18' fill='%23d4d0c8'/%3E%3Cpath d='M0 0h15v1H1v16H0z' fill='%23fff'/%3E%3Cpath d='M15 0h1v18H0v-1h15z' fill='%23404040'/%3E%3Cpath d='M4 7h7l-3.5 4z'/%3E%3C/svg%3E") right 2px center no-repeat; box-shadow: inset 1px 1px #808080, inset -1px -1px #fff, inset 2px 2px #404040, inset -2px -2px #d4d0c8; padding: 0 20px 0 3px; font: 13px W2KSans, Tahoma, sans-serif; color: #000;  }
 .wp-color { position: absolute; left: 429px; top: 34px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 .wp-ruler { position: absolute; left: 4px; top: 61px; width: 710px; height: 22px; background: url(/assets/ui/wp/ruler.png) no-repeat; image-rendering: pixelated; }
 .wp-work { position: absolute !important; left: 0; right: 0; top: 84px; bottom: 21px; padding: 0 !important; background: #fff !important; box-shadow: inset 1px 1px #808080, inset -1px -1px #fff, inset 2px 2px #404040, inset -2px -2px #d4d0c8; overflow: auto; box-sizing: border-box; border: 2px solid transparent; }
 .wp-work .wordpad-page { min-height: 100%; background: #fff; box-shadow: none; padding: 0 2px; margin: 0; font: 10pt Arial, sans-serif; line-height: normal; }
 .wp-status { position: absolute; left: 0; right: 0; bottom: 0; height: 20px; }
-.wp-status-text { position: absolute; left: 1px; top: 3px; letter-spacing: -0.2px; }
+.wp-status-text { position: absolute; left: 1px; top: 3px;  }
 .wp-panel { position: absolute; top: 2px; height: 17px; box-sizing: border-box; box-shadow: inset 1px 1px #808080, inset -1px -1px #fff; padding: 2px 2px; }
 .wp-sel { -webkit-text-fill-color: #000; }
 .wp-tools::after, .wp-format::after { content: ""; position: absolute; width: 2px; box-shadow: inset 1px 0 #808080, inset 2px 0 #fff; }
@@ -5623,14 +5622,14 @@ button.selected:focus {
 .wp-format::after { left: 566px; top: 33px; height: 24px; }
 
 /* Imaging (reference r4) */
-.img-root { position: relative; width: 100%; height: 100%; flex: 1; min-height: 0; background: #d4d0c8; font-size: 11px; }
+.img-root { position: relative; width: 100%; height: 100%; flex: 1; min-height: 0; background: #d4d0c8; font-size: 13px; }
 .img-header { position: absolute; left: 0; top: 0; width: 100%; height: 59px; background: #d4d0c8 url(/assets/ui/img/header.png) no-repeat; image-rendering: pixelated; }
 .img-hit { position: absolute; height: 22px; cursor: default; }
 .img-canvas { position: absolute; left: 0; right: 0; top: 59px; bottom: 49px; background: #fff; box-shadow: inset 1px 1px #808080, inset 2px 2px #404040, inset -1px -1px #fff; overflow: auto; box-sizing: border-box; }
 .img-canvas .imaging-stage { background: #fff; min-height: 100%; padding: 2px; }
 .img-anno { position: absolute; left: 0; top: 390px; width: 462px; height: 27px; background: url(/assets/ui/img/anno.png) no-repeat; image-rendering: pixelated; }
 .img-status { position: absolute; left: 0; right: 0; bottom: 0; height: 20px; }
-.img-status-text { position: absolute; left: 2px; top: 5px; letter-spacing: -0.2px; }
+.img-status-text { position: absolute; left: 2px; top: 5px;  }
 .img-panel { position: absolute; top: 3px; height: 17px; box-sizing: border-box; box-shadow: inset 1px 1px #808080, inset -1px -1px #fff; padding: 2px 3px; white-space: nowrap; overflow: hidden; }
 
 /* Paint (reference r6) */
@@ -5661,16 +5660,16 @@ button.selected:focus {
 .gs-left::before, .gs-left::after { content: ""; position: absolute; left: 0; width: 100%; height: 1px; background: #336699; top: 24px; box-shadow: 0 25px #336699, 0 50px #336699; }
 .gs-left::after { display: none; }
 .gs-right { position: absolute; left: 183px; top: 115px; width: 297px; height: 228px; background: #fff; }
-.gs-item { padding-left: 4px; position: absolute; height: 24px; width: 170px; line-height: 24px; font: bold 11px Tahoma, "MS Sans Serif", sans-serif; letter-spacing: 0.1px; color: #000; cursor: default; margin-left: -4px; padding-left: 4px; z-index: 1; }
+.gs-item { padding-left: 4px; position: absolute; height: 24px; width: 170px; line-height: 24px; font: bold 13px W2KSans, Tahoma, sans-serif; letter-spacing: 0.1px; color: #000; cursor: default; margin-left: -4px; padding-left: 4px; z-index: 1; }
 .gs-item.off { color: #808080; text-shadow: 1px 1px #d6e8f8; }
 .gs-pane { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; }
 .gs-pane > * { pointer-events: auto; }
 .gs-title { position: absolute; left: 198px; top: 126px; font: 19.5px Tahoma, "MS Sans Serif", sans-serif; color: #336699; white-space: nowrap; }
-.gs-text { position: absolute; left: 198px; top: 153px; font: 11px/13px Tahoma, "MS Sans Serif", sans-serif; white-space: pre; letter-spacing: -0.1px; color: #000; }
+.gs-text { position: absolute; left: 198px; top: 153px; font: 13px/13px W2KSans, Tahoma, sans-serif; white-space: pre;  color: #000; }
 .gs-img { position: absolute; image-rendering: auto; }
 .gs-hit { position: absolute; }
-.gs-exit { position: absolute; left: 431px; top: 315px; width: 43px; height: 21px; box-sizing: border-box; border: 1px solid #808080; box-shadow: 1px 1px #fff; background: #fff; color: #808080; text-align: center; line-height: 19px; font: 11px/19px Tahoma, "MS Sans Serif", sans-serif; cursor: default; }
-.gs-startup { position: absolute; left: 11px; top: 324px; height: 14px; display: flex; align-items: center; font: 11px Tahoma, "MS Sans Serif", sans-serif; letter-spacing: -0.2px; z-index: 1; }
+.gs-exit { position: absolute; left: 431px; top: 315px; width: 43px; height: 21px; box-sizing: border-box; border: 1px solid #808080; box-shadow: 1px 1px #fff; background: #fff; color: #808080; text-align: center; line-height: 19px; font: 13px/19px W2KSans, Tahoma, sans-serif; cursor: default; }
+.gs-startup { position: absolute; left: 11px; top: 324px; height: 14px; display: flex; align-items: center; font: 13px W2KSans, Tahoma, sans-serif;  z-index: 1; }
 .gs-box { width: 13px; height: 13px; box-sizing: border-box; background: #fff; box-shadow: inset 1px 1px #808080, inset 2px 2px #404040, inset -1px -1px #d4d0c8; position: relative; margin-right: 3px; }
 .gs-box.on::after { content: ""; position: absolute; left: 4px; top: 2px; width: 3px; height: 6px; border: solid #000; border-width: 0 2px 2px 0; transform: rotate(40deg); }
 .gs-startup-label { outline: 1px dotted #404040; padding: 0 1px; }
