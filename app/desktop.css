@@ -5962,7 +5962,7 @@ body.icon-dragging, body.icon-dragging * { cursor: default; }
   max-width: 45vw;
   width: max-content;
 }
-.gs-item:hover, .gs-item:focus { background: #336699; color: #fff !important; text-shadow: none; outline: none; }
+.gs-item:hover, .gs-item:focus { background: none; color: #fff !important; text-shadow: none; outline: none; }
 .gs-item:hover *, .gs-item:focus * { color: #fff !important; }
 .gs-text.wrap { white-space: normal; width: 262px; line-height: 15px; }
 .gs-li { position: relative; padding-left: 12px; }
