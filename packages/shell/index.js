@@ -127,7 +127,7 @@ export class DesktopShell {
   renderDesktop() {
     const ctx = this.ctx,
       root = document.querySelector("#desktop-icons"),
-      positions = ctx.settings.get("desktopPositions") || {};
+      positions = ctx.settings.get("autoArrange") ? {} : ctx.settings.get("desktopPositions") || {};
     const icons = [
       {
         id: "documents",
@@ -173,6 +173,7 @@ export class DesktopShell {
     for (const i of icons) if (!i.path && customNames[i.id]) i.name = customNames[i.id];
     this.activeIcons = icons;
     root.replaceChildren();
+    if (ctx.settings.get("hideDesktopIcons")) return;
     icons.forEach((item, i) => {
       const rows = Math.max(1, Math.floor((innerHeight - 60) / 82)),
         pos = positions[item.id] || {
@@ -306,7 +307,7 @@ export class DesktopShell {
   /** Pointer based icon dragging: multi-select move, align to grid, drop on folder / Recycle Bin / open windows. */
   dragIcon(e, item, node) {
     if (e.button !== 0) return;
-    const ctx = this.ctx, startX = e.clientX, startY = e.clientY;
+    const ctx = this.ctx, locked = ctx.settings.get("lockDesktopItems") || ctx.settings.get("autoArrange"), startX = e.clientX, startY = e.clientY;
     if (!this.selected.has(item.id)) {
       if (!e.ctrlKey && !e.metaKey) this.selected.clear();
       this.selected.add(item.id);
@@ -317,7 +318,7 @@ export class DesktopShell {
     let moving = false, over = null;
     const move = (ev) => {
       const dx = ev.clientX - startX, dy = ev.clientY - startY;
-      if (!moving && Math.hypot(dx, dy) < 5) return;
+      if (locked || (!moving && Math.hypot(dx, dy) < 5)) return;
       if (!moving) { moving = true; node.setPointerCapture?.(e.pointerId); document.body.classList.add("icon-dragging"); }
       for (const [n, o] of origin) { n.style.left = o.x + dx + "px"; n.style.top = o.y + dy + "px"; n.classList.add("dragging"); }
       {
@@ -448,26 +449,62 @@ export class DesktopShell {
     )
       for (const item of items) await this.ctx.fs.remove(item.path);
   }
+  /** Re-lay out desktop icons in a column grid, ordered by `by` (name/type/size/date). */
+  arrangeIcons(by) {
+    const ctx = this.ctx, icons = [...this.activeIcons];
+    const meta = (i) => (i.path ? ctx.fs.stat(i.path) || {} : {});
+    const ext = (i) => (i.path ? (i.name.split(".").pop() || "").toLowerCase() : "");
+    const sys = (i) => (i.path ? 1 : 0); // system icons stay first, as on Windows
+    const keys = {
+      name: (a, b) => a.name.localeCompare(b.name),
+      type: (a, b) => (a.folder ? 0 : 1) - (b.folder ? 0 : 1) || ext(a).localeCompare(ext(b)) || a.name.localeCompare(b.name),
+      size: (a, b) => (meta(a).size || 0) - (meta(b).size || 0) || a.name.localeCompare(b.name),
+      date: (a, b) => (meta(a).modified || meta(a).mtime || 0) - (meta(b).modified || meta(b).mtime || 0) || a.name.localeCompare(b.name),
+    };
+    icons.sort((a, b) => sys(a) - sys(b) || keys[by](a, b));
+    const rows = Math.max(1, Math.floor((innerHeight - 60) / 82)), pos = {};
+    icons.forEach((i, n) => (pos[i.id] = { x: Math.floor(n / rows) * 80 + 6, y: (n % rows) * 82 + 10 }));
+    ctx.settings.set("desktopPositions", pos);
+    this.renderDesktop();
+  }
+  lineUpIcons() {
+    const ctx = this.ctx, pos = ctx.settings.get("desktopPositions") || {};
+    const rows = Math.max(1, Math.floor((innerHeight - 60) / 82)), cols = Math.max(1, Math.floor(innerWidth / 80)), taken = new Set(), out = {};
+    document.querySelectorAll(".desktop-icon").forEach((n) => {
+      let gx = Math.max(0, Math.min(cols - 1, Math.round((parseFloat(n.style.left) - 6) / 80))), gy = Math.max(0, Math.min(rows - 1, Math.round((parseFloat(n.style.top) - 10) / 82)));
+      for (let k = 0; taken.has(gx + "," + gy) && k < 500; k++) { gy++; if (gy >= rows) { gy = 0; gx = Math.min(cols - 1, gx + 1); } }
+      taken.add(gx + "," + gy);
+      out[n.dataset.id] = { x: gx * 80 + 6, y: gy * 82 + 10 };
+    });
+    ctx.settings.set("desktopPositions", { ...pos, ...out });
+    this.renderDesktop();
+  }
   backgroundMenu(x, y) {
-    const ctx = this.ctx;
+    const ctx = this.ctx, st = (k) => !!ctx.settings.get(k), tog = (k) => () => { ctx.settings.set(k, !st(k)); this.renderDesktop(); };
     popup(
       [
         {
-          label: "Arrange Icons",
+          label: "Active Desktop",
           submenu: [
-            {
-              label: "By Name",
-              action: () => {
-                ctx.settings.set("desktopPositions", {});
-                this.renderDesktop();
-              },
-            },
-            {
-              label: "Auto Arrange",
-              action: () => ctx.settings.set("desktopPositions", {}),
-            },
+            { label: "Show Desktop Icons", checked: !st("hideDesktopIcons"), action: tog("hideDesktopIcons") },
+            { label: "Lock Desktop Items", checked: st("lockDesktopItems"), action: tog("lockDesktopItems") },
+            separator(),
+            { label: "Customize My Desktop...", action: () => ctx.launch("control", { page: "display" }) },
+            { label: "Update Now", action: () => this.renderDesktop() },
           ],
         },
+        {
+          label: "Arrange Icons",
+          submenu: [
+            { label: "by Name", action: () => this.arrangeIcons("name") },
+            { label: "by Type", action: () => this.arrangeIcons("type") },
+            { label: "by Size", action: () => this.arrangeIcons("size") },
+            { label: "by Date", action: () => this.arrangeIcons("date") },
+            separator(),
+            { label: "Auto Arrange", checked: st("autoArrange"), action: () => { tog("autoArrange")(); if (st("autoArrange")) this.arrangeIcons("name"); } },
+          ],
+        },
+        { label: "Line Up Icons", action: () => this.lineUpIcons() },
         { label: "Refresh", action: () => this.renderDesktop() },
         separator(),
         {
@@ -475,6 +512,8 @@ export class DesktopShell {
           disabled: !ctx.clipboard.files.length,
           action: () => ctx.clipboard.pasteFiles(ctx.fs, DESKTOP),
         },
+        { label: "Paste Shortcut", disabled: !ctx.clipboard.files.length, action: async () => { for (const p of ctx.clipboard.files) await this.createShortcutTo({ path: p, name: basename(p) }); } },
+        { label: "Undo", disabled: true },
         separator(),
         {
           label: "New",
