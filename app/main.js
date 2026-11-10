@@ -626,9 +626,7 @@ async function seedSampleDocs() {
       const r = await fetch("/assets/samples/Docs/" + encodeURIComponent(n));
       if (r.ok) await fs.importFile(new File([await r.blob()], n, { type: r.headers.get("content-type") || "" }), desk + "/Docs");
     }
-    const z = await fetch("/assets/samples/Docs.zip");
-    if (z.ok) await fs.importFile(new File([await z.blob()], "Docs.zip", { type: "application/zip" }), desk);
-    if (z.ok) settings.set("samples.docs.v1", true);
+    settings.set("samples.docs.v1", true);
   } catch (e) { console.warn("sample docs", e); }
 }
 async function start() {
