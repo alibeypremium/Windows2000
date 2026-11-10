@@ -5789,3 +5789,7 @@ input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type=
 .wmp-clip { background: none !important; border: 0 !important; padding: 0 !important; color: #000 !important; font: 11px Tahoma, sans-serif !important; white-space: nowrap; }
 .wmp-tri { position: relative; width: 40px; height: 20px; background: url(assets/wmp/bmp5212.png) -60px 0 no-repeat; cursor: default; touch-action: none; }
 .wmp-knob { position: absolute; top: 3px; width: 5px; height: 14px; background: #c0c0c0; border: 1px solid; border-color: #fff #404040 #404040 #fff; box-sizing: border-box; }
+.wmp-root[data-view=compact] .wmp-info { display: none; }
+.wmp-root[data-view=minimal] .wmp-info, .wmp-root[data-view=minimal] .wmp-seekrow { display: none; }
+.wmp-root[data-view=minimal] .wmp-controls { padding: 2px 4px; }
+.wmp-btn:disabled { cursor: default; }

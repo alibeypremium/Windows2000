@@ -287,7 +287,13 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
   applyVolume();
   w.addCleanup(ctx.bus.on("settings:change", applyVolume));
   const off = (label, extra = {}) => ({ label, disabled: true, ...extra });
-  let onTop = false, mute = false;
+  let onTop = false, mute = false, viewMode = "standard";
+  const setView = (m) => {
+    viewMode = m;
+    const r = w.el.querySelector(".wmp-root");
+    if (r) r.dataset.view = m;
+    if (!w.el.classList.contains("maximized")) w.el.style.height = (m === "standard" ? 455 : m === "compact" ? 385 : 335) + "px";
+  };
   w.setMenu({
     File: [
       { label: "Open...", shortcut: "Ctrl+O", action: () => wmpOpen(ctx, async (v) => { if (ctx.fs.exists(v)) { playlist.push(v); index = playlist.length - 1; await load(v, true); } else { video.src = v; title.textContent = v; await toggle(true); } }, async (dlg) => { dlg.close(); await importMedia(); }) },
@@ -307,9 +313,9 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
       { label: "Exit", action: () => w.close() },
     ],
     View: () => [
-      { label: "Standard", shortcut: "Ctrl+1", checked: true, action: () => {} },
-      off("Compact", { shortcut: "Ctrl+2" }),
-      off("Minimal", { shortcut: "Ctrl+3" }),
+      { label: "Standard", shortcut: "Ctrl+1", checked: viewMode === "standard", action: () => setView("standard") },
+      { label: "Compact", shortcut: "Ctrl+2", checked: viewMode === "compact", action: () => setView("compact") },
+      { label: "Minimal", shortcut: "Ctrl+3", checked: viewMode === "minimal", action: () => setView("minimal") },
       separator(),
       { label: "Full Screen", shortcut: "Alt+Enter", action: () => w.maximize() },
       { label: "Zoom", submenu: [off("50%", { shortcut: "Alt+1" }), { label: "100%", shortcut: "Alt+2", checked: true, action: () => {} }, off("200%", { shortcut: "Alt+3" })] },
@@ -425,9 +431,12 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
     );
     } else {
   const spr = (n, i, dis) => ({ backgroundImage: `url(assets/wmp/bmp${n}.png)`, backgroundPosition: `-${i * 20}px 0` });
+  const wbs = [];
   const wb = (i, titleText, fn) => {
     const b = el("button", { class: "wmp-btn", title: titleText, "aria-label": titleText, onclick: fn });
+    b.dataset.i = i;
     Object.assign(b.style, spr(5208, i));
+    wbs.push(b);
     return b;
   };
   const wmpPlay = wb(0, "Play", () => toggle(true));
@@ -438,6 +447,12 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
   const sync = () => {
     const idle = video.paused && !video.currentTime;
     logo.hidden = !idle;
+    const off = { 1: video.paused, 2: idle, 3: false, 4: idle, 5: idle, 6: playlist.length < 2 };
+    for (const b of wbs) {
+      const i = +b.dataset.i, dis = !!off[i];
+      b.disabled = dis;
+      b.style.backgroundImage = `url(assets/wmp/bmp${dis ? 5209 : 5208}.png)`;
+    }
     visual.style.visibility = idle ? "hidden" : "visible";
   };
   video.addEventListener("play", sync);
@@ -468,7 +483,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
   syncMute();
   seek.className = "wmp-seek";
   w.setContent(
-    el("div", { class: "wmp-root" },
+    el("div", { class: "wmp-root", "data-view": "standard" },
       el("div", { class: "wmp-screen" }, video, visual, logo),
       el("div", { class: "wmp-seekrow" }, seek),
       el("div", { class: "wmp-controls" },
