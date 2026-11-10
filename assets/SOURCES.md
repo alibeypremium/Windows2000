@@ -501,3 +501,9 @@ Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the origi
 - Görünüm (koyu metalik kaplama, DivX yazısı, LCD zaman göstergesi, yuvarlak düğmeler, sağ tık menüsü) DivX Player 5.x'ten **belirsiz hatırlanan** bir görünüme göre tasarlandı; orijinal skin/exe yok. Düzen büyük ölçüde tahmindir.
 - Oynatma tarayıcının HTML5 medya motoruyla yapılır; DivX codec'i yoktur, `.avi/.divx` dosyaları oynamaz ("cannot play" hatası). Çalışan: aç, oynat/duraklat, durdur, ileri/geri, arama, ses, sessiz, tam ekran, en-boy oranı, dosya bilgisi.
 - "DivX" yazısı CSS metni; logo ve ikon (`assets/icons/divx-*.png`) bu proje için çizildi, orijinal değil.
+
+## DivX Player 5.x ve VLC media player — referans ekran görüntülerine göre yeniden çizim
+- Kaynak: kullanıcının verdiği gerçek ekran görüntüleri (DivX Player ana pencere + açılır menü; VLC kompakt pencere). Pencere ölçüleri, renkler, düğme yerleşimi, LCD paneli, menü maddeleri ve ses üçgeni bu görüntülerden ölçülerek yeniden çizildi (piksel kopyası değil, CSS/SVG).
+- DivX: gümüş kabartmalı çerçeve, noktalı başlık şeridi, yuvarlak düğmeler, kum rengi zaman paneli, "DIVX" logosu SVG olarak yeniden çizildi (460x322 ≈ referansın 1/1.5 ölçeği). Menü: Open, Open URL, Open Recent File, Playback Properties, Skin, Playback, Video Display, Preferences, DivX VOD, Help, newsletter, Exit — referanstaki sırayla.
+- VLC: referans 0.9.x Qt arayüzü (Media/Playback/Audio/Video/Tools/View/Help). Boşta yalnızca kontrol penceresi (364x131), video çalınca üstte video alanı açılır; 1.00x ve --:--/--:-- kutuları, %0–200 ses üçgeni.
+- Tahmin: menü alt maddeleri ve diyalog metinleri (referansta görünmeyenler) hatırlanarak yazıldı; ikon dosyaları hâlâ proje için çizilmiş yer tutuculardır.
