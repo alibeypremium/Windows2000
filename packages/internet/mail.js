@@ -9,6 +9,7 @@ import {
 } from "../ui/index.js";
 import { DOCS, downloadFile } from "../core/index.js";
 import { loadOeMenus, oeMenu } from "./oe-menu.js";
+import { oeAbout, oeNewFolder, oeFind, oeLayout, oeOptions, oeRules } from "./oe-dialogs.js";
 const CONTACTS = DOCS + "/Address Book.json",
   MAIL = DOCS + "/Mail.json";
 const read = (ctx, path, initial) => {
@@ -388,10 +389,11 @@ export function openMail(
         separator(),
         {
           label: "About Outlook Express",
-          action: () => ctx.dialogs.message("Microsoft Outlook Express\nVersion 5.50.4807.1700\n\nCopyright © 1981-2000 Microsoft Corp.", { title: "About Outlook Express", icon: "oe" }),
+          action: () => oeAbout(ctx),
         },
       ],
     })));
+  applyLayout(layout);
     w.setContent(
       toolbar([
         { icon: "mail", label: "Send", action: send },
@@ -456,7 +458,7 @@ export function openMail(
     to: "New Outlook Express User",
     subject: "Welcome to Outlook Express 6",
     date: Date.now(),
-    unread: true,
+    unread: !ctx.settings.get("mailWelcomeRead"),
     welcome: true,
     body: "",
   };
@@ -509,6 +511,7 @@ export function openMail(
       ["Deleted Items", "deleted16", 257],
       ["Drafts", "drafts16", 275],
     ];
+    for (const f of ctx.settings.get("oeFolders") || []) FOLDERS.push([f, "outbox16", 275 + 18 * (FOLDERS.length - 4)]);
     foldersEl.replaceChildren(
       el("div", { class: "oe-phead" }, el("span", { text: "Folders" }), el("b", { class: "oe-x", text: "×" })),
       el("div", { class: "oe-fl oe-root-f" }, im("oe16"), el("span", { text: "Outlook Express" })),
@@ -534,7 +537,7 @@ export function openMail(
           {
             class: "oe-row" + (m.unread ? " unread" : "") + (selected === m.id ? " sel" : ""),
             onclick: () => ((selected = m.id), render()),
-            ondblclick: () => m.folder === "Drafts" && openMail(ctx, { compose: true, draft: m }),
+            ondblclick: () => (m.folder === "Drafts" ? openMail(ctx, { compose: true, draft: m }) : openRead(m)),
           },
           el("div", { class: "c1" }, im("env16"), el("span", { text: m.from || m.to || "" })),
           el("div", { class: "c2", text: m.subject || "(No subject)" }),
@@ -578,6 +581,59 @@ export function openMail(
         el("p", {}, "Tired of sharing your e-", el("br"), "mail account with others", el("br"), "in your household? ", el("u", { text: "Get a" }), el("br"), el("u", { text: "free Hotmail account!" }), el("br"), "Then read your mail from", el("br"), "any place on earth. ", el("u", { text: "Click" }), el("br"), el("u", { text: "here to sign up" }), " right now!"),
       ),
     );
+  const openRead = async (m) => {
+    if (m.unread) {
+      if (m.welcome) ctx.settings.set("mailWelcomeRead", true);
+      else await ctx.fs.updateJSON(MAIL, (mail) => mail.map((x) => (x.id === m.id ? { ...x, unread: false } : x)));
+      ctx.bus.emit?.("mail:change");
+    }
+    const rw = ctx.wm.create({ title: m.subject || "(No subject)", icon: "oe", width: 700, height: 500, x: 90 + Math.random() * 40, y: 50 + Math.random() * 30, appId: "readmsg" });
+    let cur = m;
+    const hdrBox = el("div", { class: "oe-rh" }), bodyBox = el("div", { class: "oe-rbody" }), tbar = el("div", { class: "oe-toolbar oe-rtoolbar" });
+    const fmtD = (t) => {
+      const d = new Date(t), days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], mon = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      return `${days[d.getDay()]}, ${mon[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()} ${d.getHours() % 12 || 12}:${String(d.getMinutes()).padStart(2, "0")} ${d.getHours() < 12 ? "AM" : "PM"}`;
+    };
+    const siblings = () => messages().filter((x) => x.folder === cur.folder);
+    const go = (d) => { const l = siblings(), i = l.findIndex((x) => x.id === cur.id), n = l[i + d]; if (n) { cur = n; show(); } };
+    const show = () => {
+      rw.setTitle?.(cur.subject || "(No subject)");
+      const row = (k, v) => el("div", { class: "oe-rhr" }, el("span", { class: "k", text: k }), el("span", { class: "v", text: v }));
+      hdrBox.replaceChildren(row("From:", cur.from || ""), row("Date:", fmtD(cur.date)), row("To:", cur.to || ""), row("Subject:", cur.subject || ""));
+      bodyBox.replaceChildren(cur.welcome ? welcomeBody() : el("pre", { text: cur.body }));
+    };
+    const mtb = (cx, icon, label, o = {}) => {
+      const b = el("div", { class: "oe-tb" + (o.off ? " off" : ""), style: { left: cx - 40 + "px" }, onclick: () => !o.off && o.action?.() }, im(icon), el("span", { text: label }));
+      return b;
+    };
+    const rep = () => openMail(ctx, { compose: true, reply: cur });
+    tbar.append(
+      mtb(41, "reply", "Reply", { action: rep }),
+      mtb(102, "replyall", "Reply All", { action: rep }),
+      mtb(163, "fwd", "Forward", { action: rep }),
+      sep(198),
+      mtb(231, "print", "Print", { action: () => ctx.printText(bodyBox.innerText, cur.subject) }),
+      mtb(293, "delete", "Delete", { action: async () => { selected = cur.id; await deleteMessage(); rw.close(); } }),
+      sep(328),
+      mtb(361, "prev", "Previous", { off: !siblings().length }),
+      mtb(422, "next", "Next", {}),
+      sep(458),
+      mtb(494, "addr", "Addresses", { action: () => ctx.launch("address") }),
+    );
+    rw.setContent(el("div", { class: "oe-read" }, tbar, hdrBox, bodyBox));
+    const rid = {
+      40465: { action: newMail }, 40170: { action: newMail }, 40228: { action: () => rw.close() },
+      40482: { action: async () => { selected = cur.id; await deleteMessage(); rw.close(); } },
+      40116: { action: () => ctx.printText(bodyBox.innerText, cur.subject) },
+      40484: { action: () => document.execCommand("copy") }, 40125: { action: () => document.execCommand("selectAll") },
+      40145: { action: () => go(-1) }, 40146: { action: () => go(1) },
+      40176: { action: rep }, 40177: { action: rep }, 40180: { action: rep },
+      40199: { action: () => ctx.launch("address") },
+      40483: { action: () => ctx.dialogs.message(`Type: ${cur.welcome ? "Message" : "Mail"}\nFrom: ${cur.from || ""}\nSubject: ${cur.subject || ""}`, { title: "Properties", icon: "oe" }) },
+    };
+    loadOeMenus().then((mm) => rw.setMenu(oeMenu(mm.read, (id) => rid[id], { Help: [{ label: "Contents and Index", action: () => ctx.launch("help", { topic: "outlook" }) }, separator(), { label: "About Outlook Express", action: () => ctx.dialogs.message("Microsoft Outlook Express\nVersion 5.50.4807.1700\n\nCopyright © 1981-2000 Microsoft Corp.", { title: "About Outlook Express", icon: "oe" }) }] })));
+    show();
+  };
   const deleteMessage = async () => {
     if (!selected) return;
     if (selected === "welcome") {
@@ -591,7 +647,31 @@ export function openMail(
     selected = null;
     render();
   };
+  const layout = Object.assign({ contacts: true, folderBar: true, folderList: false, outlookBar: false, statusBar: true, toolbar: true, viewsBar: false, infoPane: false, preview: true, pvSide: false, pvHeader: true }, ctx.settings.get("oeLayout") || {});
+  const applyLayout = (st) => {
+    ctx.settings.set("oeLayout", st);
+    contacts.style.display = st.contacts ? "" : "none";
+    status.style.display = st.statusBar ? "" : "none";
+    toolbarEl.style.display = st.toolbar ? "" : "none";
+    pvHead.style.display = st.pvHeader ? "" : "none";
+    preview.style.display = st.preview ? "" : "none";
+  };
+  const findMessages = (q) => {
+    const has = (a, b) => !b || String(a || "").toLowerCase().includes(b.toLowerCase());
+    const hits = messages().filter((m) => has(m.from, q.from) && has(m.to, q.to) && has(m.subject, q.subject) && has(m.body, q.body));
+    const rw = ctx.wm.create({ title: "Find Message - " + hits.length + " found", icon: "oe", width: 520, height: 240, appId: "dialog" });
+    rw.setContent(el("div", { class: "oe-find" }, el("div", { class: "oe-find-h" }, ...["From", "Subject", "Received"].map((t) => el("span", { text: t }))), ...hits.map((m) => el("div", { class: "oe-find-r", ondblclick: () => openRead(m) }, el("span", { text: m.from || m.to || "" }), el("span", { text: m.subject || "" }), el("span", { text: new Date(m.date).toLocaleString("en-US") })))));
+  };
   const ids = {
+    40204: { action: () => oeOptions(ctx, ctx.settings.get("oeOptions") || {}, (st) => ctx.settings.set("oeOptions", st)) },
+    40132: { action: () => oeFind(ctx, findMessages) }, 40489: { action: () => oeFind(ctx, findMessages) },
+    40288: { action: () => oeNewFolder(ctx, (n) => { ctx.settings.set("oeFolders", [...(ctx.settings.get("oeFolders") || []), n]); render(); }) },
+    40366: { action: () => oeNewFolder(ctx, (n) => { ctx.settings.set("oeFolders", [...(ctx.settings.get("oeFolders") || []), n]); render(); }) },
+    40442: { action: () => oeRules(ctx, ctx.settings.get("oeRules") || {}, (st) => ctx.settings.set("oeRules", st)) },
+    40443: { action: () => oeRules(ctx, ctx.settings.get("oeRules") || {}, (st) => ctx.settings.set("oeRules", st)) },
+    40445: { action: () => oeRules(ctx, ctx.settings.get("oeRules") || {}, (st) => ctx.settings.set("oeRules", st)) },
+    40455: { action: () => oeLayout(ctx, { ...layout, ...(ctx.settings.get("oeLayout") || {}) }, applyLayout) },
+    40145: { action: () => {}, disabled: true },
     40465: { action: newMail }, 40170: { action: newMail }, 40017: undefined,
     40123: { action: () => w.close() },
     40128: { action: deleteMessage, disabled: !selected }, 40433: undefined,

@@ -49,6 +49,13 @@ export function dialogFromTemplate(ctx, tpl, opts = {}) {
       const input = el("input", { class: "rk-input", value: opts.values?.[c.id] ?? "" });
       node = [sunken(x, y, cw, 21, input), btn(x + cw - 19, y + 2, 17, 17, "▾", {})];
       byId[c.id] = input;
+    } else if (["listbox", "SysListView32", "SysTreeView32"].includes(c.class)) {
+      node = sunken(x, y, cw, ch, el("div", { class: "rk-listbox" }));
+      byId[c.id] = node;
+    } else if (c.class === "SysDateTimePick32") {
+      const input = el("input", { class: "rk-input", type: "date", value: opts.values?.[c.id] ?? "" });
+      node = sunken(x, y, cw, 21, input);
+      byId[c.id] = input;
     } else if (c.class === "Link Window") {
       node = link(x, y, label.replace(/<[^>]+>/g, ""), opts.on?.[c.id] || (() => {}));
     } else if (c.class === "static") {

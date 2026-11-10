@@ -5808,3 +5808,17 @@ input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type=
 .cdp-field { flex: 1; margin-left: auto; width: 270px; background: #c0c0c0; border: 2px solid; border-color: #404040 #fff #fff #404040; height: 18px; font: 11px Tahoma; }
 .cdp-logo { position: absolute; right: 10px; bottom: 8px; width: 44px; height: 22px; display: none; }
 .cdp-status { padding: 2px 6px; background: #c0c0c0; color: #000; border-top: 1px solid #fff; font: 11px Tahoma; }
+.oe-read { position: relative; height: 100%; background: #d4d0c8; font: 11px Tahoma, sans-serif; display: flex; flex-direction: column; }
+.oe-rtoolbar { position: relative !important; flex: none; top: 0 !important; margin: 2px 0 0; right: auto !important; width: calc(100% - 2px); }
+.oe-rh { flex: none; margin: 3px 4px 0; border: 1px solid; border-color: #808080 #fff #fff #808080; padding: 3px 6px; background: #d4d0c8; }
+.oe-rhr { display: flex; height: 17px; align-items: center; }
+.oe-rhr .k { width: 52px; font-weight: bold; }
+.oe-rhr .v { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.oe-rbody { flex: 1; min-height: 0; margin: 3px 4px 4px; background: #fff; border: 2px solid; border-color: #808080 #fff #fff #808080; overflow: auto; position: relative; padding: 6px; font: 13px "Times New Roman", serif; }
+.oe-rbody pre { margin: 0; white-space: pre-wrap; font: 13px "Courier New", monospace; }
+.oe-rbody .oe-welcome { position: relative; min-height: 400px; margin: -6px; }
+.oe-find { background: #fff; height: 100%; font: 11px Tahoma, sans-serif; overflow: auto; }
+.oe-find-h, .oe-find-r { display: grid; grid-template-columns: 170px 190px 1fr; height: 17px; align-items: center; padding: 0 4px; white-space: nowrap; }
+.oe-find-h { background: #d4d0c8; border-bottom: 1px solid #808080; font-weight: normal; }
+.oe-find-r:hover { background: #0a246a; color: #fff; }
+.rk-listbox { position: absolute; inset: 0; background: #fff; overflow: auto; }
