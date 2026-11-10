@@ -399,3 +399,6 @@ Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the origi
 - Volume Control: strips, Properties and Advanced Controls dialogs rebuilt from sndvol32.exe templates (packages/accessories/volume.js, volume-data.js).
 - Sound Recorder: window, buttons (bitmap 501), menus and Details dialog from sndrec32.exe; editing functions implemented on PCM buffers (packages/accessories/recorder.js).
 - Internet Explorer: Internet Options (6 tabs, no Privacy tab: IE 5.01), Open dialog built from inetcplc.dll/shdoclc.dll templates (packages/internet/ie-data.js, scripts/dump-icons.py); Media toolbar button removed (IE 6 only).
+
+## Internet Explorer: sağ tık menüleri
+- Page/Link/Image/Control bağlam menüleri shdoclc.dll menü 24641 yapısından (öğe sırası ISO'dan; bazı öğeler pasif). File>Edit kaynak görüntüler.

@@ -6,6 +6,7 @@ import {
   statusBar,
   separator,
   field,
+  popup,
 } from "../ui/index.js";
 import { basename, downloadFile } from "../core/index.js";
 import { ieOpen, ieOptions, ieAddFavorite, ieProps, iePageSetup, iePrint, IE_HELP } from "./ie-dialogs.js";
@@ -265,6 +266,62 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
     forward = () => {
       if (index < history.length - 1) navigate(history[++index], false);
     };
+  const viewSource = () => ctx.launch("notepad", { text: current.startsWith("C:") ? ctx.fs.readFile(current) : viewport.innerHTML });
+  const addFav = () => ieAddFavorite(ctx, { name: w.title.replace(" - Microsoft Internet Explorer", ""), folders: [...new Set(favorites().map((f) => f.folder).filter(Boolean))], onOk: (title, folder) => ctx.settings.set("favorites", [...favorites(), { title, url: current, folder }]) });
+  const off = (label, extra = {}) => ({ label, disabled: true, ...extra });
+  const pageMenu = () => [
+    { label: "Back", disabled: index <= 0, action: back },
+    { label: "Forward", disabled: index >= history.length - 1, action: forward },
+    separator(),
+    off("Save Background As..."), off("Set as Wallpaper"), off("Copy Background"), off("Set as Desktop Item..."),
+    separator(),
+    { label: "Select All", action: () => { const r = document.createRange(); r.selectNodeContents(viewport); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); } },
+    off("Paste"),
+    separator(),
+    off("Create Shortcut"),
+    { label: "Add to Favorites...", action: addFav },
+    { label: "View Source", action: viewSource },
+    separator(),
+    off("Encoding"),
+    separator(),
+    { label: "Print", action: () => iePrint(ctx, () => ctx.printText(viewport.innerText, current)) },
+    { label: "Refresh", action: render },
+    separator(),
+    { label: "Properties", action: () => ieProps(ctx, { url: current, title: w.title.replace(" - Microsoft Internet Explorer", "") }) },
+  ];
+  const linkMenu = (href) => [
+    { label: "Open", action: () => navigate(href) },
+    { label: "Open in New Window", action: () => ctx.launch("ie", { url: href }) },
+    off("Save Target As..."), off("Print Target"),
+    separator(),
+    off("Cut"), { label: "Copy", action: () => document.execCommand("copy") },
+    { label: "Copy Shortcut", action: () => navigator.clipboard?.writeText(href) },
+    off("Paste"),
+    separator(),
+    { label: "Add to Favorites...", action: addFav },
+    separator(),
+    { label: "Properties", action: () => ieProps(ctx, { url: href, title: href }) },
+  ];
+  const imageMenu = (src) => [
+    { label: "Open Link", disabled: true }, off("Open Link in New Window"), off("Save Target As..."), off("Print Target"),
+    separator(),
+    off("Show Picture"), { label: "Save Picture As...", action: () => downloadFile(basename(src) || "picture.png", src, "image/png") }, off("Set as Wallpaper"), off("Set as Desktop Item..."),
+    separator(),
+    off("Cut"), { label: "Copy", action: () => document.execCommand("copy") }, off("Copy Shortcut"), off("Paste"),
+    separator(),
+    { label: "Add to Favorites...", action: addFav },
+    separator(),
+    { label: "Properties", action: () => ieProps(ctx, { url: src, title: basename(src) }) },
+  ];
+  const controlMenu = () => [
+    off("Undo"), separator(), { label: "Cut", action: () => document.execCommand("cut") }, { label: "Copy", action: () => document.execCommand("copy") }, { label: "Paste", action: () => document.execCommand("paste") }, { label: "Delete", action: () => document.execCommand("delete") }, separator(), { label: "Select All", action: () => document.execCommand("selectAll") },
+  ];
+  viewport.addEventListener("contextmenu", (e) => {
+    const t = e.target;
+    e.preventDefault();
+    const a = t.closest?.("a[href]"), img = t.closest?.("img");
+    popup(t.closest?.("input,textarea,select") ? controlMenu() : img ? imageMenu(img.src) : a ? linkMenu(a.href) : pageMenu(), e.clientX, e.clientY);
+  });
   const TB = "/assets/ui/ie/tb-";
   const tbButton = (name, label, action, { drop = false, disabled = false, title } = {}) => {
     const b = button(
@@ -320,7 +377,7 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
         shortcut: "Ctrl+O",
         action: () => ieOpen(ctx, (v) => navigate(v)),
       },
-      { label: "Edit", disabled: true },
+      { label: "Edit", action: viewSource },
       { label: "Save", shortcut: "Ctrl+S", disabled: true },
       {
         label: "Save As...",
