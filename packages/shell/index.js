@@ -162,6 +162,30 @@ export class DesktopShell {
         icon: "winamp",
         action: () => ctx.launch("winamp"),
       },
+      {
+        id: "acrobat",
+        name: "Acrobat Reader 5.0",
+        icon: "acrobat",
+        action: () => ctx.launch("acrobat"),
+      },
+      {
+        id: "divx",
+        name: "DivX Player",
+        icon: "divx",
+        action: () => ctx.launch("divx"),
+      },
+      {
+        id: "vlc",
+        name: "VLC media player",
+        icon: "vlc",
+        action: () => ctx.launch("vlc"),
+      },
+      {
+        id: "winrar",
+        name: "WinRAR",
+        icon: "winrar",
+        action: () => ctx.launch("winrar"),
+      },
       ...ctx.fs.list(DESKTOP).map((n) => ({
         id: n.path,
         name: n.name,
