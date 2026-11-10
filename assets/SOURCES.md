@@ -478,3 +478,4 @@ Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the origi
 - Çalma listesi: Windows2000 demo melodisi ve ISO'dan gelen sistem sesleri. Eject (⏏) ile bilgisayardan mp3/ogg/wav eklenir.
 - Tahmin/uydurma: Winamp ikonu (`assets/icons/winamp-*.png`) bu proje için çizildi, orijinal değil. `app/desktop.css` içindeki `.selected`/`.window` kuralları `#webamp` içinde devre dışı bırakıldı.
 - Düzeltme: Webamp bundle'ı `import.meta.url` ile yükleniyor (Pages'te göreli yol hatası giderildi); masaüstüne Winamp kısayolu eklendi. Winamp3 kurulum paketinin içindeki tek ikon genel NSIS kurulum ikonu çıktı (Winamp ikonu değil), bu yüzden kullanılmadı; Winamp ikonu hâlâ bu projede çizilmiş bir ikondur.
+- Winamp ikonu: proje sahibinin verdiği dönem arşivinden (`Winamp 2.95- icon 164.png`, 32×32 olarak küçültüldü; 16×16 bundan türetildi). Önceki çizim ikonun yerini aldı.
