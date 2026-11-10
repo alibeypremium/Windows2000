@@ -3,7 +3,7 @@
  * (see scripts/dump-dialogs.py). Template units are dialog units; for the
  * 8pt MS Shell Dlg font one unit is 1.5 px horizontally and 1.625 px vertically.
  */
-import { el } from "./index.js";
+import { el, popup } from "./index.js";
 import { refWindow, btn, check, radio, group, sunken, text, link } from "../control-panel/refkit.js";
 
 export const px = (x) => Math.round((x * 6) / 4);
@@ -44,13 +44,18 @@ export function dialogFromTemplate(ctx, tpl, opts = {}) {
         withMnemonic(node, label);
       }
     } else if (c.class === "edit") {
-      const input = el("input", { class: "rk-input", value: opts.values?.[c.id] ?? c.text, type: c.style & 0x20 ? "password" : "text" });
-      if (c.style & 0x2000) input.type = "number";
+      const multi = !!(c.style & 0x4);
+      const input = multi ? el("textarea", { class: "rk-input rk-multi", readOnly: !!(c.style & 0x800) }) : el("input", { class: "rk-input", value: opts.values?.[c.id] ?? c.text, type: c.style & 0x20 ? "password" : "text" });
+      if (multi) input.value = opts.values?.[c.id] ?? c.text;
+      if (!multi && c.style & 0x2000) input.type = "number";
       node = sunken(x, y, cw, ch, input);
       byId[c.id] = input;
     } else if (c.class === "combobox" || c.class === "ComboBoxEx32") {
       const input = el("input", { class: "rk-input", value: opts.values?.[c.id] ?? "" });
-      node = [sunken(x, y, cw, 21, input), btn(x + cw - 19, y + 2, 17, 17, "▾", {})];
+      const opts_ = opts.combos?.[c.id];
+      const arrow = btn(x + cw - 19, y + 2, 17, 17, "▾", { onclick: opts_ ? () => { const r = arrow.getBoundingClientRect(); popup(opts_.map((o) => ({ label: o, action: () => { input.value = o; input.dispatchEvent(new Event("change")); } })), r.left - (cw - 19), r.bottom + 2); } : undefined });
+      if (opts_) input.readOnly = true;
+      node = [sunken(x, y, cw, 21, input), arrow];
       byId[c.id] = input;
     } else if (["listbox", "SysListView32", "SysTreeView32"].includes(c.class)) {
       node = sunken(x, y, cw, ch, el("div", { class: "rk-listbox" }));

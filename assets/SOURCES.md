@@ -408,3 +408,12 @@ Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the origi
 - Create New Folder: shdoclc 4480; Rename: browseLC.dll 258; Browse For Folder: shell32.dll 1087 (Move to Folder).
 - Tahmin: Work Offline "sayfa çevrimdışı yok" metni; Find (on This Page) basit prompt; ziyaret sayıları/tarihleri tutulmuyor.
 - Tüm dlg.js diyaloglarında Enter=OK, Esc=Cancel.
+
+## Disk Defragmenter (dfrg.msc)
+- DfrgRes.dll: diyalog 102/104/105/106 (Analysis/Defragmentation Complete & Report), tüm metinler (string 114–725), renk bitmap'leri 102,141–146, ikonlar 106/127 (`scripts/dump-bitmaps.py`, `dump-icons.py`). DfrgUI.dll ikonları.
+- Tahmin: MMC çerçevesi (sol ağaç + başlık bandı), harita yerleşimi/renk dağılımı, rapor sayıları sanal dosya sisteminden türetilmiş.
+
+## Disk Management (diskmgmt.msc)
+- dmdskres.dll: diyalog 172 (Format), 353–359 (Create Partition Wizard), 361/363 (drive letter/path), 348 (Disk properties), 345 (Rescanning), 347/139 (Appearance/Scaling), tüm menü/durum/hata metinleri, ikon ve bitmap'ler (`assets/diskmgmt/`).
+- Tahmin: MMC çerçevesi, graphical view yerleşimi/renkleri, wizard sol görseli (ISO'da bulunamadı), Volume Properties sayfası.
+- Bölüm modeli `settings.diskMgmt`; yeni sürücüler Explorer'da My Computer/Folders'ta görünür.

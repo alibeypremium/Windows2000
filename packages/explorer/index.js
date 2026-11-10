@@ -48,7 +48,24 @@ const FONT_ITEMS = [
   type: "special",
   icon: BITMAP_FONTS.has(name) ? "fontBmp" : "fontTT",
 }));
+let activeCtx = null;
+// user-created drives from Disk Management (settings "diskMgmt")
+const extraDrivesOf = (ctx) => {
+  const st = ctx?.settings.get("diskMgmt");
+  if (!st) return [];
+  const out = [];
+  for (const p of st.parts) {
+    if (p.kind === "primary" && p.letter && p.letter !== "C") out.push(p);
+    if (p.kind === "extended") for (const l of p.logicals || []) if (l.letter) out.push(l);
+  }
+  return out.sort((a, b) => a.letter.localeCompare(b.letter));
+};
+const driveName = (d) => (d.label || "Local Disk") + " (" + d.letter + ":)";
+const extraDrivesGlobal = () => extraDrivesOf(activeCtx);
+
 export function openExplorer(ctx, { path = "computer", title } = {}) {
+  activeCtx = ctx;
+  const extraDrives = () => extraDrivesOf(ctx);
   if (path === "documents") path = DOCS;
   const w = ctx.wm.create({
     title: title || shellNames[path] || basename(path),
@@ -142,6 +159,13 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
           icon: "cd",
           detail: "CD-ROM",
         },
+        ...extraDrives().map((d) => ({
+          name: driveName(d),
+          path: d.letter + ":/",
+          type: "folder",
+          icon: "drive",
+          detail: "Local Disk",
+        })),
         {
           name: "Control Panel",
           path: "control",
@@ -882,6 +906,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
         ["Program Files", "C:/Program Files", "folder", 3],
         ["WINNT", "C:/WINNT", "folder", 3],
         ["Compact Disc (D:)", "D:/", "cd", 2],
+        ...extraDrives().map((d) => [driveName(d), d.letter + ":/", "drive", 2]),
         ["Control Panel", "control", "control", 2],
         ["My Network Places", "network", "network", 1],
         ["Recycle Bin", "recycle", "recycle", 1],
@@ -1523,7 +1548,7 @@ function locationName(path) {
     return (
       { C: "Local Disk (C:)", D: "Compact Disc (D:)", A: "3½ Floppy (A:)" }[
         drive[1].toUpperCase()
-      ] || path
+      ] || (() => { const d = extraDrivesGlobal().find((x) => x.letter === drive[1].toUpperCase()); return d ? driveName(d) : path; })()
     );
   return shellNames[path] || basename(path) || path;
 }

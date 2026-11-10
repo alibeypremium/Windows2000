@@ -5864,3 +5864,68 @@ input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type=
 .ie-org-ic { width: 16px; height: 16px; display: inline-block; background: center/16px no-repeat; }
 .ie-org-ic.root, .ie-org-ic.folder { background-image: url(assets/icons/folder-16x16.png); }
 .ie-org-ic.item { background-image: url(assets/icons/internet-explorer-16x16.png); }
+
+/* Disk Defragmenter (dfrgui) */
+.dfg-root { font: 11px Tahoma, sans-serif; }
+.dfg-right { flex: 1; min-width: 0; display: flex; flex-direction: column; padding: 2px 4px 4px 2px; gap: 3px; }
+.dfg-title { background: linear-gradient(90deg,#0a246a,#a6caf0); color: #fff; font-weight: bold; padding: 2px 6px; height: 16px; line-height: 16px; }
+.dfg-list { background: #fff; border: 2px inset #fff; height: 62px; overflow: hidden; }
+.dfg-head, .dfg-row { display: flex; height: 17px; line-height: 17px; white-space: nowrap; }
+.dfg-head { background: #d4d0c8; border-bottom: 1px solid #808080; }
+.dfg-head span { border-right: 1px solid #808080; padding: 0 4px; box-sizing: border-box; }
+.dfg-row.sel span.c0 { background: #0a246a; color: #fff; }
+.dfg-row span { padding: 0 4px; box-sizing: border-box; overflow: hidden; }
+.dfg-row img { vertical-align: -3px; margin-right: 3px; width: 16px; height: 16px; }
+.dfg-head .c0, .dfg-row .c0 { width: 150px; } .c1 { width: 100px; } .c2 { width: 80px; } .c3 { width: 90px; } .c4 { width: 90px; } .c5 { width: 80px; }
+.dfg-lbl { margin-top: 4px; }
+.dfg-mapbox { border: 2px inset #fff; background: #fff; align-self: flex-start; line-height: 0; }
+.dfg-map { image-rendering: pixelated; display: block; }
+.dfg-btns { display: flex; gap: 6px; margin-top: 6px; }
+.dfg-btn { min-width: 75px; height: 23px; font: 11px Tahoma, sans-serif; background: #d4d0c8; border: 2px outset #fff; padding: 0 8px; }
+.dfg-btn:active:not(:disabled) { border-style: inset; }
+.dfg-btn:disabled { color: #808080; text-shadow: 1px 1px #fff; }
+.dfg-legend { display: flex; gap: 14px; margin-top: 8px; }
+.dfg-leg img { width: 12px; height: 12px; vertical-align: -2px; margin-right: 4px; border: 1px solid #000; box-sizing: content-box; }
+.dfg-lvh, .dfg-lvr { display: flex; height: 17px; line-height: 17px; white-space: nowrap; font: 11px Tahoma, sans-serif; }
+.dfg-lvh { background: #d4d0c8; border-bottom: 1px solid #808080; }
+.dfg-lvh span:nth-child(1), .dfg-lvr span:nth-child(1) { width: 215px; overflow: hidden; padding: 0 3px; } .dfg-lvh span:nth-child(2), .dfg-lvr span:nth-child(2) { width: 62px; padding: 0 3px; text-align: right; } .dfg-lvh span:nth-child(3), .dfg-lvr span:nth-child(3) { width: 62px; padding: 0 3px; text-align: right; }
+.rk-multi { resize: none; font: 11px "Lucida Console", monospace; white-space: pre; }
+
+/* Disk Management (dmdskres) */
+.dm-root { font: 11px Tahoma, sans-serif; }
+.dm-right { flex: 1; min-width: 0; display: flex; flex-direction: column; padding: 2px 4px 4px 2px; gap: 3px; }
+.dm-top { background: #fff; border: 2px inset #fff; height: 128px; overflow: auto; flex: none; }
+.dm-bot { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 4px; background: #d4d0c8; overflow: auto; }
+.dm-bot .dm-list { background: #fff; border: 2px inset #fff; flex: 1; }
+.dm-list { min-width: max-content; }
+.dm-lh, .dm-lr { display: flex; height: 17px; line-height: 17px; white-space: nowrap; }
+.dm-lh { background: #d4d0c8; border-bottom: 1px solid #808080; position: sticky; top: 0; }
+.dm-lh span { border-right: 1px solid #808080; padding: 0 4px; box-sizing: border-box; }
+.dm-lr span { padding: 0 4px; box-sizing: border-box; overflow: hidden; }
+.dm-lr.sel { background: #0a246a; color: #fff; }
+.dm-lr .c { display: inline-flex; align-items: center; }
+.vi { width: 16px; height: 16px; display: inline-block; margin-right: 3px; background: url(assets/icons/hard-disk-drive-16x16.png) center no-repeat; }
+.vi.cd { background-image: url(assets/icons/cd-drive-16x16.png); }
+.vi.di { background-image: url(assets/icons/hard-disk-drive-16x16.png); }
+.dm-graph { background: #fff; border: 2px inset #fff; flex: 1; padding: 4px 0; overflow: auto; display: flex; flex-direction: column; gap: 6px; }
+.dm-disk { display: flex; height: 62px; margin: 0 6px 0 0; }
+.dm-dl { width: 92px; flex: none; background: #d4d0c8; border: 1px solid #808080; border-right-color: #fff; border-bottom-color: #fff; box-shadow: inset -1px -1px #808080; padding: 3px 4px 3px 22px; line-height: 12px; position: relative; font-size: 11px; }
+.dm-dl img { position: absolute; left: 2px; top: 3px; width: 16px; height: 16px; image-rendering: pixelated; }
+.dm-regs { flex: 1; display: flex; min-width: 0; gap: 0; border: 1px solid #808080; }
+.dm-reg { min-width: 70px; background: #fff; border-right: 1px solid #000; display: flex; flex-direction: column; box-sizing: border-box; overflow: hidden; cursor: default; }
+.dm-reg .bar { height: 10px; flex: none; }
+.dm-reg .bar.hatch { background-image: repeating-linear-gradient(45deg, #2e8b57 0 1px, transparent 1px 4px) !important; background-color: #9fdc9f; }
+.dm-reg .txt { padding: 2px 4px; line-height: 12px; white-space: nowrap; }
+.dm-reg.sel { outline: 2px dotted #000; outline-offset: -3px; }
+.dm-ext { display: flex; flex-direction: column; border-right: 1px solid #000; min-width: 70px; overflow: hidden; }
+.dm-ext > .bar { height: 10px; flex: none; }
+.dm-extin { flex: 1; display: flex; }
+.dm-extin .dm-reg { flex: 1 1 0; }
+.dm-legend { display: flex; gap: 14px; padding: 2px 4px; flex: none; align-items: center; font-size: 11px; }
+.dm-legend i { display: inline-block; width: 12px; height: 10px; margin-right: 4px; border: 1px solid #000; vertical-align: -1px; }
+.dm-wzhead { height: 81px; left: 4px; top: 22px; width: 475px; right: auto; background: #fff; border-bottom: 1px solid #808080; box-sizing: border-box; }
+.dm-wzhead .t { position: absolute; left: 31px; top: 12px; font-weight: bold; }
+.dm-wzhead .s { position: absolute; left: 46px; top: 30px; }
+.dm-wzhead .ic { position: absolute; right: 8px; top: 8px; width: 32px; height: 32px; image-rendering: pixelated; }
+.dm-wzside { position: absolute; left: 0; top: 0; width: 160px; height: 100%; background: linear-gradient(180deg,#000080,#1084d0); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 40px; box-sizing: border-box; }
+.dm-wzside img { width: 64px; height: 64px; image-rendering: pixelated; }

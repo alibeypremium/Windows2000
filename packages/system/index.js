@@ -9,5 +9,6 @@ export {
   openClipboardViewer,
   openKeyboard,
   openMagnifier,
-  openDiskManager,
 } from "./utilities.js";
+export { openDiskManager, driveLetters } from "./diskmgmt.js";
+export { openDefrag } from "./defrag.js";

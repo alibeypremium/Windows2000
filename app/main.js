@@ -73,6 +73,7 @@ import {
   openKeyboard,
   openMagnifier,
   openDiskManager,
+  openDefrag,
 } from "/packages/system/index.js";
 
 const bus = new EventBus(),
@@ -321,7 +322,7 @@ ctx.apps = [
     name: "Disk Defragmenter",
     icon: "defragApp",
     aliases: ["dfrg.msc"],
-    open: (ctx, args) => openDiskManager(ctx, { ...args, defrag: true }),
+    open: openDefrag,
   },
   {
     id: "charmap",
