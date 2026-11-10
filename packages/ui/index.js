@@ -70,6 +70,7 @@ const icons = {
   winamp: "winamp",
   winrar: "winrar",
   acrobat: "acrobat",
+  vlc: "vlc",
   games: "games",
   programs: "w2k/programs",
   settings: "w2k/settings-b",

@@ -52,6 +52,7 @@ import {
 import { openWinamp } from "/packages/accessories/winamp.js";
 import { openWinRAR } from "/packages/accessories/winrar.js";
 import { openAcrobat } from "/packages/accessories/acrobat.js";
+import { openVLC } from "/packages/accessories/vlc.js";
 import {
   openControlPanel,
   controlItems,
@@ -223,6 +224,13 @@ ctx.apps = [
     icon: "acrobat",
     aliases: ["acrord32", "acrord32.exe", "acroread", "acrobat", "reader"],
     open: (ctx, args) => openAcrobat(ctx, args || {}),
+  },
+  {
+    id: "vlc",
+    name: "VLC media player",
+    icon: "vlc",
+    aliases: ["vlc.exe", "vlc"],
+    open: (ctx, args) => openVLC(ctx, args || {}),
   },
   {
     id: "winrar",

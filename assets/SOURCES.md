@@ -491,3 +491,8 @@ Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the origi
 - PDF çizimi/metin katmanı **pdf.js 6.5.438** (Apache-2.0, `assets/vendor/pdfjs/`). Arayüz (menüler File/Edit/Document/View/Tools/Window/Help, araç çubuğu, sol Bookmarks/Thumbnails paneli, alt durum çubuğu, Find, Go To Page, Document Info, Hand/Text Select) Acrobat Reader 5.x'ten **hatırlanan düzene göre** yazıldı; orijinal exe/kaynak yok, ayrıntılar tahmindir.
 - Araç çubuğu düğme görselleri ve program ikonu (`assets/icons/acrobat-*.png`) bu proje için çizildi, orijinal değil.
 - Çalışmayanlar: yorum/imza panelleri, form doldurma, Reader'ın çevrimiçi özellikleri, Preferences. Print tarayıcının yazdırma penceresini kullanır.
+
+## VLC media player 0.8.6 (look-alike)
+- Menüler (File/View/Settings/Audio/Video/Navigation/Help), tuş takımı, arama çubuğu, %0–200 ses çubuğu, Playlist penceresi VLC 0.8.x'ten **hatırlanan düzene göre** yazıldı; orijinal exe/kaynak yok, ayrıntılar tahmindir.
+- Oynatma tarayıcının HTML5 medya motoruyla yapılır (mp4/webm/ogg/mp3/wav…). AVI/MKV/WMV gibi dönem formatları tarayıcıda oynamaz ("unable to open the MRL" hatası verir). %100 üstü ses, yalnızca yerel (blob) kaynaklarda WebAudio ile yükseltilir.
+- Koni logosu ve düğme glifleri bu proje için çizildi (`assets/icons/vlc-*.png` dahil), orijinal değil. Çalışmayanlar: Preferences, Extended GUI, Open Disc/Capture, altyazı/ses yolu seçimi, Messages günlüğü.

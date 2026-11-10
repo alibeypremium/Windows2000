@@ -6049,3 +6049,23 @@ body.icon-dragging, body.icon-dragging * { cursor: default; }
 .ar-zoom { width: 96px; }
 .ar-size { padding: 1px 6px; border: 1px solid; border-color: #808080 #fff #fff #808080; min-width: 90px; }
 .ar-find-status { min-height: 14px; color: #800000; }
+
+/* VLC media player 0.8.6 */
+.vlc-screen { flex: 1; min-height: 120px; background: #000; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.vlc-video { width: 100%; height: 100%; background: #000; object-fit: contain; }
+.vlc-cone { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+.vlc-seekrow { display: flex; align-items: center; gap: 6px; padding: 3px 6px 0; background: var(--face); }
+.vlc-seek { flex: 1; margin: 0; }
+.vlc-time { min-width: 78px; text-align: right; font-size: 11px; }
+.vlc-controls { display: flex; align-items: center; gap: 2px; padding: 3px 4px; background: var(--face); }
+.vlc-btn { width: 28px; height: 24px; padding: 0; min-width: 0; display: inline-flex; align-items: center; justify-content: center; }
+.vlc-sp { flex: 1; }
+.vlc-vol { width: 90px; margin: 0 4px; }
+.vlc-voltxt { width: 38px; font-size: 11px; }
+.vlc-statusbar { padding: 2px 6px; border-top: 1px solid #fff; background: var(--face); min-height: 16px; font-size: 11px; }
+.vlc-pl { flex: 1; overflow: auto; background: #fff; border: 2px solid; border-color: #808080 #fff #fff #808080; margin: 2px; }
+.vlc-pl-row { padding: 2px 6px; cursor: default; white-space: nowrap; }
+.vlc-pl-row.cur { font-weight: bold; }
+.vlc-pl-row.sel { background: var(--active); color: #fff; }
+.vlc-pl-empty { color: #808080; padding: 8px; }
+.vlc-pl-bar { display: flex; gap: 4px; padding: 4px; background: var(--face); }
