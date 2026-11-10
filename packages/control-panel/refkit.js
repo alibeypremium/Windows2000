@@ -272,6 +272,7 @@ export const hslider = (x, y, w, value, { ticks = [], onchange, tickY = 15 } = {
     thumb.style.left = Math.round(value * (w - 1) - 5) + "px";
   };
   set(value);
+  n.set = set;
   const move = (e) => {
     const r = n.getBoundingClientRect();
     set((e.clientX - r.left) / (w - 1));

@@ -58,7 +58,7 @@ export function dialogFromTemplate(ctx, tpl, opts = {}) {
       byId[c.id] = input;
     } else if (c.class === "Link Window") {
       node = link(x, y, label.replace(/<[^>]+>/g, ""), opts.on?.[c.id] || (() => {}));
-    } else if (c.class === "static") {
+    } else if (c.class === "static" || c.class === "noflickertext") {
       const kind = c.style & 0x1f;
       if (kind === 0x12 || kind === 0x11 || kind === 0x10) node = el("div", { class: "rk-etched", style: { left: x + "px", top: y + "px", width: cw + "px", height: ch + "px" } });
       else {

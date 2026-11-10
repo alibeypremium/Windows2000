@@ -397,3 +397,4 @@ Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the origi
 - CD Player: bitmaps, menus and Player Options/Playlist Editor dialogs extracted from cdplayer.exe (assets/cdplayer, packages/accessories/cd-data.js).
 - Outlook Express: read-message window menu (msoeres.dll menu 121), Options/Find/Layout/Rules/New Folder/About dialogs from msoeres.dll templates (packages/internet/oe-data.js).
 - Volume Control: strips, Properties and Advanced Controls dialogs rebuilt from sndvol32.exe templates (packages/accessories/volume.js, volume-data.js).
+- Sound Recorder: window, buttons (bitmap 501), menus and Details dialog from sndrec32.exe; editing functions implemented on PCM buffers (packages/accessories/recorder.js).
