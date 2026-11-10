@@ -395,76 +395,77 @@ export function openWelcome(ctx) {
     y: 196,
     appId: "welcome",
   });
+  // welcome.exe string table: slides 1300-1305 cycle on the "Getting Started" page,
+  // hovering a menu item shows its own title (1010-1012), text (1030-1032) and watermark bitmap.
   const SLIDES = [
-    ["s1", "You can access all your documents, programs, and\nsettings from the start button."],
-    ["s2", 'Click "X" to close a window or program.'],
-    ["s3", "Use Control Panel to customize your desktop and\nconfigure your computer."],
-    ["s4", "Click Start, then Help for assistance with Windows\nfeatures."],
+    ["iso-s1", 195, 184, "You can access all your documents, programs, and\nsettings from the start button."],
+    ["mouse", 280, 180, "Click an icon twice quickly (double-click) to open a file,\nfolder, program, or drive."],
+    ["iso-ie", 195, 222, "Use Internet Explorer to find and view information from\nall sources including the Internet.\n\nUse Outlook Express to send and receive e-mail\nmessages."],
+    ["iso-s4", 195, 184, "Click Start, then Help for assistance with Windows\nfeatures."],
+    ["iso-s3", 195, 184, "Use Control Panel to customize your desktop and\nconfigure your computer."],
+    ["iso-s2", 195, 184, 'Click "X" to close a window or program.'],
+  ];
+  const HOVER = [
+    ["Register Windows 2000", "Register your copy of Windows 2000 Professional and help Microsoft give you:\n\n\u2022 The best possible product support\n\u2022 The right software upgrades\n\u2022 The most relevant new product information", "hover-register", 144, 125],
+    ["Discover Windows 2000", "Windows 2000 Professional is easier to use, easier to manage, more compatible, and more powerful. The Discover Windows 2000 Professional tour highlights all the newest and coolest features.", "hover-discover", 153, 150],
+    ["Connect to the Internet", "\u2022 Read the latest news and financial information\n\u2022 Visit Web sites around the world\n\u2022 Get e-mail\n\nWe make it quick and simple for you to connect to the Internet.", "hover-connect", 145, 142],
   ];
   const at = (x, y) => ({ left: x + "px", top: y + "px" });
-  const menuItem = (label, hot, y, onclick) => {
-    const n = el("div", { class: "gs-item", style: at(13, y) });
-    n.append(el("u", { text: label[hot] }), label.slice(hot + 1));
-    if (hot) n.prepend(label.slice(0, hot));
+  const menuItem = (label, y, i, onclick) => {
+    const n = el("div", { class: "gs-item", style: at(13, y), role: "button", tabindex: 0 });
+    n.append(el("u", { text: label[0] }), label.slice(1));
     n.addEventListener("click", onclick);
+    n.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") onclick(); });
+    n.addEventListener("mouseenter", () => showHover(i));
+    n.addEventListener("focus", () => showHover(i));
+    n.addEventListener("mouseleave", () => showSlide(false));
+    n.addEventListener("blur", () => showSlide(false));
     return n;
   };
   const items = [
-    menuItem("Register Now", 0, 120, () => show("start")),
-    menuItem("Discover Windows", 0, 145, () => show("discover")),
-    menuItem("Connect to the Internet", 0, 170, () => show("connect")),
+    menuItem("Register Now", 120, 0, () => ctx.dialogs.message("Registration is not available in this virtual desktop.", { title: "Register Windows 2000", icon: "info" })),
+    menuItem("Discover Windows", 145, 1, () => ctx.launch("help", { topic: "welcome" })),
+    menuItem("Connect to the Internet", 170, 2, () => ctx.launch("ie")),
   ];
   const pane = el("div", { class: "gs-pane" });
   let timer = 0,
     slide = 0;
-  const setItems = (states) =>
-    items.forEach((n, i) => n.classList.toggle("off", !states[i]));
   const body = (title, lines, ...extra) => [
     el("div", { class: "gs-title", text: title }),
     el("div", { class: "gs-text", text: lines }),
     ...extra,
   ];
   const img = (name, x, y, wd, ht) =>
-    el("img", { class: "gs-img", src: `/assets/ui/gs/${name}.png`, alt: "", style: { ...at(x, y), width: wd + "px", height: ht + "px" } });
-  function show(page) {
+    el("img", { class: "gs-img", src: `/assets/ui/gs/${name}.png`, alt: "", style: { ...at(x, y), ...(wd ? { width: wd + "px", height: ht + "px" } : {}) } });
+  function hits(name) {
+    if (name !== "iso-ie") return [];
+    const mk = (x, w, title, app) => {
+      const n = el("div", { class: "gs-hit", style: { ...at(x, 222), width: w + "px", height: "83px" }, title });
+      n.addEventListener("dblclick", () => ctx.launch(app));
+      return n;
+    };
+    return [mk(195, 61, "Internet Explorer", "ie"), mk(256, 61, "Outlook Express", "mail")];
+  }
+  function drawSlide() {
+    const [name, x, y, text] = SLIDES[slide];
+    pane.replaceChildren(...body("Getting Started", text, img(name, x, y), ...hits(name)));
+  }
+  function showSlide(restart = true) {
     clearInterval(timer);
-    pane.replaceChildren();
-    if (page === "start") {
-      setItems([1, 0, 0]);
-      const draw = () => {
-        const [name, text] = SLIDES[slide];
-        pane.replaceChildren(...body("Getting Started", text, img(name, 190, 184, 230, 130)));
-      };
-      draw();
-      timer = setInterval(() => {
-        slide = (slide + 1) % SLIDES.length;
-        draw();
-      }, 5000);
-    } else if (page === "connect") {
-      setItems([1, 0, 1]);
-      const ie = el("div", { class: "gs-hit", style: { ...at(198, 228), width: "58px", height: "76px" }, title: "Internet Explorer" });
-      ie.addEventListener("dblclick", () => ctx.launch("ie"));
-      const oe = el("div", { class: "gs-hit", style: { ...at(258, 228), width: "62px", height: "76px" }, title: "Outlook Express" });
-      oe.addEventListener("dblclick", () => ctx.launch("mail"));
-      pane.replaceChildren(
-        ...body(
-          "Getting Started",
-          "Use Internet Explorer to find and view information from\nall sources including the Internet.\n\nUse Outlook Express to send and receive e-mail\nmessages.",
-          img("connect", 190, 222, 140, 92),
-          ie,
-          oe,
-        ),
-      );
-    } else {
-      setItems([1, 1, 1]);
-      pane.replaceChildren(
-        ...body(
-          "Getting Started",
-          "Click an icon twice quickly (double-click) to open a file,\nfolder, program, or drive.",
-          img("mouse", 280, 180, 110, 120),
-        ),
-      );
-    }
+    if (restart) slide = 0;
+    drawSlide();
+    timer = setInterval(() => {
+      slide = (slide + 1) % SLIDES.length;
+      drawSlide();
+    }, 5000);
+  }
+  function showHover(i) {
+    clearInterval(timer);
+    const [title, text, art, wd, ht] = HOVER[i];
+    pane.replaceChildren(img(art, 480 - wd - 6, 343 - ht - 4, wd, ht), ...body(title, text));
+    const tx = pane.querySelector(".gs-text");
+    tx.classList.add("wrap");
+    tx.replaceChildren(...text.split("\n").map((l) => el("div", { class: l.startsWith("\u2022") ? "gs-li" : "gs-ln", text: l.replace(/^\u2022 /, "") || "\u00a0" })));
   }
   const exit = el("div", { class: "gs-exit", role: "button" }, el("u", { text: "E" }), "xit");
   exit.addEventListener("click", () => w.close());
@@ -479,15 +480,15 @@ export function openWelcome(ctx) {
     el("img", { class: "gs-banner", src: "/assets/ui/gs/banner.png", alt: "" }),
     el("div", { class: "gs-left" }),
     el("div", { class: "gs-right" }),
-    ...items,
     pane,
+    ...items,
     startup,
     exit,
   );
   w.addCleanup?.(() => clearInterval(timer));
   const close = w.close.bind(w);
   w.close = (...a) => (clearInterval(timer), close(...a));
-  show("start");
+  showSlide();
   return w;
 }
 export function openAbout(ctx) {
