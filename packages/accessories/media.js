@@ -16,6 +16,7 @@ import {
   pickFiles,
   DOCS,
 } from "../core/index.js";
+import { wmpOpen, wmpAbout, wmpStats, wmpProps, wmpOptions } from "./wmp-dialogs.js";
 export function encodeWav(channels, sampleRate) {
   const length = channels[0].length,
     count = channels.length,
@@ -289,18 +290,17 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
   let onTop = false, mute = false;
   w.setMenu({
     File: [
-      { label: "Open...", shortcut: "Ctrl+O", action: importMedia },
+      { label: "Open...", shortcut: "Ctrl+O", action: () => wmpOpen(ctx, async (v) => { if (ctx.fs.exists(v)) { playlist.push(v); index = playlist.length - 1; await load(v, true); } else { video.src = v; title.textContent = v; await toggle(true); } }, async (dlg) => { dlg.close(); await importMedia(); }) },
       { label: "Close", disabled: !current, action: () => { video.pause(); video.removeAttribute("src"); video.load(); current = null; } },
       separator(),
       { label: "Save As...", shortcut: "Ctrl+S", disabled: true },
       separator(),
       {
         label: "Properties",
-        action: () =>
-          ctx.dialogs.message(
-            `File: ${current || "Built-in desktop melody"}\nDuration: ${format(video.duration)}`,
-            { title: "Properties", icon: "media" },
-          ),
+        action: () => {
+          const n = current ? ctx.fs.stat(current) : null;
+          wmpProps(ctx, { name: n?.name || "Windows Welcome", type: n?.mime || "Wave Sound", size: n?.size ? n.size + " bytes" : "", length: format(video.duration), videoSize: video.videoWidth ? video.videoWidth + " x " + video.videoHeight : "" });
+        },
       },
       { label: "More Information", submenu: [off("Show"), off("Clip"), off("Banner")] },
       separator(),
@@ -314,13 +314,13 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
       { label: "Full Screen", shortcut: "Alt+Enter", action: () => w.maximize() },
       { label: "Zoom", submenu: [off("50%", { shortcut: "Alt+1" }), { label: "100%", shortcut: "Alt+2", checked: true, action: () => {} }, off("200%", { shortcut: "Alt+3" })] },
       separator(),
-      { label: "Statistics", action: () => ctx.launch("systeminfo") },
+      { label: "Statistics", action: () => wmpStats(ctx, video) },
       separator(),
       off("Settings", { submenu: [] }),
       separator(),
       off("Captions"),
       { label: "Always on Top", shortcut: "Ctrl+T", checked: onTop, action: () => (onTop = !onTop) },
-      off("Options..."),
+      { label: "Options...", action: () => wmpOptions(ctx, { onTop }, (st) => (onTop = !!st.onTop)) },
     ],
     Play: () => [
       { label: "Play/Pause", shortcut: "Space", action: () => toggle() },
@@ -358,7 +358,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
       { label: "Help Topics", action: () => ctx.launch("help", { topic: "media" }) },
       separator(),
       off("Check for Player Upgrade"),
-      { label: "About Windows Media Player", action: () => ctx.dialogs.message("Windows Media Player\nVersion 6.4.09.1129\n\nCopyright © 1992-1999 Microsoft Corp.", { title: "About Windows Media Player", icon: "media" }) },
+      { label: "About Windows Media Player", action: () => wmpAbout(ctx) },
     ],
   });
   if (cd)
@@ -447,8 +447,22 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
   const volImg = el("div", { class: "wmp-vol-icon" });
   Object.assign(volImg.style, { backgroundImage: "url(assets/wmp/bmp5212.png)", backgroundPosition: "0 0" });
   volImg.onclick = () => ctx.settings.set("muted", !ctx.settings.get("muted"));
-  volume.className = "wmp-vol-slider";
-  vol.append(volImg, volume);
+  const tri = el("div", { class: "wmp-tri" }), knob = el("div", { class: "wmp-knob" });
+  tri.append(knob);
+  const setVol = (e) => {
+    const r = tri.getBoundingClientRect();
+    ctx.settings.set("volume", Math.max(0, Math.min(100, Math.round(((e.clientX - r.left - 4) / 31) * 100))));
+  };
+  tri.addEventListener("pointerdown", (e) => {
+    tri.setPointerCapture(e.pointerId);
+    setVol(e);
+    tri.onpointermove = setVol;
+  });
+  tri.addEventListener("pointerup", () => (tri.onpointermove = null));
+  const syncKnob = () => (knob.style.left = 2 + ((ctx.settings.get("volume") ?? 65) / 100) * 31 + "px");
+  w.addCleanup(ctx.bus.on("settings:change", syncKnob));
+  syncKnob();
+  vol.append(volImg, tri);
   const syncMute = () => (volImg.style.backgroundPosition = ctx.settings.get("muted") ? "-40px 0" : "0 0");
   w.addCleanup(ctx.bus.on("settings:change", syncMute));
   syncMute();

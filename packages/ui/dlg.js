@@ -21,11 +21,12 @@ const withMnemonic = (node, label) => {
  */
 export function dialogFromTemplate(ctx, tpl, opts = {}) {
   const width = px(tpl.cx) + FRAME_X * 2, height = py(tpl.cy) + FRAME_Y + 4;
-  const w = refWindow(ctx, { title: opts.title ?? tpl.title, icon: opts.icon, width, height, x: opts.x, y: opts.y, appId: opts.appId || "dialog", noIcon: !opts.icon });
+  const OX = opts.host ? opts.ox ?? 0 : FRAME_X, OY = opts.host ? opts.oy ?? 0 : FRAME_Y;
+  const w = opts.host || refWindow(ctx, { title: opts.title ?? tpl.title, icon: opts.icon, width, height, x: opts.x, y: opts.y, appId: opts.appId || "dialog", noIcon: !opts.icon });
   const byId = {};
   for (const c of tpl.controls) {
     if (opts.hidden?.includes(c.id)) continue;
-    const x = px(c.x) + FRAME_X, y = py(c.y) + FRAME_Y, cw = px(c.cx), ch = py(c.cy);
+    const x = px(c.x) + OX, y = py(c.y) + OY, cw = px(c.cx), ch = py(c.cy);
     const isIconRef = c.class === "static" && typeof c.text === "number";
     if (isIconRef) continue; // icon/bitmap resource reference
     const label = String(opts.labels?.[c.id] ?? c.text);
@@ -43,6 +44,10 @@ export function dialogFromTemplate(ctx, tpl, opts = {}) {
       const input = el("input", { class: "rk-input", value: opts.values?.[c.id] ?? c.text, type: c.style & 0x20 ? "password" : "text" });
       if (c.style & 0x2000) input.type = "number";
       node = sunken(x, y, cw, ch, input);
+      byId[c.id] = input;
+    } else if (c.class === "combobox") {
+      const input = el("input", { class: "rk-input", value: opts.values?.[c.id] ?? "" });
+      node = [sunken(x, y, cw, 21, input), btn(x + cw - 19, y + 2, 17, 17, "▾", {})];
       byId[c.id] = input;
     } else if (c.class === "Link Window") {
       node = link(x, y, label.replace(/<[^>]+>/g, ""), opts.on?.[c.id] || (() => {}));

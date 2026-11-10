@@ -393,3 +393,4 @@ Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the origi
 
 - Task Manager, Registry Editor, System Information, Magnifier (dialogs), Event Viewer, Device Manager, Disk Management and Disk Defragmenter: menus and dialogs follow the Windows 2000 SP4 ISO resources (taskmgr, regedit, msinfo32, magnify, mmc).
 - Windows Media Player UI bitmaps (button strips, Windows Media logo, volume) and menus extracted from msdxm.ocx (assets/wmp).
+- WMP dialogs (Open, About, Statistics, Properties, Options sheet) rebuilt from msdxm.ocx RT_DIALOG templates (packages/accessories/wmp-data.js).
