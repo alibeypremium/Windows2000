@@ -46,7 +46,7 @@ export function oeLayout(ctx, state, apply) {
 }
 
 /** Generic multi-row property sheet. pages: [{label, tpl, labels?}] */
-export function oeSheet(ctx, { title, pages, store, onApply, cx = 275, cy = 210, rows = 1 }) {
+export function oeSheet(ctx, { title, pages, store, onApply, cx = 275, cy = 210, rows = 1, active: startTab = 0 }) {
   const pw = px(cx) + 8, ph = py(cy) + 8, per = Math.ceil(pages.length / rows);
   const top = FY + 8, PX = FX + 8, W = pw + PX * 2, PY = top + rows * 21, H = PY + ph + 10 + 23 + 14;
   const w = refWindow(ctx, { title, icon: "oe", width: W, height: H, appId: "dialog" });
@@ -58,7 +58,9 @@ export function oeSheet(ctx, { title, pages, store, onApply, cx = 275, cy = 210,
     const { out, host } = hostOf(), tpl = pages[i].tpl, st = (state[i] ||= {});
     const on = {}, checked = {};
     for (const c of tpl.controls) if (c.class === "button" && [2, 3, 4, 5, 6, 9].includes(c.style & 0xf)) { checked[c.id] = !!st[c.id]; on[c.id] = () => (st[c.id] = !st[c.id]); }
-    dialogFromTemplate(ctx, tpl, { host, ox: PX, oy: PY, checked, on, labels: pages[i].labels });
+    const ctl = {};
+    dialogFromTemplate(ctx, tpl, { host, ox: PX, oy: PY, checked, on: { ...on, ...(pages[i].on ? pages[i].on(ctl, st) : {}) }, labels: pages[i].labels, ctlOut: ctl, ...(pages[i].opts || {}) });
+    pages[i].after?.(ctl, st, out, { ox: PX, oy: PY });
     return (cache[i] = out);
   };
   const show = (i) => {
@@ -79,7 +81,7 @@ export function oeSheet(ctx, { title, pages, store, onApply, cx = 275, cy = 210,
     body.replaceChildren(...build(i));
   };
   w.place(strip, body);
-  show(0);
+  show(startTab);
   const by = PY + ph + 10;
   w.place(btn(W - PX - 3 * 75 - 12, by, 75, 23, "OK", { def: true, onclick: () => { onApply?.(state); w.close(); } }), btn(W - PX - 2 * 75 - 6, by, 75, 23, "Cancel", { onclick: () => w.close() }), btn(W - PX - 75, by, 75, 23, "Apply", { onclick: () => onApply?.(state) }));
   return w;

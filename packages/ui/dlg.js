@@ -28,7 +28,10 @@ export function dialogFromTemplate(ctx, tpl, opts = {}) {
     if (opts.hidden?.includes(c.id)) continue;
     const x = px(c.x) + OX, y = py(c.y) + OY, cw = px(c.cx), ch = py(c.cy);
     const isIconRef = c.class === "static" && typeof c.text === "number";
-    if (isIconRef) continue; // icon/bitmap resource reference
+    if (isIconRef) {
+      if (opts.iconBase) { const im = el("img", { src: opts.iconBase + c.text + ".png", style: { position: "absolute", left: x + "px", top: y + "px", width: "32px", height: "32px", imageRendering: "pixelated" } }); im.onerror = () => im.remove(); w.place(im); }
+      continue; // icon/bitmap resource reference
+    }
     const label = String(opts.labels?.[c.id] ?? c.text);
     const disabled = !!(c.style & 0x08000000), t = c.style & 0xf;
     let node;
@@ -45,12 +48,16 @@ export function dialogFromTemplate(ctx, tpl, opts = {}) {
       if (c.style & 0x2000) input.type = "number";
       node = sunken(x, y, cw, ch, input);
       byId[c.id] = input;
-    } else if (c.class === "combobox") {
+    } else if (c.class === "combobox" || c.class === "ComboBoxEx32") {
       const input = el("input", { class: "rk-input", value: opts.values?.[c.id] ?? "" });
       node = [sunken(x, y, cw, 21, input), btn(x + cw - 19, y + 2, 17, 17, "▾", {})];
       byId[c.id] = input;
     } else if (["listbox", "SysListView32", "SysTreeView32"].includes(c.class)) {
       node = sunken(x, y, cw, ch, el("div", { class: "rk-listbox" }));
+      byId[c.id] = node;
+    } else if (c.class === "msctls_trackbar32") {
+      const vert = ch > cw;
+      node = el("div", { class: "rk-tb" + (vert ? " v" : ""), style: { left: x + "px", top: y + "px", width: cw + "px", height: ch + "px" } }, el("i"), el("b"));
       byId[c.id] = node;
     } else if (c.class === "SysDateTimePick32") {
       const input = el("input", { class: "rk-input", type: "date", value: opts.values?.[c.id] ?? "" });
@@ -74,7 +81,8 @@ export function dialogFromTemplate(ctx, tpl, opts = {}) {
     }
   }
   for (const g of opts.groups || []) for (const id of g) byId[id]?.addEventListener("click", () => g.forEach((o) => byId[o]?.classList.toggle("checked", o === id)));
-  w.ctl = byId;
+  if (opts.ctlOut) Object.assign(opts.ctlOut, byId);
+  if (!opts.host) w.ctl = byId;
   w.on = (id) => byId[id]?.classList.contains("checked");
   return w;
 }

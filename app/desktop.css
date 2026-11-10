@@ -5838,3 +5838,17 @@ input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type=
 .sr-btn:active:not(:disabled) { border-color: #404040 #fff #fff #404040; }
 .sr-btn:disabled { filter: grayscale(1) opacity(.45); }
 .sr-ic { position: absolute; left: 11px; top: 3px; width: 25px; height: 17px; background: url(assets/sndrec/bmp501.png) no-repeat; display: block; }
+.rk-tb { position: absolute; }
+.rk-tb i { position: absolute; left: 4px; right: 4px; top: 6px; height: 4px; border: 1px solid; border-color: #808080 #fff #fff #808080; background: #404040; }
+.rk-tb b { position: absolute; left: 40%; top: 2px; width: 11px; height: 20px; background: #d4d0c8; border: 1px solid; border-color: #fff #404040 #404040 #fff; box-sizing: border-box; }
+.rk-tb.v i { left: 12px; right: auto; top: 4px; bottom: 4px; width: 4px; height: auto; }
+.rk-tb.v b { left: 4px; top: 40%; width: 22px; height: 11px; }
+.ie-adv { font: 11px Tahoma, sans-serif; padding: 1px 0; }
+.ie-adv-c { display: flex; align-items: center; gap: 3px; height: 18px; padding-left: 2px; white-space: nowrap; }
+.ie-adv-c img { width: 16px; height: 16px; }
+.ie-adv-i { display: flex; align-items: center; gap: 3px; height: 16px; padding-left: 24px; white-space: nowrap; }
+.ie-adv-i.r { padding-left: 44px; }
+.ie-adv-i input { margin: 0; }
+.ie-zones { display: flex; gap: 6px; padding: 4px; }
+.ie-zone { width: 52px; text-align: center; font: 11px Tahoma, sans-serif; }
+.ie-zone img { display: block; margin: 0 auto 2px; width: 32px; height: 32px; }

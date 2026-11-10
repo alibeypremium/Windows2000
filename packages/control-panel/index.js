@@ -1,3 +1,4 @@
+import { ieOptions } from "../internet/ie-dialogs.js";
 import { schemes } from "./schemes.js";
 import {
   el,
@@ -215,7 +216,7 @@ export function openControlPanel(ctx, { page = "system" } = {}) {
   if (page === "hardware") return openHardwareWizard(ctx);
   if (page === "autoupdate") return openAutomaticUpdates(ctx);
   if (page === "bde") return openBdeAdministrator(ctx);
-  if (page === "internet") return openInternetProperties(ctx);
+  if (page === "internet") return ieOptions(ctx);
   if (page === "gaming") return openGamingOptions(ctx);
   if (page === "scanners") return openScannersProperties(ctx);
   if (page === "sounds") return openSoundsProperties(ctx);

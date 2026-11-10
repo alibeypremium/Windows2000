@@ -8,6 +8,7 @@ import {
   field,
 } from "../ui/index.js";
 import { basename, downloadFile } from "../core/index.js";
+import { ieOpen, ieOptions } from "./ie-dialogs.js";
 const normalizeAddress = (input) => {
   let target = String(input || "about:home").trim();
   if (!/^(about:|https?:\/\/|[A-Z]:[\\/])/i.test(target))
@@ -297,7 +298,6 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
       if (q) navigate(q);
     }),
     tbButton("favorites", "Favorites", () => navigate("about:favorites")),
-    tbButton("media", "Media", () => ctx.launch("wmplayer")),
     tbButton("history", "", () => navigate("about:history"), { title: "History" }),
     sep(),
     tbButton("mail", "", () => ctx.launch("outlook"), { title: "Mail" }),
@@ -318,10 +318,7 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
       {
         label: "Open...",
         shortcut: "Ctrl+O",
-        action: async () => {
-          const p = await ctx.dialogs.prompt("Type the Internet address of a document or folder, and Internet Explorer will open it for you.", current, { title: "Open" });
-          if (p) navigate(p);
-        },
+        action: () => ieOpen(ctx, (v) => navigate(v)),
       },
       { label: "Edit", disabled: true },
       { label: "Save", shortcut: "Ctrl+S", disabled: true },
