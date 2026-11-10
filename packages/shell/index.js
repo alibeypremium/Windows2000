@@ -817,8 +817,6 @@ export class DesktopShell {
             "recorder",
             "volume",
             "mediaplayer",
-            "winamp",
-            "winrar",
           ]),
         },
         { label: "Games", icon: "programGroup", submenu: games },
@@ -853,7 +851,7 @@ export class DesktopShell {
           icon: "programGroup",
           submenu: [{ label: "(Empty)", disabled: true }],
         },
-        ...this.appItems(["ie", "outlook"]),
+        ...this.appItems(["ie", "outlook", "acrobat", "winamp", "winrar"]),
       ],
       settings = [
         {

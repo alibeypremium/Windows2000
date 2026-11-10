@@ -69,6 +69,7 @@ const icons = {
   pinball: "pinball",
   winamp: "winamp",
   winrar: "winrar",
+  acrobat: "acrobat",
   games: "games",
   programs: "w2k/programs",
   settings: "w2k/settings-b",

@@ -486,3 +486,8 @@ Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the origi
 - Araç çubuğu ve program ikonları (`assets/ui/winrar/*.png`, `assets/icons/winrar-*.png`) bu proje için çizildi, orijinal değil. Sahibi orijinal ikonları sağlayınca değiştirilecek.
 - Çalışmayanlar (mesajla bildirilir): SFX, kurtarma kaydı, virüs tarama, yorum, rapor, benchmark, Settings, Favorites yönetimi.
 - `core` `fs.writeFile` artık `encoding` seçeneğini kaydediyor (ikili dosyalar için `data-url`).
+
+## Adobe Acrobat Reader 5.0 (look-alike)
+- PDF çizimi/metin katmanı **pdf.js 6.5.438** (Apache-2.0, `assets/vendor/pdfjs/`). Arayüz (menüler File/Edit/Document/View/Tools/Window/Help, araç çubuğu, sol Bookmarks/Thumbnails paneli, alt durum çubuğu, Find, Go To Page, Document Info, Hand/Text Select) Acrobat Reader 5.x'ten **hatırlanan düzene göre** yazıldı; orijinal exe/kaynak yok, ayrıntılar tahmindir.
+- Araç çubuğu düğme görselleri ve program ikonu (`assets/icons/acrobat-*.png`) bu proje için çizildi, orijinal değil.
+- Çalışmayanlar: yorum/imza panelleri, form doldurma, Reader'ın çevrimiçi özellikleri, Preferences. Print tarayıcının yazdırma penceresini kullanır.

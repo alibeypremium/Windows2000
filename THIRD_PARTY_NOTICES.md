@@ -33,3 +33,6 @@ The desktop melody and short event sounds are synthesized by this project's Java
 
 ## WinRAR look-alike dependencies
 `assets/vendor/winrar/fflate.mjs` is fflate (MIT, Arjun Barrett); `unrar.mjs` + `unrar.wasm` are node-unrar-js 2.0.2 (MIT) wrapping the unrar source (extraction only; the unrar licence forbids using it to re-create the RAR compression algorithm). Licence files are kept alongside.
+
+## pdf.js
+`assets/vendor/pdfjs/` contains pdf.js 6.5.438 (Apache License 2.0, Mozilla and contributors) with its standard fonts and WASM image decoders; licence files are kept alongside.

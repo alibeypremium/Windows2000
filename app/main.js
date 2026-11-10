@@ -51,6 +51,7 @@ import {
 } from "/packages/games/index.js";
 import { openWinamp } from "/packages/accessories/winamp.js";
 import { openWinRAR } from "/packages/accessories/winrar.js";
+import { openAcrobat } from "/packages/accessories/acrobat.js";
 import {
   openControlPanel,
   controlItems,
@@ -215,6 +216,13 @@ ctx.apps = [
     icon: "winamp",
     aliases: ["winamp.exe"],
     open: (ctx) => openWinamp(ctx),
+  },
+  {
+    id: "acrobat",
+    name: "Adobe Acrobat Reader 5.0",
+    icon: "acrobat",
+    aliases: ["acrord32", "acrord32.exe", "acroread", "acrobat", "reader"],
+    open: (ctx, args) => openAcrobat(ctx, args || {}),
   },
   {
     id: "winrar",
@@ -471,6 +479,7 @@ ctx.openFile = async (path) => {
   )
     return ctx.launch("mediaplayer", { path });
   if (["zip", "rar"].includes(ext)) return ctx.launch("winrar", { path });
+  if (ext === "pdf" || node.mime === "application/pdf") return ctx.launch("acrobat", { path });
   if (["html", "htm"].includes(ext)) return ctx.launch("ie", { path });
   if (["exe", "dll", "sys", "msi"].includes(ext))
     return ctx.dialogs.message(
