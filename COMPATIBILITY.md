@@ -27,7 +27,6 @@ This project recreates the Windows 2000 desktop interface and selected workflows
 | Minesweeper          | Core    | Levels/custom board, flags, questions, chord, timer and best times.              | 9×9 Beginner and safe first-click neighborhood; native RNG parity unverified.        |
 | Solitaire            | Core    | Klondike, draw 1/3, legal moves, scoring, undo, hints and auto-foundation.       | Custom cards and simplified original options/scoring.                                |
 | FreeCell             | Core    | Free cells, sequence limits, undo, hints and deterministic game numbers.         | Deal numbers are specific to this implementation.                                    |
-| Pinball              | Partial | Playable table, flippers, plunger, bumpers, nudge, 3 balls and scores.           | Custom table; original Space Cadet artwork, missions and exact physics absent.       |
 | Command Prompt       | Partial | Virtual file/text commands, environment, history, completion and launching.      | Simplified parser; no native executables, complete batch language or pipes.          |
 | Task Manager         | Core    | Window/process list, switch/close/run, event-loop and available JS heap reports. | Processes are desktop windows; no host process/CPU management.                       |
 | Registry Editor      | Partial | Virtual keys/values, search and JSON import/export.                              | No native hives or Windows .reg compatibility.                                       |

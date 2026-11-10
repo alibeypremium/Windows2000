@@ -10,7 +10,7 @@
 | `@win2k/shell`         | Desktop, Start, taskbar, Run, session UI, screensavers and Help               |
 | `@win2k/explorer`      | Files, shell namespaces, search, Recycle Bin and import/export                |
 | `@win2k/accessories`   | Notepad, WordPad, Calculator, Paint, media, recording and imaging             |
-| `@win2k/games`         | Minesweeper, Klondike, FreeCell and custom Pinball                            |
+| `@win2k/games`         | Minesweeper, Klondike and FreeCell                            |
 | `@win2k/control-panel` | Configuration pages and theme application                                     |
 | `@win2k/internet`      | Browser frames, local mail, contacts and communications                       |
 | `@win2k/system`        | Terminal, registry UI, tasks, reports and accessibility utilities             |

@@ -81,13 +81,11 @@ const topics = {
     paragraphs: [
       "Minesweeper offers beginner, intermediate, expert, and custom fields, flagging, chording, a safe first click, and best times. Right-click or touch and hold to mark a square.",
       "Solitaire supports Klondike draw-one and draw-three rules, scoring, hints, undo, card backs, dragging, and automatic foundation moves. FreeCell supports free cells, ordered runs, legal move capacity, and numbered deterministic deals. FreeCell deal numbers are specific to this implementation.",
-      "Pinball uses fixed-step physics, bumpers, flippers, a plunger, nudging, scoring, and three balls. Its table geometry, artwork, and mission rules are an approximation; the original Space Cadet game data and engine are not included.",
     ],
     links: [
       ["Play Minesweeper", "minesweeper", {}],
       ["Play Solitaire", "solitaire", {}],
       ["Play FreeCell", "freecell", {}],
-      ["Play Pinball", "pinball", {}],
     ],
   },
   internet: {
@@ -163,8 +161,8 @@ const HH = "/assets/ui/help/";
 const HELP = "/assets/help/";
 let HELP_DATA = null;
 const loadHelp = () => (HELP_DATA ? Promise.resolve(HELP_DATA) : fetch(HELP + "help.json").then((r) => r.json()).then((d) => (HELP_DATA = d)));
-const BOOK_ORDER = ["getstart", "howto", "concepts", "tshoot", "cpanel", "display", "access", "hardware", "printing", "folderop", "find", "fonts", "recycle", "keyb", "mouse", "datetime", "sounds", "notepad", "wordpad", "mspaint", "calc", "charmap", "clipbrd", "mplayer", "soundrec", "sndvol32", "freecell", "sol", "winmine", "pinball", "regedit", "taskmgr", "iexplore", "msoe", "nthelp", "dialer", "hypertrm", "mobsync", "osk", "deluxcd", "wab", "MP_w", "glossary"];
-const TOPIC_BOOK = { notepad: "notepad", wordpad: "wordpad", paint: "mspaint", calculator: "calc", media: "MP_w", regedit: "regedit", taskmgr: "taskmgr", magnifier: "magnify", hyperterminal: "hypertrm", dialer: "dialer", sync: "mobsync", osk: "osk", cdplayer: "deluxcd", address: "wab", charmap: "charmap", clipbook: "clipbrd", sndrec: "soundrec", volume: "sndvol32", internet: "iexplore", system: "tshoot", games: "sol", solitaire: "sol", freecell: "freecell", minesweeper: "winmine", outlook: "msoe", pinball: "pinball", shortcuts: "folderop" };
+const BOOK_ORDER = ["getstart", "howto", "concepts", "tshoot", "cpanel", "display", "access", "hardware", "printing", "folderop", "find", "fonts", "recycle", "keyb", "mouse", "datetime", "sounds", "notepad", "wordpad", "mspaint", "calc", "charmap", "clipbrd", "mplayer", "soundrec", "sndvol32", "freecell", "sol", "winmine", "regedit", "taskmgr", "iexplore", "msoe", "nthelp", "dialer", "hypertrm", "mobsync", "osk", "deluxcd", "wab", "MP_w", "glossary"];
+const TOPIC_BOOK = { notepad: "notepad", wordpad: "wordpad", paint: "mspaint", calculator: "calc", media: "MP_w", regedit: "regedit", taskmgr: "taskmgr", magnifier: "magnify", hyperterminal: "hypertrm", dialer: "dialer", sync: "mobsync", osk: "osk", cdplayer: "deluxcd", address: "wab", charmap: "charmap", clipbook: "clipbrd", sndrec: "soundrec", volume: "sndvol32", internet: "iexplore", system: "tshoot", games: "sol", solitaire: "sol", freecell: "freecell", minesweeper: "winmine", outlook: "msoe", shortcuts: "folderop" };
 const walk = (nodes, fn, path = []) => nodes.forEach((n, i) => (fn(n, [...path, i]), n.c && walk(n.c, fn, [...path, i])));
 
 export function openHelp(ctx, { topic } = {}) {

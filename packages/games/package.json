@@ -2,7 +2,7 @@
   "name": "@win2k/games",
   "version": "1.0.0",
   "type": "module",
-  "description": "Minesweeper, Solitaire, FreeCell and Pinball",
+  "description": "Minesweeper, Solitaire, and FreeCell",
   "exports": {
     ".": "./index.js",
     "./*": "./*"

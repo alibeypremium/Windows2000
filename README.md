@@ -33,7 +33,7 @@ The static build is written to `dist/`. Serve that directory at an HTTP(S) origi
 ## First steps
 
 - Use Start → Programs, desktop icons, or Start → Run to open apps.
-- Try Run commands `notepad`, `mspaint`, `calc`, `winmine`, `sol`, `freecell`, `pinball`, `cmd`, `regedit`, and `control`.
+- Try Run commands `notepad`, `mspaint`, `calc`, `winmine`, `sol`, `freecell`, `cmd`, `regedit`, and `control`.
 - Files saved by an editor appear in Explorer. Import files through Explorer, or drop files onto the desktop. Export individual files using Download.
 - Control Panel → System → Backup exports the virtual filesystem as JSON. Settings and task definitions are stored separately and are not included in this filesystem backup.
 - Right-click windows and taskbar buttons for window operations. Drag title bars and borders to move and resize windows.
@@ -41,7 +41,7 @@ The static build is written to `dist/`. Serve that directory at an HTTP(S) origi
 
 ## Renderer selection
 
-The default renderer attempts WebGPU, WebGL 2, then Canvas 2D. The desktop background, Paint presentation, and Pinball presentation use the reusable rendering package. Paint raster editing and game physics run in JavaScript.
+The default renderer attempts WebGPU, WebGL 2, then Canvas 2D. The desktop background, and Paint presentation use the reusable rendering package. Paint raster editing and game physics run in JavaScript.
 
 Use `?renderer=canvas2d`, `?renderer=webgl2`, or `?renderer=webgpu` for renderer selection; unsupported backends fall back. `?app=notepad` launches a registered app after startup. About Windows and System Information report the selected renderer.
 

@@ -47,7 +47,6 @@ import {
   openMinesweeper,
   openSolitaire,
   openFreeCell,
-  openPinball,
 } from "/packages/games/index.js";
 import { openWinamp } from "/packages/accessories/winamp.js";
 import { openWinRAR } from "/packages/accessories/winrar.js";
@@ -313,13 +312,6 @@ ctx.apps = [
     icon: "freecell",
     aliases: ["freecell.exe"],
     open: openFreeCell,
-  },
-  {
-    id: "pinball",
-    name: "Pinball",
-    icon: "pinball",
-    aliases: ["pinball.exe"],
-    open: openPinball,
   },
   {
     id: "taskmgr",

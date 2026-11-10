@@ -66,7 +66,6 @@ const icons = {
   solitaire: "w2k/ref-solitaire",
   freecell: "w2k/ref-freecell",
   minesweeper: "w2k/ref-minesweeper",
-  pinball: "pinball",
   winamp: "winamp",
   winrar: "winrar",
   word: "word",

@@ -837,7 +837,6 @@ export class DesktopShell {
     const games = this.appItems([
         "freecell",
         "minesweeper",
-        "pinball",
         "solitaire",
       ]),
       accessories = [

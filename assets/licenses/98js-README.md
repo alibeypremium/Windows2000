@@ -15,7 +15,6 @@ Includes:
 * ![](images/icons/pipes-16x16.png) 3D FlowerBox ([original repository](https://github.com/kevin-shannon/3D-FlowerBox)) by [Kevin Shannon](https://github.com/kevin-shannon)
 * ![](images/icons/minesweeper-16x16.png) Minesweeper ([separate README](programs/minesweeper/README.md); [original repository](https://github.com/ziebelje/minesweeper)) by [Jon Ziebell](https://github.com/ziebelje/)
 * ![](images/icons/solitaire-16x16.png) Solitaire ([original repository](https://github.com/rjanjic/js-solitaire)) by [Radovan Janjic](https://github.com/rjanjic)
-* ![](images/icons/pinball-16x16.png) Pinball ([original repository](https://github.com/alula/SpaceCadetPinball)) ported by [Muzychenko Andrey](https://github.com/k4zmu2a) and [Alula](https://github.com/alula)
 * ![](images/icons/winamp2-16x16.png) Winamp 2.9 ([separate README](programs/winamp/README.md); [original repository](https://github.com/captbaritone/webamp)) by [Jordan Eldredge](https://jordaneldredge.com/)
 * ![](images/icons/folder-open-16x16.png) Windows Explorer / ![](images/icons/internet-explorer-16x16.png) Internet Explorer ([separate README](programs/explorer/README.md))
 * ![](images/icons/chm-16x16.png) Help Viewer
