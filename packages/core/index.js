@@ -639,17 +639,45 @@ export class Clipboard {
       return this.text;
     }
   }
+  /**
+   * Move/copy `paths` into `target`. When the destination already has an item of the
+   * same name (and the source is elsewhere) `this.onConflict(info)` is asked, like the
+   * shell's Confirm File/Folder Replace: "yes" | "all" | "no" | "cancel".
+   */
+  async transfer(fs, paths, target, { copy = false, onDone } = {}) {
+    const done = [];
+    let all = false;
+    for (const path of paths) {
+      const dest = joinPath(target, basename(path));
+      const sameFolder = dirname(path).toLowerCase() === target.toLowerCase();
+      if (fs.exists(dest) && !sameFolder && dest.toLowerCase() !== path.toLowerCase()) {
+        let answer = "yes";
+        if (!all && this.onConflict)
+          answer = await this.onConflict({ name: basename(path), folder: fs.stat(path)?.type === "folder", src: fs.stat(path), dst: fs.stat(dest), multi: paths.length > 1 });
+        if (answer === "cancel") break;
+        if (answer === "no") continue;
+        if (answer === "all") all = true;
+        if (fs.stat(path)?.type === "folder" && fs.stat(dest)?.type === "folder") {
+          // folders merge: same-named files inside are asked about / replaced individually
+          await this.transfer(fs, fs.list(path, { includeHidden: true }).map((n) => n.path), dest, { copy });
+          if (!copy) await fs.remove(path, { permanent: true });
+          done.push(dest);
+        } else {
+          await fs.remove(dest, { permanent: true });
+          done.push(await fs.move(path, dest, { copy }));
+        }
+      } else done.push(await fs.move(path, joinPath(target, fs.uniqueName(target, basename(path))), { copy }));
+      onDone?.(path);
+    }
+    return done;
+  }
   async pasteFiles(fs, target) {
-    const pasted = [];
-    for (const path of [...this.files]) {
-      const name = fs.uniqueName(target, basename(path));
-      pasted.push(
-        await fs.move(path, joinPath(target, name), {
-          copy: this.mode === "copy",
-        }),
-      );
-      if (this.mode === "cut")
-        this.files = this.files.filter((p) => p !== path);
+    const files = [...this.files], copy = this.mode === "copy";
+    let pasted;
+    try {
+      pasted = await this.transfer(fs, files, target, { copy, onDone: (p) => { if (!copy) this.files = this.files.filter((f) => f !== p); } });
+    } finally {
+      this.bus.emit("clipboard:change", this);
     }
     this.bus.emit("clipboard:change", this);
     return pasted;

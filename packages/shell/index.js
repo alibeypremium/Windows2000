@@ -88,13 +88,7 @@ export class DesktopShell {
         }
         const paths = e.dataTransfer.getData("application/x-win2k-files");
         if (paths) {
-          for (const p of JSON.parse(paths))
-            if (!p.toLowerCase().startsWith(DESKTOP.toLowerCase() + "/"))
-              await ctx.fs.move(
-                p,
-                joinPath(DESKTOP, ctx.fs.uniqueName(DESKTOP, basename(p))),
-                { copy: e.ctrlKey },
-              );
+          await ctx.clipboard.transfer(ctx.fs, JSON.parse(paths).filter((p) => !p.toLowerCase().startsWith(DESKTOP.toLowerCase() + "/")), DESKTOP, { copy: e.ctrlKey });
         } else
           for (const file of e.dataTransfer.files)
             await ctx.fs.importFile(file, DESKTOP);
@@ -233,17 +227,8 @@ export class DesktopShell {
             b.classList.remove("drop-target");
             const data = e.dataTransfer.getData("application/x-win2k-files");
             if (data) {
-              for (const p of JSON.parse(data))
-                if (item.id === "recycle") await ctx.fs.remove(p);
-                else if (p !== item.folder)
-                  await ctx.fs.move(
-                    p,
-                    joinPath(
-                      item.folder,
-                      ctx.fs.uniqueName(item.folder, basename(p)),
-                    ),
-                    { copy: e.ctrlKey },
-                  );
+              if (item.id === "recycle") for (const p of JSON.parse(data)) await ctx.fs.remove(p);
+              else await ctx.clipboard.transfer(ctx.fs, JSON.parse(data).filter((p) => p !== item.folder), item.folder, { copy: e.ctrlKey });
             } else if (item.folder)
               for (const file of e.dataTransfer.files)
                 await ctx.fs.importFile(file, item.folder);
@@ -340,7 +325,7 @@ export class DesktopShell {
       if (target) {
         try {
           if (target.id === "recycle") for (const p of files) await ctx.fs.remove(p);
-          else for (const p of files) if (p !== target.folder) await ctx.fs.move(p, joinPath(target.folder, ctx.fs.uniqueName(target.folder, basename(p))), { copy: ev.ctrlKey });
+          else await ctx.clipboard.transfer(ctx.fs, files.filter((p) => p !== target.folder), target.folder, { copy: ev.ctrlKey });
         } catch (err) { ctx.dialogs.message(String(err.message || err), { title: "Error", icon: "error" }); }
         this.renderDesktop();
         return;

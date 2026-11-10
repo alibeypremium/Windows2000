@@ -1359,14 +1359,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
         if (shellNames[target]) return;
         const local = e.dataTransfer.getData("application/x-win2k-files");
         if (local) {
-          for (const p of JSON.parse(local)) {
-            if (dirname(p).toLowerCase() === target.toLowerCase()) continue;
-            await ctx.fs.move(
-              p,
-              joinPath(target, ctx.fs.uniqueName(target, basename(p))),
-              { copy: e.ctrlKey },
-            );
-          }
+          await ctx.clipboard.transfer(ctx.fs, JSON.parse(local).filter((p) => dirname(p).toLowerCase() !== target.toLowerCase()), target, { copy: e.ctrlKey });
         } else
           for (const file of e.dataTransfer.files)
             await ctx.fs.importFile(file, target);

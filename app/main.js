@@ -20,6 +20,7 @@ import {
   icon,
 } from "/packages/ui/index.js";
 import { DesktopRenderer } from "/packages/rendering/index.js";
+import { confirmReplace } from "/packages/ui/shconfirm.js";
 import {
   DesktopShell,
   openRun,
@@ -511,6 +512,7 @@ ctx.run = async (command) => {
 };
 ctx.lock = () => ctx.shell.lock();
 ctx.previewScreensaver = (type) => ctx.shell.previewScreensaver(type);
+ctx.clipboard.onConflict = (info) => confirmReplace(ctx, info);
 const escapeHTML = (text) =>
   String(text).replace(
     /[&<>"']/g,
