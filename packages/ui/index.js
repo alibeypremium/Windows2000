@@ -68,6 +68,7 @@ const icons = {
   minesweeper: "w2k/ref-minesweeper",
   winamp: "winamp",
   winrar: "winrar",
+  rarfile: "rarfile",
   word: "word",
   worddoc: "worddoc",
   netscape: "netscape",
@@ -254,6 +255,7 @@ document.addEventListener("pointerdown", (e) => {
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeMenus();
 });
+let ctxMenu = null;
 export function popup(items, x, y, { parent = null, anchor = null } = {}) {
   if (!parent) closeMenus();
   const menu = el("div", { class: "popup-menu", role: "menu", tabindex: -1 });
@@ -279,7 +281,7 @@ export function popup(items, x, y, { parent = null, anchor = null } = {}) {
         ? el("span", { class: "menu-check", text: item.checked ? "✓" : "" })
         : null,
       item.icon ? icon(item.icon) : el("span", { class: "menu-icon-space" }),
-      el("span", { class: "menu-label", text: item.label }),
+      el("span", { class: "menu-label", text: item.label, style: item.bold ? { fontWeight: "bold" } : null }),
       el("span", { class: "menu-shortcut", text: item.shortcut || "" }),
       item.submenu ? el("span", { class: "menu-arrow" }) : null,
     );
@@ -302,7 +304,23 @@ export function popup(items, x, y, { parent = null, anchor = null } = {}) {
         );
       }
     };
-    row.addEventListener("pointerenter", openChild);
+    row.addEventListener("pointerenter", () => {
+      if (ctxMenu && !ctxMenu.contains(row)) { ctxMenu.remove(); ctxMenu = null; }
+      openChild();
+    });
+    if (item.context) {
+      row.dataset.sortKey = (item.submenu ? "0" : "1") + item.label.toLowerCase();
+      row.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        ctxMenu?.remove();
+        ctxMenu = null;
+        menu.querySelectorAll(".selected").forEach((n) => n.classList.remove("selected"));
+        row.classList.add("selected");
+        const list = (typeof item.context === "function" ? item.context() : item.context).map((c) => c && c.sort ? { ...c, action: () => sortMenuRows(menu) } : c);
+        ctxMenu = popup(list, e.clientX, e.clientY, { parent: menu });
+      });
+    }
     row.addEventListener("focus", () => {
       menu
         .querySelectorAll(".selected")
@@ -365,6 +383,16 @@ export function popup(items, x, y, { parent = null, anchor = null } = {}) {
   menu.style.top = y + "px";
   anchor?.classList.add("menu-open");
   return menu;
+}
+/** "Sort by Name": folders first, then items, alphabetical (like the Windows 2000 Start menu). */
+function sortMenuRows(menu) {
+  const rows = [...menu.querySelectorAll(":scope > .popup-item[data-sort-key]")];
+  const slots = rows.slice();
+  rows.sort((a, b) => a.dataset.sortKey.localeCompare(b.dataset.sortKey));
+  const anchor = document.createComment("");
+  slots.forEach((r) => r.before(anchor.cloneNode()));
+  const marks = [...menu.childNodes].filter((n) => n.nodeType === 8);
+  rows.forEach((r, i) => marks[i].replaceWith(r));
 }
 export function menuBar(groups) {
   const bar = el("nav", {

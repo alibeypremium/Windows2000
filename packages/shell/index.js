@@ -810,6 +810,51 @@ export class DesktopShell {
       day: "numeric",
     });
   }
+  /** Windows 2000 Start-menu item context menu (shell32 verbs + WinRAR shell extension, as on a real install). */
+  startItemMenu(entry) {
+    const wrap = (list) => list.map((c) => (c.separator ? c : { ...c, ...(c.action ? { action: () => { this.closeStart(); return c.action(); } } : {}), ...(c.submenu ? { submenu: wrap(c.submenu) } : {}) }));
+    return wrap(this.startItemMenuRaw(entry));
+  }
+  startItemMenuRaw(entry) {
+    const ctx = this.ctx, sep = separator, name = entry.label, folder = !!entry.submenu;
+    const rar = (label) => ({ label, icon: "rarfile", action: () => ctx.launch("winrar") });
+    const toDesktop = (dir) => async () => {
+      const cmd = entry.appId || "explorer";
+      await ctx.fs.writeFile(joinPath(dir, ctx.fs.uniqueName(dir, `Shortcut to ${name}.lnk`)), JSON.stringify({ command: cmd }), { mime: "application/x-win2k-shortcut" });
+      this.renderDesktop();
+    };
+    const sendTo = { label: "Send To", submenu: [
+      { label: "Desktop (create shortcut)", icon: "desktop", action: toDesktop(DESKTOP) },
+      { label: "Mail Recipient", icon: "outlook", action: () => ctx.launch("outlook") },
+      { label: "My Documents", icon: "documents", action: toDesktop(DOCS) },
+      { label: "3½ Floppy (A)", icon: "floppy", action: () => ctx.dialogs.message("A:\\ is not accessible.\n\nThe device is not ready.", { title: "Copy Error", icon: "error" }) },
+    ] };
+    const key = entry.appId || name;
+    const del = async () => {
+      if (!(await confirmDelete(ctx, { names: [name], folders: [folder] }))) return;
+      ctx.settings.set("startHidden", [...new Set([...(ctx.settings.get("startHidden") || []), key])]);
+    };
+    const rename = async () => {
+      const v = await ctx.dialogs.prompt("Type a new name for the item:", name, { title: "Rename" });
+      if (v && v.trim()) ctx.settings.set("startNames", { ...(ctx.settings.get("startNames") || {}), [key]: v.trim() });
+    };
+    const props = () => ctx.dialogs.message(`${name}\n\nType: ${folder ? "File Folder" : "Shortcut"}${entry.appId ? "\nTarget: " + entry.appId + ".exe" : ""}\nLocation: Start Menu\\Programs`, { title: name + " Properties", icon: entry.icon });
+    const open = { label: "Open", bold: true, action: () => (entry.appId ? ctx.launch(entry.appId) : ctx.launch("explorer", { path: "computer" })) };
+    if (folder)
+      return [open, { label: "Explore", action: () => ctx.launch("explorer", { path: "computer" }) }, { label: "Find...", action: () => ctx.launch("explorer", { path: "search" }) }, sep(), rar("Add to archive..."), rar(`Add to "${name}.rar"`), rar("Compress and email..."), rar(`Compress to "${name}.rar" and email`), sep(), sendTo, sep(), { label: "Cut" }, { label: "Copy" }, sep(), { label: "Create Shortcut", action: toDesktop(DESKTOP) }, { label: "Delete", action: del }, { label: "Rename", action: rename }, sep(), { label: "Sort by Name", sort: true }, sep(), { label: "Properties", action: props }];
+    return [open, rar("Add to archive..."), rar(`Add to "${name}.rar"`), rar("Compress and email..."), rar(`Compress to "${name}.rar" and email`), sep(), sendTo, sep(), { label: "Cut" }, { label: "Copy" }, sep(), { label: "Create Shortcut", action: toDesktop(DESKTOP) }, { label: "Delete", action: del }, { label: "Rename", action: rename }, sep(), { label: "Sort by Name", sort: true }, sep(), { label: "Properties", action: props }];
+  }
+  /** Adds the right-click menu to every item of a Start submenu tree. */
+  decorateStart(items) {
+    const hidden = this.ctx.settings.get("startHidden") || [], names = this.ctx.settings.get("startNames") || {};
+    return items.filter((i) => i.separator || !hidden.includes(i.appId || i.label)).map((i) => {
+      if (i.separator || i.disabled) return i;
+      const out = { ...i, label: names[i.appId || i.label] || i.label };
+      if (Array.isArray(i.submenu)) out.submenu = this.decorateStart(i.submenu);
+      out.context = () => this.startItemMenu(out);
+      return out;
+    });
+  }
   appItems(ids) {
     return ids
       .map((id) => {
@@ -818,6 +863,7 @@ export class DesktopShell {
           ? {
               label: app.name,
               icon: app.icon,
+              appId: id,
               action: () => this.ctx.launch(id),
             }
           : null;
@@ -937,7 +983,7 @@ export class DesktopShell {
         action: () => ctx.launch("help", { topic: "updates" }),
       },
       { separator: true },
-      { label: "Programs", icon: "programs", submenu: programs },
+      { label: "Programs", icon: "programs", submenu: this.decorateStart(programs) },
       {
         label: "Documents",
         icon: "documents",
