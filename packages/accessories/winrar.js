@@ -1,7 +1,10 @@
-// WinRAR 3.20 look-alike. ZIP is read/written with fflate (MIT) and RAR is read with the unrar WebAssembly build
+// WinRAR 4.11 look-alike (menus, dialogs, toolbar bitmaps and icons come from the real WinRAR.exe resources). ZIP is read/written with fflate (MIT) and RAR is read with the unrar WebAssembly build
 // (node-unrar-js, MIT/unrar licence). Both are vendored in assets/vendor/winrar. RAR archives cannot be created.
 import { el, button, menuBar, icon, fileIcon, statusBar } from "../ui/index.js";
 import { basename, dirname, extension, joinPath, normalizePath, pickFiles, DOCS } from "../core/index.js";
+import { loadRar, buildDialog, buildTabs, openDlgWindow, ctl, plain, RAR_BASE } from "./winrar-dlg.js";
+
+const RB = "/assets/ui/winrar/rar411/";
 
 const V = new URL("../../assets/vendor/winrar/", import.meta.url).href;
 let libs = null;
@@ -63,14 +66,15 @@ function readZipDirectory(u8) {
 }
 
 export async function openWinRAR(ctx, { path = null } = {}) {
+  const RS = await loadRar();
   const w = ctx.wm.create({ title: "WinRAR", icon: "winrar", width: 640, height: 450, x: 120, y: 70, appId: "winrar" });
   const st = Object.assign({ sortKey: "name", sortDir: 1 }, ctx.settings.get("winrar") || {});
   let cwd = DOCS; // file-manager folder, "" = drives
   let arc = null; // { path, kind, data, entries, inner }
   let items = [], selected = new Set(), last = null;
 
-  const toolbtn = (name, label, action) => {
-    const b = el("button", { class: "wr-tool", title: label, type: "button" }, el("img", { src: `/assets/ui/winrar/${name}.png`, width: 32, height: 32, alt: "", draggable: "false" }), el("span", { text: label }));
+  const toolbtn = (img, label, action) => {
+    const b = el("button", { class: "wr-tool", title: label, type: "button" }, el("img", { src: `${RB}b${img}.png`, width: 48, height: 36, alt: "", draggable: "false" }), el("span", { text: label }));
     b.addEventListener("click", action);
     return b;
   };
@@ -159,7 +163,7 @@ export async function openWinRAR(ctx, { path = null } = {}) {
         const c = el("div", { class: "wr-td" + (k === "size" || k === "packed" ? " num" : ""), style: { width: wd + "px" } });
         if (k === "name") {
           const ext = extension(it.name);
-          c.append(it.drive ? icon("drive") : (ext === "zip" || ext === "rar") && !it.dir ? el("img", { class: "icon", src: "/assets/ui/winrar/archive16.png", width: 16, height: 16, alt: "" }) : icon(fileIcon({ name: it.name, type: it.dir ? "folder" : "file" })), el("span", { text: v }));
+          c.append(it.drive ? icon("drive") : (ext === "zip" || ext === "rar") && !it.dir ? el("img", { class: "icon", src: "/assets/icons/rarfile-16x16.png", width: 16, height: 16, alt: "" }) : icon(fileIcon({ name: it.name, type: it.dir ? "folder" : "file" })), el("span", { text: v }));
         } else c.textContent = v;
         return c;
       });
@@ -233,13 +237,32 @@ export async function openWinRAR(ctx, { path = null } = {}) {
     if (TEXT.test(extension(path))) await ctx.fs.writeFile(path, new TextDecoder().decode(bytes), { mime: "text/plain" });
     else await ctx.fs.writeFile(path, bytesDataUrl(bytes), { mime: "application/octet-stream", encoding: "data-url" });
   };
-  const progress = (title, text) => {
-    const bar = el("div", { class: "wr-bar" }, el("div", { class: "wr-bar-fill" }));
-    const label = el("div", { class: "wr-prog-text", text }), name = el("div", { class: "wr-prog-name" });
-    const pw = ctx.wm.create({ title, noIcon: true, width: 380, height: 150, dialog: true, resizable: false, minimizable: false, maximizable: false, appId: "dialog" });
-    let cancelled = false;
-    pw.setContent(el("div", { class: "wr-prog" }, label, name, bar, el("div", { class: "dialog-buttons" }, button("Cancel", () => { cancelled = true; }))));
-    return { set: (n, f) => { name.textContent = n; bar.firstChild.style.width = Math.round(f * 100) + "%"; }, get cancelled() { return cancelled; }, close: () => pw.close() };
+  // ---------- real dialog helpers ----------
+  const modal = (title, content, { collect = () => true, buttons = true, bind } = {}) => new Promise((resolve) => {
+    let fin = false, d;
+    const done = async (v) => { if (fin) return; fin = true; d.onClose = null; await d.close(); resolve(v); };
+    const ok = () => { const v = collect(); if (v !== false) done(v); };
+    const row = buttons ? el("div", { class: "rd-btnrow" }, button("OK", ok, { class: "default-button" }), button("Cancel", () => done(null)), button("Help", () => ctx.launch("help", { topic: "intro" }))) : null;
+    d = openDlgWindow(ctx, { title, content, buttons: row });
+    d.onClose = () => { resolve(null); return true; };
+    d.el.addEventListener("keydown", (e) => { if (e.key === "Escape") { e.stopPropagation(); done(null); } else if (e.key === "Enter" && e.target.tagName !== "BUTTON" && e.target.tagName !== "TEXTAREA") { e.preventDefault(); ok(); } });
+    bind?.({ ok, done, win: d });
+  });
+  const progress = (title) => {
+    const dlg = buildDialog(RS.dialogs[11934]);
+    const log = dlg.byId(159), pct = dlg.byId(152), bar = dlg.byId(160).firstChild;
+    let cancelled = false, paused = false;
+    const d = openDlgWindow(ctx, { title, content: dlg.root });
+    dlg.byId(2).addEventListener("click", () => { cancelled = true; });
+    dlg.byId(111).addEventListener("click", () => { paused = !paused; dlg.byId(111).lastChild && (dlg.byId(111).textContent = paused ? "Resume" : "Pause"); });
+    dlg.byId(110).addEventListener("click", () => d.minimize?.());
+    dlg.byId(9).addEventListener("click", () => ctx.launch("help", { topic: "intro" }));
+    return {
+      line: (t) => { log.append(t + "\n"); log.scrollTop = log.scrollHeight; },
+      set: (n, f) => { pct.textContent = Math.round(f * 100) + "%"; bar.style.width = Math.round(f * 100) + "%"; },
+      get cancelled() { return cancelled; }, get paused() { return paused; },
+      close: () => d.close(),
+    };
   };
   /** Returns [{name,dir,bytes|null}] for the requested archive entries (selection = names relative to arc.inner). */
   const readEntries = async (wanted, onProgress, test = false) => {
@@ -263,68 +286,89 @@ export async function openWinRAR(ctx, { path = null } = {}) {
     }
     return out;
   };
-  const extractTo = async (dest, names) => {
-    const pr = progress(`Extracting from ${basename(arc.path)}`, `Extracting from ${basename(arc.path)}`);
+  const extractTo = async (dest, names, opts = {}) => {
+    const pr = progress(`Extracting from ${basename(arc.path)}`);
+    pr.line(`Extracting from ${basename(arc.path)}\n`);
     try {
       const strip = names && arc.inner ? arc.inner + "/" : "";
       const list = await readEntries(names, (n, f) => pr.set(n, f));
       for (const f of list) {
         if (pr.cancelled) break;
         const rel = strip && f.name.toLowerCase().startsWith(strip.toLowerCase()) ? f.name.slice(strip.length) : f.name;
-        const target = joinPath(dest, rel);
+        let target = joinPath(dest, rel);
+        if (!f.dir && ctx.fs.exists(target)) {
+          const m = opts.overwrite || "ask";
+          if (opts.update === "fresh" && false) continue;
+          if (m === "skip") { pr.line(`Skipping  ${rel}`); continue; }
+          if (m === "rename") { let n = 1; const base = target.replace(/(\.[^./]*)?$/, ""), ext = (target.match(/(\.[^./]*)$/) || [""])[0]; while (ctx.fs.exists(`${base}(${n})${ext}`)) n++; target = `${base}(${n})${ext}`; }
+          else if (m === "ask" && (await ctx.dialogs.message(`${dispPath(target)}\n\nAlready exists. Do you want to replace it?`, { title: "Confirm file replace", icon: "question", buttons: ["Yes", "No"], defaultButton: 1 })) !== "Yes") { pr.line(`Skipping  ${rel}`); continue; }
+        }
+        pr.line(`Extracting  ${rel.replace(/\//g, "\\")}`);
         if (f.dir) await mkdirs(target); else await putFile(target, f.bytes);
       }
     } catch (e) { pr.close(); return errBox(e); }
     pr.close();
   };
-  const folderDialog = (title, initial) => new Promise((resolve) => {
-    const d = ctx.wm.create({ title, noIcon: true, width: 420, height: 380, dialog: true, resizable: false, minimizable: false, maximizable: false, appId: "dialog" });
-    const input = el("input", { type: "text", value: dispPath(initial), "aria-label": "Destination path", style: { width: "100%" } });
-    const tree = el("div", { class: "wr-tree inset" });
+  const folderDialog = (title, initial) => {
+    const t = buildTabs([RS.dialogs[11836], RS.dialogs[11860]], { labels: ["General", "Advanced"], uid: 2 });
+    const g = t.pages[0];
+    const pathBox = g.byId(101), tree = g.byId(104);
+    ctl.value(pathBox, dispPath(initial));
+    ctl.checked(g.byId(109), true); ctl.checked(g.byId(105), true);
     const showTree = (open) => {
       tree.replaceChildren();
       const add = (p, depth) => {
         const n = ctx.fs.get(p);
         if (!n || n.type !== "folder") return;
-        const row = el("div", { class: "wr-tree-row" + (normalizePath(p) === normalizePath(open) ? " sel" : ""), style: { paddingLeft: 4 + depth * 14 + "px" } }, icon(normalizePath(p) === normalizePath(open) ? "folderOpen" : "folder"), el("span", { text: depth === 0 ? p.slice(0, 2) : basename(p) }));
-        row.addEventListener("click", () => { input.value = dispPath(p); showTree(p); });
+        const cur = normalizePath(p) === normalizePath(open);
+        const row = el("div", { class: "wr-tree-row" + (cur ? " sel" : ""), style: { paddingLeft: 4 + depth * 14 + "px" } }, icon(cur ? "folderOpen" : "folder"), el("span", { text: depth === 0 ? p.slice(0, 2) : basename(p) }));
+        row.addEventListener("click", () => { ctl.value(pathBox, dispPath(p)); showTree(p); });
         tree.append(row);
         const parts = normalizePath(open).toLowerCase();
-        if (parts === p.toLowerCase() || parts.startsWith(p.toLowerCase().replace(/\/$/, "") + "/") || depth === 0) {
-          for (const c of ctx.fs.list(p).filter((x) => x.type === "folder")) add(c.path, depth + 1);
-        }
+        if (parts === p.toLowerCase() || parts.startsWith(p.toLowerCase().replace(/\/$/, "") + "/") || depth === 0) for (const c of ctx.fs.list(p).filter((x) => x.type === "folder")) add(c.path, depth + 1);
       };
       add("C:/", 0); add("D:/", 0);
     };
     showTree(initial);
-    let done = false;
-    const finish = (v) => { if (done) return; done = true; d.onClose = null; d.close(); resolve(v); };
-    d.setContent(el("div", { class: "wr-dlg" },
-      el("div", { text: "Destination path (will be created if does not exist)" }), input,
-      el("div", { class: "wr-grp" }, el("div", { text: "Update mode" }), el("label", {}, el("input", { type: "radio", name: "um", checked: true }), " Extract and replace files"), el("label", {}, el("input", { type: "radio", name: "um" }), " Extract and update files"), el("label", {}, el("input", { type: "radio", name: "um" }), " Fresh existing files only")),
-      el("div", { text: "Folders" }), tree,
-      el("div", { class: "dialog-buttons" }, button("OK", () => finish(normalizePath(input.value.replace(/\\/g, "/"))), { class: "default-button" }), button("Cancel", () => finish(null)), button("Help", () => ctx.launch("help", { topic: "intro" })))));
-    d.onClose = () => { resolve(null); return true; };
-    input.focus(); input.select();
-  });
+    g.byId(102).addEventListener("click", () => showTree(normalizePath(ctl.value(pathBox).replace(/\\/g, "/"))));
+    g.byId(103).addEventListener("click", async () => {
+      const name = await ctx.dialogs.prompt("New folder name:", "", { title: "Create folder" });
+      if (!name) return;
+      const p = joinPath(normalizePath(ctl.value(pathBox).replace(/\\/g, "/")), name);
+      try { await mkdirs(p); ctl.value(pathBox, dispPath(p)); showTree(p); } catch (e) { errBox(e); }
+    });
+    g.byId(115).addEventListener("click", () => ctx.settings.set("winrarExtract", { path: ctl.value(pathBox) }));
+    return modal(title, t.root, { collect: () => {
+      const radio = (ids) => ids.find((i) => ctl.checked(g.byId(i)));
+      return {
+        dest: normalizePath(ctl.value(pathBox).replace(/\\/g, "/")),
+        update: { 109: "replace", 110: "update", 111: "fresh" }[radio([109, 110, 111])],
+        overwrite: { 105: "ask", 106: "yes", 107: "skip", 108: "rename" }[radio([105, 106, 107, 108])],
+        subfolder: ctl.checked(g.byId(112)), explorer: ctl.checked(g.byId(114)),
+      };
+    } });
+  };
 
   // ---------- commands ----------
   const selNames = () => [...selected];
   const needArc = (what) => { if (!arc) { ctx.dialogs.message(`${what} is available only inside an archive. Open an archive first.`, { title: "WinRAR", icon: "info" }); return false; } return true; };
   const doExtract = async () => {
     if (!needArc("Extract")) return;
-    const dest = await folderDialog("Extraction path and options", dirname(arc.path));
-    if (!dest) return;
-    await extractTo(dest, selected.size ? selNames() : null);
+    const r = await folderDialog("Extraction path and options", dirname(arc.path));
+    if (!r || !r.dest) return;
+    const dest = r.subfolder ? joinPath(r.dest, basename(arc.path).replace(/\.[^.]*$/, "")) : r.dest;
+    await extractTo(dest, selected.size ? selNames() : null, r);
+    if (r.explorer) ctx.launch("explorer", { path: dest });
     render();
   };
   const doTest = async () => {
     if (!needArc("Test")) return;
-    const pr = progress("Testing", `Testing ${basename(arc.path)}`);
+    const pr = progress(`Testing ${basename(arc.path)}`);
+    pr.line(`Testing archive ${basename(arc.path)}\n`);
     let bad = 0, count = 0;
     try {
       const L = await loadLibs();
-      const list = await readEntries(null, (n, f) => pr.set(n, f));
+      const list = await readEntries(null, (n, f) => { pr.set(n, f); pr.line(`Testing     ${n.replace(/\//g, "\\")}`.padEnd(40) + "OK"); });
       for (const f of list) {
         if (f.dir) continue;
         count++;
@@ -363,24 +407,23 @@ export async function openWinRAR(ctx, { path = null } = {}) {
     for (const p of paths) walk(p, basename(p));
     return out;
   };
-  const addDialog = (defName, files, folder) => new Promise((resolve) => {
-    const d = ctx.wm.create({ title: "Archive name and parameters", noIcon: true, width: 440, height: 400, dialog: true, resizable: false, minimizable: false, maximizable: false, appId: "dialog" });
-    const name = el("input", { type: "text", value: defName, style: { width: "100%" }, "aria-label": "Archive name" });
-    const method = el("select", {}, ...["Store", "Fastest", "Fast", "Normal", "Good", "Best"].map((m) => el("option", { text: m, selected: m === "Normal" })));
-    const chk = (t, c = false, dis = false) => el("label", { class: "wr-chk" }, el("input", { type: "checkbox", checked: c, disabled: dis }), " " + t);
-    const del = chk("Delete files after archiving");
-    const rarR = el("input", { type: "radio", name: "fmt", disabled: true }), zipR = el("input", { type: "radio", name: "fmt", checked: true });
-    let done = false;
-    const finish = (v) => { if (done) return; done = true; d.onClose = null; d.close(); resolve(v); };
-    d.setContent(el("div", { class: "wr-dlg" },
-      el("div", { text: "Archive name" }), name,
-      el("div", { class: "wr-grp" }, el("div", { text: "Archive format" }), el("label", { title: "RAR archives can not be created in this browser version" }, rarR, " RAR (read only)"), el("label", {}, zipR, " ZIP")),
-      el("div", { class: "wr-grp" }, el("div", { text: "Compression method" }), method),
-      el("div", { class: "wr-grp" }, el("div", { text: "Archiving options" }), del, chk("Create SFX archive", false, true), chk("Create solid archive", false, true), chk("Put authenticity verification", false, true), chk("Lock archive", false, true)),
-      el("div", { class: "dialog-buttons" }, button("OK", () => finish({ name: name.value.trim(), level: ["Store", "Fastest", "Fast", "Normal", "Good", "Best"].indexOf(method.value), del: del.firstChild.checked }), { class: "default-button" }), button("Cancel", () => finish(null)), button("Help", () => ctx.launch("help", { topic: "intro" })))));
-    d.onClose = () => { resolve(null); return true; };
-    name.focus(); name.select();
-  });
+  const addDialog = (defName) => {
+    const ids = [11528, 11562, 11542, 11582, 11628, 11606, 11654];
+    const t = buildTabs(ids.map((i) => RS.dialogs[i]), { labels: ["General", "Advanced", "Options", "Files", "Backup", "Time", "Comment"], uid: 1 });
+    const g = t.pages[0];
+    ctl.value(g.byId(101), defName);
+    ctl.options(g.byId(112), ["Store", "Fastest", "Fast", "Normal", "Good", "Best"], 3);
+    ctl.options(g.byId(117), ["Add and replace files", "Add and update files", "Fresh existing files only", "Synchronize archive contents"], 0);
+    ctl.options(g.byId(107), ["B", "KB", "MB", "GB"], 2);
+    ctl.checked(g.byId(114), true);
+    const rar = g.byId(113);
+    rar.title = "RAR archives can not be created in this browser version";
+    ctl.setEnabled(rar, false);
+    for (const i of [109, 110, 108, 104, 116, 106, 107, 105]) ctl.setEnabled(g.byId(i), false);
+    g.byId(102).addEventListener("click", async () => { const p = await ctx.dialogs.file({ mode: "save", path: dirname(normalizePath(ctl.value(g.byId(101)).replace(/\\/g, "/"))) || DOCS, name: basename(ctl.value(g.byId(101))) }); if (p) ctl.value(g.byId(101), dispPath(p)); });
+    g.byId(115).addEventListener("click", () => unavailable("Compression profiles"));
+    return modal("Archive name and parameters", t.root, { collect: () => ({ name: ctl.value(g.byId(101)).trim(), level: ["Store", "Fastest", "Fast", "Normal", "Good", "Best"].indexOf(ctl.value(g.byId(112))), del: ctl.checked(g.byId(111)) }) });
+  };
   const doAdd = async () => {
     let paths = [], target;
     if (arc) {
@@ -396,7 +439,7 @@ export async function openWinRAR(ctx, { path = null } = {}) {
     if (!sel.length) { await ctx.dialogs.message("Select files or folders to add first.", { title: "WinRAR", icon: "info" }); return; }
     paths = sel.map((i) => i.path);
     const base = sel.length === 1 ? sel[0].name.replace(/\.[^.]*$/, "") || sel[0].name : basename(cwd) || "Archive";
-    const r = await addDialog(joinPath(cwd, base + ".zip").replace(/\//g, "\\"), paths, cwd);
+    const r = await addDialog(joinPath(cwd, base + ".zip").replace(/\//g, "\\"));
     if (!r || !r.name) return;
     target = normalizePath(r.name.replace(/\\/g, "/"));
     if (!/\.zip$/i.test(target)) target += ".zip";
@@ -406,7 +449,8 @@ export async function openWinRAR(ctx, { path = null } = {}) {
     render();
   };
   const saveZip = async (target, files, level) => {
-    const pr = progress("Adding to archive", `Creating ${basename(target)}`);
+    const pr = progress(`Adding to archive ${basename(target)}`);
+    pr.line(`Creating archive ${basename(target)}\n`);
     try {
       const L = await loadLibs();
       pr.set(basename(target), 0.5);
@@ -449,60 +493,56 @@ export async function openWinRAR(ctx, { path = null } = {}) {
   };
   const unavailable = (what) => ctx.dialogs.message(`${what} is not available in this browser version of WinRAR.`, { title: "WinRAR", icon: "info" });
   const selectAll = () => { selected = new Set(items.map((i) => i.name)); markSel(); };
-  const about = () => ctx.dialogs.message("WinRAR 3.20\n32 bit version\n\nCopyright © 1993-2002 Alexander Roshal\n\nThis is a browser look-alike. It reads ZIP and RAR archives and creates ZIP archives.", { title: "About WinRAR", icon: "winrar" });
+  const about = () => {
+    const dlg = buildDialog(RS.dialogs[11890], { uid: 3 });
+    const set = (id, t) => { const c = dlg.byId(id); if (c) c.textContent = t; };
+    const bmp = dlg.byId(109); bmp.replaceChildren(el("img", { src: RB + "b104.png", alt: "" })); bmp.firstChild.style.cssText = "width:100%;height:100%;object-fit:contain;object-position:left";
+    set(107, "WinRAR 4.11 (32-bit)"); set(108, "Copyright © 1993-2011 by"); set(105, ""); set(106, "");
+    const big = dlg.byId(101); big.replaceChildren(el("img", { src: "/assets/icons/winrar-32x32.png", alt: "" })); big.style.cssText += ";background:none;border:0";
+    dlg.byId(110).addEventListener("click", async () => { try { ctx.launch("notepad", { text: await (await fetch(RB + "License.txt")).text() }); } catch (e) { errBox(e); } });
+    dlg.byId(111).addEventListener("click", () => ctx.dialogs.message("WinRAR uses the following components:\n\nunrar and fflate (browser ports)\n\nZIP archives are created in the browser.", { title: "Acknowledgments", icon: "info" }));
+    dlg.byId(112).addEventListener("click", () => window.open("https://www.rarlab.com/", "_blank", "noopener,noreferrer"));
+    modal("About WinRAR", dlg.root, { buttons: false, bind: ({ done }) => dlg.byId(1).addEventListener("click", () => done(null)) });
+  };
 
   // ---------- window ----------
-  const menus = menuBar({
-    File: [
-      { label: "Open archive", shortcut: "Ctrl+O", action: doOpen },
-      { label: "Change drive", shortcut: "Ctrl+D", action: () => { arc = null; cwd = ""; render(); } },
-      { label: "Save archive copy as...", disabled: !arc, action: async () => { if (!arc) return; const p = await ctx.dialogs.file({ mode: "save", path: DOCS, name: basename(arc.path) }); if (p) ctx.fs.writeFile(p, bytesDataUrl(arc.data), { encoding: "data-url", mime: "application/octet-stream" }); } },
-      { separator: true },
-      { label: "Select all", shortcut: "Ctrl+A", action: selectAll },
-      { label: "Invert selection", shortcut: "Ctrl+Alt+A", action: () => { selected = new Set(items.filter((i) => !selected.has(i.name)).map((i) => i.name)); markSel(); } },
-      { separator: true },
-      { label: "Exit", action: () => w.close() },
-    ],
-    Commands: [
-      { label: "Add files to archive", shortcut: "Alt+A", action: doAdd },
-      { label: "Extract to specified folder", shortcut: "Alt+E", action: doExtract },
-      { label: "Test archived files", shortcut: "Alt+T", action: doTest },
-      { label: "View file", shortcut: "Alt+V", action: doView },
-      { label: "Delete files", shortcut: "Del", action: doDelete },
-      { separator: true },
-      { label: "Show information", shortcut: "Alt+I", action: doInfo },
-      { label: "Scan archive for viruses", action: () => unavailable("Virus scanning") },
-      { label: "Add archive comment", action: () => unavailable("Archive comments") },
-      { label: "Protect archive from damage", action: () => unavailable("Recovery records") },
-      { label: "Convert archive to SFX", action: () => unavailable("SFX conversion") },
-    ],
-    Tools: [
-      { label: "Wizard", shortcut: "Alt+W", action: doAdd },
-      { label: "Find files", shortcut: "Alt+F", action: doFind },
-      { label: "Generate report", action: () => unavailable("Reports") },
-      { label: "Benchmark and hardware test", action: () => unavailable("The benchmark") },
-      { label: "Convert archives", action: () => unavailable("Archive conversion") },
-      { label: "Repair archive", shortcut: "Alt+R", action: () => unavailable("Archive repair") },
-    ],
-    Favorites: [
-      { label: "Add to favorites...", shortcut: "Ctrl+F", action: () => unavailable("Favorites") },
-      { label: "Organize favorites...", action: () => unavailable("Favorites") },
-      { separator: true },
-      { label: "My Documents", action: () => { arc = null; cwd = DOCS; render(); } },
-      { label: "Desktop", action: () => { arc = null; cwd = "C:/Documents and Settings/Administrator/Desktop"; render(); } },
-    ],
-    Options: [
-      { label: "Settings...", shortcut: "Ctrl+S", action: () => unavailable("The settings dialog") },
-      { label: "Import/export", action: () => unavailable("Import/export") },
-      { label: "View log...", action: () => unavailable("The log") },
-    ],
-    Help: [
-      { label: "Help topics", shortcut: "F1", action: () => ctx.launch("help", { topic: "intro" }) },
-      { separator: true },
-      { label: "About WinRAR...", action: about },
-    ],
+  const doRename = async () => {
+    const it = items.find((i) => selected.has(i.name));
+    if (!it) return;
+    if (arc || it.drive) return ctx.dialogs.message("Files inside archives cannot be renamed in this browser version.", { title: "WinRAR", icon: "info" });
+    const dlg = buildDialog(RS.dialogs[12014], { uid: 4 });
+    ctl.value(dlg.byId(101), it.name); ctl.value(dlg.byId(102), it.name);
+    const r = await modal("Rename", dlg.root, { buttons: false, collect: () => ctl.value(dlg.byId(102)).trim(), bind: ({ ok, done }) => { dlg.byId(1).addEventListener("click", ok); dlg.byId(2).addEventListener("click", () => done(null)); setTimeout(() => dlg.byId(102).select(), 50); } });
+    if (!r || r === it.name) return;
+    try { await ctx.fs.rename(it.path, joinPath(dirname(it.path), r)); render(); } catch (e) { errBox(e); }
+  };
+  const drives = () => ["C:", "D:"].map((d) => ({ label: d + "\\", action: () => { arc = null; cwd = d + "/"; render(); } }));
+  const ACTIONS = {
+    101: doOpen, 106: selectAll, 107: selectAll, 108: () => { selected = new Set(); markSel(); }, 109: () => { selected = new Set(items.filter((i) => !selected.has(i.name)).map((i) => i.name)); markSel(); },
+    102: async () => { if (!arc) return; const p = await ctx.dialogs.file({ mode: "save", path: DOCS, name: basename(arc.path) }); if (p) ctx.fs.writeFile(p, bytesDataUrl(arc.data), { encoding: "data-url", mime: "application/octet-stream" }); },
+    110: () => w.close(),
+    120: doAdd, 130: doExtract, 131: doTest, 127: doView, 128: doDelete, 123: doRename, 124: () => { const it = items.find((i) => selected.has(i.name)); if (it && !it.dir && !arc) ctx.openFile(it.path); },
+    129: doExtract, 140: doAdd, 143: doFind, 141: doInfo, 184: about,
+    180: () => ctx.launch("help", { topic: "intro" }), 181: () => window.open("https://www.rarlab.com/", "_blank", "noopener,noreferrer"),
+    165: () => {}, 164: () => {}, 163: () => {},
+  };
+  const NA = { 105: "Setting a default password", 230: "Copying files to the clipboard", 231: "Pasting files from the clipboard", 132: "Archive comments", 133: "Recovery records", 134: "Locking archives", 145: "Virus scanning", 144: "Archive conversion", 121: "Archive repair", 135: "SFX conversion", 142: "Reports", 146: "The benchmark", 150: "Favorites", 151: "Favorites", 160: "The settings dialog", 161: "Export settings", 162: "Import settings", 166: "The folder tree", 167: "The folder tree", 168: "Themes", 169: "Themes", 170: "Themes", 171: "The log", 172: "The log" };
+  const convMenu = (list) => list.map((m) => {
+    if (m.sep) return { separator: true };
+    if (m.popup) return { label: plain(m.popup.split("\t")[0]).trim(), submenu: /Change &drive/.test(m.popup) ? drives() : convMenu(m.items) };
+    const [label, sc] = m.label.split("\t");
+    const act = ACTIONS[m.id] || (() => unavailable(NA[m.id] || plain(label).trim()));
+    return { label: plain(label).trim(), shortcut: sc, action: act, disabled: m.id === 103 };
   });
-  const up = el("button", { class: "wr-up", type: "button", title: "Up one level", "aria-label": "Up one level" }, el("img", { src: "/assets/ui/winrar/up16.png", width: 16, height: 16, alt: "" }));
+  const menus = menuBar({
+    File: () => convMenu(RS.menus["11780"][0].items).map((m) => (m.label === "Change drive" ? { ...m, submenu: drives(), disabled: false } : m)),
+    Commands: () => convMenu(RS.menus["11780"][1].items),
+    Tools: () => convMenu(RS.menus["11780"][2].items),
+    Favorites: () => [...convMenu(RS.menus["11780"][3].items), { label: "My Documents", action: () => { arc = null; cwd = DOCS; render(); } }, { label: "Desktop", action: () => { arc = null; cwd = "C:/Documents and Settings/Administrator/Desktop"; render(); } }],
+    Options: () => convMenu(RS.menus["11780"][4].items),
+    Help: () => convMenu(RS.menus["11780"][5].items),
+  });
+  const up = el("button", { class: "wr-up", type: "button", title: "Up one level", "aria-label": "Up one level" }, el("img", { src: RB + "up.png", width: 16, height: 16, alt: "" }));
   up.addEventListener("click", goUp);
   addr.addEventListener("keydown", (e) => {
     if (e.key !== "Enter") return;
@@ -512,13 +552,14 @@ export async function openWinRAR(ctx, { path = null } = {}) {
     else errBox(new Error(`Cannot find ${addr.value}`));
   });
   const tools = el("div", { class: "wr-tools" },
-    toolbtn("add", "Add", doAdd), toolbtn("extract", "Extract To", doExtract), toolbtn("test", "Test", doTest), toolbtn("view", "View", doView), toolbtn("delete", "Delete", doDelete),
-    el("span", { class: "wr-tsep" }), toolbtn("find", "Find", doFind), toolbtn("wizard", "Wizard", doAdd), toolbtn("info", "Info", doInfo), toolbtn("repair", "Repair", () => unavailable("Archive repair")));
-  w.setContent(menus, tools, el("div", { class: "wr-addrbar" }, up, el("span", { class: "wr-addr-icon" }, el("img", { src: "/assets/ui/winrar/archive16.png", width: 16, height: 16, alt: "" })), addr), body, status);
+    toolbtn(110, "Add", doAdd), toolbtn(114, "Extract To", doExtract), toolbtn(121, "Test", doTest), toolbtn(122, "View", doView), toolbtn(112, "Delete", doDelete),
+    el("span", { class: "wr-tsep" }), toolbtn(125, "Find", doFind), toolbtn(123, "Wizard", doAdd), toolbtn(116, "Info", doInfo), toolbtn(119, "Repair", () => unavailable("Archive repair")));
+  w.setContent(menus, tools, el("div", { class: "wr-addrbar" }, up, el("span", { class: "wr-addr-icon" }, el("img", { src: "/assets/icons/rarfile-16x16.png", width: 16, height: 16, alt: "" })), addr), body, status);
   body.addEventListener("keydown", (e) => {
     if (e.key === "Backspace") { e.preventDefault(); goUp(); }
     else if (e.key === "Enter") { const it = items.find((i) => selected.has(i.name)); if (it) activate(it); }
     else if (e.key === "Delete") doDelete();
+    else if (e.key === "F2") doRename();
     else if (e.ctrlKey && e.key.toLowerCase() === "a") { e.preventDefault(); selectAll(); }
     else if (e.altKey && e.key.toLowerCase() === "e") doExtract();
     else if (e.altKey && e.key.toLowerCase() === "t") doTest();

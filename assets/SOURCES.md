@@ -525,3 +525,12 @@ Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the origi
 - Cropped 1:1 from the user's Netscape 4.5/4.7 screenshot: navigation toolbar buttons, Bookmarks and What's Related buttons, status-bar lock/plug and component bar → `assets/ui/netscape/`.
 - Synthesized: enabled Forward button (mirrored Back gem + dark label) and disabled Back.
 - Guessed: menu contents, Netcenter-style home page, About page text, dialogs.
+
+## WinRAR 4.11
+- Everything below was extracted from the user-supplied `wrar411.exe` (RAR SFX, unpacked with unrar WASM) → `WinRAR.exe` resources (pefile):
+  - App icon and small icons (RT_GROUP_ICON 101–108) → `assets/icons/winrar-*`, `rarfile-*`, `rarrepair-*`, `rardrive*`, `rarkey*`, `rardoc-*`.
+  - Toolbar bitmaps (RT_BITMAP 110–130 large 48x36, 140–160 small 24x24, 101/102 sort arrows, 103 up, 104 banner, 105/113 pictures) → `assets/ui/winrar/rar411/` (transparent colour keyed).
+  - Main menu (RT_MENU 11780), 73 dialog templates (RT_DIALOG) and 517 strings → `menus.json`, `dialogs.json`, `strings.json`; rendered by `packages/accessories/winrar-dlg.js` in dialog units. `License.txt` is the one shipped in the installer.
+- Real, wired: menus, toolbar, Add (tabs), Extract (tabs), About, Rename, progress dialog.
+- Rendered from the real templates but not functional: Add tabs Advanced/Options/Files/Backup/Time/Comment.
+- Not built: Wizard, Find files dialog, Info, Settings, Convert, Benchmark etc. (menu items show a "not available" message). RAR archives are read-only (cannot be created).
