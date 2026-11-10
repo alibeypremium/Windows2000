@@ -534,3 +534,6 @@ Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the origi
 - Real, wired: menus, toolbar, Add (tabs), Extract (tabs), About, Rename, progress dialog.
 - Rendered from the real templates but not functional: Add tabs Advanced/Options/Files/Backup/Time/Comment.
 - Not built: Wizard, Find files dialog, Info, Settings, Convert, Benchmark etc. (menu items show a "not available" message). RAR archives are read-only (cannot be created).
+
+## DivX, VLC and Winamp icons (replaced)
+- Supplied by the user (divx.png, VLC-Logo-2001.png, Winamp_2.95.png); background removed, cropped to the artwork, scaled to 16x16 and 32x32 → `assets/icons/{divx,vlc,winamp}-*`.
