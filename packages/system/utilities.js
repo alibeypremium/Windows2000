@@ -1,3 +1,4 @@
+import { openSysInfo } from "./sysinfo.js";
 import {
   el,
   button,
@@ -577,6 +578,7 @@ export function openRegistry(ctx) {
 }
 
 export function openSystemInfo(ctx, { devices = false } = {}) {
+  if (!devices) return openSysInfo(ctx);
   const w = ctx.wm.create({
       title: devices ? "Device Manager" : "System Information",
       icon: devices ? "deviceMgr" : "sysInfo",

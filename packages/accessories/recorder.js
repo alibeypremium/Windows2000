@@ -12,7 +12,7 @@ const fmt = (s) => (Math.round(s * 100) / 100).toFixed(2) + " sec.";
 
 export function openSoundRecorder(ctx) {
   const tpl = D["100"], W = px(tpl.cx) + FX * 2 + 2, H = FY + MENU + py(tpl.cy) + FX + 4;
-  const w = refWindow(ctx, { title: "Sound - Sound Recorder", icon: "speaker", width: W, height: H, appId: "recorder" });
+  const w = refWindow(ctx, { title: "Sound - Sound Recorder", icon: "recorderApp", width: W, height: H, appId: "recorder" });
   let ch = [new Float32Array(0)], rate = 11025, pos = 0, dirty = false, path = null, clip = null;
   let ac = null, src = null, startedAt = 0, startPos = 0, playing = false, rec = null, raf = 0;
   const len = () => ch[0].length;
@@ -67,7 +67,7 @@ export function openSoundRecorder(ctx) {
   };
   const record = async () => {
     if (playing || rec) return;
-    if (!navigator.mediaDevices?.getUserMedia) return ctx.dialogs.message("Sound Recorder cannot record: no microphone is available in this browser.", { title: "Sound Recorder", icon: "speaker" });
+    if (!navigator.mediaDevices?.getUserMedia) return ctx.dialogs.message("Sound Recorder cannot record: no microphone is available in this browser.", { title: "Sound Recorder", icon: "recorderApp" });
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true }), a = ctxAudio();
       await a.resume();
@@ -85,7 +85,7 @@ export function openSoundRecorder(ctx) {
       mic.connect(node); node.connect(a.destination);
       rec = { stream, node, mic, chunks };
       sync();
-    } catch (e) { ctx.dialogs.message("Sound Recorder cannot record: " + (e.message || e), { title: "Sound Recorder", icon: "speaker" }); }
+    } catch (e) { ctx.dialogs.message("Sound Recorder cannot record: " + (e.message || e), { title: "Sound Recorder", icon: "recorderApp" }); }
   };
   const decode = async (url) => { const buf = await (await fetch(url)).arrayBuffer(); return ctxAudio().decodeAudioData(buf); };
   const toChannels = (ab) => Array.from({ length: Math.min(2, ab.numberOfChannels) }, (_, i) => new Float32Array(ab.getChannelData(i)));
@@ -125,13 +125,13 @@ export function openSoundRecorder(ctx) {
 
   const props = () => {
     const secsTxt = secs(len()).toFixed(2) + " sec.", bytes = len() * ch.length * 2;
-    const d = dialogFromTemplate(ctx, D["103"], { title: "Properties for " + (path ? basename(path) : "Sound"), icon: "speaker", values: { 1002: path ? basename(path) : "Sound", 1003: "", 1005: `PCM ${Math.round(rate / 100) / 10} kHz, 16 Bit, ${ch.length === 1 ? "Mono" : "Stereo"}`, 1011: "[untitled]" }, labels: { 1004: secsTxt, 1012: bytes + " bytes" }, on: { 1000: () => d.close() } });
+    const d = dialogFromTemplate(ctx, D["103"], { title: "Properties for " + (path ? basename(path) : "Sound"), icon: "recorderApp", values: { 1002: path ? basename(path) : "Sound", 1003: "", 1005: `PCM ${Math.round(rate / 100) / 10} kHz, 16 Bit, ${ch.length === 1 ? "Mono" : "Stereo"}`, 1011: "[untitled]" }, labels: { 1004: secsTxt, 1012: bytes + " bytes" }, on: { 1000: () => d.close() } });
     const bw = px(230) + 8, by = py(218) + 22 - 28;
     d.place(btn(bw - 8 - 150 - 6, by, 72, 23, "OK", { def: true, onclick: () => d.close() }), btn(bw - 8 - 72, by, 72, 23, "Cancel", { onclick: () => d.close() }));
     return d;
   };
   const newSound = async () => { if (!(await confirmDiscard())) return; ch = [new Float32Array(0)]; path = null; dirty = false; setPos(0); title(); };
-  const aboutDlg = () => ctx.dialogs.message("Sound Recorder\nVersion 5.0 (Build 2195: Service Pack 4)\n\nCopyright © 1991-1999 Microsoft Corp.", { title: "About Sound Recorder", icon: "speaker" });
+  const aboutDlg = () => ctx.dialogs.message("Sound Recorder\nVersion 5.0 (Build 2195: Service Pack 4)\n\nCopyright © 1991-1999 Microsoft Corp.", { title: "About Sound Recorder", icon: "recorderApp" });
   const off = (label, extra = {}) => ({ label, disabled: true, ...extra });
   w.setMenu({
     File: () => [

@@ -5967,3 +5967,9 @@ body.icon-dragging, body.icon-dragging * { cursor: default; }
 .gs-text.wrap { white-space: normal; width: 262px; line-height: 15px; }
 .gs-li { position: relative; padding-left: 12px; }
 .gs-li::before { content: ""; position: absolute; left: 3px; top: 6px; width: 3px; height: 3px; background: #000; border-radius: 50%; }
+.si-tree .svc-node { white-space: nowrap; cursor: default; }
+.si-pm { display: inline-block; width: 12px; text-align: center; color: #000; }
+.si-none { padding: 6px 8px; }
+.si-tree .svc-node.sub { display: block; background: transparent; color: #000; margin-left: 0; width: max-content; min-width: 0; }
+.si-tree .svc-node.sub.cur { background: var(--highlight, #0a246a); color: #fff; }
+.si-tree { overflow: auto; }

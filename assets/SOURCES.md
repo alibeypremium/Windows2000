@@ -441,3 +441,8 @@ Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the origi
 - Selected desktop/Explorer icons are blended 50% with the highlight colour (`#w2k-sel` SVG filter) instead of the earlier sepia tint.
 
 - Quick launch: sol simge On-Screen Keyboard, sağ simge Show Desktop; Explorer Arrange Icons (Name/Type/Size/Date) View menüsü + boş alan sağ tık; Save As 'Desktop' kısayol düğmesi; Explorer öğeleri draggable="true" (tahmin: düğme glifi ISO dışı).
+
+## Application icons, System Information
+- `assets/icons/iso/{cdplayer,mplayer2,msinfo32,sndrec32,sndvol32}-{16x16,32x32}.png`: first RT_GROUP_ICON of cdplayer.exe (101), mplayer2.exe (110), msinfo32.exe (128), sndrec32.exe (10), sndvol32.exe (300). They replace the earlier generic icons in the Start menu (Entertainment), window title bars and the app registry. The round Media Player 7 icon is not on the ISO (Windows 2000 ships Media Player 6.4).
+- System Information (`packages/system/sysinfo.js`): the category tree (System Summary, Hardware Resources, Components, Software Environment), the column titles, "No ... information" texts, Find/Tools/Basic/Advanced menu texts are from msinfo32.dll strings. Values are simulated from the browser/virtual system; the MMC menu layout (Action/View/Tools/Help) is a guess. Open/Save .NFO and Advanced view are disabled.
+- CD Player: window already follows cdplayer.exe resources; the original Deluxe skin draws its own caption strip (bitmaps 154/301/401), which is not reproduced (standard title bar used).

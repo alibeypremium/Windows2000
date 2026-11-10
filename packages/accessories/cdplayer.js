@@ -8,7 +8,7 @@ import { makeDemoAudio } from "./media.js";
 const GLYPH = { play: "▶", pause: "❚❚", stop: "■", prev: "|◀", next: "▶|", back: "◀◀", fwd: "▶▶", eject: "⏏" };
 
 export async function openCdPlayer(ctx) {
-  const w = ctx.wm.create({ title: "CD Player", icon: "media", width: 420, height: 252, appId: "cdplayer", resizable: false, maximizable: false });
+  const w = ctx.wm.create({ title: "CD Player", icon: "cdPlayerApp", width: 420, height: 252, appId: "cdplayer", resizable: false, maximizable: false });
   const st = Object.assign({ startup: false, stopExit: false, topmost: false, taskbar: true, time: 1004, preview: 10 }, ctx.settings.get("cdplayer") || {});
   let random = false, repeat = false, intro = false, tb = true, info = true, sb = true, disc = true, url = null;
   const audio = new Audio();
@@ -63,7 +63,7 @@ export async function openCdPlayer(ctx) {
   audio.addEventListener("ended", () => { if (repeat) { audio.currentTime = 0; audio.play(); } else stop(); });
   const sheet = (tpl, ttl, build, onOk) => {
     const W = px(tpl.cx) + 16, H = py(tpl.cy) + 22 + 4 + 40;
-    const sw = refWindow(ctx, { title: ttl, icon: "media", width: W, height: H, appId: "dialog" });
+    const sw = refWindow(ctx, { title: ttl, icon: "cdPlayerApp", width: W, height: H, appId: "dialog" });
     const d = dialogFromTemplate(ctx, tpl, { host: sw, ox: 8, oy: 22 + 4, ...build });
     sw.place(btn(W - 8 - 150 - 6, H - 4 - 30, 72, 23, "OK", { def: true, onclick: () => { onOk?.(d); sw.close(); } }), btn(W - 8 - 72, H - 4 - 30, 72, 23, "Cancel", { onclick: () => sw.close() }));
     return sw;
@@ -98,7 +98,7 @@ export async function openCdPlayer(ctx) {
     Help: [
       { label: "Help Topics", action: () => ctx.launch("help", { topic: "cdplayer" }) },
       separator(),
-      { label: "About CD Player", action: () => ctx.dialogs.message("CD Player\nVersion 5.0 (Build 2195: Service Pack 4)\n\nCopyright © 1990-1999 Microsoft Corp.", { title: "About CD Player", icon: "media" }) },
+      { label: "About CD Player", action: () => ctx.dialogs.message("CD Player\nVersion 5.0 (Build 2195: Service Pack 4)\n\nCopyright © 1990-1999 Microsoft Corp.", { title: "About CD Player", icon: "cdPlayerApp" }) },
     ],
   });
   const bar = el("div", { class: "cdp-bar" }, ...keys), disp = el("div", { class: "cdp-disp" }, el("div", { class: "cdp-lcd" }, dot, trk, led)), infoBox = el("div", { class: "cdp-info" }, el("label", { text: "Artist:" }, artist), el("label", { text: "Title:" }, title), el("label", { text: "Track:" }, trackSel));

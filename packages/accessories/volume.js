@@ -28,7 +28,7 @@ export function openVolume(ctx) {
   const vis = ctx.settings.get("volStrips") || ["master", "wave", "synth", "cd"];
   const strips = STRIPS.filter((s) => vis.includes(s.id));
   const SW = px(61) + 1;
-  const w = refWindow(ctx, { title: "Volume Control", icon: "speaker", width: strips.length * SW + FX * 2 + 2, height: FY + MENU + py(150) + FX + 2, appId: "volume" });
+  const w = refWindow(ctx, { title: "Volume Control", icon: "volumeApp", width: strips.length * SW + FX * 2 + 2, height: FY + MENU + py(150) + FX + 2, appId: "volume" });
   const redraw = () => {
     w.layer.replaceChildren();
     strips.forEach((s, i) => {
@@ -50,7 +50,7 @@ export function openVolume(ctx) {
     });
   };
   const advanced = () => {
-    const d = dialogFromTemplate(ctx, D["110"], { title: "Advanced Controls for Volume Control", icon: "speaker", hidden: [1035, 1033, 1031, 1032], on: { 1: () => d.close() } });
+    const d = dialogFromTemplate(ctx, D["110"], { title: "Advanced Controls for Volume Control", icon: "volumeApp", hidden: [1035, 1033, 1031, 1032], on: { 1: () => d.close() } });
     const bt = D["110"].controls.filter((c) => c.id === 1025 || c.id === 1026);
     bt.forEach((c) => d.place(hslider(4 + px(c.x), 22 + py(c.y) - 3, px(c.cx), (ctx.settings.get(c.id === 1025 ? "bass" : "treble") ?? 50) / 100, { ticks: [0, 0.25, 0.5, 0.75, 1], onchange: (v) => ctx.settings.set(c.id === 1025 ? "bass" : "treble", Math.round(v * 100)) })));
     return d;
@@ -58,7 +58,7 @@ export function openVolume(ctx) {
   const props = () => {
     const tpl = D["107"], state = new Set(vis);
     const d = dialogFromTemplate(ctx, tpl, {
-      icon: "speaker", values: { 1012: "Browser Audio Device", 1016: "Volume" }, checked: { 1013: true },
+      icon: "volumeApp", values: { 1012: "Browser Audio Device", 1016: "Volume" }, checked: { 1013: true },
       groups: [[1013, 1014, 1015]],
       on: { 1: () => { ctx.settings.set("volStrips", STRIPS.filter((s) => state.has(s.id)).map((s) => s.id)); d.close(); w.close(); ctx.launch("volume"); }, 2: () => d.close() },
     });
@@ -79,7 +79,7 @@ export function openVolume(ctx) {
     Help: [
       { label: "Help Topics", action: () => ctx.launch("help", { topic: "volume" }) },
       separator(),
-      { label: "About Volume Control", action: () => ctx.dialogs.message("Volume Control\nVersion 5.0 (Build 2195: Service Pack 4)\n\nCopyright © 1991-1999 Microsoft Corp.", { title: "About Volume Control", icon: "speaker" }) },
+      { label: "About Volume Control", action: () => ctx.dialogs.message("Volume Control\nVersion 5.0 (Build 2195: Service Pack 4)\n\nCopyright © 1991-1999 Microsoft Corp.", { title: "About Volume Control", icon: "volumeApp" }) },
     ],
   });
   redraw();

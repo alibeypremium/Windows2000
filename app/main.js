@@ -203,7 +203,7 @@ ctx.apps = [
   {
     id: "cdplayer",
     name: "CD Player",
-    icon: "cd",
+    icon: "cdPlayerApp",
     aliases: ["cdplayer.exe"],
     open: (ctx, args) => openCdPlayer(ctx),
   },
@@ -217,7 +217,7 @@ ctx.apps = [
   {
     id: "volume",
     name: "Volume Control",
-    icon: "speaker",
+    icon: "volumeApp",
     aliases: ["sndvol32", "sndvol32.exe"],
     singleton: true,
     open: openVolume,
