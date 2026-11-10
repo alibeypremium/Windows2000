@@ -402,3 +402,9 @@ Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the origi
 
 ## Internet Explorer: sağ tık menüleri
 - Page/Link/Image/Control bağlam menüleri shdoclc.dll menü 24641 yapısından (öğe sırası ISO'dan; bazı öğeler pasif). File>Edit kaynak görüntüler.
+
+## Internet Explorer: Organize Favorites ve kalan boşluklar
+- Organize Favorites: shdoclc.dll `ORGFAV.DLG` (HTML, 41.2em x 31em) metin ve yerleşimi; Create Folder/Rename/Move/Delete butonları, özellik paneli ("times visited / last visited").
+- Create New Folder: shdoclc 4480; Rename: browseLC.dll 258; Browse For Folder: shell32.dll 1087 (Move to Folder).
+- Tahmin: Work Offline "sayfa çevrimdışı yok" metni; Find (on This Page) basit prompt; ziyaret sayıları/tarihleri tutulmuyor.
+- Tüm dlg.js diyaloglarında Enter=OK, Esc=Cancel.

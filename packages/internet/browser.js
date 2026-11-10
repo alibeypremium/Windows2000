@@ -9,7 +9,7 @@ import {
   popup,
 } from "../ui/index.js";
 import { basename, downloadFile } from "../core/index.js";
-import { ieOpen, ieOptions, ieAddFavorite, ieProps, iePageSetup, iePrint, IE_HELP } from "./ie-dialogs.js";
+import { ieOpen, ieOptions, ieAddFavorite, ieProps, ieOrganize, iePageSetup, iePrint, IE_HELP } from "./ie-dialogs.js";
 const normalizeAddress = (input) => {
   let target = String(input || "about:home").trim();
   if (!/^(about:|https?:\/\/|[A-Z]:[\\/])/i.test(target))
@@ -75,12 +75,15 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
     }
     render();
   };
+  const _setTitle = w.setTitle.bind(w);
+  w.setTitle = (t) => _setTitle(ctx.settings.get("ieOffline") && !t.includes("[Working Offline]") ? t + " [Working Offline]" : t.replace(" [Working Offline]", ""));
   const favorites = () =>
     ctx.settings.get("favorites") || [
       { title: "Microsoft", url: "https://www.microsoft.com/" },
       { title: "Wikipedia", url: "https://www.wikipedia.org/" },
       { title: "The Internet Archive", url: "https://archive.org/" },
     ];
+  const favFolders = () => [...new Set([...(ctx.settings.get("favFolders") || []), ...favorites().map((f) => f.folder).filter(Boolean)])];
   const home = () => navigate(ctx.settings.get("homePage") || "about:home");
   function render() {
     viewport.replaceChildren();
@@ -210,6 +213,13 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
       w.setTitle(basename(current) + " - Microsoft Internet Explorer");
       return;
     }
+    if (ctx.settings.get("ieOffline") && /^https?:/i.test(current)) {
+      status.children[0].textContent = "Done";
+      ctx.dialogs.confirm("This page is not available offline.\n\nTo view this page, click Connect.", "Web Page Unavailable While Offline").then((ok) => {
+        if (ok) { ctx.settings.set("ieOffline", false); w.setTitle(w.title); render(); }
+      });
+      return;
+    }
     const url = new URL(current);
     if (/(^|\.)(bing\.com|search\.msn\.com)$/i.test(url.hostname)) {
       w.setTitle("Browser Not Supported - Bing - Microsoft Internet Explorer");
@@ -267,7 +277,7 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
       if (index < history.length - 1) navigate(history[++index], false);
     };
   const viewSource = () => ctx.launch("notepad", { text: current.startsWith("C:") ? ctx.fs.readFile(current) : viewport.innerHTML });
-  const addFav = () => ieAddFavorite(ctx, { name: w.title.replace(" - Microsoft Internet Explorer", ""), folders: [...new Set(favorites().map((f) => f.folder).filter(Boolean))], onOk: (title, folder) => ctx.settings.set("favorites", [...favorites(), { title, url: current, folder }]) });
+  const addFav = () => ieAddFavorite(ctx, { name: w.title.replace(/ - Microsoft Internet Explorer( \[Working Offline\])?/, ""), folders: favFolders(), onOk: (title, folder) => ctx.settings.set("favorites", [...favorites(), { title, url: current, folder }]) });
   const off = (label, extra = {}) => ({ label, disabled: true, ...extra });
   const pageMenu = () => [
     { label: "Back", disabled: index <= 0, action: back },
@@ -287,7 +297,7 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
     { label: "Print", action: () => iePrint(ctx, () => ctx.printText(viewport.innerText, current)) },
     { label: "Refresh", action: render },
     separator(),
-    { label: "Properties", action: () => ieProps(ctx, { url: current, title: w.title.replace(" - Microsoft Internet Explorer", "") }) },
+    { label: "Properties", action: () => ieProps(ctx, { url: current, title: w.title.replace(/ - Microsoft Internet Explorer( \[Working Offline\])?/, "") }) },
   ];
   const linkMenu = (href) => [
     { label: "Open", action: () => navigate(href) },
@@ -381,7 +391,7 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
       { label: "Save", shortcut: "Ctrl+S", disabled: true },
       {
         label: "Save As...",
-        action: () => downloadFile((w.title.replace(" - Microsoft Internet Explorer", "") || "index") + ".htm", `<html>${viewport.innerHTML}</html>`, "text/html"),
+        action: () => downloadFile((w.title.replace(/ - Microsoft Internet Explorer( \[Working Offline\])?/, "") || "index") + ".htm", `<html>${viewport.innerHTML}</html>`, "text/html"),
       },
       separator(),
       { label: "Page Setup...", action: () => iePageSetup(ctx) },
@@ -399,9 +409,9 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
       separator(),
       {
         label: "Properties",
-        action: () => ieProps(ctx, { url: current, title: w.title.replace(" - Microsoft Internet Explorer", "") }),
+        action: () => ieProps(ctx, { url: current, title: w.title.replace(/ - Microsoft Internet Explorer( \[Working Offline\])?/, "") }),
       },
-      { label: "Work Offline", checked: !!ctx.settings.get("ieOffline"), action: () => ctx.settings.set("ieOffline", !ctx.settings.get("ieOffline")) },
+      { label: "Work Offline", checked: !!ctx.settings.get("ieOffline"), action: () => { ctx.settings.set("ieOffline", !ctx.settings.get("ieOffline")); w.setTitle(w.title.replace(/ - Microsoft Internet Explorer.*/, "") + " - Microsoft Internet Explorer"); } },
       { label: "Close", action: () => w.close() },
     ],
     Edit: [
@@ -420,7 +430,7 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
         },
       },
       separator(),
-      { label: "Find (on This Page)...", shortcut: "Ctrl+F", disabled: true },
+      { label: "Find (on This Page)...", shortcut: "Ctrl+F", action: async () => { const t = await ctx.dialogs.prompt("Find what:", "", { title: "Find" }); if (t) window.find(t); } },
     ],
     View: () => [
       {
@@ -501,14 +511,19 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
     Favorites: () => [
       {
         label: "Add to Favorites...",
-        action: () => ieAddFavorite(ctx, { name: w.title.replace(" - Microsoft Internet Explorer", ""), folders: [...new Set(favorites().map((f) => f.folder).filter(Boolean))], onOk: (title, folder) => ctx.settings.set("favorites", [...favorites(), { title, url: current, folder }]) }),
+        action: () => ieAddFavorite(ctx, { name: w.title.replace(/ - Microsoft Internet Explorer( \[Working Offline\])?/, ""), folders: favFolders(), onOk: (title, folder) => ctx.settings.set("favorites", [...favorites(), { title, url: current, folder }]) }),
       },
       {
         label: "Organize Favorites...",
-        action: () => navigate("about:favorites"),
+        action: () => ieOrganize(ctx, { get: favorites, set: (v) => ctx.settings.set("favorites", v), folders: favFolders, setFolders: (v) => ctx.settings.set("favFolders", v), open: navigate }),
       },
       separator(),
-      ...favorites().map((f) => ({
+      ...favFolders().map((fo) => ({
+        label: fo,
+        icon: "folder",
+        submenu: favorites().filter((f) => f.folder === fo).map((f) => ({ label: f.title, icon: "ie", action: () => navigate(f.url) })),
+      })),
+      ...favorites().filter((f) => !f.folder).map((f) => ({
         label: f.title,
         icon: "ie",
         action: () => navigate(f.url),

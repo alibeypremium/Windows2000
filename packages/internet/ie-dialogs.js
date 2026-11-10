@@ -1,7 +1,7 @@
 // Internet Explorer 5.01 dialogs built from inetcplc.dll / shdoclc.dll templates.
 import { el } from "../ui/index.js";
 import { dialogFromTemplate, px, py } from "../ui/dlg.js";
-import { btn } from "../control-panel/refkit.js";
+import { btn, refWindow, sunken } from "../control-panel/refkit.js";
 import { IE_DIALOGS as D } from "./ie-data.js";
 import { oeSheet } from "./oe-dialogs.js";
 
@@ -86,7 +86,14 @@ export function ieOpen(ctx, onOpen, onBrowse) {
 }
 
 export function ieNewFolder(ctx, onOk) {
-  const d = dialogFromTemplate(ctx, D.s4480, { title: "Create New Folder", icon: "ie", on: { 1: () => { const v = d.ctl[4481]?.value?.trim?.(); d.close(); if (v) onOk(v); }, 2: () => d.close() } });
+  const d = dialogFromTemplate(ctx, D.s4480, { title: "Create New Folder", icon: "ie", on: { 1: () => { const v = d.ctl[4354]?.value?.trim?.(); d.close(); if (v) onOk(v); }, 2: () => d.close() } });
+  setTimeout(() => d.ctl[4354]?.focus?.(), 30);
+  return d;
+}
+
+export function ieRename(ctx, name, onOk) {
+  const d = dialogFromTemplate(ctx, D.b258, { title: "Rename", icon: "ie", iconBase: ICONS, values: { 320: name }, on: { 1: () => { const v = d.ctl[320].value.trim(); d.close(); if (v) onOk(v); }, 2: () => d.close() } });
+  setTimeout(() => { d.ctl[320]?.focus?.(); d.ctl[320]?.select?.(); }, 30);
   return d;
 }
 
@@ -94,7 +101,7 @@ export function ieAddFavorite(ctx, { name, folders, onOk }) {
   let folder = "";
   const d = dialogFromTemplate(ctx, D.s21400, {
     title: "Add Favorite", icon: "ie", iconBase: ICONS, values: { 1005: name }, labels: { 1006: "Create in >>" },
-    on: { 1: () => { const v = d.ctl[1005].value.trim(); d.close(); if (v) onOk(v, folder); }, 2: () => d.close(), 1007: async () => { const n = await ctx.dialogs.prompt("Folder name:", "", { title: "Create New Folder" }); if (n) { folders.push(n); renderTree(); } } },
+    on: { 1: () => { const v = d.ctl[1005].value.trim(); d.close(); if (v) onOk(v, folder); }, 2: () => d.close(), 1007: () => ieNewFolder(ctx, (n) => { folders.push(n); renderTree(); }) },
   });
   const list = d.ctl[14145]?.querySelector?.(".rk-listbox");
   const renderTree = () => {
@@ -133,3 +140,79 @@ export const IE_HELP = (ctx, about) => [
   { separator: true },
   { label: "About Internet Explorer", action: about },
 ];
+
+/** Browse For Folder (shell32.dll dialog 1087) over a list of favorite folders. */
+export function browseFavFolder(ctx, { folders, current, onOk }) {
+  let pick = current || "";
+  const d = dialogFromTemplate(ctx, D.b1087, { title: "Browse For Folder", icon: "ie", iconBase: ICONS, labels: { 14146: "Select the folder you want to move the selected item to." }, values: { 14148: pick || "Favorites" },
+    on: { 1: () => { d.close(); onOk(pick); }, 2: () => d.close(), 14150: () => ieNewFolder(ctx, (n) => { if (!folders.includes(n)) folders.push(n); pick = n; draw(); }) } });
+  const tree = el("div", { class: "oe-fav-tree" });
+  d.place(sunken(px(10) + 4, py(35) + 22, px(192), py(91), tree));
+  const draw = () => { d.ctl[14148].value = pick || "Favorites"; tree.replaceChildren(...["", ...folders].map((f) => el("div", { class: "ie-org-row" + (f === pick ? " sel" : ""), style: { paddingLeft: (f ? 20 : 4) + "px" }, onclick: () => { pick = f; draw(); } }, el("span", { class: "ie-org-ic folder" }), el("span", { text: f || "Favorites" })))); };
+  draw();
+  return d;
+}
+
+/** Organize Favorites — layout/text from shdoclc.dll ORGFAV.DLG (41.2em x 31em, MS Shell Dlg 8pt). */
+export function ieOrganize(ctx, { get, set, folders, setFolders, open }) {
+  const W = 440 + 8, H = 331 + 22 + 4;
+  const w = refWindow(ctx, { title: "Organize Favorites", icon: "ie", width: W, height: H, appId: "dialog" });
+  let favs = get().map((f) => ({ ...f })), fl = [...new Set([...folders(), ...get().map((f) => f.folder).filter(Boolean)])];
+  let sel = null; const open_ = new Set(), commit = () => { set(favs); setFolders(fl); };
+  const tree = el("div", { class: "oe-fav-tree" });
+  const info = el("div", { class: "oe-fav-info" });
+  const sunk = sunken(204, 4, 440 - 204 - 4, 331 - 8 - 30, tree);
+  const bs = { create: null, rename: null, move: null, del: null };
+  const rows = () => {
+    const out = [{ kind: "root", name: "Favorites", depth: 0 }];
+    for (const f of fl) { out.push({ kind: "folder", name: f, depth: 1 }); if (open_.has(f)) for (const i of favs.filter((x) => x.folder === f)) out.push({ kind: "item", it: i, name: i.title, depth: 2 }); }
+    for (const i of favs.filter((x) => !x.folder)) out.push({ kind: "item", it: i, name: i.title, depth: 1 });
+    return out;
+  };
+  const same = (a, b) => a && b && a.kind === b.kind && a.name === b.name && a.it === b.it;
+  const draw = () => {
+    tree.replaceChildren(...rows().map((r) => {
+      const n = el("div", { class: "ie-org-row" + (same(sel, r) ? " sel" : ""), style: { paddingLeft: 4 + r.depth * 16 + "px" }, ondblclick: () => { if (r.kind === "folder") { open_.has(r.name) ? open_.delete(r.name) : open_.add(r.name); draw(); } else if (r.kind === "item") open?.(r.it.url); } },
+        el("span", { class: "ie-org-ic " + r.kind }), el("span", { text: r.name }));
+      n.onclick = () => { sel = r; if (r.kind === "folder" && !open_.has(r.name)) open_.add(r.name); draw(); props(); };
+      return n;
+    }));
+    for (const k of ["rename", "move", "del"]) bs[k].disabled = !sel || sel.kind === "root";
+    bs.move.disabled = !sel || sel.kind !== "item";
+  };
+  const props = () => {
+    if (!sel || sel.kind === "root") { info.replaceChildren(); return; }
+    if (sel.kind === "folder") info.replaceChildren(el("b", { text: sel.name }), el("br"), "Favorites Folder", el("br"), el("br"), el("b", { text: "Modified:" }), el("br"), new Date().toLocaleDateString("en-US"));
+    else info.replaceChildren(el("b", { text: sel.it.title }), el("br"), sel.it.url, el("br"), "times visited: " + (sel.it.visits || 0), el("br"), "last visited: " + (sel.it.last || "Never"));
+  };
+  const mk = (x, y, label, fn) => { const b = btn(x, y, 72, 23, label, { onclick: fn }); b.style.width = "92px"; return b; };
+  const bx = 8, by = 108;
+  bs.create = mk(bx, by, "Create Folder", () => ieNewFolder(ctx, (n) => { if (!fl.includes(n)) { fl.push(n); commit(); draw(); } }));
+  bs.rename = mk(bx + 100, by, "Rename", () => {
+    if (!sel || sel.kind === "root") return;
+    ieRename(ctx, sel.name, (n) => {
+    if (sel.kind === "folder") { fl = fl.map((f) => (f === sel.name ? n : f)); favs.forEach((f) => { if (f.folder === sel.name) f.folder = n; }); sel = { kind: "folder", name: n, depth: 1 }; } else { sel.it.title = n; sel.name = n; }
+    commit(); draw(); props();
+    });
+  });
+  bs.move = mk(bx, by + 28, "Move to Folder...", async () => {
+    if (!sel || sel.kind !== "item") return;
+    browseFavFolder(ctx, { folders: fl, current: sel.it.folder || "", onOk: (f) => { sel.it.folder = f || undefined; commit(); draw(); } });
+  });
+  bs.del = mk(bx + 100, by + 28, "Delete", async () => {
+    if (!sel || sel.kind === "root") return;
+    const ok = await ctx.dialogs.confirm(sel.kind === "folder" ? `Are you sure you want to remove the folder '${sel.name}' and all its contents?` : `Are you sure you want to send '${sel.name}' to the Recycle Bin?`, sel.kind === "folder" ? "Confirm Folder Delete" : "Confirm File Delete");
+    if (!ok) return;
+    if (sel.kind === "folder") { fl = fl.filter((f) => f !== sel.name); favs = favs.filter((f) => f.folder !== sel.name); } else favs = favs.filter((f) => f !== sel.it);
+    sel = null; commit(); draw(); props();
+  });
+  const infoText = el("div", { class: "oe-fav-help", text: "To create a new folder, click on the Create Folder button. To rename or delete an item, select the item and click Rename or Delete." });
+  Object.assign(infoText.style, { left: "8px", top: "8px", width: "190px" });
+  const panel = sunken(8, 166, 190, 331 - 166 - 34, info);
+  const pane = el("div", { class: "rk-pane" });
+  Object.assign(pane.style, { left: "4px", top: "22px", width: "440px", height: "331px" });
+  pane.append(infoText, bs.create, bs.rename, bs.move, bs.del, panel, sunk, btn(440 - 99 - 6, 331 - 23 - 6, 99, 23, "Close", { onclick: () => w.close() }));
+  w.place(pane);
+  draw();
+  return w;
+}

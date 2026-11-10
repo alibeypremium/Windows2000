@@ -5854,3 +5854,13 @@ input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type=
 .ie-zone img { display: block; margin: 0 auto 2px; width: 32px; height: 32px; }
 .ie-fold { font: 11px Tahoma, sans-serif; height: 16px; line-height: 16px; padding-left: 20px; white-space: nowrap; }
 .ie-fold.sel { background: #0a246a; color: #fff; }
+
+/* IE Organize Favorites (shdoclc ORGFAV.DLG) */
+.oe-fav-help { position: absolute; font: 11px Tahoma, sans-serif; line-height: 13px; color: #000; }
+.oe-fav-tree { position: absolute; inset: 0; background: #fff; overflow: auto; font: 11px Tahoma, sans-serif; }
+.oe-fav-info { position: absolute; inset: 0; padding: 4px; background: #d4d0c8; font: 11px Tahoma, sans-serif; line-height: 13px; overflow: hidden; white-space: nowrap; }
+.ie-org-row { height: 18px; line-height: 18px; white-space: nowrap; display: flex; align-items: center; gap: 3px; }
+.ie-org-row.sel span:last-child { background: #0a246a; color: #fff; }
+.ie-org-ic { width: 16px; height: 16px; display: inline-block; background: center/16px no-repeat; }
+.ie-org-ic.root, .ie-org-ic.folder { background-image: url(assets/icons/folder-16x16.png); }
+.ie-org-ic.item { background-image: url(assets/icons/internet-explorer-16x16.png); }

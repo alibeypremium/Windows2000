@@ -82,7 +82,14 @@ export function dialogFromTemplate(ctx, tpl, opts = {}) {
   }
   for (const g of opts.groups || []) for (const id of g) byId[id]?.addEventListener("click", () => g.forEach((o) => byId[o]?.classList.toggle("checked", o === id)));
   if (opts.ctlOut) Object.assign(opts.ctlOut, byId);
-  if (!opts.host) w.ctl = byId;
+  if (!opts.host) {
+    w.ctl = byId;
+    w.el.addEventListener("keydown", (e) => {
+      if (e.target.tagName === "BUTTON" || e.target.tagName === "TEXTAREA") return;
+      if (e.key === "Enter" && byId[1] && opts.on?.[1]) { e.preventDefault(); byId[1].click(); }
+      else if (e.key === "Escape" && byId[2]) { e.preventDefault(); byId[2].click(); }
+    });
+  }
   w.on = (id) => byId[id]?.classList.contains("checked");
   return w;
 }
