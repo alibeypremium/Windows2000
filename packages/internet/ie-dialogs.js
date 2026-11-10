@@ -89,3 +89,47 @@ export function ieNewFolder(ctx, onOk) {
   const d = dialogFromTemplate(ctx, D.s4480, { title: "Create New Folder", icon: "ie", on: { 1: () => { const v = d.ctl[4481]?.value?.trim?.(); d.close(); if (v) onOk(v); }, 2: () => d.close() } });
   return d;
 }
+
+export function ieAddFavorite(ctx, { name, folders, onOk }) {
+  let folder = "";
+  const d = dialogFromTemplate(ctx, D.s21400, {
+    title: "Add Favorite", icon: "ie", iconBase: ICONS, values: { 1005: name }, labels: { 1006: "Create in >>" },
+    on: { 1: () => { const v = d.ctl[1005].value.trim(); d.close(); if (v) onOk(v, folder); }, 2: () => d.close(), 1007: async () => { const n = await ctx.dialogs.prompt("Folder name:", "", { title: "Create New Folder" }); if (n) { folders.push(n); renderTree(); } } },
+  });
+  const list = d.ctl[14145]?.querySelector?.(".rk-listbox");
+  const renderTree = () => {
+    if (!list) return;
+    list.replaceChildren(...["Favorites", ...folders].map((f, i) => el("div", { class: "ie-fold" + (f === (folder || "Favorites") ? " sel" : ""), onclick: () => { folder = i ? f : ""; renderTree(); } }, f)));
+  };
+  renderTree();
+  return d;
+}
+
+export function ieProps(ctx, { url, title }) {
+  const ext = /\.(\w+)$/.exec(url.split("?")[0])?.[1];
+  const d = dialogFromTemplate(ctx, D.s21080, { title: "Properties", icon: "ie", values: { 21283: title }, labels: { 21085: ext && ext !== "htm" ? ext.toUpperCase() + " File" : "HTML Document", 21087: "(unknown)", 21286: url } });
+  const W = px(227) + 8, y = py(215) + 22 - 28;
+  d.place(btn(W - 8 - 3 * 72 - 12, y, 72, 23, "OK", { def: true, onclick: () => d.close() }), btn(W - 8 - 2 * 72 - 6, y, 72, 23, "Cancel", { onclick: () => d.close() }), btn(W - 8 - 72, y, 72, 23, "Apply", {}));
+  return d;
+}
+
+export function iePageSetup(ctx, onOk) {
+  const st = ctx.settings.get("iePageSetup") || { h: "&w&bPage &p of &P", f: "&u&b&d", l: "0.75", r: "0.75", t: "0.75", b: "0.75" };
+  const d = dialogFromTemplate(ctx, D.s1546, { title: "Page Setup", icon: "ie", values: { 1137: "Letter", 1138: "Automatically Select", 8147: st.h, 8149: st.f, 1155: st.l, 1157: st.r, 1156: st.t, 1158: st.b }, checked: { 1056: true }, groups: [[1056, 1057]], on: { 1: () => { ctx.settings.set("iePageSetup", { h: d.ctl[8147].value, f: d.ctl[8149].value, l: d.ctl[1155].value, r: d.ctl[1157].value, t: d.ctl[1156].value, b: d.ctl[1158].value }); d.close(); onOk?.(); }, 2: () => d.close() } });
+  return d;
+}
+
+export function iePrint(ctx, onOk) {
+  const d = dialogFromTemplate(ctx, D.s1538, { title: "Print", icon: "ie", values: { 1139: "Browser Print (PDF)", 1152: "1", 1153: "1", 1154: "1" }, labels: { 1099: "Ready", 1098: "Browser printer", 1101: "Browser", 1100: "" }, checked: { 1056: true, 1059: true }, groups: [[1056, 1058, 1057], [1059, 1060, 1061]], on: { 1: () => { d.close(); onOk?.(); }, 2: () => d.close() } });
+  return d;
+}
+
+export const IE_HELP = (ctx, about) => [
+  { label: "Contents and Index", action: () => ctx.launch("help", { topic: "internet" }) },
+  { label: "Product Updates", disabled: true },
+  { label: "Web Tutorial", disabled: true },
+  { label: "Online Support", disabled: true },
+  { label: "Microsoft on the Web", submenu: ["Free Stuff", "Get Faster Internet Access", "Frequently Asked Questions", null, "Internet Start Page", "Send Feedback...", "Best of the Web", "Search the Web", null, "Microsoft Home Page"].map((l) => (l ? { label: l, disabled: true } : { separator: true })) },
+  { separator: true },
+  { label: "About Internet Explorer", action: about },
+];

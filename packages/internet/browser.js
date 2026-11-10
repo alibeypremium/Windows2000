@@ -8,7 +8,7 @@ import {
   field,
 } from "../ui/index.js";
 import { basename, downloadFile } from "../core/index.js";
-import { ieOpen, ieOptions } from "./ie-dialogs.js";
+import { ieOpen, ieOptions, ieAddFavorite, ieProps, iePageSetup, iePrint, IE_HELP } from "./ie-dialogs.js";
 const normalizeAddress = (input) => {
   let target = String(input || "about:home").trim();
   if (!/^(about:|https?:\/\/|[A-Z]:[\\/])/i.test(target))
@@ -327,8 +327,8 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
         action: () => downloadFile((w.title.replace(" - Microsoft Internet Explorer", "") || "index") + ".htm", `<html>${viewport.innerHTML}</html>`, "text/html"),
       },
       separator(),
-      { label: "Page Setup...", disabled: true },
-      { label: "Print...", shortcut: "Ctrl+P", action: () => ctx.printText(viewport.innerText, current) },
+      { label: "Page Setup...", action: () => iePageSetup(ctx) },
+      { label: "Print...", shortcut: "Ctrl+P", action: () => iePrint(ctx, () => ctx.printText(viewport.innerText, current)) },
       separator(),
       {
         label: "Send",
@@ -342,7 +342,7 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
       separator(),
       {
         label: "Properties",
-        action: () => ctx.dialogs.message(`Address (URL): ${current}`, { title: "Properties", icon: "ie" }),
+        action: () => ieProps(ctx, { url: current, title: w.title.replace(" - Microsoft Internet Explorer", "") }),
       },
       { label: "Work Offline", checked: !!ctx.settings.get("ieOffline"), action: () => ctx.settings.set("ieOffline", !ctx.settings.get("ieOffline")) },
       { label: "Close", action: () => w.close() },
@@ -444,18 +444,7 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
     Favorites: () => [
       {
         label: "Add to Favorites...",
-        action: async () => {
-          const title = await ctx.dialogs.prompt(
-            "Name:",
-            w.title.replace(" - Microsoft Internet Explorer", ""),
-            { title: "Add Favorite" },
-          );
-          if (title)
-            ctx.settings.set("favorites", [
-              ...favorites(),
-              { title, url: current },
-            ]);
-        },
+        action: () => ieAddFavorite(ctx, { name: w.title.replace(" - Microsoft Internet Explorer", ""), folders: [...new Set(favorites().map((f) => f.folder).filter(Boolean))], onOk: (title, folder) => ctx.settings.set("favorites", [...favorites(), { title, url: current, folder }]) }),
       },
       {
         label: "Organize Favorites...",
@@ -485,19 +474,7 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
       separator(),
       { label: "Internet Options...", action: () => ctx.launch("control", { page: "internet" }) },
     ],
-    Help: [
-      { label: "Contents and Index", action: () => ctx.launch("help", { topic: "internet" }) },
-      { label: "Tip of the Day", disabled: true },
-      { label: "For Netscape Users", disabled: true },
-      { label: "Tour", disabled: true },
-      { label: "Online Support", disabled: true },
-      { label: "Send Feedback", disabled: true },
-      separator(),
-      {
-        label: "About Internet Explorer",
-        action: () => ctx.dialogs.message("Microsoft Internet Explorer\nVersion: 5.01\n\nCopyright © 1995-1999 Microsoft Corp.", { title: "About Internet Explorer", icon: "ie" }),
-      },
-    ],
+    Help: IE_HELP(ctx, () => ctx.dialogs.message("Microsoft Internet Explorer\nVersion: 5.00.3700.1000\n\nCopyright © 1995-2001 Microsoft Corp.", { title: "About Internet Explorer", icon: "ie" })),
   });
   w.setContent(
     tools,

@@ -5852,3 +5852,5 @@ input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type=
 .ie-zones { display: flex; gap: 6px; padding: 4px; }
 .ie-zone { width: 52px; text-align: center; font: 11px Tahoma, sans-serif; }
 .ie-zone img { display: block; margin: 0 auto 2px; width: 32px; height: 32px; }
+.ie-fold { font: 11px Tahoma, sans-serif; height: 16px; line-height: 16px; padding-left: 20px; white-space: nowrap; }
+.ie-fold.sel { background: #0a246a; color: #fff; }
