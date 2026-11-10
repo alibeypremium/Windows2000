@@ -1,4 +1,4 @@
-const CACHE = "win2k-desktop-v1";
+const CACHE = "win2k-desktop-v2";
 const isAsset = (u) => /\/assets\/.+\.(png|gif|ico|woff2?|ttf)$/i.test(u.pathname);
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -10,7 +10,7 @@ self.addEventListener("install", (event) => {
         try {
           const list = await (await fetch(new URL("assets-manifest.json", self.location))).json();
           for (let i = 0; i < list.length; i += 24)
-            await Promise.all(list.slice(i, i + 24).map((f) => cache.add(new URL(f, self.location)).catch(() => {})));
+            await Promise.all(list.slice(i, i + 24).map((f) => cache.add(new Request(new URL(f, self.location), { cache: "reload" })).catch(() => {})));
         } catch {}
       }),
   );
@@ -33,17 +33,18 @@ self.addEventListener("fetch", (event) => {
     url = new URL(request.url);
   if (request.method !== "GET" || url.origin !== location.origin) return;
   if (isAsset(url))
+    // Stale-while-revalidate: instant from cache, refreshed in the background so replaced icons reach everyone.
     return event.respondWith(
-      caches.match(request).then(
-        (hit) =>
-          hit ||
-          fetch(request).then((response) => {
-            if (response.ok) {
-              const copy = response.clone();
-              caches.open(CACHE).then((cache) => cache.put(request, copy));
-            }
-            return response;
-          }),
+      caches.open(CACHE).then((cache) =>
+        cache.match(request).then((hit) => {
+          const net = fetch(request, { cache: "no-cache" })
+            .then((response) => {
+              if (response.ok) cache.put(request, response.clone());
+              return response;
+            })
+            .catch(() => hit);
+          return hit || net;
+        }),
       ),
     );
   event.respondWith(
