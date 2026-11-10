@@ -1,3 +1,4 @@
+import { SAVER_LIST } from "../rendering/savers.js";
 import { ieOptions } from "../internet/ie-dialogs.js";
 import { schemes } from "./schemes.js";
 import {
@@ -360,12 +361,7 @@ export function openControlPanel(ctx, { page = "system" } = {}) {
           monitor(),
           field(
             "Screen saver:",
-            select("screensaver", [
-              ["none", "(None)"],
-              ["starfield", "Starfield"],
-              ["pipes", "Mystify"],
-              ["blank", "Blank Screen"],
-            ]),
+            select("screensaver", SAVER_LIST),
           ),
           field(
             "Wait (minutes):",

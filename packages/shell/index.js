@@ -14,6 +14,7 @@ import { DESKTOP, DOCS, joinPath, basename, pickFiles } from "../core/index.js";
 import { openTaskbarProperties } from "../control-panel/dialogs.js";
 import { refWindow, kit, btn } from "../control-panel/refkit.js";
 import { dialogFromTemplate, px, py } from "../ui/dlg.js";
+import { startSaver } from "../rendering/savers.js";
 import { lanStatusTemplate } from "./lan-data.js";
 export { openHelp, openWelcome, openAbout } from "./help.js";
 export class DesktopShell {
@@ -1249,70 +1250,23 @@ export class DesktopShell {
     document.querySelector("#overlay-layer").append(overlay);
   }
   previewScreensaver(type) {
-    if (type === "none") return;
+    if (!type || type === "none") return;
     this.lastActivity = Date.now();
     const overlay = el("div", { class: "screensaver" }),
       canvas = el("canvas", { width: innerWidth, height: innerHeight });
     overlay.append(canvas);
     document.querySelector("#overlay-layer").append(overlay);
-    const c = canvas.getContext("2d"),
-      stars = Array.from({ length: 130 }, () => ({
-        x: (Math.random() - 0.5) * innerWidth,
-        y: (Math.random() - 0.5) * innerHeight,
-        z: Math.random() * 1000,
-      }));
-    let raf,
-      t = 0;
-    const draw = () => {
-      t += 0.016;
-      c.fillStyle = type === "pipes" ? "rgba(0,0,0,.09)" : "#000";
-      c.fillRect(0, 0, canvas.width, canvas.height);
-      if (type === "starfield") {
-        for (const s of stars) {
-          s.z -= 3;
-          if (s.z <= 1) s.z = 1000;
-          const k = 240 / s.z;
-          c.fillStyle = "#fff";
-          c.fillRect(
-            s.x * k + innerWidth / 2,
-            s.y * k + innerHeight / 2,
-            Math.max(1, k * 2),
-            Math.max(1, k * 2),
-          );
-        }
-      } else if (type === "pipes") {
-        c.strokeStyle = `hsl(${(t * 28) % 360} 75% 55%)`;
-        c.lineWidth = 2;
-        c.beginPath();
-        for (let i = 0; i < 6; i++) {
-          const x =
-              innerWidth / 2 + Math.sin(t * 0.6 + i * 1.2) * innerWidth * 0.42,
-            y =
-              innerHeight / 2 +
-              Math.cos(t * 0.8 + i * 1.9) * innerHeight * 0.42;
-          i ? c.lineTo(x, y) : c.moveTo(x, y);
-        }
-        c.closePath();
-        c.stroke();
-      }
-      raf = requestAnimationFrame(draw);
-    };
+    const stop = startSaver(type, canvas, (this.ctx.settings.get("saverOptions") || {})[type] || {});
+    let armed = false;
+    setTimeout(() => (armed = true), 400);
     const dismiss = () => {
-      cancelAnimationFrame(raf);
+      if (!armed) return;
+      stop();
       overlay.remove();
       this.lastActivity = Date.now();
-      document.removeEventListener("keydown", dismiss);
+      for (const [t, f] of [["keydown", dismiss], ["pointermove", dismiss], ["pointerdown", dismiss]]) document.removeEventListener(t, f);
     };
-    overlay.addEventListener("pointerdown", dismiss, { once: true });
-    overlay.addEventListener(
-      "pointermove",
-      () => {
-        if (t > 0.2) dismiss();
-      },
-      { once: true },
-    );
-    document.addEventListener("keydown", dismiss, { once: true });
-    draw();
+    for (const t of ["keydown", "pointermove", "pointerdown"]) document.addEventListener(t, dismiss);
   }
 }
 export function openRun(ctx) {

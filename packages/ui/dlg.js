@@ -60,10 +60,20 @@ export function dialogFromTemplate(ctx, tpl, opts = {}) {
     } else if (["listbox", "SysListView32", "SysTreeView32"].includes(c.class)) {
       node = sunken(x, y, cw, ch, el("div", { class: "rk-listbox" }));
       byId[c.id] = node;
-    } else if (c.class === "msctls_trackbar32") {
+    } else if (c.class === "msctls_trackbar32" || c.class === "scrollbar") {
       const vert = ch > cw;
-      node = el("div", { class: "rk-tb" + (vert ? " v" : ""), style: { left: x + "px", top: y + "px", width: cw + "px", height: ch + "px" } }, el("i"), el("b"));
+      const thumb = el("b");
+      node = el("div", { class: "rk-tb" + (vert ? " v" : ""), style: { left: x + "px", top: y + "px", width: cw + "px", height: ch + "px" } }, el("i"), thumb);
       byId[c.id] = node;
+      const sl = opts.sliders?.[c.id];
+      if (sl && !vert) { // interactive horizontal slider: sl = {min, max, value, onchange}
+        const span = () => cw - 11 - 2;
+        let v = sl.value;
+        const paint = () => (thumb.style.left = 1 + ((v - sl.min) / (sl.max - sl.min)) * span() + "px");
+        const set = (ev) => { const r = node.getBoundingClientRect(); v = Math.round(sl.min + Math.max(0, Math.min(1, (ev.clientX - r.left - 6) / span())) * (sl.max - sl.min)); paint(); sl.onchange?.(v); };
+        paint();
+        node.addEventListener("pointerdown", (ev) => { set(ev); const mv = (e2) => set(e2); const up = () => { window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); }; window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up); });
+      }
     } else if (c.class === "SysDateTimePick32") {
       const input = el("input", { class: "rk-input", type: "date", value: opts.values?.[c.id] ?? "" });
       node = sunken(x, y, cw, 21, input);

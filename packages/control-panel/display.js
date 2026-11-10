@@ -2,6 +2,8 @@
 import { el, popup } from "../ui/index.js";
 import { refWindow, kit } from "./refkit.js";
 import { sheetButtons } from "./dialogs.js";
+import { SAVER_LIST, startSaver } from "../rendering/savers.js";
+import { openSaverSettings, hasSaverSettings } from "./saver-settings.js";
 
 const IMG = "/assets/ui/display/";
 const OX = 227,
@@ -26,12 +28,7 @@ const WALLPAPERS = [
   ["Winter", "paint"],
   ["Zapotec", "tile"],
 ];
-const SAVERS = [
-  ["none", "(None)"],
-  ["starfield", "3D Flying Objects"],
-  ["pipes", "Mystify Your Mind"],
-  ["blank", "Blank Screen"],
-];
+const SAVERS = SAVER_LIST;
 const COLORS = ["16 Colors", "256 Colors", "High Color (16 bit)", "True Color (24 bit)", "True Color (32 bit)"];
 
 export function openDisplayProperties(ctx, { schemes = {}, applyTheme, tab = 0 } = {}) {
@@ -49,6 +46,7 @@ export function openDisplayProperties(ctx, { schemes = {}, applyTheme, tab = 0 }
   const S = ctx.settings;
   const state = {
     wallpaperName: S.get("wallpaperName") || "(None)",
+    wallpaperStyle: S.get("wallpaperStyle") || "Tile",
     color: S.get("desktopColor") || "#3a6ea5",
     scheme: S.get("scheme") || "Windows Standard",
     saver: S.get("screensaver") || "none",
@@ -108,11 +106,30 @@ export function openDisplayProperties(ctx, { schemes = {}, applyTheme, tab = 0 }
     );
     return pos(n, x, y, wd, 16);
   };
-  const monitor = (screen) => [
-    pos(el("div", { class: "dp-screen", style: { background: state.color } }), 353, 142, 154, 114),
-    screen || null,
-    k.img(338, 126, IMG + "monitor.png", 184, 170),
-  ];
+  const monitor = (screen) => {
+    const file = WALLPAPER_FILES[state.wallpaperName];
+    const st = { background: state.color };
+    if (screen == null && file) {
+      st.backgroundImage = `url(/assets/wallpapers/${file}.png)`;
+      const m = state.wallpaperStyle;
+      st.backgroundRepeat = m === "Tile" ? "repeat" : "no-repeat";
+      st.backgroundPosition = "center";
+      st.backgroundSize = m === "Stretch" ? "100% 100%" : "auto";
+    }
+    const scr = pos(el("div", { class: "dp-screen", style: st }), 353, 142, 154, 114);
+    if (st.backgroundImage && st.backgroundSize === "auto") {
+      const im = new Image(); // the preview shows the picture at monitor scale (154 / screen width)
+      im.onload = () => (scr.style.backgroundSize = `${Math.max(1, Math.round((im.width * 154) / (window.screen.width || 1024)))}px ${Math.max(1, Math.round((im.height * 154) / (window.screen.width || 1024)))}px`);
+      im.src = `/assets/wallpapers/${file}.png`;
+    }
+    return [scr, screen || null, k.img(338, 126, IMG + "monitor.png", 184, 170)];
+  };
+  const saverPreview = () => {
+    if (state.saver === "none") return null;
+    const cv = el("canvas", { width: 154, height: 114, style: { position: "absolute" } });
+    startSaver(state.saver, cv, (S.get("saverOptions") || {})[state.saver] || {});
+    return pos(cv, 353, 142, 154, 114);
+  };
 
   /* ---------- Background ---------- */
   const background = () => {
@@ -120,12 +137,13 @@ export function openDisplayProperties(ctx, { schemes = {}, applyTheme, tab = 0 }
       ROW = 17,
       VIS = 112 - 4,
       max = Math.max(0, rows.length * ROW - VIS);
-    let top = 0;
+    let top = state.wpTop || 0;
     const list = el("div", { class: "dp-list" }),
       inner = el("div", { class: "dp-rows" });
     pos(list, 254, 345, 252, 108);
     const sb = k.vscroll(506, 345, 110, 17, 28);
     const sync = () => {
+      state.wpTop = top;
       inner.style.top = -top + "px";
       const thumb = sb.querySelector(".thumb"),
         track = 110 - 32 - 28;
@@ -143,8 +161,8 @@ export function openDisplayProperties(ctx, { schemes = {}, applyTheme, tab = 0 }
           );
           r.addEventListener("click", () => {
             state.wallpaperName = name;
-            draw();
             dirty();
+            redraw();
           });
           return r;
         }),
@@ -169,8 +187,8 @@ export function openDisplayProperties(ctx, { schemes = {}, applyTheme, tab = 0 }
       k.btn(534, 343, 75, 23, "Browse...", {
         onclick: () => ctx.dialogs.message("Browse is not available in this virtual desktop.", { title: "Browse" }),
       }),
-      k.text(535, 381, "Picture Display:", { disabled: true }),
-      k.combo(534, 397, 75, 20, "Center", { disabled: true }),
+      k.text(535, 381, "Picture Display:", { disabled: state.wallpaperName === "(None)" }),
+      state.wallpaperName === "(None)" ? k.combo(534, 397, 75, 20, "Center", { disabled: true }) : dd(534, 397, 75, 20, state.wallpaperStyle, ["Center", "Tile", "Stretch"].map((v) => [v, v]), (v) => { state.wallpaperStyle = v; dirty(); redraw(); }),
       k.btn(534, 430, 75, 23, "Pattern...", {
         onclick: () => ctx.dialogs.message("Patterns are not available in this virtual desktop.", { title: "Pattern" }),
       }),
@@ -181,14 +199,14 @@ export function openDisplayProperties(ctx, { schemes = {}, applyTheme, tab = 0 }
   const screenSaver = () => {
     const none = state.saver === "none";
     return [
-      ...monitor(),
+      ...monitor(saverPreview() || false),
       k.group(252, 304, 357, 71, "Screen Saver", 9),
       dd(261, 316, 171, 19, SAVERS.find((s) => s[0] === state.saver)?.[1] || "(None)", SAVERS, (v) => {
         state.saver = v;
         dirty();
         redraw();
       }),
-      k.btn(439, 313, 75, 23, "Settings...", { disabled: none }),
+      k.btn(439, 313, 75, 23, "Settings...", { disabled: none, onclick: () => (hasSaverSettings(state.saver) ? openSaverSettings(ctx, state.saver, { onOk: redraw }) : ctx.dialogs.message("This screen saver has no options that you can set.", { title: "Screen Saver" })) }),
       k.btn(520, 313, 75, 23, "Preview", { disabled: none, onclick: () => ctx.previewScreensaver?.(state.saver) }),
       k.check(261, 348, "Password protected", { disabled: none }),
       k.text(472, 349, "Wait:", { disabled: none }),
@@ -315,6 +333,7 @@ export function openDisplayProperties(ctx, { schemes = {}, applyTheme, tab = 0 }
     S.patch({
       wallpaper: wp,
       wallpaperName: state.wallpaperName,
+      wallpaperStyle: state.wallpaperStyle,
       desktopColor: state.color,
       scheme: state.scheme,
       screensaver: state.saver,

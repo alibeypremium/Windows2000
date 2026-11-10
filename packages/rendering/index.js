@@ -368,6 +368,10 @@ export class DesktopRenderer {
     }
     const file = WALLPAPER_FILES[this.settings.get("wallpaperName")];
     layer.style.backgroundImage = file ? `url(/assets/wallpapers/${file}.png)` : "none";
+    const style = this.settings.get("wallpaperStyle") || "Tile";
+    layer.style.backgroundRepeat = style === "Tile" ? "repeat" : "no-repeat";
+    layer.style.backgroundPosition = "center";
+    layer.style.backgroundSize = style === "Stretch" ? "100% 100%" : "auto";
     document.querySelector("#desktop").style.backgroundColor =
       this.settings.get("desktopColor");
     this.surface.setDesktop(
