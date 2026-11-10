@@ -811,6 +811,7 @@ export class DesktopShell {
             "recorder",
             "volume",
             "mediaplayer",
+            "winamp",
           ]),
         },
         { label: "Games", icon: "programGroup", submenu: games },

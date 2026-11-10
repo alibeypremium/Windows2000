@@ -472,3 +472,8 @@ Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the origi
 - Enter (Launch Ball) top oyundayken tekrar basılınca `TPlunger` yeniden tetikleniyor ve WASM `memory access out of bounds` ile oyun donuyordu (top ekranda "kayboluyordu"). Artık Launch Ball yalnızca top plunger kanalındayken çalışır (orijinal oyundaki gibi).
 - `TTextBox` mesaj zincirinde boşa çıkmış `PreviousMessage` işaretçisi sıfırlanıyor; `gdrv::copy_bitmap` sınır kırpması eklendi.
 - Top sprite'ı ISO'daki ball0 bitmap'idir (10×10 px, 600×416 çözünürlük) — küçük olması orijinaldeki gibidir.
+
+## Winamp 2.x (Webamp)
+- Oynatıcı motoru ve klasik Winamp 2.91 varsayılan skin'i **Webamp 2.3.1** (MIT, `assets/vendor/webamp/webamp.bundle.min.mjs`, npm `webamp`) paketinden gelir. Winamp, Windows 2000 ISO'sunda olmadığı için ISO'dan çıkarılmadı; kullanıcının verdiği `winamp3.exe` (eski NSIS paketi) açılamadı.
+- Çalma listesi: Windows2000 demo melodisi ve ISO'dan gelen sistem sesleri. Eject (⏏) ile bilgisayardan mp3/ogg/wav eklenir.
+- Tahmin/uydurma: Winamp ikonu (`assets/icons/winamp-*.png`) bu proje için çizildi, orijinal değil. `app/desktop.css` içindeki `.selected`/`.window` kuralları `#webamp` içinde devre dışı bırakıldı.

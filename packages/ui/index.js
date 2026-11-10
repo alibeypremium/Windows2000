@@ -67,6 +67,7 @@ const icons = {
   freecell: "w2k/ref-freecell",
   minesweeper: "w2k/ref-minesweeper",
   pinball: "pinball",
+  winamp: "winamp",
   games: "games",
   programs: "w2k/programs",
   settings: "w2k/settings-b",

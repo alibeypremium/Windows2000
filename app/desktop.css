@@ -255,7 +255,7 @@ a,
   font-size: 13px;
   color: #444;
 }
-.selected {
+.selected:not(#webamp .selected) {
   background: var(--active) !important;
   color: white !important;
 }
@@ -373,7 +373,7 @@ button.selected:focus {
   user-select: none !important;
   cursor: inherit;
 }
-.window {
+.window:not(#webamp .window) {
   position: absolute;
   display: flex;
   flex-direction: column;

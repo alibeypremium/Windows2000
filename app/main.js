@@ -49,6 +49,7 @@ import {
   openFreeCell,
   openPinball,
 } from "/packages/games/index.js";
+import { openWinamp } from "/packages/accessories/winamp.js";
 import {
   openControlPanel,
   controlItems,
@@ -206,6 +207,13 @@ ctx.apps = [
     icon: "cdPlayerApp",
     aliases: ["cdplayer.exe"],
     open: (ctx, args) => openCdPlayer(ctx),
+  },
+  {
+    id: "winamp",
+    name: "Winamp",
+    icon: "winamp",
+    aliases: ["winamp.exe"],
+    open: (ctx) => openWinamp(ctx),
   },
   {
     id: "recorder",

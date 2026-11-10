@@ -27,3 +27,6 @@ The desktop melody and short event sounds are synthesized by this project's Java
 ## Assets cropped from reference screenshots
 
 `assets/ui/` and `assets/icons/w2k/ref-*.png` are crops of Windows 2000 user-interface imagery from screenshots supplied by the project owner. They are Microsoft's imagery, are not covered by any permissive license and are included for this non-commercial fan project only.
+
+## Webamp
+`assets/vendor/webamp/webamp.bundle.min.mjs` is Webamp 2.3.1 (MIT License, Copyright (c) Jordan Eldredge and contributors), used as the Winamp 2.x player engine; it bundles the classic Winamp 2.91 default skin.
