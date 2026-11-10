@@ -5962,7 +5962,8 @@ body.icon-dragging, body.icon-dragging * { cursor: default; }
   max-width: 45vw;
   width: max-content;
 }
-.gs-item:hover, .gs-item:focus { background: #c4def5; outline: none; }
+.gs-item:hover, .gs-item:focus { background: #336699; color: #fff !important; text-shadow: none; outline: none; }
+.gs-item:hover *, .gs-item:focus * { color: #fff !important; }
 .gs-text.wrap { white-space: normal; width: 262px; line-height: 15px; }
 .gs-li { position: relative; padding-left: 12px; }
 .gs-li::before { content: ""; position: absolute; left: 3px; top: 6px; width: 3px; height: 3px; background: #000; border-radius: 50%; }
