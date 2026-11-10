@@ -617,17 +617,18 @@ ctx.printImage = (data) => {
 };
 async function seedSampleDocs() {
   if (settings.get("samples.docs.v1")) return;
-  settings.set("samples.docs.v1", true);
   const desk = "C:/Documents and Settings/Administrator/Desktop";
   const names = ["Güzel Sözler.txt", "Mektup.wdoc", "ayarlar.json", "Gün Batımı.png", "Ay Işığı.png", "Hayat Rehberi.pdf", "Sabah Melodisi.mp3", "Gece Rüyası.ogg", "Zil.wav", "Gün Batımı.mp4", "Yıldızlar.webm"];
   try {
     if (!fs.exists(desk + "/Docs")) await fs.mkdir(desk + "/Docs");
     for (const n of names) {
+      if (fs.exists(desk + "/Docs/" + n)) continue;
       const r = await fetch("/assets/samples/Docs/" + encodeURIComponent(n));
       if (r.ok) await fs.importFile(new File([await r.blob()], n, { type: r.headers.get("content-type") || "" }), desk + "/Docs");
     }
     const z = await fetch("/assets/samples/Docs.zip");
     if (z.ok) await fs.importFile(new File([await z.blob()], "Docs.zip", { type: "application/zip" }), desk);
+    if (z.ok) settings.set("samples.docs.v1", true);
   } catch (e) { console.warn("sample docs", e); }
 }
 async function start() {
