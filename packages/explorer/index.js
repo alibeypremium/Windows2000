@@ -456,6 +456,26 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
           separator(),
           { label: "Properties", action: () => properties() },
         ];
+  const arrangeMenu = () => ({
+    label: "Arrange Icons",
+    submenu: [
+      ["by Name", "name"],
+      ["by Type", "type"],
+      ["by Size", "size"],
+      ["by Date", "modified"],
+    ].map(([label, key]) => ({
+      label,
+      checked: sortBy === key,
+      action: () => {
+        sortDirection = key === "modified" ? -1 : 1;
+        sortBy = key;
+        renderList();
+      },
+    })).concat([
+      separator(),
+      { label: "Auto Arrange", checked: true, action: () => renderList() },
+    ]),
+  });
   const viewMenu = () => [
     {
       label: "Large Icons",
@@ -489,6 +509,9 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
         render();
       },
     },
+    separator(),
+    arrangeMenu(),
+    { label: "Line Up Icons", action: () => renderList() },
     separator(),
     {
       label: "Explorer Bar",
@@ -1227,7 +1250,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
           class: "file-item",
           role: "option",
           "data-path": n.path,
-          draggable: true,
+          draggable: "true",
           tabindex: -1,
         },
         icon(n.icon || fileIcon(n), view === "icons" ? 32 : 16),
@@ -1376,7 +1399,11 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
   listing.addEventListener("contextmenu", (e) => {
     if (!e.target.closest(".file-item")) {
       e.preventDefault();
-      popup(contextItems(), e.clientX, e.clientY);
+      popup(
+        [arrangeMenu(), { label: "Refresh", action: render }, separator(), ...contextItems()],
+        e.clientX,
+        e.clientY,
+      );
     }
   });
   w.el.addEventListener(

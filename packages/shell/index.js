@@ -629,15 +629,15 @@ export class DesktopShell {
       el(
         "div",
         { id: "quick-launch" },
-        button(icon("showDesktop"), () => ctx.wm.showDesktop(), {
+        button(icon("showDesktop"), () => ctx.launch("keyboard"), {
+          class: "quick-launch-button",
+          title: "On-Screen Keyboard",
+          "aria-label": "On-Screen Keyboard",
+        }),
+        button(icon("qlDesktop"), () => ctx.wm.showDesktop(), {
           class: "quick-launch-button",
           title: "Show Desktop",
           "aria-label": "Show Desktop",
-        }),
-        button(icon("qlDesktop"), () => ctx.launch("explorer"), {
-          class: "quick-launch-button",
-          title: "Windows Explorer",
-          "aria-label": "Windows Explorer",
         }),
         button(icon("qlIe"), () => ctx.launch("ie"), {
           class: "quick-launch-button",

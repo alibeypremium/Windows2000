@@ -439,3 +439,5 @@ Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the origi
 - Network Identification: Properties opens netid.dll dialog 103 (Identification Changes); Network ID reuses the layout of netid.dll dialog 105 (Domain Username And Password) as a user-name prompt (that prompt and its text are not in the original). The user name feeds "Registered to:" on the General tab; until the computer is renamed its full name is `<user name>-windows2000`.
 - Local Area Connection Status: netshell.dll dialog 1801 on a one-tab sheet with Close (&Close = string 23020); "Bytes:" is shown as "Packets:" (string 23051) and the dial-up Errors row is dropped; activity pictures are netshell LAN icons 121–128 (`assets/tray/lan32-*.png`). Blink timing and counters are simulated.
 - Selected desktop/Explorer icons are blended 50% with the highlight colour (`#w2k-sel` SVG filter) instead of the earlier sepia tint.
+
+- Quick launch: sol simge On-Screen Keyboard, sağ simge Show Desktop; Explorer Arrange Icons (Name/Type/Size/Date) View menüsü + boş alan sağ tık; Save As 'Desktop' kısayol düğmesi; Explorer öğeleri draggable="true" (tahmin: düğme glifi ISO dışı).

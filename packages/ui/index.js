@@ -1164,6 +1164,14 @@ export class DialogService {
             },
             { title: "Up One Level", "aria-label": "Up One Level" },
           ),
+          button(
+            "🖥",
+            () => {
+              folder = "C:/Documents and Settings/Administrator/Desktop";
+              render();
+            },
+            { title: "Desktop", "aria-label": "Desktop", class: "file-dialog-desktop" },
+          ),
           button("New Folder", async () => {
             const n = await this.prompt(
               "Name of the new folder:",
