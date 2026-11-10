@@ -396,3 +396,4 @@ Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the origi
 - WMP dialogs (Open, About, Statistics, Properties, Options sheet) rebuilt from msdxm.ocx RT_DIALOG templates (packages/accessories/wmp-data.js).
 - CD Player: bitmaps, menus and Player Options/Playlist Editor dialogs extracted from cdplayer.exe (assets/cdplayer, packages/accessories/cd-data.js).
 - Outlook Express: read-message window menu (msoeres.dll menu 121), Options/Find/Layout/Rules/New Folder/About dialogs from msoeres.dll templates (packages/internet/oe-data.js).
+- Volume Control: strips, Properties and Advanced Controls dialogs rebuilt from sndvol32.exe templates (packages/accessories/volume.js, volume-data.js).
