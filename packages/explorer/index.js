@@ -1,4 +1,5 @@
 /** @package @win2k/explorer — shell namespace, file management and search. */
+import { confirmDelete } from "../ui/shconfirm.js";
 import {
   DOCS,
   DESKTOP,
@@ -342,10 +343,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     if (!valid.length) return;
     const permanent = current === "recycle";
     if (
-      await ctx.dialogs.confirm(
-        `Are you sure you want to ${permanent ? "permanently delete" : "send to the Recycle Bin"} ${valid.length === 1 ? "“" + basename(valid[0]) + "”" : `these ${valid.length} items`}?`,
-        "Confirm File Delete",
-      )
+      await confirmDelete(ctx, { names: valid.map(basename), folders: valid.map((p) => ctx.fs.stat(p)?.type === "folder"), permanent })
     ) {
       for (const p of valid) await ctx.fs.remove(p, { permanent });
       selected.clear();
@@ -389,10 +387,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
             label: "Empty Recycle Bin",
             action: async () => {
               if (
-                await ctx.dialogs.confirm(
-                  "Are you sure you want to permanently delete all the items?",
-                  "Confirm Delete",
-                )
+                await confirmDelete(ctx, { names: Array(ctx.fs.recycled().length).fill(""), emptyBin: true })
               )
                 (await ctx.fs.emptyRecycleBin(), ctx.sound.play("recycle"));
             },

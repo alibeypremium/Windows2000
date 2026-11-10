@@ -14,6 +14,7 @@ import { DESKTOP, DOCS, joinPath, basename, pickFiles } from "../core/index.js";
 import { openTaskbarProperties } from "../control-panel/dialogs.js";
 import { refWindow, kit, btn } from "../control-panel/refkit.js";
 import { dialogFromTemplate, px, py } from "../ui/dlg.js";
+import { confirmDelete } from "../ui/shconfirm.js";
 import { startSaver } from "../rendering/savers.js";
 import { lanStatusTemplate } from "./lan-data.js";
 export { openHelp, openWelcome, openAbout } from "./help.js";
@@ -215,11 +216,6 @@ export class DesktopShell {
       });
       b.addEventListener("dragstart", (e) => e.preventDefault());
       b.addEventListener("pointerdown", (e) => this.dragIcon(e, item, b));
-      b.addEventListener("keydown", (e) => {
-        if (e.key === "F2") this.renameSelected();
-        else if (e.key === "Delete") this.deleteSelected();
-        else if (e.key === "Enter") safely(() => item.action())();
-      });
       if (item.folder || item.id === "recycle") {
         b.addEventListener("dragover", (e) => {
           e.preventDefault();
@@ -287,8 +283,8 @@ export class DesktopShell {
   async emptyRecycleBin() {
     const ctx = this.ctx, n = ctx.fs.recycled().length;
     if (!n) return;
-    const r = await ctx.dialogs.message(n === 1 ? "Are you sure you want to delete the 1 item in the Recycle Bin?" : `Are you sure you want to delete these ${n} items in the Recycle Bin?`, { title: "Confirm Multiple File Delete", icon: "warning", buttons: ["Yes", "No"] });
-    if (r !== "Yes") return;
+    const ok = await confirmDelete(ctx, { names: Array(n).fill(""), emptyBin: true });
+    if (!ok) return;
     await ctx.fs.emptyRecycleBin();
     this.renderDesktop();
   }
@@ -443,10 +439,7 @@ export class DesktopShell {
     );
     if (
       items.length &&
-      (await this.ctx.dialogs.confirm(
-        "Send " + items.length + " item(s) to the Recycle Bin?",
-        "Confirm File Delete",
-      ))
+      (await confirmDelete(this.ctx, { names: items.map((i) => i.name), folders: items.map((i) => !!i.folder) }))
     )
       for (const item of items) await this.ctx.fs.remove(item.path);
   }

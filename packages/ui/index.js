@@ -908,11 +908,25 @@ export class DialogService {
     return new Promise((resolve) => {
       const kind = { error: "critical", warning: "exclamation", info: "asterisk", help: "question", question: "question" }[ico];
       if (kind) this.sound?.play(kind);
+      // user32.dll MessageBox icons (assets/msgbox); other names fall back to the icon set
+      const std = { error: "error", warning: "warning", info: "info", help: "question", question: "question" }[ico];
+      const glyph = std
+        ? el("img", { class: "mb-icon", src: `/assets/msgbox/${std}.png`, width: 32, height: 32, alt: "", draggable: "false" })
+        : ico ? icon(ico, 32) : null;
+      // size the box like MessageBox: text wraps at ~ 1/2 screen, buttons 75x23 centred
+      const probe = el("div", { class: "message-text mb-probe", text: message });
+      document.body.append(probe);
+      const textW = Math.min(Math.ceil(probe.scrollWidth) + 2, Math.max(260, Math.floor(innerWidth * 0.45)));
+      probe.style.width = textW + "px";
+      const textH = Math.max(Math.ceil(probe.scrollHeight), glyph ? 32 : 14);
+      probe.remove();
+      const btnW = buttons.length * 75 + (buttons.length - 1) * 6 + 24;
+      const bodyW = Math.max((glyph ? 14 + 32 + 16 : 16) + textW + 16, btnW, 130);
       const w = this.wm.create({
         title,
-        icon: ico,
-        width: 400,
-        height: 180,
+        noIcon: true,
+        width: bodyW + 8,
+        height: 22 + 4 + 16 + textH + 18 + 23 + 12,
         dialog: true,
         resizable: false,
         minimizable: false,
@@ -924,7 +938,7 @@ export class DialogService {
         await w.close();
         resolve(value);
       };
-      const row = el("div", { class: "dialog-buttons" });
+      const row = el("div", { class: "dialog-buttons mb-buttons" });
       buttons.forEach((label, i) =>
         row.append(
           button(label, () => finish(label), {
@@ -935,9 +949,9 @@ export class DialogService {
       w.setContent(
         el(
           "div",
-          { class: "message-content" },
-          icon(ico, 32),
-          el("div", { class: "message-text", text: message }),
+          { class: "message-content mb-content" },
+          glyph,
+          el("div", { class: "message-text", style: { width: textW + "px" }, text: message }),
         ),
         row,
       );

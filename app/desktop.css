@@ -5937,3 +5937,28 @@ body.icon-dragging, body.icon-dragging * { cursor: default; }
   display: block;
   margin: auto;
 }
+
+/* Windows 2000 MessageBox metrics */
+.message-content.mb-content {
+  gap: 16px;
+  padding: 16px 16px 0 14px;
+  align-items: flex-start;
+  overflow: visible;
+}
+.message-content.mb-content .message-text {
+  line-height: 1.3;
+  align-self: center;
+}
+.mb-icon { image-rendering: pixelated; flex: none; }
+.dialog-buttons.mb-buttons {
+  justify-content: center;
+  padding: 18px 0 12px;
+  margin-top: 0;
+}
+.mb-probe {
+  position: absolute;
+  visibility: hidden;
+  white-space: pre-wrap;
+  max-width: 45vw;
+  width: max-content;
+}
