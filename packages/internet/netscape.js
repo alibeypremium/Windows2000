@@ -68,22 +68,17 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
   const address = el("input", { class: "ns-loc-input", value: "", "aria-label": "Location" });
   const viewport = el("div", { class: "ns-view" });
   const msg = el("div", { class: "ns-status-text", text: "Document: Done" });
-  const throbber = el("div", { class: "ns-throbber", title: "Netscape home page" });
+  const anim = el("div", { class: "ns-throbber-anim" });
+  anim.style.backgroundImage = `url(${IMG}throbber.png)`;
+  const throbber = el("div", { class: "ns-throbber", title: "Netscape home page" }, anim);
   throbber.style.backgroundImage = `url(${IMG}logo.png)`;
+  timer = setInterval(() => {
+    frameNo = (frameNo + 1) % FRAMES;
+    anim.style.backgroundPosition = `-${frameNo * 32}px 0`;
+  }, 60);
 
   const setLoading = (on) => {
     loading = on;
-    clearInterval(timer);
-    if (on) {
-      throbber.style.backgroundImage = `url(${IMG}throbber.png)`;
-      timer = setInterval(() => {
-        frameNo = (frameNo + 1) % FRAMES;
-        throbber.style.backgroundPosition = `-${frameNo * 32}px 0`;
-      }, 60);
-    } else {
-      throbber.style.backgroundImage = `url(${IMG}logo.png)`;
-      throbber.style.backgroundPosition = "0 0";
-    }
     syncNav();
   };
 
@@ -301,7 +296,7 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
   const status = el("div", { class: "ns-status" }, el("img", { src: IMG + "st-lock.png", alt: "", draggable: "false" }), msg, el("img", { class: "ns-comp", src: IMG + "st-comp.png", alt: "", draggable: "false" }));
 
   w.setContent(menus, nav, loc, pers, viewport, status);
-  w.onClose?.(() => clearInterval(timer));
+  w.onClose = () => { clearInterval(timer); return true; };
 
   address.addEventListener("keydown", (e) => e.key === "Enter" && go(address.value));
   throbber.addEventListener("click", () => go("http://home.netscape.com/"));
