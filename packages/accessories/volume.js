@@ -35,7 +35,7 @@ export function openVolume(ctx) {
       const tpl = D[s.tpl], ox = FX + i * SW, oy = FY + MENU;
       const get = () => ctx.settings.get(s.key) ?? s.def;
       dialogFromTemplate(ctx, tpl, {
-        host: w, ox, oy, labels: { 1004: s.label, 1000: "&" + s.muteLabel.replace(/^&/, "") },
+        host: w, ox, oy, hidden: [1001, 1002, 1005], labels: { 1004: s.label, 1000: "&" + s.muteLabel.replace(/^&/, "") },
         checked: { 1000: !!ctx.settings.get(s.mute) },
         on: { 1000: () => ctx.settings.set(s.mute, !ctx.settings.get(s.mute)), 1022: () => advanced() },
       });

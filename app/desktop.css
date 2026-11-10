@@ -5984,3 +5984,5 @@ body.icon-dragging, body.icon-dragging * { cursor: default; }
 .ab-tb:not(.off):active img { margin: 1px 0 0 1px; }
 .wp-btn:active::after, .wp-btn.on::after { content: ""; position: absolute; inset: 0; opacity: 1; background: none; box-shadow: inset 1px 1px #404040, inset -1px -1px #fff, inset 2px 2px #808080, inset -2px -2px #d4d0c8; }
 .wp-btn.on:not(:active)::after { background: repeating-conic-gradient(rgba(255,255,255,.55) 0 25%, rgba(212,208,200,.0) 0 50%) 2px 2px / 2px 2px; background-clip: padding-box; }
+.img-hit:hover { box-shadow: inset 1px 1px #fff, inset -1px -1px #808080; }
+.img-hit:active { box-shadow: inset 1px 1px #808080, inset -1px -1px #fff; }

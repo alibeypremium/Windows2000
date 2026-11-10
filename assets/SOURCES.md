@@ -458,3 +458,6 @@ Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the origi
 - Raised border on hover and sunken border + 1px shift on press follow the standard flat-toolbar look (not read from the ISO).
 
 - WordPad toolbar: the button pictures (screenshot crops with a baked raised bevel) now get a sunken bevel while pressed, and Bold/Italic/Underline stay pressed (dithered, as the alignment buttons) while the caret text has that style. Bevel colours are the standard 3D palette (not read from the ISO).
+
+- Imaging toolbar: the picture is a screenshot crop with invisible hit areas; hover (raised) and press (sunken) borders are now drawn over the buttons (standard 3D palette, not from the ISO).
+- Volume Control: the dialog templates from sndvol32.exe contain their own trackbar controls (ids 1001/1002) and level meter (1005); they were drawn underneath the interactive sliders, giving a doubled thumb/ticks. They are now hidden. The 16x16 window icon is sndvol32.exe icon 300 as stored on the ISO (the 32x32 version of that icon is the mixer with speaker; the speaker-only icons 301-304 are tray icons).
