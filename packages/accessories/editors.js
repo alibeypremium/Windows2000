@@ -582,6 +582,15 @@ export function openWordPad(ctx, { path = null } = {}) {
     onchange: (e) => command("foreColor", e.target.value),
   });
   const align = {};
+  // Bold / Italic / Underline stay pressed while the text at the caret has that style
+  const toggles = {};
+  const syncToggles = () => {
+    for (const [k, b] of Object.entries(toggles)) b.classList.toggle("on", !!document.queryCommandState(k));
+  };
+  for (const [x, k, t] of [[360, "bold", "Bold"], [383, "italic", "Italic"], [406, "underline", "Underline"]])
+    toggles[k] = wb(x, 34, k, t, async () => { await command(k); syncToggles(); });
+  editor.addEventListener("keyup", syncToggles);
+  editor.addEventListener("mouseup", () => setTimeout(syncToggles));
   const setAlign = (k, cmd) => {
     for (const [n, b] of Object.entries(align)) {
       b.classList.toggle("on", n === k);
@@ -598,9 +607,9 @@ export function openWordPad(ctx, { path = null } = {}) {
     family,
     size,
     script,
-    wb(360, 34, "bold", "Bold", () => command("bold")),
-    wb(383, 34, "italic", "Italic", () => command("italic")),
-    wb(406, 34, "underline", "Underline", () => command("underline")),
+    toggles.bold,
+    toggles.italic,
+    toggles.underline,
     wb(429, 34, "color", "Color", () => colorInput.click()),
     colorInput,
     align.left,
