@@ -156,6 +156,12 @@ export class DesktopShell {
         icon: "ie",
         action: () => ctx.launch("ie"),
       },
+      {
+        id: "winamp",
+        name: "Winamp",
+        icon: "winamp",
+        action: () => ctx.launch("winamp"),
+      },
       ...ctx.fs.list(DESKTOP).map((n) => ({
         id: n.path,
         name: n.name,
