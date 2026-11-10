@@ -467,3 +467,8 @@ Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the origi
 - FreeCell: "At the end of each move, FreeCell transfers unneeded cards to home cells" (freecell.chm, Strategies and tips) is implemented (a card is unneeded when the opposite-colour cards of lower rank are already home; aces and twos always go); right-clicking a card brings a partly hidden card to the front while the button is held (same help topic). The "title bar flashes when only one legal move remains" behaviour is not implemented. Auto-moves are undone together with the player's move by Undo.
 - Solitaire already had double-click to suit stack and right-click/Ctrl+A for all playable cards (sol.chm, Play Solitaire).
 - Pinball: `pinball.wasm` rebuilt with a few extra read-only debug exports (`pb_state` 6-15); the table logic is unchanged.
+
+## Pinball – Launch Ball / çökme düzeltmesi
+- Enter (Launch Ball) top oyundayken tekrar basılınca `TPlunger` yeniden tetikleniyor ve WASM `memory access out of bounds` ile oyun donuyordu (top ekranda "kayboluyordu"). Artık Launch Ball yalnızca top plunger kanalındayken çalışır (orijinal oyundaki gibi).
+- `TTextBox` mesaj zincirinde boşa çıkmış `PreviousMessage` işaretçisi sıfırlanıyor; `gdrv::copy_bitmap` sınır kırpması eklendi.
+- Top sprite'ı ISO'daki ball0 bitmap'idir (10×10 px, 600×416 çözünürlük) — küçük olması orijinaldeki gibidir.

@@ -222,9 +222,26 @@ void gdrv::fill_bitmap(gdrv_bitmap8* bmp, int width, int height, int xOff, int y
 	}
 }
 
+// Clips a copy rectangle to both bitmaps (guards against out-of-bounds writes/reads).
+static bool clip_copy(gdrv_bitmap8* dst, gdrv_bitmap8* src, int& w, int& h, int& dx, int& dy, int& sx, int& sy)
+{
+	if (dx >= 0 && dy >= 0 && sx >= 0 && sy >= 0 && dx + w <= dst->Width && dy + h <= dst->Height &&
+		sx + w <= src->Width && sy + h <= src->Height)
+		return true;
+	if (dx < 0) { w += dx; sx -= dx; dx = 0; }
+	if (dy < 0) { h += dy; sy -= dy; dy = 0; }
+	if (sx < 0) { w += sx; dx -= sx; sx = 0; }
+	if (sy < 0) { h += sy; dy -= sy; sy = 0; }
+	w = std::min(w, std::min(dst->Width - dx, src->Width - sx));
+	h = std::min(h, std::min(dst->Height - dy, src->Height - sy));
+	return w > 0 && h > 0;
+}
+
 void gdrv::copy_bitmap(gdrv_bitmap8* dstBmp, int width, int height, int xOff, int yOff, gdrv_bitmap8* srcBmp,
                        int srcXOff, int srcYOff)
 {
+	if (!clip_copy(dstBmp, srcBmp, width, height, xOff, yOff, srcXOff, srcYOff))
+		return;
 	auto srcPtr = &srcBmp->BmpBufPtr1[srcBmp->Stride * srcYOff + srcXOff];
 	auto dstPtr = &dstBmp->BmpBufPtr1[dstBmp->Stride * yOff + xOff];
 
@@ -239,6 +256,8 @@ void gdrv::copy_bitmap(gdrv_bitmap8* dstBmp, int width, int height, int xOff, in
 void gdrv::copy_bitmap_w_transparency(gdrv_bitmap8* dstBmp, int width, int height, int xOff, int yOff,
                                       gdrv_bitmap8* srcBmp, int srcXOff, int srcYOff)
 {
+	if (!clip_copy(dstBmp, srcBmp, width, height, xOff, yOff, srcXOff, srcYOff))
+		return;
 	auto srcPtr = &srcBmp->BmpBufPtr1[srcBmp->Stride * srcYOff + srcXOff];
 	auto dstPtr = &dstBmp->BmpBufPtr1[dstBmp->Stride * yOff + xOff];
 

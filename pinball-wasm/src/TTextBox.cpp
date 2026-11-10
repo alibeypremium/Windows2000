@@ -66,6 +66,8 @@ void TTextBox::TimerExpired(int timerId, void* caller)
 		TTextBoxMessage* nextMessage = message->NextMessage;
 		delete message;
 		tb->CurrentMessage = nextMessage;
+		if (!tb->CurrentMessage || tb->PreviousMessage == message)
+			if (!tb->CurrentMessage) tb->PreviousMessage = nullptr;
 		tb->Draw();
 		control::handler(MessageCode::ControlTimerExpired, tb);
 	}
@@ -98,6 +100,8 @@ void TTextBox::Clear(bool lowPriorityOnly)
 		CurrentMessage = message->NextMessage;
 		delete message;
 	}
+	if (!CurrentMessage)
+		PreviousMessage = nullptr;
 	if (CurrentMessage)
 		Draw();
 }
@@ -107,7 +111,7 @@ void TTextBox::Display(const char* text, float time, bool lowPriority)
 	if (!text)
 		return;
 
-	if (CurrentMessage && !strcmp(text, PreviousMessage->Text))
+	if (CurrentMessage && PreviousMessage && PreviousMessage->Text && !strcmp(text, PreviousMessage->Text))
 	{
 		PreviousMessage->Refresh(time);
 		if (PreviousMessage == CurrentMessage)
@@ -190,6 +194,8 @@ void TTextBox::Draw()
 		CurrentMessage = CurrentMessage->NextMessage;
 		delete tmp;
 	}
+	if (!CurrentMessage)
+		PreviousMessage = nullptr;
 
 	if (display)
 	{

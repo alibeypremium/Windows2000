@@ -97,6 +97,9 @@ int TPlunger::Message(MessageCode code, float value)
 		loader::play_sound(SoundIndexP1, this, "TPlunger2");
 		break;
 	case MessageCode::PlungerLaunchBall:
+		// Launch Ball only works while a ball is resting in the plunger lane (as in the original game).
+		if (!PinballTable->BallCountInRect(PinballTable->PlungerPosition, PinballTable->CollisionCompOffset * 1.2f))
+			break;
 		PullbackStartedFlag = true;
 		Boost = MaxPullback;
 		Message(MessageCode::PlungerInputReleased, 0.0f);
