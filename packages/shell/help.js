@@ -190,7 +190,13 @@ export function openHelp(ctx, { topic } = {}) {
     tree = el("div", { class: "hh-tree" }),
     root = el("div", { class: "hh-root" });
   const tb = (cls, ico, label, x, cx, onclick, disabled = false) => {
-    const b = el("div", { class: "hh-tb " + cls + (disabled ? " off" : ""), onclick: () => !b.classList.contains("off") && onclick() }, img(ico), el("span", { text: label }));
+    const pic = img(ico);
+    const b = el("div", { class: "hh-tb " + cls + (disabled ? " off" : ""), onclick: () => !b.classList.contains("off") && onclick() }, pic, el("span", { text: label }));
+    // hhctrl.ocx toolbar bitmaps 512 (cold) / 513 (hot): coloured picture while the pointer is over an enabled button
+    b.paint = (hot) => { pic.src = HH + (b.classList.contains("off") ? ico + ".png" : "hot/" + ico + (hot ? "-hot" : "-cold") + ".png"); };
+    b.addEventListener("mouseenter", () => b.paint(true));
+    b.addEventListener("mouseleave", () => b.paint(false));
+    queueMicrotask(() => b.paint(false));
     b.style.left = x + "px";
     b.style.setProperty("--cx", cx + "px");
     return b;
@@ -211,6 +217,8 @@ export function openHelp(ctx, { topic } = {}) {
   const sync = () => {
     back.classList.toggle("off", !hist.length);
     fw.classList.toggle("off", !fwd.length);
+    back.paint(false);
+    fw.paint(false);
   };
   const go = (key, dir) => {
     if (!key) return;

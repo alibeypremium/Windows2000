@@ -86,7 +86,13 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
     ];
   const favFolders = () => [...new Set([...(ctx.settings.get("favFolders") || []), ...favorites().map((f) => f.folder).filter(Boolean)])];
   const home = () => navigate(ctx.settings.get("homePage") || "about:home");
+  function syncNav() {
+    const set = (n, off) => { const b = w.el?.querySelector?.(`.ie-tb[data-tb="${n}"]`); if (b) { b.classList.toggle("disabled", off); if (off) b.firstChild.src = "/assets/ui/ie/iso/" + n + "-cold.png"; } };
+    set("back", index <= 0);
+    set("fwd", index >= history.length - 1);
+  }
   function render() {
+    syncNav();
     viewport.replaceChildren();
     status.children[0].textContent = "Done";
     status.children[1].textContent = current.startsWith("about:")
@@ -333,11 +339,14 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
     const a = t.closest?.("a[href]"), img = t.closest?.("img");
     popup(t.closest?.("input,textarea,select") ? controlMenu() : img ? imageMenu(img.src) : a ? linkMenu(a.href) : pageMenu(), e.clientX, e.clientY);
   });
-  const TB = "/assets/ui/ie/tb-";
+  const TB = "/assets/ui/ie/tb-", ISO = "/assets/ui/ie/iso/";
+  const isoTb = new Set(["back", "fwd", "stop", "refresh", "home", "search", "favorites", "history", "mail", "print"]);
   const tbButton = (name, label, action, { drop = false, disabled = false, title } = {}) => {
+    const iso = isoTb.has(name);
+    const pic = el("img", { src: iso ? ISO + name + "-cold.png" : TB + name + ".png", alt: "", draggable: "false" });
     const b = button(
       [
-        el("img", { src: TB + name + ".png", alt: "", draggable: "false" }),
+        pic,
         label ? el("span", { text: label }) : null,
         drop ? el("span", { class: "ie-drop" }) : null,
       ],
@@ -345,6 +354,12 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
       { class: "ie-tb" + (disabled ? " disabled" : ""), title: title || label },
     );
     b.dataset.tb = name;
+    if (iso) {
+      // Windows 2000 toolbars show the "hot" (coloured) bitmap while the pointer is over an enabled button.
+      const hot = (on) => { if (!b.classList.contains("disabled")) pic.src = ISO + name + (on ? "-hot" : "-cold") + ".png"; };
+      b.addEventListener("mouseenter", () => hot(true));
+      b.addEventListener("mouseleave", () => hot(false));
+    }
     return b;
   };
   const sep = () => el("span", { class: "ie-tb-sep" });
