@@ -186,6 +186,12 @@ export class DesktopShell {
         icon: "winrar",
         action: () => ctx.launch("winrar"),
       },
+      {
+        id: "word",
+        name: "Microsoft Word",
+        icon: "word",
+        action: () => ctx.launch("word"),
+      },
       ...ctx.fs.list(DESKTOP).map((n) => ({
         id: n.path,
         name: n.name,
@@ -875,7 +881,7 @@ export class DesktopShell {
           icon: "programGroup",
           submenu: [{ label: "(Empty)", disabled: true }],
         },
-        ...this.appItems(["ie", "outlook", "acrobat", "divx", "vlc", "winamp", "winrar"]),
+        ...this.appItems(["ie", "outlook", "word", "acrobat", "divx", "vlc", "winamp", "winrar"]),
       ],
       settings = [
         {

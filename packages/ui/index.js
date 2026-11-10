@@ -69,6 +69,8 @@ const icons = {
   pinball: "pinball",
   winamp: "winamp",
   winrar: "winrar",
+  word: "word",
+  worddoc: "worddoc",
   acrobat: "acrobat",
   vlc: "vlc",
   divx: "divx",
@@ -225,6 +227,7 @@ export function fileIcon(file) {
   if (["bat", "cmd"].includes(ext)) return "batchFile";
   if (["sys", "ini", "dll", "cfg", "inf"].includes(ext)) return "sysFile";
   if (["htm", "html", "url"].includes(ext)) return "ie";
+  if (ext === "doc") return "worddoc";
   if (["rtf", "wdoc"].includes(ext)) return "wordpad";
   if (["txt", "log", "md", "js", "json", "css", "csv"].includes(ext))
     return "textFile";

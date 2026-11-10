@@ -51,6 +51,7 @@ import {
 } from "/packages/games/index.js";
 import { openWinamp } from "/packages/accessories/winamp.js";
 import { openWinRAR } from "/packages/accessories/winrar.js";
+import { openWord } from "/packages/accessories/word.js";
 import { openAcrobat } from "/packages/accessories/acrobat.js";
 import { openVLC } from "/packages/accessories/vlc.js";
 import { openDivX } from "/packages/accessories/divx.js";
@@ -239,6 +240,13 @@ ctx.apps = [
     icon: "divx",
     aliases: ["divx.exe", "divxplayer", "divxplayer.exe"],
     open: (ctx, args) => openDivX(ctx, args || {}),
+  },
+  {
+    id: "word",
+    name: "Microsoft Word",
+    icon: "word",
+    aliases: ["winword", "winword.exe", "word", "word.exe"],
+    open: (ctx, args) => openWord(ctx, args || {}),
   },
   {
     id: "winrar",
@@ -483,6 +491,7 @@ ctx.openFile = async (path) => {
       throw new Error("This shortcut is invalid.");
     }
   }
+  if (ext === "doc") return ctx.launch("word", { path });
   if (["wdoc", "rtf"].includes(ext)) return ctx.launch("wordpad", { path });
   if (
     ["png", "jpg", "jpeg", "bmp", "gif", "webp", "svg"].includes(ext) ||
@@ -581,6 +590,7 @@ const printHTML = (html) => {
     { once: true },
   );
 };
+ctx.printHTML = (html) => printHTML(html);
 ctx.printText = (text, title) =>
   printHTML(
     "<h2>" + escapeHTML(title) + "</h2><pre>" + escapeHTML(text) + "</pre>",
