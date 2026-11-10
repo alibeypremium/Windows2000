@@ -53,6 +53,7 @@ import { openWinamp } from "/packages/accessories/winamp.js";
 import { openWinRAR } from "/packages/accessories/winrar.js";
 import { openAcrobat } from "/packages/accessories/acrobat.js";
 import { openVLC } from "/packages/accessories/vlc.js";
+import { openDivX } from "/packages/accessories/divx.js";
 import {
   openControlPanel,
   controlItems,
@@ -231,6 +232,13 @@ ctx.apps = [
     icon: "vlc",
     aliases: ["vlc.exe", "vlc"],
     open: (ctx, args) => openVLC(ctx, args || {}),
+  },
+  {
+    id: "divx",
+    name: "DivX Player",
+    icon: "divx",
+    aliases: ["divx.exe", "divxplayer", "divxplayer.exe"],
+    open: (ctx, args) => openDivX(ctx, args || {}),
   },
   {
     id: "winrar",

@@ -851,7 +851,7 @@ export class DesktopShell {
           icon: "programGroup",
           submenu: [{ label: "(Empty)", disabled: true }],
         },
-        ...this.appItems(["ie", "outlook", "acrobat", "vlc", "winamp", "winrar"]),
+        ...this.appItems(["ie", "outlook", "acrobat", "divx", "vlc", "winamp", "winrar"]),
       ],
       settings = [
         {
