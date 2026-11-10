@@ -10,6 +10,8 @@
 #include "Sound.h"
 #include "translations.h"
 #include "TPinballTable.h"
+#include "TPlunger.h"
+#include "TBall.h"
 
 SDL_Window* winmain::MainWindow = nullptr;
 SDL_Renderer* winmain::Renderer = nullptr;
@@ -126,6 +128,16 @@ EXPORT("pb_state") int pb_state(int what)
 	case 3: return render::vscreen ? render::vscreen->Width : 0;
 	case 4: return render::vscreen ? render::vscreen->Height : 0;
 	case 5: return winmain::single_step;
+	case 6: return (int)pb::game_mode;
+	case 7: return pb::FullTiltMode ? 1 : 0;
+	case 8: return pb::MainTable && pb::MainTable->Plunger ? (int)pb::MainTable->Plunger->PullbackStartedFlag : -1;
+	case 9: return pb::MainTable && pb::MainTable->Plunger ? (int)(pb::MainTable->Plunger->Boost * 100) : -1;
+	case 12: return pb::MainTable && !pb::MainTable->BallList.empty() ? (int)(pb::MainTable->BallList[0]->Position.X * 100) : -9;
+	case 13: return pb::MainTable && !pb::MainTable->BallList.empty() ? (int)(pb::MainTable->BallList[0]->Position.Y * 100) : -9;
+	case 14: return pb::MainTable && !pb::MainTable->BallList.empty() ? (int)(pb::MainTable->BallList[0]->Speed * 100) : -9;
+	case 15: return pb::MainTable && !pb::MainTable->BallList.empty() ? (int)pb::MainTable->BallList[0]->ActiveFlag : -9;
+	case 10: return pb::MainTable ? (int)pb::MainTable->BallList.size() : -1;
+
 	default: return 0;
 	}
 }

@@ -1,7 +1,7 @@
 import { el, separator, statusBar } from "../ui/index.js";
 import { dialogFromTemplate } from "../ui/dlg.js";
 import { FREECELL_DIALOGS as D } from "./cards-data.js";
-import { CW, CH, cardEl, slotEl, place, drag, overlap, bounceCards, isRed } from "./cardkit.js";
+import { onKeys, CW, CH, cardEl, slotEl, place, drag, overlap, bounceCards, isRed } from "./cardkit.js";
 
 const TOP = 8, ROW2 = 116, PITCH = 79;
 
@@ -124,7 +124,41 @@ export function openFreeCell(ctx) {
   const moveColumnDialog = () => new Promise((res) => {
     const d = dialogFromTemplate(ctx, D.MOVECOL, { title: "Move to Empty Column...", appId: "fcmove", on: { 201: () => (d.close(), res(true)), 202: () => (d.close(), res(false)), 2: () => (d.close(), res(null)) } });
   });
-  function after() {
+  // "At the end of each move, FreeCell transfers unneeded cards to home cells" (FreeCell help): a card is unneeded
+  // when no lower-rank card of the opposite colour is left in the playing area.
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  function nextAutoHome() {
+    const have = [0, 0, 0, 0];
+    for (const p of g.found) for (const c of p) have[c.suit]++;
+    const src = [];
+    g.cells.forEach((c, i) => c && src.push({ card: c, from: { z: "cell", i } }));
+    g.tab.forEach((col, c) => col.length && src.push({ card: col.at(-1), from: { z: "tab", c } }));
+    for (const { card, from } of src) {
+      const pile = g.found.findIndex((p) => (p.length ? p[0].suit === card.suit : false));
+      const target = pile >= 0 ? pile : card.rank === 1 ? g.found.findIndex((p) => !p.length) : -1;
+      if (target < 0 || !toFound(card, g.found[target])) continue;
+      const opp = isRed(card.suit) ? [0, 3] : [1, 2];
+      if (card.rank <= 2 || opp.every((s) => have[s] >= card.rank - 1)) return { from, target };
+    }
+    return null;
+  }
+  let busy = false;
+  async function autoHome() {
+    busy = true;
+    try {
+      const game = g;
+      for (let step; (step = nextAutoHome()); ) {
+        if (!opt.quick) await sleep(160);
+        if (over || g !== game) break;
+        const card = step.from.z === "cell" ? g.cells[step.from.i] : g.tab[step.from.c].pop();
+        if (step.from.z === "cell") g.cells[step.from.i] = null;
+        g.found[step.target].push(card);
+        render();
+      }
+    } finally { busy = false; }
+  }
+  async function after() {
+    await autoHome();
     if (g.found.every((p) => p.length === 13)) return win();
     if (!hasMoves()) lose();
   }
@@ -188,14 +222,20 @@ export function openFreeCell(ctx) {
   };
   function bindTab(n, c, i) {
     n.addEventListener("pointerdown", (e) => {
-      if (over) return;
+      if (e.button === 2) { // right button held: bring a partly hidden card to the front
+        n.style.zIndex = 9000;
+        const up = () => { removeEventListener("pointerup", up); n.style.zIndex = 2 + i; };
+        addEventListener("pointerup", up);
+        return;
+      }
+      if (over || busy) return;
       const nodes = [...board.querySelectorAll(".cd")].filter((m) => m.__ref?.z === "tab" && m.__ref.c === c && m.__ref.i >= i);
       drag(board, e, nodes, { drop: (b) => { const t = dest(b); if (!t) return false; move({ z: "tab", c, i }, t); return true; }, click: () => clickSrc({ z: "tab", c, i }, g.tab[c][i]) });
     });
     n.addEventListener("dblclick", () => i === g.tab[c].length - 1 && dbl({ z: "tab", c, i }, g.tab[c][i]));
   }
   function bindCell(n, i) {
-    n.addEventListener("pointerdown", (e) => !over && drag(board, e, [n], { drop: (b) => { const t = dest(b); if (!t) return false; move({ z: "cell", i }, t); return true; }, click: () => clickSrc({ z: "cell", i }, g.cells[i]) }));
+    n.addEventListener("pointerdown", (e) => !over && !busy && drag(board, e, [n], { drop: (b) => { const t = dest(b); if (!t) return false; move({ z: "cell", i }, t); return true; }, click: () => clickSrc({ z: "cell", i }, g.cells[i]) }));
     n.addEventListener("dblclick", () => dbl({ z: "cell", i }, g.cells[i]));
   }
   function clickSrc(from, card) {
@@ -212,6 +252,7 @@ export function openFreeCell(ctx) {
     const i = g.cells.findIndex((c) => !c);
     if (i >= 0 && from.z === "tab") move(from, { z: "cell", i });
   }
+  board.addEventListener("contextmenu", (e) => e.preventDefault());
   board.addEventListener("click", (e) => {
     if (e.target.classList.contains("cd-slot") || e.target === board) {
       if (!sel) return;
@@ -243,7 +284,7 @@ export function openFreeCell(ctx) {
     ],
   });
   w.setContent(el("div", { class: "cd-wrap" }, board, bar));
-  w.el.addEventListener("keydown", (e) => {
+  onKeys(w, "keydown", (e) => {
     if (e.key === "F2") (e.preventDefault(), newGame());
     if (e.key === "F3") (e.preventDefault(), selectGame());
     if (e.key === "F4") (e.preventDefault(), statsDialog());

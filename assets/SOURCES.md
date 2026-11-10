@@ -461,3 +461,9 @@ Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the origi
 
 - Imaging toolbar: the picture is a screenshot crop with invisible hit areas; hover (raised) and press (sunken) borders are now drawn over the buttons (standard 3D palette, not from the ISO).
 - Volume Control: the dialog templates from sndvol32.exe contain their own trackbar controls (ids 1001/1002) and level meter (1005); they were drawn underneath the interactive sliders, giving a doubled thumb/ticks. They are now hidden. The 16x16 window icon is sndvol32.exe icon 300 as stored on the ISO (the 32x32 version of that icon is the mixer with speaker; the speaker-only icons 301-304 are tray icons).
+
+## Games: keyboard and automatic moves
+- Keyboard shortcuts of FreeCell, Solitaire, Minesweeper and Pinball (F2, Space/plunger, flippers, ...) now work whenever the game window is the active window; before, they only worked after clicking inside the window, so Pinball's plunger and F2 seemed dead right after opening the game.
+- FreeCell: "At the end of each move, FreeCell transfers unneeded cards to home cells" (freecell.chm, Strategies and tips) is implemented (a card is unneeded when the opposite-colour cards of lower rank are already home; aces and twos always go); right-clicking a card brings a partly hidden card to the front while the button is held (same help topic). The "title bar flashes when only one legal move remains" behaviour is not implemented. Auto-moves are undone together with the player's move by Undo.
+- Solitaire already had double-click to suit stack and right-click/Ctrl+A for all playable cards (sol.chm, Play Solitaire).
+- Pinball: `pinball.wasm` rebuilt with a few extra read-only debug exports (`pb_state` 6-15); the table logic is unchanged.

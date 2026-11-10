@@ -1,7 +1,7 @@
 import { el, separator, statusBar } from "../ui/index.js";
 import { dialogFromTemplate } from "../ui/dlg.js";
 import { SOL_DIALOGS } from "./cards-data.js";
-import { CW, CH, cardEl, slotEl, place, drag, overlap, bounceCards, isRed } from "./cardkit.js";
+import { onKeys, CW, CH, cardEl, slotEl, place, drag, overlap, bounceCards, isRed } from "./cardkit.js";
 
 const UP = 15, DOWN = 3, TOP = 8, ROW2 = 116;
 const newDeck = () => {
@@ -278,7 +278,7 @@ export function openSolitaire(ctx) {
     ],
   });
   w.setContent(el("div", { class: "cd-wrap" }, board, bar));
-  w.el.addEventListener("keydown", (e) => {
+  onKeys(w, "keydown", (e) => {
     if (e.key === "F2") (e.preventDefault(), deal());
     if (e.key === "F1") (e.preventDefault(), ctx.launch("help", { topic: "solitaire" }));
     if (e.ctrlKey && e.key.toLowerCase() === "a") (e.preventDefault(), autoAll());

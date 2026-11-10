@@ -93,3 +93,18 @@ export function bounceCards(board, cards, { done }) {
   sheet.onload = () => requestAnimationFrame(frame);
   return end;
 }
+
+/**
+ * Keyboard shortcuts for a game window. They work whenever the window is the active one, even when the keyboard
+ * focus is still on the Start menu or the taskbar (a window only receives key events while it holds the focus).
+ */
+export function onKeys(w, type, fn) {
+  const h = (e) => {
+    if (!w.el.classList.contains("active")) return;
+    if (e.target?.closest?.("input, textarea, select, [contenteditable]")) return;
+    if (type === "keydown" && document.querySelector(".popup-menu")) return;
+    fn(e);
+  };
+  document.addEventListener(type, h);
+  w.addCleanup?.(() => document.removeEventListener(type, h));
+}

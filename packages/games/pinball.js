@@ -1,6 +1,7 @@
 // 3D Pinball for Windows - Space Cadet. The table logic is the open-source reimplementation
 // (pinball-wasm/, compiled to WebAssembly); PINBALL.DAT and the sounds come from the Windows 2000 CD.
 import { el, separator } from "../ui/index.js";
+import { onKeys } from "./cardkit.js";
 
 const BASE = "/assets/games/pinball/";
 const SOUNDS = "sound1 sound104 sound105 sound108 sound111 sound112 sound12 sound13 sound131 sound136 sound14 sound16 sound17 sound18 sound181 sound19 sound20 sound21 sound22 sound24 sound240 sound243 sound25 sound26 sound27 sound28 sound29 sound3 sound30 sound34 sound35 sound36 sound38 sound39 sound4 sound42 sound43 sound45 sound49 sound49d sound5 sound50 sound528 sound53 sound54 sound55 sound560 sound563 sound57 sound58 sound6 sound65 sound68 sound7 sound713 sound735 sound8 sound827 sound9 sound999".split(" ");
@@ -202,8 +203,8 @@ export async function openPinball(ctx) {
     x.pb_key(down ? 1 : 0, s);
     e.preventDefault();
   };
-  w.el.addEventListener("keydown", keyHandler(true));
-  w.el.addEventListener("keyup", keyHandler(false));
+  onKeys(w, "keydown", keyHandler(true));
+  onKeys(w, "keyup", keyHandler(false));
   const btn = (e) => (e.button === 0 ? 1 : e.button === 1 ? 2 : 3);
   canvas.addEventListener("mousedown", (e) => { canvas.focus(); x.pb_mouse(1, btn(e)); e.preventDefault(); });
   canvas.addEventListener("mouseup", (e) => x.pb_mouse(0, btn(e)));

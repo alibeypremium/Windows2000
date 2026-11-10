@@ -1,3 +1,4 @@
+import { onKeys } from "./cardkit.js";
 import { el, separator } from "../ui/index.js";
 import { Minefield } from "./minefield.js";
 import { dialogFromTemplate } from "../ui/dlg.js";
@@ -246,7 +247,7 @@ export function openMinesweeper(ctx) {
     ],
   });
   w.setContent(root);
-  w.el.addEventListener("keydown", (e) => {
+  onKeys(w, "keydown", (e) => {
     if (e.key === "F2") (e.preventDefault(), newGame());
     if (e.key === "F1") (e.preventDefault(), ctx.launch("help", { topic: "minesweeper" }));
   });
