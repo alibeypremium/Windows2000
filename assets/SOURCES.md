@@ -519,3 +519,9 @@ Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the origi
 - `assets/icons/word-*`, `worddoc-*`: kullanıcının verdiği ikonlardan (8x/7x büyütülmüş görüntüler blok örneklemesiyle geri küçültüldü; .doc ikonundaki mavi-siyah dama deseni lacivert rozet çerçevesine çevrildi).
 - Gerçek çalışanlar: yazma/biçimlendirme (kalın, italik, altı çizili, hizalama, madde/numara, girinti, yazı tipi/boyut/renk/vurgu), Font ve Paragraph diyalogları, Bul/Değiştir (tümünü değiştir dahil), Git, tablo ekle/satır-sütun ekle-sil, Tarih-Saat, Simge, Sayfa/Kesme, Köprü, Resim ekle, Büyük/küçük harf, Word Count, Zoom (kutu ve diyalog), Normal/Web/Print görünümleri, cetvel aç/kapa, yazdır, Kaydet/Farklı Kaydet/Aç (`.doc` = Word tarzı HTML; gerçek ikili .doc yazılmaz; ikili .doc açılırsa yalnızca okunabilir metin ayıklanır), kapatırken kaydet sorusu.
 - Tahmin/eksik: sayfalar gerçekten bölünmez (tek uzayan sayfa; "Page n/N" yüksekliğe göre hesaplanır), cetveldeki girinti işaretleri ve sekmeler çizimdir (sürüklenmez), Satır/Sütun yaklaşık hesaplanır, üstbilgi/altbilgi, dipnot, mail merge, makro, yazım denetimi (tarayıcı denetimi dışında) yoktur; bu menü maddeleri "kullanılamıyor" bildirir.
+
+## Netscape Navigator 4.0x
+- Exact (from the supplied netscape-navigator-4.0.4.iso, InstallShield 3 NAV40L.Z, PKWARE DCL): app icon (resdll.dll group 2) → `assets/icons/netscape-*`, HTML document icon (group 4) → `assets/icons/nshtml-*`, throbber animation strip (bitmap 1100) and splash (bitmap 1474) → `assets/ui/netscape/`.
+- Cropped 1:1 from the user's Netscape 4.5/4.7 screenshot: navigation toolbar buttons, Bookmarks and What's Related buttons, status-bar lock/plug and component bar → `assets/ui/netscape/`.
+- Synthesized: enabled Forward button (mirrored Back gem + dark label) and disabled Back.
+- Guessed: menu contents, Netcenter-style home page, About page text, dialogs.

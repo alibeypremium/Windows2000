@@ -187,6 +187,12 @@ export class DesktopShell {
         action: () => ctx.launch("winrar"),
       },
       {
+        id: "netscape",
+        name: "Netscape Navigator",
+        icon: "netscape",
+        action: () => ctx.launch("netscape"),
+      },
+      {
         id: "word",
         name: "Microsoft Word",
         icon: "word",
@@ -881,7 +887,7 @@ export class DesktopShell {
           icon: "programGroup",
           submenu: [{ label: "(Empty)", disabled: true }],
         },
-        ...this.appItems(["ie", "outlook", "word", "acrobat", "divx", "vlc", "winamp", "winrar"]),
+        ...this.appItems(["ie", "outlook", "word", "acrobat", "divx", "vlc", "winamp", "winrar", "netscape"]),
       ],
       settings = [
         {

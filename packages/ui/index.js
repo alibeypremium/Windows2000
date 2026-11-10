@@ -71,6 +71,8 @@ const icons = {
   winrar: "winrar",
   word: "word",
   worddoc: "worddoc",
+  netscape: "netscape",
+  nshtml: "nshtml",
   acrobat: "acrobat",
   vlc: "vlc",
   divx: "divx",

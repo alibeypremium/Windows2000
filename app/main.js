@@ -51,6 +51,7 @@ import {
 } from "/packages/games/index.js";
 import { openWinamp } from "/packages/accessories/winamp.js";
 import { openWinRAR } from "/packages/accessories/winrar.js";
+import { openNetscape } from "/packages/internet/netscape.js";
 import { openWord } from "/packages/accessories/word.js";
 import { openAcrobat } from "/packages/accessories/acrobat.js";
 import { openVLC } from "/packages/accessories/vlc.js";
@@ -247,6 +248,13 @@ ctx.apps = [
     icon: "word",
     aliases: ["winword", "winword.exe", "word", "word.exe"],
     open: (ctx, args) => openWord(ctx, args || {}),
+  },
+  {
+    id: "netscape",
+    name: "Netscape Navigator",
+    icon: "netscape",
+    aliases: ["netscape.exe", "netscape", "navigator", "communicator"],
+    open: (ctx, args) => openNetscape(ctx, args || {}),
   },
   {
     id: "winrar",
