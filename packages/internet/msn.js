@@ -93,7 +93,7 @@ export async function openMessenger(ctx) {
           el("div", { text: "Click here to sign in" }),
         ),
         button("Sign In", () => doSignIn(), { class: "msn-signin-btn" }),
-        el("div", { class: "msn-note", text: "Not signed in to .NET Messenger Service" }),
+        el("div", { class: "msn-note", text: "Click Sign In, then OK. Any e-mail address and password will work (nothing is sent anywhere)." }),
       ),
     );
     w.setTitle("MSN Messenger");
@@ -135,19 +135,25 @@ export async function openMessenger(ctx) {
   let sel = null;
 
   // ---------- menus (real resources) ----------
-  const T = (m) => m.label.split("\t");
+  // Items whose text the original fills in at runtime (single-letter placeholders in the resource).
+const LABELS = { 40001: "Sign In", 40053: null, 40273: "Start a Voice Conversation", 40274: "Start a Video Conversation", 40203: null, 40202: null, 40069: null, 40061: null };
+const T = (m) => m.label.split("\t");
   const conv = (list, acts) => list.map((m) => {
     if (m.sep) return { separator: true };
     if (m.popup) return { label: plain(m.popup).trim(), submenu: conv(m.items, acts) };
     const [lab, sc] = T(m);
     const text = plain(lab).trim();
-    if (text.length <= 1) return null; // runtime-filled items (original shows state-dependent text)
+    const ov = LABELS[m.id];
+    if (ov === null) return null;
+    if (ov) return { label: ov, action: acts[m.id] || (() => na(ov)), disabled: ov === "Sign In" ? !!me : false };
+    if (m.id === 40210) return { label: plain(lab).trim(), action: acts[m.id], disabled: !me };
+    if (text.length <= 1) return null; // runtime-filled items without a known text
     return { label: text, shortcut: sc, action: acts[m.id] || (() => na(text)), disabled: !acts[m.id] && !!m.flags && !!(m.flags & 3) };
   }).filter(Boolean);
   const statusItems = () => Object.entries(STATUS).map(([k, s]) => ({ label: s.label, checked: me?.status === k, action: () => setStatus(k) }));
   const setStatus = (k) => { if (!me) return; me.status = k; listView(); };
   const mainActs = {
-    40003: () => w.close(), 40210: () => signOut(), 40282: () => addContact(), 40004: () => (sel ? openConversation(sel) : note("Please select a contact first.")),
+    40003: () => w.close(), 40001: () => doSignIn(), 40210: () => signOut(), 40282: () => addContact(), 40004: () => (sel ? openConversation(sel) : note("Please select a contact first.")),
     40205: () => (sel ? (location.href = "mailto:" + sel.email) : note("Please select a contact first.")), 40268: () => options(), 40000: () => about(), 40157: () => ctx.launch("help", { topic: "intro" }),
     40278: () => window.open("https://www.msn.com/", "_blank", "noopener,noreferrer"), 40198: () => window.open("https://outlook.live.com/", "_blank", "noopener,noreferrer"),
     40289: () => removeContact(), 40283: () => (sel ? note(`${sel.name}\n${sel.email}`, "View Profile") : note("Please select a contact first.")), 40284: () => (sel ? note(`${sel.name}\n${sel.email}\n\nStatus: ${STATUS[sel.status].label}`, "Properties") : note("Please select a contact first.")),
@@ -168,8 +174,8 @@ export async function openMessenger(ctx) {
   // ---------- sign in / out ----------
   const doSignIn = async () => {
     const dlg = buildDialog(R.dialogs["201"], { uid: 11 });
-    ctl.value(dlg.byId(1000), saved.email || "");
-    ctl.value(dlg.byId(1001), saved.pass || "");
+    ctl.value(dlg.byId(1000), saved.email || "ornek@hotmail.com");
+    ctl.value(dlg.byId(1001), saved.pass || "parola");
     ctl.checked(dlg.byId(1020), !!saved.remember);
     dlg.byId(3).addEventListener("click", () => window.open("https://account.live.com/password/reset", "_blank", "noopener,noreferrer"));
     const icn = dlg.byId(1208); if (icn) icn.replaceChildren(el("img", { src: U + "p729.png", alt: "" }));
