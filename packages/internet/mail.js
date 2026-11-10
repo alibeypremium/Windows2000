@@ -200,6 +200,12 @@ export function openAddressBook(ctx) {
       el("img", { src: "/assets/ui/ab/" + img + ".png", alt: "" }),
       el("span", { text: label }),
     );
+    // wab32res.dll bitmaps 4136 (cold) / 4137 (hot) / 4138 (disabled)
+    const pic = b.querySelector("img");
+    b.paint = (hot) => { pic.src = `/assets/ui/ab/iso/${img}-${b.classList.contains("off") ? "off" : hot ? "hot" : "cold"}.png`; };
+    b.addEventListener("mouseenter", () => b.paint(true));
+    b.addEventListener("mouseleave", () => b.paint(false));
+    b.paint(false);
     b.addEventListener("click", () => !b.classList.contains("off") && action());
     return b;
   };
@@ -208,7 +214,7 @@ export function openAddressBook(ctx) {
     tbPrint = tbBtn(250, 62, "print", "Print", () => window.print(), false);
   const syncButtons = () => {
     for (const b of [tbProps, tbDelete, tbPrint])
-      b.classList.toggle("off", !selected);
+      (b.classList.toggle("off", !selected), b.paint(false));
   };
   const countEl = el("div", { class: "ab-status", text: "0 items" });
   const nodeShared = el("div", { class: "ab-node" }, el("img", { src: "/assets/ui/ab/shared.png", alt: "" }), el("span", { text: "Shared Contacts" })),
@@ -450,6 +456,15 @@ export function openMail(
   let folder = "Inbox",
     selected = null;
   const OE = "/assets/ui/oe/";
+  // msoeres.dll toolbar bitmaps 38/39 (and 27/28): grey picture normally, coloured "hot" picture under the pointer
+  const ISO_OE = new Set(["new", "reply", "replyall", "fwd", "print", "delete", "sendrecv", "addr", "find", "prev", "next"]);
+  const hotTb = (b, name) => {
+    if (!ISO_OE.has(name)) return;
+    const pic = b.querySelector("img"), set = (t) => { if (!b.classList.contains("off")) pic.src = `/assets/ui/oe/iso/${name}-${t}.png`; };
+    pic.src = `/assets/ui/oe/iso/${name}-cold.png`;
+    b.addEventListener("mouseenter", () => set("hot"));
+    b.addEventListener("mouseleave", () => set("cold"));
+  };
   const im = (name, cls = "", style = {}) => el("img", { src: OE + name + ".png", class: cls, draggable: "false", alt: "", style });
   const welcome = {
     id: "welcome",
@@ -479,6 +494,7 @@ export function openMail(
     status = el("div", { class: "oe-status" });
   const tbtn = (cx, icon, label, { off = false, arrow = false, action } = {}) => {
     const b = el("div", { class: "oe-tb" + (off ? " off" : ""), style: { left: cx - 40 + "px" }, onclick: () => !off && action?.() }, im(icon), el("span", { text: label }));
+    hotTb(b, icon);
     if (arrow) b.append(el("i", { class: "oe-arrow", style: { left: arrow - (cx - 40) + "px" } }));
     return b;
   };
@@ -604,6 +620,7 @@ export function openMail(
     };
     const mtb = (cx, icon, label, o = {}) => {
       const b = el("div", { class: "oe-tb" + (o.off ? " off" : ""), style: { left: cx - 40 + "px" }, onclick: () => !o.off && o.action?.() }, im(icon), el("span", { text: label }));
+      hotTb(b, icon);
       return b;
     };
     const rep = () => openMail(ctx, { compose: true, reply: cur });

@@ -5975,3 +5975,10 @@ body.icon-dragging, body.icon-dragging * { cursor: default; }
 .hh-tb:not(.off):hover { box-shadow: inset 1px 1px #fff, inset -1px -1px #808080; }
 .hh-tb:not(.off):active { box-shadow: inset 1px 1px #808080, inset -1px -1px #fff; }
 .hh-tb:not(.off):active img { margin: 1px 0 0 1px; }
+.oe-tb::before, .hh-tb::before { content: ""; position: absolute; left: 9px; right: 9px; top: 0; bottom: 0; pointer-events: none; }
+.oe-tb:not(.off):hover::before { box-shadow: inset 1px 1px #fff, inset -1px -1px #808080; }
+.oe-tb:not(.off):active::before { box-shadow: inset 1px 1px #808080, inset -1px -1px #fff; }
+.oe-tb:not(.off):active img { margin: 1px 0 0 1px; }
+.ab-tb:not(.off):hover { box-shadow: inset 1px 1px #fff, inset -1px -1px #808080; }
+.ab-tb:not(.off):active { box-shadow: inset 1px 1px #808080, inset -1px -1px #fff; }
+.ab-tb:not(.off):active img { margin: 1px 0 0 1px; }

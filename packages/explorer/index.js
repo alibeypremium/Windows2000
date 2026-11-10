@@ -619,6 +619,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     }),
   );
   const SPRITE_DIR = "/assets/ui/explorer/";
+  const ISO_TB = new Set(["back", "forward", "up", "search", "folders", "history", "moveto", "copyto", "delete", "undo", "views"]);
   const sprite = (name, x, y, w, h, bx, by) =>
     el("img", {
       class: "tb-sprite",
@@ -651,6 +652,15 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
           })
         : null,
     );
+    // ISO toolbar bitmaps (browseui.dll 267/268 and 278/279): coloured "hot" picture while the pointer is over an enabled button
+    const pic = b.querySelector("img.tb-sprite");
+    if (pic && ISO_TB.has(id)) {
+      const paint = (hot) => {
+        if (!b.disabled || !hot) pic.src = `${SPRITE_DIR}iso/${id}-${hot ? "hot" : "cold"}.png`;
+      };
+      b.addEventListener("mouseenter", () => !b.disabled && paint(true));
+      b.addEventListener("mouseleave", () => !b.disabled && paint(false));
+    }
     return b;
   };
   const tbSeparator = (x) =>
@@ -719,12 +729,12 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
       "Recent pages",
       historyMenu,
     ),
-    tbButton("up", [229, 249], [["up", 232, 95, 15, 13]], null, "Up", goUp),
+    tbButton("up", [229, 249], [["iso/up-cold", 232, 95, 15, 13]], null, "Up", goUp),
     tbSeparator(254),
     tbButton(
       "search",
       [260, 315],
-      [["search", 263, 93, 16, 16]],
+      [["iso/search-cold", 263, 93, 16, 16]],
       ["Search", 283],
       "Search",
       () => navigate("search"),
@@ -732,7 +742,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     tbButton(
       "folders",
       [324, 381],
-      [["folders", 327, 94, 15, 14]],
+      [["iso/folders-cold", 327, 94, 15, 14]],
       ["Folders", 345],
       "Folders",
       () => {
@@ -743,7 +753,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     tbButton(
       "history",
       [389, 410],
-      [["history", 392, 93, 16, 16]],
+      [["iso/history-cold", 392, 93, 16, 16]],
       null,
       "History",
       historyMenu,
@@ -752,7 +762,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     tbButton(
       "moveto",
       [419, 441],
-      [["moveto", 422, 93, 17, 16]],
+      [["iso/moveto-cold", 422, 93, 16, 16]],
       null,
       "Move To",
       moveCopy("cut"),
@@ -760,7 +770,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     tbButton(
       "copyto",
       [443, 465],
-      [["copyto", 446, 93, 17, 16]],
+      [["iso/copyto-cold", 446, 93, 16, 16]],
       null,
       "Copy To",
       moveCopy("copy"),
@@ -768,7 +778,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     tbButton(
       "delete",
       [468, 486],
-      [["delete", 471, 95, 13, 13]],
+      [["iso/delete-cold", 471, 95, 13, 13]],
       null,
       "Delete",
       remove,
@@ -776,7 +786,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     tbButton(
       "undo",
       [491, 511],
-      [["undo", 494, 96, 15, 10]],
+      [["iso/undo-cold", 494, 96, 15, 10]],
       null,
       "Undo",
       () => ctx.dialogs.message("There is nothing to undo."),
@@ -815,9 +825,9 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     q("forward").disabled = !fwd;
     q("forward-drop").disabled = !back && !fwd;
     q("back").querySelector("img").src =
-      `${SPRITE_DIR}${back ? "back-enabled" : "back-disabled"}.png`;
+      `${SPRITE_DIR}${back ? "iso/back-cold" : "back-disabled"}.png`;
     q("forward").querySelector("img").src =
-      `${SPRITE_DIR}${fwd ? "fwd-enabled" : "fwd-disabled"}.png`;
+      `${SPRITE_DIR}${fwd ? "iso/forward-cold" : "fwd-disabled"}.png`;
   };
   const addressIcon = icon("computer"),
     addressRow = el(
