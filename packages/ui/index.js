@@ -230,6 +230,7 @@ export function fileIcon(file) {
   if (["bat", "cmd"].includes(ext)) return "batchFile";
   if (["sys", "ini", "dll", "cfg", "inf"].includes(ext)) return "sysFile";
   if (["htm", "html", "url"].includes(ext)) return "ie";
+  if (["zip", "rar", "7z"].includes(ext)) return "winrar";
   if (ext === "doc") return "worddoc";
   if (["rtf", "wdoc"].includes(ext)) return "wordpad";
   if (["txt", "log", "md", "js", "json", "css", "csv"].includes(ext))

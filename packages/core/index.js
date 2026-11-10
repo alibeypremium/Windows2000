@@ -500,7 +500,7 @@ export class VirtualFileSystem {
   async importFile(file, folder = DOCS) {
     const text =
       /^(text\/|application\/(json|javascript|xml))/.test(file.type) ||
-      /\.(txt|log|ini|csv|json|js|html|css|md|bat|reg)$/i.test(file.name);
+      /\.(txt|log|ini|csv|json|js|html|css|md|bat|reg|wdoc)$/i.test(file.name);
     const content = text
       ? await file.text()
       : await new Promise((res, rej) => {

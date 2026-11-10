@@ -615,9 +615,25 @@ ctx.printImage = (data) => {
   if (!/^data:image\//.test(data)) throw new Error("Invalid image.");
   printHTML('<img src="' + escapeHTML(data) + '">');
 };
+async function seedSampleDocs() {
+  if (settings.get("samples.docs.v1")) return;
+  settings.set("samples.docs.v1", true);
+  const desk = "C:/Documents and Settings/Administrator/Desktop";
+  const names = ["Güzel Sözler.txt", "Mektup.wdoc", "ayarlar.json", "Gün Batımı.png", "Ay Işığı.png", "Hayat Rehberi.pdf", "Sabah Melodisi.mp3", "Gece Rüyası.ogg", "Zil.wav", "Gün Batımı.mp4", "Yıldızlar.webm"];
+  try {
+    if (!fs.exists(desk + "/Docs")) await fs.mkdir(desk + "/Docs");
+    for (const n of names) {
+      const r = await fetch("/assets/samples/Docs/" + encodeURIComponent(n));
+      if (r.ok) await fs.importFile(new File([await r.blob()], n, { type: r.headers.get("content-type") || "" }), desk + "/Docs");
+    }
+    const z = await fetch("/assets/samples/Docs.zip");
+    if (z.ok) await fs.importFile(new File([await z.blob()], "Docs.zip", { type: "application/zip" }), desk);
+  } catch (e) { console.warn("sample docs", e); }
+}
 async function start() {
   try {
     await fs.init();
+    await seedSampleDocs();
   } catch (error) {
     console.error(error);
     document.querySelector("#overlay-layer").append(

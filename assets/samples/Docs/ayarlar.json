@@ -1,0 +1,40 @@
+{
+  "profil": {
+    "ad": "Örnek Kullanıcı",
+    "şehir": "İstanbul",
+    "dil": "tr-TR",
+    "tema": "Windows Klasik"
+  },
+  "favoriler": {
+    "renk": "turuncu",
+    "mevsim": "ilkbahar",
+    "içecek": "çay",
+    "müzik": [
+      "Sabah Melodisi",
+      "Gece Rüyası"
+    ]
+  },
+  "çalmaListesi": [
+    {
+      "sıra": 1,
+      "dosya": "Sabah Melodisi.mp3",
+      "süre": "00:30"
+    },
+    {
+      "sıra": 2,
+      "dosya": "Gece Rüyası.ogg",
+      "süre": "00:30"
+    },
+    {
+      "sıra": 3,
+      "dosya": "Zil.wav",
+      "süre": "00:02"
+    }
+  ],
+  "günlükSöz": "Güzel bir gün, güzel bir başlangıçla başlar.",
+  "notlar": [
+    "Çiçekleri sula",
+    "Eski dostları ara",
+    "Gün batımını izle"
+  ]
+}
