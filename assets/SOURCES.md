@@ -507,3 +507,8 @@ Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the origi
 - DivX: gümüş kabartmalı çerçeve, noktalı başlık şeridi, yuvarlak düğmeler, kum rengi zaman paneli, "DIVX" logosu SVG olarak yeniden çizildi (460x322 ≈ referansın 1/1.5 ölçeği). Menü: Open, Open URL, Open Recent File, Playback Properties, Skin, Playback, Video Display, Preferences, DivX VOD, Help, newsletter, Exit — referanstaki sırayla.
 - VLC: referans 0.9.x Qt arayüzü (Media/Playback/Audio/Video/Tools/View/Help). Boşta yalnızca kontrol penceresi (364x131), video çalınca üstte video alanı açılır; 1.00x ve --:--/--:-- kutuları, %0–200 ses üçgeni.
 - Tahmin: menü alt maddeleri ve diyalog metinleri (referansta görünmeyenler) hatırlanarak yazıldı; ikon dosyaları hâlâ proje için çizilmiş yer tutuculardır.
+
+## İkonlar (kullanıcı sağladı)
+- `winrar-*.png`: kullanıcının verdiği `_winzip-icon.png` (aslında WinZip ikonu; beyaz zemin saydamlaştırıldı, 16x16 küçültme).
+- `divx-*.png`: kullanıcının verdiği `_divx-icon.png`.
+- `acrobat-*.png`: kullanıcının verdiği Acrobat Reader 4 ikonu (240x240 büyütülmüş görüntüden 8x8 blok örneklemesiyle 30x30'a indirilip 32x32'ye ortalandı).
