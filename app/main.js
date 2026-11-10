@@ -52,6 +52,7 @@ import {
 import { openWinamp } from "/packages/accessories/winamp.js";
 import { openWinRAR } from "/packages/accessories/winrar.js";
 import { openNetscape } from "/packages/internet/netscape.js";
+import { openMessenger } from "/packages/internet/msn.js";
 import { openWord } from "/packages/accessories/word.js";
 import { openAcrobat } from "/packages/accessories/acrobat.js";
 import { openVLC } from "/packages/accessories/vlc.js";
@@ -248,6 +249,13 @@ ctx.apps = [
     icon: "word",
     aliases: ["winword", "winword.exe", "word", "word.exe"],
     open: (ctx, args) => openWord(ctx, args || {}),
+  },
+  {
+    id: "msn",
+    name: "MSN Messenger",
+    icon: "msn",
+    aliases: ["msnmsgr.exe", "msnmsgr", "msn", "messenger"],
+    open: (ctx, args) => openMessenger(ctx, args || {}),
   },
   {
     id: "netscape",

@@ -6286,3 +6286,56 @@ body.icon-dragging, body.icon-dragging * { cursor: default; }
 .rd-tabbody{border:2px solid;border-color:#fff #404040 #404040 #fff;box-shadow:1px 1px 0 #808080,inset -1px -1px 0 #808080;position:relative;overflow:hidden;background:var(--face)}
 .rd-btnrow{position:relative;display:flex;gap:6px;justify-content:flex-end;padding:6px 8px 8px}
 .rd-btnrow button{min-width:75px;font:inherit;height:23px}
+
+/* MSN Messenger 5.0 */
+.msn-body{flex:1;min-height:0;background:#fff;display:flex;flex-direction:column;overflow:hidden;font:11px Tahoma,Verdana,sans-serif}
+.msn-status{height:20px;line-height:18px;padding:0 6px;background:var(--face);border-top:1px solid #fff;font:11px Tahoma,sans-serif;white-space:nowrap;overflow:hidden}
+.msn-sp{display:inline-block;flex:none;vertical-align:middle}
+.msn-signin{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:12px;text-align:center;background:linear-gradient(#fff,#e8eef9)}
+.msn-hero{width:100px;height:80px}
+.msn-big{font:bold 16px Tahoma,sans-serif;color:#1a3d8f}
+.msn-signin-text{cursor:pointer;color:#0033cc;text-decoration:underline}
+.msn-signin-btn{min-width:80px}
+.msn-note{font-size:10px;color:#666}
+.msn-signing{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:#fff}
+.msn-signing img{width:100px;height:80px}
+.msn-hdr{display:flex;align-items:center;gap:6px;padding:6px 8px;background:url(/assets/ui/msn/be767.png) 0 0/100% 100% no-repeat,#cfdcf5;cursor:default;color:#000}
+.msn-mail{display:flex;align-items:center;gap:6px;padding:4px 8px;border-bottom:1px solid #c8d4ee;background:#f3f6fd}
+.msn-mail a,.msn-act a{color:#0033cc;text-decoration:underline}
+.msn-list{flex:1;overflow:auto;padding:2px 0}
+.msn-group{display:flex;align-items:center;gap:3px;padding:2px 4px;font-weight:bold;cursor:default}
+.msn-group .msn-arrow{transform:scale(.7);transform-origin:left center;margin-right:-6px;width:22px;height:17px}
+.msn-sp.msn-st{margin-left:-3px}
+.msn-contact{display:flex;align-items:center;gap:4px;padding:1px 6px 1px 22px;height:19px;cursor:default;white-space:nowrap;overflow:hidden;outline:0}
+.msn-contact.off{color:#808080}
+.msn-contact.sel{background:#316ac5;color:#fff}
+.msn-cst{color:#666}.msn-contact.sel .msn-cst{color:#dde}
+.msn-acts{border-top:1px solid #c8d4ee;background:#f3f6fd;padding:4px 8px 6px}
+.msn-acts-h{font-weight:bold;margin-bottom:3px}
+.msn-act{display:flex;align-items:center;gap:6px;height:19px;cursor:default}
+.msn-toast{position:absolute;right:6px;bottom:30px;left:6px;display:flex;gap:6px;align-items:center;padding:8px;background:#f1f4fb;border:1px solid #1a3d8f;box-shadow:2px 2px 4px rgba(0,0,0,.35);cursor:default;z-index:20}
+.msn-toast img{width:32px;height:32px}.msn-toast-h{font-weight:bold;color:#1a3d8f}
+.msn-toolbar{display:flex;gap:2px;padding:3px 4px;background:var(--face);border-bottom:1px solid #808080}
+.msn-tb{all:unset;display:flex;flex-direction:column;align-items:center;min-width:52px;padding:2px 3px;cursor:default;font:11px Tahoma,sans-serif;box-sizing:border-box;border:1px solid transparent}
+.msn-tb:hover{border-color:#fff #808080 #808080 #fff}
+.msn-to{padding:4px 8px;background:#f1f4fb;border-bottom:1px solid #c8d4ee;font:11px Tahoma,sans-serif}
+.msn-conv{flex:1;min-height:0;display:flex;background:var(--face)}
+.msn-main{flex:1;min-width:0;display:flex;flex-direction:column;padding:4px}
+.msn-log{flex:1;min-height:0;overflow:auto;background:#fff;border:2px inset;border-color:#808080 #fff #fff #808080;padding:4px 6px;font:12px Tahoma,Verdana,sans-serif}
+.msn-line{margin:2px 0}.msn-from{color:#666;font-size:11px}.msn-txt{padding-left:10px;word-wrap:break-word}
+.msn-sys{margin:4px 0;color:#555;font-size:11px;border-top:1px solid #ddd;padding-top:3px}
+.msn-emo{vertical-align:middle;margin:0 1px}
+.msn-typing{height:15px;font:11px Tahoma,sans-serif;color:#444;padding:0 4px}
+.msn-fmt{display:flex;gap:2px}
+.msn-fbtn{all:unset;width:30px;height:28px;cursor:default;overflow:hidden;display:flex;align-items:center}
+.msn-fbtn:hover{outline:1px solid #808080}
+.msn-edit{display:flex;gap:4px;height:62px}
+.msn-input{flex:1;min-width:0;overflow:auto;background:#fff;border:2px inset;border-color:#808080 #fff #fff #808080;padding:3px 5px;font:12px Tahoma,sans-serif;outline:0}
+.msn-send{width:64px;align-self:stretch}
+.msn-side{width:112px;flex:none;display:flex;flex-direction:column;justify-content:space-between;padding:4px 4px 4px 0}
+.msn-side.hidden{display:none}
+.msn-pic,.msn-pic-me{border:2px inset;border-color:#808080 #fff #fff #808080;background:#fff;height:96px;display:flex;align-items:center;justify-content:center}
+.msn-pic img,.msn-pic-me img{width:80px;height:92px;object-fit:contain}
+.msn-emo-grid{display:grid;grid-template-columns:repeat(8,24px);gap:1px;padding:3px;background:#fff;border:1px solid #808080;box-shadow:2px 2px 0 rgba(0,0,0,.3)}
+.msn-emo-b{all:unset;width:24px;height:24px;display:flex;align-items:center;justify-content:center;cursor:default}
+.msn-emo-b:hover{background:#cfdcf5}

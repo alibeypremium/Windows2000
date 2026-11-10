@@ -537,3 +537,13 @@ Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the origi
 
 ## DivX, VLC and Winamp icons (replaced)
 - Supplied by the user (divx.png, VLC-Logo-2001.png, Winamp_2.95.png); background removed, cropped to the artwork, scaled to 16x16 and 32x32 → `assets/icons/{divx,vlc,winamp}-*`.
+
+## MSN Messenger 5.0
+- Source: user-supplied `msn_messenger_5.0nt.exe` (CAB SFX → MsnMsgs.msi → MsgrCore.cab). Extracted from `msnmsgr.exe` / `msgslang.dll` (pefile, 7-Zip):
+  - App icon (RT_GROUP_ICON 1) → `assets/icons/msn-*`.
+  - Status/contact/action icon strips, toolbar strips (normal/disabled/hot), emoticon strip (47 emoticons, also split into `assets/ui/msn/emo/`), contact pictures, logos, gradients (RT_BITMAP magenta-keyed + 59 PNG resources) → `assets/ui/msn/`.
+  - Menus (16), dialog templates (39, rendered by `packages/accessories/winrar-dlg.js`) and strings (1239) → `menus.json`, `dialogs.json`, `strings.json`.
+  - Sounds: online, newalert, newemail, type → `assets/sounds/msn/`.
+- Real: menus, sign-in dialog, About, Options tab pages (shown, mostly non-functional), icons, emoticons, sounds, toolbar art.
+- Guessed: main-window and conversation-window layout (the original draws these itself), contact names and auto-replies, emoticon text codes beyond the first sixteen, display-name handling.
+- Offline simulation only; nothing connects to any MSN service.

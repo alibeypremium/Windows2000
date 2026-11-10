@@ -72,6 +72,7 @@ const icons = {
   word: "word",
   worddoc: "worddoc",
   netscape: "netscape",
+  msn: "msn",
   nshtml: "nshtml",
   acrobat: "acrobat",
   vlc: "vlc",
