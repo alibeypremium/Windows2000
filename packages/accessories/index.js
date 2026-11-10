@@ -8,3 +8,4 @@ export {
   openImaging,
   encodeWav,
 } from "./media.js";
+export { openCdPlayer } from "./cdplayer.js";

@@ -37,6 +37,7 @@ import {
   openCalculator,
   openPaint,
   openMediaPlayer,
+  openCdPlayer,
   openVolume,
   openSoundRecorder,
   openImaging,
@@ -202,7 +203,7 @@ ctx.apps = [
     name: "CD Player",
     icon: "cd",
     aliases: ["cdplayer.exe"],
-    open: (ctx, args) => openMediaPlayer(ctx, { ...args, cd: true }),
+    open: (ctx, args) => openCdPlayer(ctx),
   },
   {
     id: "recorder",

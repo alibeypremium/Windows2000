@@ -5793,3 +5793,18 @@ input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type=
 .wmp-root[data-view=minimal] .wmp-info, .wmp-root[data-view=minimal] .wmp-seekrow { display: none; }
 .wmp-root[data-view=minimal] .wmp-controls { padding: 2px 4px; }
 .wmp-btn:disabled { cursor: default; }
+.cdp-root { position: relative; height: 100%; background: #3b3b3b; color: #fff; font: 11px Tahoma, sans-serif; padding: 6px; box-sizing: border-box; }
+.cdp-disp { display: flex; }
+.cdp-lcd { background: #000; border: 2px solid; border-color: #808080 #dfdfdf #dfdfdf #808080; width: 190px; height: 54px; position: relative; font: bold 38px "Courier New", monospace; color: #3cff3c; display: flex; align-items: center; gap: 8px; padding: 0 8px; box-sizing: border-box; }
+.cdp-trk { font-size: 16px; }
+.cdp-dot { position: absolute; top: 4px; right: 4px; width: 7px; height: 7px; background: url(assets/cdplayer/bmp156.png); }
+.cdp-bar { display: grid; grid-template-columns: repeat(4, 38px); gap: 4px; position: absolute; right: 8px; top: 6px; }
+.cdp-btn { width: 38px; height: 38px; padding: 0; border: 0; color: #e8e8e8; font: 12px Arial; background: url(assets/cdplayer/btn.png) center/38px 38px no-repeat; border-radius: 50%; }
+.cdp-btn:active:not(:disabled) { filter: brightness(.7); }
+.cdp-btn:disabled { opacity: .45; }
+.cdp-info { position: absolute; left: 6px; right: 6px; bottom: 28px; display: flex; flex-direction: column; gap: 3px; }
+.cdp-info label { display: flex; align-items: center; gap: 4px; }
+.cdp-info label { width: 100%; }
+.cdp-field { flex: 1; margin-left: auto; width: 270px; background: #c0c0c0; border: 2px solid; border-color: #404040 #fff #fff #404040; height: 18px; font: 11px Tahoma; }
+.cdp-logo { position: absolute; right: 10px; bottom: 8px; width: 44px; height: 22px; display: none; }
+.cdp-status { padding: 2px 6px; background: #c0c0c0; color: #000; border-top: 1px solid #fff; font: 11px Tahoma; }

@@ -1,0 +1,76 @@
+{
+ "102": [
+  {
+   "label": "&Fake",
+   "sub": [
+    {
+     "label": "Menu",
+     "id": 300,
+     "flags": 128
+    }
+   ]
+  }
+ ],
+ "109": [
+  {
+   "label": "Title",
+   "sub": [
+    {
+     "label": "E&xpand",
+     "id": 40001,
+     "flags": 0
+    },
+    {
+     "label": "",
+     "id": 0,
+     "flags": 0
+    },
+    {
+     "label": "&Edit Playlist...",
+     "id": 1029,
+     "flags": 0
+    },
+    {
+     "label": "Edit &Title Name",
+     "id": 40002,
+     "flags": 0
+    },
+    {
+     "label": "Edit &Track Name",
+     "id": 40003,
+     "flags": 0
+    },
+    {
+     "label": "Edit &Artist Name",
+     "id": 40004,
+     "flags": 0
+    },
+    {
+     "label": "&Delete Album",
+     "id": 40000,
+     "flags": 0
+    },
+    {
+     "label": "",
+     "id": 0,
+     "flags": 0
+    },
+    {
+     "label": "D&ownload Album Information...",
+     "id": 40005,
+     "flags": 0
+    },
+    {
+     "label": "",
+     "id": 0,
+     "flags": 0
+    },
+    {
+     "label": "&What's This?",
+     "id": 40006,
+     "flags": 128
+    }
+   ]
+  }
+ ]
+}
