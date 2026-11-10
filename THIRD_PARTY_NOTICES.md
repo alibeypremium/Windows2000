@@ -30,3 +30,6 @@ The desktop melody and short event sounds are synthesized by this project's Java
 
 ## Webamp
 `assets/vendor/webamp/webamp.bundle.min.mjs` is Webamp 2.3.1 (MIT License, Copyright (c) Jordan Eldredge and contributors), used as the Winamp 2.x player engine; it bundles the classic Winamp 2.91 default skin.
+
+## WinRAR look-alike dependencies
+`assets/vendor/winrar/fflate.mjs` is fflate (MIT, Arjun Barrett); `unrar.mjs` + `unrar.wasm` are node-unrar-js 2.0.2 (MIT) wrapping the unrar source (extraction only; the unrar licence forbids using it to re-create the RAR compression algorithm). Licence files are kept alongside.

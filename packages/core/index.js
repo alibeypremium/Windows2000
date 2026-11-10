@@ -295,16 +295,16 @@ export class VirtualFileSystem {
     this.queue = task.catch(() => {});
     return task;
   }
-  async writeFile(path, content, { mime = "text/plain" } = {}) {
+  async writeFile(path, content, { mime = "text/plain", encoding = undefined } = {}) {
     path = normalizePath(path);
     this.#writable(path);
     this.#validateName(basename(path));
     return this.#mutate(() => {
-      this.#writeNode(path, content, mime);
+      this.#writeNode(path, content, mime, encoding);
       return path;
     });
   }
-  #writeNode(path, content, mime) {
+  #writeNode(path, content, mime, encoding) {
     const parent = this.get(dirname(path));
     if (!parent || parent.trashed || parent.type !== "folder")
       throw new Error("The destination folder does not exist.");
@@ -317,6 +317,7 @@ export class VirtualFileSystem {
       type: "file",
       content: String(content),
       mime,
+      ...(encoding ? { encoding } : {}),
       created: old?.created || Date.now(),
       modified: Date.now(),
     });

@@ -68,6 +68,7 @@ const icons = {
   minesweeper: "w2k/ref-minesweeper",
   pinball: "pinball",
   winamp: "winamp",
+  winrar: "winrar",
   games: "games",
   programs: "w2k/programs",
   settings: "w2k/settings-b",

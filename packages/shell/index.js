@@ -818,6 +818,7 @@ export class DesktopShell {
             "volume",
             "mediaplayer",
             "winamp",
+            "winrar",
           ]),
         },
         { label: "Games", icon: "programGroup", submenu: games },

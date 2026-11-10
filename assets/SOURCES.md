@@ -479,3 +479,10 @@ Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the origi
 - Tahmin/uydurma: Winamp ikonu (`assets/icons/winamp-*.png`) bu proje için çizildi, orijinal değil. `app/desktop.css` içindeki `.selected`/`.window` kuralları `#webamp` içinde devre dışı bırakıldı.
 - Düzeltme: Webamp bundle'ı `import.meta.url` ile yükleniyor (Pages'te göreli yol hatası giderildi); masaüstüne Winamp kısayolu eklendi. Winamp3 kurulum paketinin içindeki tek ikon genel NSIS kurulum ikonu çıktı (Winamp ikonu değil), bu yüzden kullanılmadı; Winamp ikonu hâlâ bu projede çizilmiş bir ikondur.
 - Winamp ikonu: proje sahibinin verdiği dönem arşivinden (`Winamp 2.95- icon 164.png`, 32×32 olarak küçültüldü; 16×16 bundan türetildi). Önceki çizim ikonun yerini aldı.
+
+## WinRAR 3.20 (look-alike)
+- Arayüz düzeni (menüler File/Commands/Tools/Favorites/Options/Help, büyük düğmeli araç çubuğu, adres çubuğu, sütunlar, durum çubuğu metinleri) WinRAR 3.x'ten **hatırlanan düzene göre** yazıldı; orijinal exe/kaynak yok. Ayrıntılar tahmindir.
+- ZIP: fflate (MIT) — okuma/yazma. RAR: node-unrar-js 2.0.2 (MIT; unrar lisansı) WASM — yalnızca okuma/çıkarma. RAR **oluşturulamaz**, RAR içine ekleme/silme yok. Kütüphaneler `assets/vendor/winrar/` (lisans dosyalarıyla).
+- Araç çubuğu ve program ikonları (`assets/ui/winrar/*.png`, `assets/icons/winrar-*.png`) bu proje için çizildi, orijinal değil. Sahibi orijinal ikonları sağlayınca değiştirilecek.
+- Çalışmayanlar (mesajla bildirilir): SFX, kurtarma kaydı, virüs tarama, yorum, rapor, benchmark, Settings, Favorites yönetimi.
+- `core` `fs.writeFile` artık `encoding` seçeneğini kaydediyor (ikili dosyalar için `data-url`).
