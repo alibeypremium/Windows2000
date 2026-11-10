@@ -16,7 +16,7 @@ import { refWindow, kit, btn } from "../control-panel/refkit.js";
 import { dialogFromTemplate, px, py } from "../ui/dlg.js";
 import { confirmDelete } from "../ui/shconfirm.js";
 import { startSaver } from "../rendering/savers.js";
-import { lanStatusTemplate } from "./lan-data.js";
+import { openLanStatus } from "./lan-status.js";
 export { openHelp, openWelcome, openAbout } from "./help.js";
 export class DesktopShell {
   constructor(ctx) {
@@ -562,7 +562,7 @@ export class DesktopShell {
   /** Network tray icon (netshell.dll 16px LAN icons); blinks on activity. */
   lanTray() {
     const ctx = this.ctx;
-    const st = (this.lan = this.lan || { up: true, since: Date.now(), sent: 0, recv: 0, burst: 0 });
+    const st = (this.lan = this.lan || { up: true, since: Date.now(), sentPk: 0, recvPk: 0, burst: 0 });
     const img = el("img", { src: "assets/tray/lan193.png", width: 16, height: 16, alt: "" });
     const b = button(img, () => this.lanStatus(), {
       class: "tray-button lan",
@@ -578,16 +578,17 @@ export class DesktopShell {
     st.activity = (n = 12) => {
       if (!st.up) return;
       st.burst = Math.max(st.burst, n);
-      st.sent += 300 + Math.floor(Math.random() * 2000);
-      st.recv += 800 + Math.floor(Math.random() * 9000);
+      st.sentPk += 1 + Math.floor(Math.random() * 6);
+      st.recvPk += 1 + Math.floor(Math.random() * 12);
     };
     clearInterval(st.timer);
     st.timer = setInterval(() => {
       if (st.burst > 0) st.burst--;
-      else if (Math.random() < 0.05) st.activity(3 + Math.floor(Math.random() * 6));
+      else if (Math.random() < 0.3) st.activity(3 + Math.floor(Math.random() * 8));
       paint();
+      b.title = `Local Area Connection\nSpeed: 100.0 Mbps\nSent: ${st.sentPk.toLocaleString("en-US")} packets\nReceived: ${st.recvPk.toLocaleString("en-US")} packets`;
       st.refresh?.();
-    }, 150);
+    }, 120);
     ctx.bus.on("network:activity", () => st.activity(14));
     b.addEventListener("contextmenu", (e) => {
       e.preventDefault();
@@ -607,34 +608,7 @@ export class DesktopShell {
   }
 
   lanStatus() {
-    const st = this.lan, ctx = this.ctx;
-    if (st.dlg?.el?.isConnected) return st.dlg.el.focus?.();
-    const fmt = (n) => n.toLocaleString("en-US");
-    const dur = () => {
-      const t = Math.floor((Date.now() - st.since) / 1000), p = (v) => String(v).padStart(2, "0");
-      return `${p(Math.floor(t / 3600))}:${p(Math.floor(t / 60) % 60)}:${p(t % 60)}`;
-    };
-    const ctl = {};
-    const w = (st.dlg = dialogFromTemplate(ctx, lanStatusTemplate, {
-      title: "Local Area Connection Status",
-      ctlOut: ctl,
-      values: {},
-      labels: { 1007: st.up ? "Connected" : "Disconnected", 1008: dur(), 1009: st.up ? "100.0 Mbps" : "0 bps", 1003: fmt(st.sent), 1005: fmt(st.recv) },
-      on: {
-        1026: () => ctx.launch("control", { page: "network" }),
-        1025: () => { st.up = !st.up; if (st.up) st.since = Date.now(); st.paint(); w.close?.(); },
-      },
-    }));
-    w.place(btn(px(147) + 4, py(142) + 22, px(56), py(14), "Close", { onclick: () => w.close() }));
-    ctl[1025] && (ctl[1025].textContent = st.up ? "Disable" : "Enable");
-    st.refresh = () => {
-      if (!w.el.isConnected) return (st.refresh = null);
-      ctl[1007].textContent = st.up ? "Connected" : "Disconnected";
-      ctl[1008].textContent = dur();
-      ctl[1003].textContent = fmt(st.sent);
-      ctl[1005].textContent = fmt(st.recv);
-    };
-    return w;
+    return openLanStatus(this.ctx, this.lan);
   }
 
   renderTaskbar() {

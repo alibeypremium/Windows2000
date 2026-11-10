@@ -434,3 +434,8 @@ Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the origi
 
 ## Getting Started with Windows 2000 (welcome.exe)
 - Behaviour and texts follow welcome.exe's string table: the right pane cycles slides 1300–1305 on "Getting Started"; hovering Register Now / Discover Windows / Connect to the Internet shows that item's title (1010–1012), text (1030–1032) and watermark bitmap (bitmaps 3/4/5 -> `assets/ui/gs/hover-*.png`). The slide pictures are bitmaps 20/22/23/24/25 with their 1-bit masks 30/32/33/34/35 (`assets/ui/gs/iso-*.png`). Hover highlight colour, bitmap placement and the slide order are guesses. The mouse slide still uses a crop from the user's screenshots (the original is the AVI resource). Clicking the items does not run regwiz/discover/icwconn1 (not emulated): Register shows a notice, Discover opens Help, Connect opens Internet Explorer.
+
+## System Properties names, LAN status sheet, icon selection
+- Network Identification: Properties opens netid.dll dialog 103 (Identification Changes); Network ID reuses the layout of netid.dll dialog 105 (Domain Username And Password) as a user-name prompt (that prompt and its text are not in the original). The user name feeds "Registered to:" on the General tab; until the computer is renamed its full name is `<user name>-windows2000`.
+- Local Area Connection Status: netshell.dll dialog 1801 on a one-tab sheet with Close (&Close = string 23020); "Bytes:" is shown as "Packets:" (string 23051) and the dial-up Errors row is dropped; activity pictures are netshell LAN icons 121–128 (`assets/tray/lan32-*.png`). Blink timing and counters are simulated.
+- Selected desktop/Explorer icons are blended 50% with the highlight colour (`#w2k-sel` SVG filter) instead of the earlier sepia tint.

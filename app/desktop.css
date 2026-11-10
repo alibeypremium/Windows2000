@@ -352,9 +352,9 @@ button.selected:focus {
   outline: 1px dotted #ddd;
 }
 .desktop-icon.selected .icon {
-  filter: brightness(0.75) sepia(0.2) hue-rotate(170deg);
+  filter: url(#w2k-sel); /* Win2000 blends the icon 50% with the highlight colour */
 }
-.desktop-icon:focus-visible {
+.desktop-icon:focus, .desktop-icon:focus-visible, button.desktop-icon.selected:focus {
   outline: none;
 }
 .drop-target {
@@ -1323,7 +1323,7 @@ button.selected:focus {
   outline-offset: -1px;
 }
 .icons-view .file-item.selected .icon {
-  filter: brightness(0.65) sepia(0.3) hue-rotate(180deg);
+  filter: url(#w2k-sel);
 }
 .small-view {
   display: grid;

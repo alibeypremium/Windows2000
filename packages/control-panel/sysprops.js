@@ -2,6 +2,8 @@
 import { el } from "../ui/index.js";
 import { refWindow, kit } from "./refkit.js";
 import { sheetButtons } from "./dialogs.js";
+import { dialogFromTemplate } from "../ui/dlg.js";
+import { NETID } from "./netid-data.js";
 
 const IMG = "/assets/ui/system/";
 const OX = 369,
@@ -11,13 +13,67 @@ export function openSystemProperties(ctx, { tab = 0 } = {}) {
   const k = kit(0, 0),
     w = refWindow(ctx, { title: "System Properties", width: 410, height: 462, appId: "control", help: true, noIcon: true, x: OX, y: OY });
   const S = ctx.settings;
-  const user = ((n) => (n && n !== "Administrator" ? n : "user"))(S.get("username"));
-  const pc = ((n) => (n && n.toUpperCase() !== "WIN2000" ? n : "USER-767BA2105C"))(S.get("computerName")).toLowerCase();
+  const slug = (n) => String(n).trim().toLowerCase().replace(/\s+/g, "-");
+  const rawUser = S.get("username");
+  const user = rawUser && rawUser !== "Administrator" ? rawUser : "user";
+  const stored = S.get("computerName");
+  // until the computer is renamed it is called "<user name>-windows2000"
+  const pc = (stored && stored.toUpperCase() !== "WIN2000" ? stored : `${slug(user)}-windows2000`).toLowerCase();
+  const reopen = (t) => { w.close(); openSystemProperties(ctx, { tab: t }); };
   const msg = (t, title = "System Properties") => ctx.dialogs.message(t, { title });
   const hdr = (x, wd, label) => {
     const n = el("div", { class: "rk-hdr left", text: label });
     Object.assign(n.style, { left: x + "px", top: "169px", width: wd + "px", height: "15px" });
     return n;
+  };
+
+  /** Properties: netid.dll "Identification Changes" (computer name / workgroup). */
+  const identChanges = () => {
+    const ctl = {};
+    const name = pc;
+    const d = dialogFromTemplate(ctx, NETID["103"], {
+      ctlOut: ctl, values: { 1002: name, 1001: name + ".", 116: "", 1007: "WORKGROUP" }, labels: { 1017: "You can change the name and the membership of this computer. Changes may affect access to network resources." },
+      checked: { 1004: true }, groups: [[1008, 1004]], hidden: [1010],
+      on: {
+        1: () => {
+          const v = ctl[1002].value.trim();
+          if (!v) return ctx.dialogs.message("A computer name cannot be empty.", { title: "Identification Changes", icon: "warning" });
+          if (!/^[A-Za-z0-9-]{1,15}$/.test(v)) return ctx.dialogs.message("The computer name contains invalid characters. Use letters, numbers and hyphens (up to 15 characters).", { title: "Identification Changes", icon: "warning" });
+          S.set("computerName", v);
+          d.close();
+          ctx.dialogs.message("You must restart this computer for the changes to take effect.", { title: "Network Identification", icon: "info" }).then(() => reopen(1));
+        },
+        2: () => d.close(),
+        1003: () => ctx.dialogs.message("Primary DNS suffix settings are not available in this virtual desktop.", { title: "DNS Suffix and NetBIOS Computer Name" }),
+      },
+    });
+    ctl[1002].addEventListener("input", () => (ctl[1001].value = ctl[1002].value.toLowerCase() + "."));
+    if (ctl[1001]) { ctl[1001].readOnly = true; }
+    if (ctl[116]) ctl[116].disabled = true;
+    return d;
+  };
+  /** Network ID: asks for the user name (layout of netid.dll dialog 105, relabelled). */
+  const networkId = () => {
+    const ctl = {};
+    const tpl = structuredClone(NETID["105"]);
+    tpl.controls = tpl.controls.filter((c) => c.text !== "&Password:");
+    const d = dialogFromTemplate(ctx, tpl, {
+      title: "Network Identification", ctlOut: ctl, values: { 1014: rawUser && rawUser !== "Administrator" ? rawUser : "" },
+      labels: { 1017: "Enter the user name for this computer. It is shown in System Properties, and the computer is named after it." },
+      hidden: [1015],
+      on: {
+        1: () => {
+          const v = ctl[1014].value.trim();
+          if (!v) return ctx.dialogs.message("Type a user name.", { title: "Network Identification", icon: "warning" });
+          S.set("username", v);
+          if (!stored || stored.toUpperCase() === "WIN2000" || stored === `${slug(rawUser)}-windows2000`) S.set("computerName", `${slug(v)}-windows2000`);
+          d.close();
+          reopen(1);
+        },
+        2: () => d.close(),
+      },
+    });
+    return d;
   };
 
   const general = () => [
@@ -43,9 +99,9 @@ export function openSystemProperties(ctx, { tab = 0 } = {}) {
     k.text(25, 133, "Workgroup:"),
     k.text(149, 133, "WORKGROUP"),
     k.text(25, 168, "To use the Network Identification Wizard to join a\ndomain and create a local user, click Network ID."),
-    k.btn(307, 166, 75, 23, "Network ID", { onclick: () => msg("The Network Identification Wizard is not available in this virtual desktop.", "Network Identification Wizard") }),
+    k.btn(307, 166, 75, 23, "Network ID", { onclick: networkId }),
     k.text(25, 219, "To rename this computer or join a domain, click\nProperties."),
-    k.btn(307, 217, 75, 23, "Properties", { onclick: () => msg("Computer name changes are not available in this virtual desktop.", "Identification Changes") }),
+    k.btn(307, 217, 75, 23, "Properties", { onclick: identChanges }),
   ];
   const section = (gy, gh, label, icon, ih, tx, line, btn) => [
     k.group(25, gy, 362, gh, label, 9),
