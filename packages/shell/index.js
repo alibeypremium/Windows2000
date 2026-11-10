@@ -218,12 +218,18 @@ export class DesktopShell {
     this.activeIcons = icons;
     root.replaceChildren();
     if (ctx.settings.get("hideDesktopIcons")) return;
+    // Icons without a saved position take the next grid cell that no other icon occupies.
+    const gridRows = Math.max(1, Math.floor((innerHeight - 60) / 82)), taken = new Set();
+    for (const it of icons) { const sp = positions[it.id]; if (sp) taken.add(Math.round((sp.x - 6) / 80) + "," + Math.round((sp.y - 10) / 82)); }
+    let slot = 0;
+    const freeSlot = () => {
+      for (;; slot++) {
+        const c = Math.floor(slot / gridRows), r = slot % gridRows;
+        if (!taken.has(c + "," + r)) { taken.add(c + "," + r); slot++; return { x: c * 80 + 6, y: r * 82 + 10 }; }
+      }
+    };
     icons.forEach((item, i) => {
-      const rows = Math.max(1, Math.floor((innerHeight - 60) / 82)),
-        pos = positions[item.id] || {
-          x: Math.floor(i / rows) * 80 + 6,
-          y: (i % rows) * 82 + 10,
-        },
+      const pos = positions[item.id] || freeSlot(),
         b = button(
           [
             icon(item.icon, ctx.settings.get("largeIcons") ? 32 : 16),
