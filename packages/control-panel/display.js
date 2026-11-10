@@ -12,10 +12,7 @@ const OX = 227,
 import { WALLPAPER_FILES } from "../rendering/wallpapers.js";
 const WALLPAPERS = [
   ["Blue Lace 16", "tile"],
-  ["Boiling Point", "paint"],
-  ["Chateau", "paint"],
   ["Coffee Bean", "tile"],
-  ["Fall Memories", "paint"],
   ["FeatherTexture", "tile"],
   ["Gone Fishing", "paint"],
   ["Greenstone", "paint"],
@@ -24,8 +21,6 @@ const WALLPAPERS = [
   ["River Sumida", "paint"],
   ["Santa Fe Stucco", "tile"],
   ["Soap Bubbles", "paint"],
-  ["Straw Mat", "tile"],
-  ["Winter", "paint"],
   ["Zapotec", "tile"],
 ];
 const SAVERS = SAVER_LIST;
