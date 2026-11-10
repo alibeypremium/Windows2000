@@ -5929,3 +5929,11 @@ input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type=
 .dm-wzhead .ic { position: absolute; right: 8px; top: 8px; width: 32px; height: 32px; image-rendering: pixelated; }
 .dm-wzside { position: absolute; left: 0; top: 0; width: 160px; height: 100%; background: linear-gradient(180deg,#000080,#1084d0); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 40px; box-sizing: border-box; }
 .dm-wzside img { width: 64px; height: 64px; image-rendering: pixelated; }
+.desktop-icon.dragging { opacity: .6; z-index: 50; }
+body.icon-dragging, body.icon-dragging * { cursor: default; }
+
+.tray-button.lan img {
+  image-rendering: pixelated;
+  display: block;
+  margin: auto;
+}

@@ -12,7 +12,9 @@ import {
 } from "../ui/index.js";
 import { DESKTOP, DOCS, joinPath, basename, pickFiles } from "../core/index.js";
 import { openTaskbarProperties } from "../control-panel/dialogs.js";
-import { refWindow, kit } from "../control-panel/refkit.js";
+import { refWindow, kit, btn } from "../control-panel/refkit.js";
+import { dialogFromTemplate, px, py } from "../ui/dlg.js";
+import { lanStatusTemplate } from "./lan-data.js";
 export { openHelp, openWelcome, openAbout } from "./help.js";
 export class DesktopShell {
   constructor(ctx) {
@@ -167,6 +169,8 @@ export class DesktopShell {
         path: n.path,
       })),
     ];
+    const customNames = ctx.settings.get("iconNames") || {};
+    for (const i of icons) if (!i.path && customNames[i.id]) i.name = customNames[i.id];
     this.activeIcons = icons;
     root.replaceChildren();
     icons.forEach((item, i) => {
@@ -194,7 +198,6 @@ export class DesktopShell {
               left: Math.min(pos.x, innerWidth - 77) + "px",
               top: Math.min(pos.y, innerHeight - 105) + "px",
             },
-            draggable: true,
           },
         );
       b.addEventListener(
@@ -204,58 +207,16 @@ export class DesktopShell {
       b.addEventListener("contextmenu", (e) => {
         e.preventDefault();
         e.stopPropagation();
-        this.selected = new Set([item.id]);
+        if (!this.selected.has(item.id)) this.selected = new Set([item.id]);
         this.updateSelection();
-        popup(
-          [
-            { label: "Open", action: item.action },
-            ...(item.path
-              ? [
-                  separator(),
-                  {
-                    label: "Cut",
-                    action: () => ctx.clipboard.setFiles([item.path], "cut"),
-                  },
-                  {
-                    label: "Copy",
-                    action: () => ctx.clipboard.setFiles([item.path]),
-                  },
-                  { label: "Rename", action: () => this.renameSelected() },
-                  { label: "Delete", action: () => this.deleteSelected() },
-                ]
-              : []),
-            separator(),
-            {
-              label: "Properties",
-              action: () =>
-                item.id === "recycle"
-                  ? ctx.dialogs.message(
-                      "Items in the Recycle Bin can be restored or permanently deleted.",
-                      { title: "Recycle Bin Properties", icon: "recycle" },
-                    )
-                  : ctx.launch("control", {
-                      page:
-                        item.id === "computer"
-                          ? "system"
-                          : item.id === "network"
-                            ? "network"
-                            : item.id === "ie"
-                              ? "internet"
-                              : "folder",
-                    }),
-            },
-          ],
-          e.clientX,
-          e.clientY,
-        );
+        popup(this.iconMenu(item), e.clientX, e.clientY);
       });
-      b.addEventListener("dragstart", (e) => {
-        e.dataTransfer.setData("application/x-win2k-desktop-icon", item.id);
-        if (item.path)
-          e.dataTransfer.setData(
-            "application/x-win2k-files",
-            JSON.stringify([item.path]),
-          );
+      b.addEventListener("dragstart", (e) => e.preventDefault());
+      b.addEventListener("pointerdown", (e) => this.dragIcon(e, item, b));
+      b.addEventListener("keydown", (e) => {
+        if (e.key === "F2") this.renameSelected();
+        else if (e.key === "Delete") this.deleteSelected();
+        else if (e.key === "Enter") safely(() => item.action())();
       });
       if (item.folder || item.id === "recycle") {
         b.addEventListener("dragover", (e) => {
@@ -293,6 +254,124 @@ export class DesktopShell {
       }
       root.append(b);
     });
+  }
+  /** Context menu of a desktop icon (Windows 2000 shell32 menus: verbs + Cut/Copy/Create Shortcut/Delete/Rename/Properties). */
+  iconMenu(item) {
+    const ctx = this.ctx, sep = separator;
+    const open = { label: "Open", action: item.action, bold: true };
+    const explore = { label: "Explore", action: () => ctx.launch("explorer", { path: item.folder || { computer: "computer", network: "network", recycle: "recycle", documents: DOCS }[item.id] || "computer" }) };
+    const shortcut = { label: "Create Shortcut", action: () => this.createShortcutTo(item) };
+    const rename = { label: "Rename", action: () => this.renameSelected(item) };
+    const props = { label: "Properties", action: () => this.iconProperties(item) };
+    const nd = () => ctx.dialogs.message("Network drives are not available in this browser environment.", { title: "Map Network Drive", icon: "warning" });
+    const map = [{ label: "Map Network Drive...", action: nd }, { label: "Disconnect Network Drive...", action: nd }];
+    if (item.path) {
+      const paste = { label: "Paste", disabled: !item.folder || !ctx.clipboard.files.length, action: () => ctx.clipboard.pasteFiles(ctx.fs, item.path) };
+      return [open, ...(item.folder ? [explore] : []), sep(), { label: "Cut", action: () => ctx.clipboard.setFiles(this.selectedPaths(item), "cut") }, { label: "Copy", action: () => ctx.clipboard.setFiles(this.selectedPaths(item)) }, ...(item.folder ? [paste] : []), sep(), shortcut, { label: "Delete", action: () => this.deleteSelected() }, rename, sep(), props];
+    }
+    if (item.id === "recycle") {
+      const n = ctx.fs.recycled().length;
+      return [open, explore, sep(), { label: "Empty Recycle Bin", disabled: !n, action: () => this.emptyRecycleBin() }, sep(), shortcut, rename, sep(), props];
+    }
+    if (item.id === "computer") return [open, explore, { label: "Search...", action: () => ctx.launch("explorer", { path: "search" }) }, { label: "Manage", action: () => ctx.launch("diskmanager") }, sep(), ...map, sep(), shortcut, rename, sep(), props];
+    if (item.id === "network") return [open, explore, { label: "Search for Computers...", action: () => ctx.launch("explorer", { path: "search" }) }, sep(), ...map, sep(), shortcut, rename, sep(), props];
+    if (item.id === "documents") return [open, explore, { label: "Search...", action: () => ctx.launch("explorer", { path: "search" }) }, sep(), ...map, sep(), shortcut, rename, sep(), props];
+    return [open, sep(), shortcut, rename, sep(), props];
+  }
+  selectedPaths(item) {
+    const p = this.activeIcons.filter((a) => this.selected.has(a.id) && a.path).map((a) => a.path);
+    return p.length ? p : [item.path];
+  }
+  async emptyRecycleBin() {
+    const ctx = this.ctx, n = ctx.fs.recycled().length;
+    if (!n) return;
+    const r = await ctx.dialogs.message(n === 1 ? "Are you sure you want to delete the 1 item in the Recycle Bin?" : `Are you sure you want to delete these ${n} items in the Recycle Bin?`, { title: "Confirm Multiple File Delete", icon: "warning", buttons: ["Yes", "No"] });
+    if (r !== "Yes") return;
+    await ctx.fs.emptyRecycleBin();
+    this.renderDesktop();
+  }
+  async createShortcutTo(item) {
+    const ctx = this.ctx;
+    const command = item.path ? item.path : { computer: "explorer computer", network: "explorer network", recycle: "explorer recycle", documents: "explorer " + DOCS, ie: "ie" }[item.id];
+    const name = "Shortcut to " + item.name;
+    await ctx.fs.writeFile(joinPath(DESKTOP, ctx.fs.uniqueName(DESKTOP, name + ".lnk")), JSON.stringify({ command }), { mime: "application/x-win2k-shortcut" });
+    this.renderDesktop();
+  }
+  iconProperties(item) {
+    const ctx = this.ctx;
+    if (item.id === "recycle") return ctx.dialogs.message("The Recycle Bin contains files you have deleted from your computer. These files are not permanently removed until you empty the Recycle Bin.", { title: "Recycle Bin Properties", icon: "recycle" });
+    if (item.path) return ctx.launch("explorer", { path: item.path }).then?.(() => {}) && ctx.dialogs.message(`${item.name}\n\nLocation: ${item.path.replaceAll("/", "\\")}`, { title: item.name + " Properties", icon: item.icon });
+    return ctx.launch("control", { page: item.id === "computer" ? "system" : item.id === "network" ? "network" : item.id === "ie" ? "internet" : "folder" });
+  }
+  /** Pointer based icon dragging: multi-select move, align to grid, drop on folder / Recycle Bin / open windows. */
+  dragIcon(e, item, node) {
+    if (e.button !== 0) return;
+    const ctx = this.ctx, startX = e.clientX, startY = e.clientY;
+    if (!this.selected.has(item.id)) {
+      if (!e.ctrlKey && !e.metaKey) this.selected.clear();
+      this.selected.add(item.id);
+      this.updateSelection();
+    }
+    const nodes = () => [...document.querySelectorAll(".desktop-icon")].filter((n) => this.selected.has(n.dataset.id));
+    const origin = new Map(nodes().map((n) => [n, { x: parseFloat(n.style.left), y: parseFloat(n.style.top) }]));
+    let moving = false, over = null;
+    const move = (ev) => {
+      const dx = ev.clientX - startX, dy = ev.clientY - startY;
+      if (!moving && Math.hypot(dx, dy) < 5) return;
+      if (!moving) { moving = true; node.setPointerCapture?.(e.pointerId); document.body.classList.add("icon-dragging"); }
+      for (const [n, o] of origin) { n.style.left = o.x + dx + "px"; n.style.top = o.y + dy + "px"; n.classList.add("dragging"); }
+      {
+        const under = document.elementsFromPoint(ev.clientX, ev.clientY).find((el) => !el.closest(".desktop-icon.dragging"));
+        const t = under?.closest?.(".desktop-icon");
+        if (over && over !== t) over.classList.remove("drop-target");
+        over = t && !this.selected.has(t.dataset.id) && (this.activeIcons.find((a) => a.id === t.dataset.id)?.folder || t.dataset.id === "recycle") ? t : null;
+        over?.classList.add("drop-target");
+      }
+    };
+    const up = async (ev) => {
+      window.removeEventListener("pointermove", move);
+      node.releasePointerCapture?.(e.pointerId);
+      document.body.classList.remove("icon-dragging");
+      over?.classList.remove("drop-target");
+      if (!moving) { if (!e.ctrlKey && !e.metaKey) { this.selected = new Set([item.id]); this.updateSelection(); } return; }
+      node.addEventListener("click", (c) => { c.stopImmediatePropagation(); c.preventDefault(); }, { once: true, capture: true });
+      const dragged = this.activeIcons.filter((a) => this.selected.has(a.id));
+      const files = dragged.filter((a) => a.path).map((a) => a.path);
+      const under = document.elementsFromPoint(ev.clientX, ev.clientY).find((el) => !el.closest(".desktop-icon.dragging"));
+      const target = this.activeIcons.find((a) => a.id === over?.dataset.id);
+      if (target) {
+        try {
+          if (target.id === "recycle") for (const p of files) await ctx.fs.remove(p);
+          else for (const p of files) if (p !== target.folder) await ctx.fs.move(p, joinPath(target.folder, ctx.fs.uniqueName(target.folder, basename(p))), { copy: ev.ctrlKey });
+        } catch (err) { ctx.dialogs.message(String(err.message || err), { title: "Error", icon: "error" }); }
+        this.renderDesktop();
+        return;
+      }
+      const win = under?.closest?.(".window");
+      if (win && files.length) {
+        const dt = new DataTransfer();
+        dt.setData("application/x-win2k-files", JSON.stringify(files));
+        for (const t of ["dragenter", "dragover", "drop"]) under.dispatchEvent(new DragEvent(t, { bubbles: true, cancelable: true, dataTransfer: dt, clientX: ev.clientX, clientY: ev.clientY, ctrlKey: ev.ctrlKey }));
+        this.renderDesktop();
+        return;
+      }
+      // place on the desktop, aligned to the 80x82 grid
+      const positions = ctx.settings.get("desktopPositions") || {};
+      const taken = new Set(this.activeIcons.filter((a) => !this.selected.has(a.id)).map((a) => { const n = document.querySelector(`.desktop-icon[data-id="${CSS.escape(a.id)}"]`); return n ? Math.round((parseFloat(n.style.left) - 6) / 80) + "," + Math.round((parseFloat(n.style.top) - 10) / 82) : ""; }));
+      const cols = Math.floor(innerWidth / 80), rows = Math.max(1, Math.floor((innerHeight - 60) / 82));
+      for (const [n, o] of origin) {
+        const x = parseFloat(n.style.left), y = parseFloat(n.style.top);
+        let gx = Math.max(0, Math.min(cols - 1, Math.round((x - 6) / 80))), gy = Math.max(0, Math.min(rows - 1, Math.round((y - 10) / 82)));
+        for (let k = 0; taken.has(gx + "," + gy) && k < 200; k++) { gy++; if (gy >= rows) { gy = 0; gx = Math.min(cols - 1, gx + 1); } }
+        taken.add(gx + "," + gy);
+        positions[n.dataset.id] = { x: gx * 80 + 6, y: gy * 82 + 10 };
+      }
+      ctx.settings.set("desktopPositions", positions);
+      this.renderDesktop();
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up, { once: true });
+    node.addEventListener("pointercancel", up, { once: true });
   }
   updateSelection() {
     document.querySelectorAll(".desktop-icon").forEach((el) => {
@@ -342,11 +421,15 @@ export class DesktopShell {
     root.addEventListener("pointerup", stop, { once: true });
     root.addEventListener("pointercancel", stop, { once: true });
   }
-  async renameSelected() {
-    const item = this.activeIcons.find(
-      (a) => this.selected.has(a.id) && a.path,
-    );
+  async renameSelected(only) {
+    const item = only || this.activeIcons.find((a) => this.selected.has(a.id) && a.path);
     if (!item) return;
+    if (!item.path) {
+      const names = this.ctx.settings.get("iconNames") || {};
+      const n = await this.ctx.dialogs.prompt("Type a new name:", names[item.id] || item.name, { title: "Rename" });
+      if (n) { names[item.id] = n; this.ctx.settings.set("iconNames", names); this.renderDesktop(); }
+      return;
+    }
     const n = await this.ctx.dialogs.prompt("Type a new name:", item.name, {
       title: "Rename",
     });
@@ -458,6 +541,84 @@ export class DesktopShell {
       y,
     );
   }
+  /** Network tray icon (netshell.dll 16px LAN icons); blinks on activity. */
+  lanTray() {
+    const ctx = this.ctx;
+    const st = (this.lan = this.lan || { up: true, since: Date.now(), sent: 0, recv: 0, burst: 0 });
+    const img = el("img", { src: "assets/tray/lan193.png", width: 16, height: 16, alt: "" });
+    const b = button(img, () => this.lanStatus(), {
+      class: "tray-button lan",
+      title: "Local Area Connection\nSpeed: 100.0 Mbps",
+      "aria-label": "Local Area Connection",
+    });
+    const frames = ["190", "191", "192"];
+    const paint = () => {
+      const n = st.up ? (st.burst > 0 ? frames[(st.burst + (st.tick = (st.tick || 0) + 1)) % 3] : "193") : "195";
+      img.src = `assets/tray/lan${n}.png`;
+    };
+    st.paint = paint;
+    st.activity = (n = 12) => {
+      if (!st.up) return;
+      st.burst = Math.max(st.burst, n);
+      st.sent += 300 + Math.floor(Math.random() * 2000);
+      st.recv += 800 + Math.floor(Math.random() * 9000);
+    };
+    clearInterval(st.timer);
+    st.timer = setInterval(() => {
+      if (st.burst > 0) st.burst--;
+      else if (Math.random() < 0.05) st.activity(3 + Math.floor(Math.random() * 6));
+      paint();
+      st.refresh?.();
+    }, 150);
+    ctx.bus.on("network:activity", () => st.activity(14));
+    b.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      popup(
+        [
+          { label: st.up ? "Disable" : "Enable", action: () => { st.up = !st.up; if (st.up) st.since = Date.now(); paint(); } },
+          { label: "Status", action: () => this.lanStatus() },
+          separator(),
+          { label: "Open Network and Dial-up Connections", action: () => ctx.launch("control", { page: "network" }) },
+        ],
+        e.clientX,
+        e.clientY,
+      );
+    });
+    return b;
+  }
+
+  lanStatus() {
+    const st = this.lan, ctx = this.ctx;
+    if (st.dlg?.el?.isConnected) return st.dlg.el.focus?.();
+    const fmt = (n) => n.toLocaleString("en-US");
+    const dur = () => {
+      const t = Math.floor((Date.now() - st.since) / 1000), p = (v) => String(v).padStart(2, "0");
+      return `${p(Math.floor(t / 3600))}:${p(Math.floor(t / 60) % 60)}:${p(t % 60)}`;
+    };
+    const ctl = {};
+    const w = (st.dlg = dialogFromTemplate(ctx, lanStatusTemplate, {
+      title: "Local Area Connection Status",
+      ctlOut: ctl,
+      values: {},
+      labels: { 1007: st.up ? "Connected" : "Disconnected", 1008: dur(), 1009: st.up ? "100.0 Mbps" : "0 bps", 1003: fmt(st.sent), 1005: fmt(st.recv) },
+      on: {
+        1026: () => ctx.launch("control", { page: "network" }),
+        1025: () => { st.up = !st.up; if (st.up) st.since = Date.now(); st.paint(); w.close?.(); },
+      },
+    }));
+    w.place(btn(px(147) + 4, py(142) + 22, px(56), py(14), "Close", { onclick: () => w.close() }));
+    ctl[1025] && (ctl[1025].textContent = st.up ? "Disable" : "Enable");
+    st.refresh = () => {
+      if (!w.el.isConnected) return (st.refresh = null);
+      ctl[1007].textContent = st.up ? "Connected" : "Disconnected";
+      ctl[1008].textContent = dur();
+      ctl[1003].textContent = fmt(st.sent);
+      ctl[1005].textContent = fmt(st.recv);
+    };
+    return w;
+  }
+
   renderTaskbar() {
     const ctx = this.ctx,
       taskbar = document.querySelector("#taskbar");
@@ -502,6 +663,7 @@ export class DesktopShell {
       el(
         "div",
         { class: "system-tray inset" },
+        this.lanTray(),
         button(icon("speaker"), () => ctx.launch("volume"), {
           class: "tray-button",
           title: "Volume",

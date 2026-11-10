@@ -66,6 +66,7 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
   };
   const navigate = (target, push = true) => {
     target = normalizeAddress(target);
+    ctx.bus.emit("network:activity");
     current = target;
     address.value = current;
     if (push) {

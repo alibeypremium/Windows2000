@@ -578,12 +578,6 @@ async function start() {
   bus.on("settings:change", () =>
     ctx.log("Information", "Control Panel", "Desktop settings updated"),
   );
-  const explorer = await ctx.launch("explorer", { path: "computer" });
-  explorer.geometry.x = Math.min(122, Math.max(2, innerWidth - 723));
-  explorer.geometry.y = 41;
-  explorer.geometry.width = Math.min(721, innerWidth - 4);
-  explorer.geometry.height = Math.min(537, innerHeight - 60);
-  wm.applyGeometry(explorer);
   if (settings.get("showWelcome")) await ctx.launch("welcome");
   wm.fit();
   document.body.classList.add("ready");

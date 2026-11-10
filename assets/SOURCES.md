@@ -417,3 +417,8 @@ Minesweeper: tiles, LED digits, faces, sounds and dialog templates are the origi
 - dmdskres.dll: diyalog 172 (Format), 353–359 (Create Partition Wizard), 361/363 (drive letter/path), 348 (Disk properties), 345 (Rescanning), 347/139 (Appearance/Scaling), tüm menü/durum/hata metinleri, ikon ve bitmap'ler (`assets/diskmgmt/`).
 - Tahmin: MMC çerçevesi, graphical view yerleşimi/renkleri, wizard sol görseli (ISO'da bulunamadı), Volume Properties sayfası.
 - Bölüm modeli `settings.diskMgmt`; yeni sürücüler Explorer'da My Computer/Folders'ta görünür.
+
+## Desktop icons, context menus, network tray icon
+- Desktop icon context menus follow shell32.dll menu 210 (Cut/Copy/Paste/Create Shortcut/Delete/Rename/Properties) and 227 (Empty Recycle Bin); dragging is pointer-based with grid snapping. Explore/Manage/Search/Map Network Drive actions and shortcut (.lnk) creation are simulated.
+- Tray network icon: `assets/tray/lan190–195.png` are the 16px icons from netshell.dll; blink timing and traffic counters are simulated. "Local Area Connection Status" uses netshell.dll dialog 1801 (`packages/shell/lan-data.js`); tray menu follows netshell menu 15101.
+- Startup no longer opens My Computer automatically.
