@@ -6231,8 +6231,8 @@ body.icon-dragging, body.icon-dragging * { cursor: default; }
 .ns-tb.disabled{pointer-events:none}
 .ns-spacer{flex:1}
 .ns-throbber{width:32px;height:32px;margin:5px 14px 0 6px;background:no-repeat 0 0;flex:none;cursor:default}
-.ns-nav .ns-throbber{width:48px;height:42px;position:relative}
-.ns-throbber-anim{position:absolute;left:8px;top:5px;width:32px;height:32px;background-repeat:no-repeat}
+.ns-nav .ns-throbber{width:34px;height:34px;margin:0 10px 0 6px;position:relative;box-sizing:border-box;border:1px solid;border-color:var(--shadow) #fff #fff var(--shadow);cursor:pointer;align-self:center}
+.ns-throbber-anim{position:absolute;left:0;top:0;width:32px;height:32px;background-repeat:no-repeat;pointer-events:none}
 .ns-loc{height:24px;align-items:center;gap:4px;padding:0 4px 0 0}
 .ns-bm{all:unset;display:flex;align-items:center;height:22px}
 .ns-bm img{height:22px;display:block}

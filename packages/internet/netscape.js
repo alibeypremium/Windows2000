@@ -70,8 +70,7 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
   const msg = el("div", { class: "ns-status-text", text: "Document: Done" });
   const anim = el("div", { class: "ns-throbber-anim" });
   anim.style.backgroundImage = `url(${IMG}throbber.png)`;
-  const throbber = el("div", { class: "ns-throbber", title: "Netscape home page" }, anim);
-  throbber.style.backgroundImage = `url(${IMG}logo.png)`;
+  const throbber = el("div", { class: "ns-throbber", title: "Netscape home page", role: "button" }, anim);
   timer = setInterval(() => {
     frameNo = (frameNo + 1) % FRAMES;
     anim.style.backgroundPosition = `-${frameNo * 32}px 0`;
@@ -299,7 +298,7 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
   w.onClose = () => { clearInterval(timer); return true; };
 
   address.addEventListener("keydown", (e) => e.key === "Enter" && go(address.value));
-  throbber.addEventListener("click", () => go("http://home.netscape.com/"));
+  throbber.addEventListener("click", () => home());
   w.el.addEventListener("keydown", (e) => {
     if (e.key === "Escape") stop();
     if (e.ctrlKey && e.key.toLowerCase() === "r") { e.preventDefault(); render(); }
