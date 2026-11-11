@@ -1,5 +1,6 @@
 /** @package @win2k/explorer — shell namespace, file management and search. */
 import { confirmDelete } from "../ui/shconfirm.js";
+import { openProperties, typeName } from "./props.js";
 import { rarMenuItems } from "../accessories/winrar-shell.js";
 import {
   DOCS,
@@ -85,6 +86,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     view = path === "recycle" ? "details" : "icons",
     treeVisible = false,
     sortBy = "name",
+    colW = { normal: [224, 80, 130, 150], recycle: [119, 120, 109, 100, 70] },
     sortDirection = 1,
     descEl = null,
     shownFiles = new Set(),
@@ -293,11 +295,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
       });
       return;
     }
-    const stat = ctx.fs.stat(n.path);
-    ctx.dialogs.message(
-      `Type: ${stat.type === "folder" ? "File Folder" : extension(stat.name).toUpperCase() + " File"}\nLocation: ${dirname(stat.originalPath || n.path).replaceAll("/", "\\")}\nSize: ${formatBytes(stat.size)}\nCreated: ${new Date(stat.created).toLocaleString()}\nModified: ${new Date(stat.modified).toLocaleString()}${stat.trashed ? "\nDeleted: " + new Date(stat.deleted).toLocaleString() : ""}`,
-      { title: n.name + " Properties", icon: fileIcon(n) },
-    );
+    openProperties(ctx, n, { onChange: () => render() });
   };
   const newFolder = async () => {
     const folder = shellNames[current] ? DOCS : current;
@@ -1224,11 +1222,15 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
           sortDirection
       );
     });
+    const colKey = current === "recycle" ? "recycle" : "normal";
+    const gridCols = () => colW[colKey].map((x) => x + "px").join(" ");
+    const gridStyle = () => ({ gridTemplateColumns: gridCols(), minWidth: colW[colKey].reduce((a, b) => a + b, 0) + "px" });
+    const applyCols = () => listing.querySelectorAll(".file-details-header, .details-view .file-item").forEach((r) => Object.assign(r.style, gridStyle()));
     if (view === "details")
       listing.append(
         el(
           "div",
-          { class: "file-details-header" },
+          { class: "file-details-header", style: gridStyle() },
           ...(current === "recycle"
             ? ["Name", "Original Location", "Date Deleted", "Type", "Size"]
             : ["Name", "Size", "Type", "Modified"]
@@ -1236,9 +1238,26 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
             const key = (current === "recycle"
               ? ["name", "origin", "deleted", "type", "size"]
               : ["name", "size", "type", "modified"])[i];
+            const grip = el("span", { class: "col-grip" });
+            grip.addEventListener("click", (ev) => ev.stopPropagation());
+            grip.addEventListener("pointerdown", (ev) => {
+              ev.preventDefault(); ev.stopPropagation();
+              const x0 = ev.clientX, w0 = colW[colKey][i];
+              grip.setPointerCapture(ev.pointerId);
+              const mv = (m) => { colW[colKey][i] = Math.max(20, w0 + m.clientX - x0); applyCols(); };
+              const up = () => { grip.removeEventListener("pointermove", mv); grip.removeEventListener("pointerup", up); };
+              grip.addEventListener("pointermove", mv); grip.addEventListener("pointerup", up);
+            });
+            grip.addEventListener("dblclick", (ev) => {
+              ev.stopPropagation();
+              const cells = [...listing.querySelectorAll(".details-view .file-item")].map((r) => r.children[i + 1 + (r.querySelector(":scope > .icon") ? 0 : 0)]);
+              const m = Math.max(20, ...cells.map((c) => (c ? c.scrollWidth : 0)), label.length * 7) + 14 + (i === 0 ? 22 : 0);
+              colW[colKey][i] = m; applyCols();
+            });
             return button(
               [
                 label,
+                grip,
                 sortBy === key
                   ? el("span", {
                       class: "sort-arrow",
@@ -1264,6 +1283,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
           "data-path": n.path,
           draggable: "true",
           tabindex: -1,
+          style: view === "details" ? gridStyle() : undefined,
         },
         icon(n.icon || fileIcon(n), view === "icons" ? 32 : 16),
         el("span", {
@@ -1295,19 +1315,18 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
         b.append(
           el("span", {
             class: "file-size",
-            text: n.type === "file" ? formatBytes(n.size || 0) : "",
+            text: n.type === "file" ? Math.max(1, Math.ceil((n.size || 0) / 1024)).toLocaleString("en-US") + " KB" : "",
           }),
           el("span", {
             class: "file-type",
             text:
               n.type === "folder"
                 ? "File Folder"
-                : n.detail ||
-                  (extension(n.name) || n.type).toUpperCase() + " File",
+                : n.detail || typeName(n),
           }),
           el("span", {
             class: "file-date",
-            text: n.modified ? new Date(n.modified).toLocaleDateString() : "",
+            text: n.modified ? new Date(n.modified).toLocaleString("en-US", { year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "2-digit" }).replace(",", "") : "",
           }),
         );
       b.addEventListener("click", (e) => {
@@ -1402,7 +1421,40 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     );
   }
   bindDrop(listing, () => current);
+  // Rubber-band (marquee) selection
+  listing.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0 || e.target.closest(".file-item, .file-details-header")) return;
+    if (e.offsetX > listing.clientWidth || e.offsetY > listing.clientHeight) return; // scrollbar
+    const box = listing.getBoundingClientRect();
+    const sx = e.clientX - box.left + listing.scrollLeft, sy = e.clientY - box.top + listing.scrollTop;
+    const base = e.ctrlKey || e.metaKey ? new Set(selected) : new Set();
+    const band = el("div", { class: "rubber-band" });
+    let active = false;
+    const mv = (m) => {
+      const cx = m.clientX - box.left + listing.scrollLeft, cy = m.clientY - box.top + listing.scrollTop;
+      if (!active && Math.abs(cx - sx) + Math.abs(cy - sy) < 4) return;
+      if (!active) { active = true; listing.append(band); listing.dataset.banding = "1"; }
+      const l = Math.min(sx, cx), t = Math.min(sy, cy), r = Math.max(sx, cx), b = Math.max(sy, cy);
+      Object.assign(band.style, { left: l + "px", top: t + "px", width: r - l + "px", height: b - t + "px" });
+      const next = new Set(base);
+      for (const it of listing.querySelectorAll(".file-item")) {
+        const ib = it.getBoundingClientRect();
+        // use the icon + label area (not the full grid cell) in icon views
+        const il = ib.left - box.left + listing.scrollLeft, it_ = ib.top - box.top + listing.scrollTop;
+        if (il < r && il + ib.width > l && it_ < b && it_ + ib.height > t) next.add(it.dataset.path);
+      }
+      selected = next;
+      renderSelection();
+    };
+    const up = () => {
+      document.removeEventListener("pointermove", mv); document.removeEventListener("pointerup", up);
+      band.remove();
+      setTimeout(() => delete listing.dataset.banding, 0);
+    };
+    document.addEventListener("pointermove", mv); document.addEventListener("pointerup", up);
+  });
   listing.addEventListener("click", (e) => {
+    if (listing.dataset.banding) return;
     if (e.target === listing) {
       selected.clear();
       renderSelection();

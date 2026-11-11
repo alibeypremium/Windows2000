@@ -726,6 +726,19 @@ export class DesktopShell {
     taskbar.addEventListener("contextmenu", (e) => {
       if (e.target.closest("#task-buttons button")) return;
       e.preventDefault();
+      if (e.target.closest("#start-button")) {
+        const startDir = DESKTOP.replace(/\/Desktop$/, "");
+        const open = (path) => () => ctx.launch("explorer", { path });
+        popup([
+          { label: "Open", bold: true, action: open(startDir) },
+          { label: "Explore", action: open(startDir) },
+          { label: "Find...", action: () => ctx.launch("explorer", { path: "search" }) },
+          separator(),
+          { label: "Open All Users", action: open(startDir) },
+          { label: "Explore All Users", action: open(startDir) },
+        ], e.clientX, e.clientY - 120);
+        return;
+      }
       popup(
         [
           {
@@ -920,6 +933,7 @@ export class DesktopShell {
           submenu: this.appItems([
             "clipboard",
             "charmap",
+            "cleanmgr",
             "defrag",
             "systeminfo",
             "tasks",
@@ -1076,6 +1090,21 @@ export class DesktopShell {
         }
       };
       b.addEventListener("pointerenter", openChild);
+      b.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const PROFILE = DESKTOP.replace(/\/Desktop$/, "");
+        const targets = { Programs: PROFILE, Documents: DOCS, Settings: "control" };
+        const target = targets[item.label.replace(/…|\.\.\./g, "")];
+        if (!target) return; // Help, Run, Shut Down: no shell menu in Windows 2000
+        const open = (verb) => () => { this.closeStart(); if (verb === "Search") this.ctx.launch("explorer", { path: "search" }); else if (target === "control") this.ctx.launch("control"); else this.ctx.launch("explorer", { path: target }); };
+        child?.remove(); child = null;
+        popup([
+          { label: "Open", bold: true, action: open("Open") },
+          { label: "Explore", action: open("Explore") },
+          { label: "Find...", action: open("Search") },
+        ], e.clientX, e.clientY);
+      });
       b.addEventListener("keydown", (e) => {
         if (e.key === "ArrowRight" && item.submenu) {
           e.preventDefault();

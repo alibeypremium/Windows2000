@@ -4,6 +4,7 @@ import { refWindow, kit } from "./refkit.js";
 import { sheetButtons } from "./dialogs.js";
 import { dialogFromTemplate } from "../ui/dlg.js";
 import { NETID } from "./netid-data.js";
+import { openPerformanceOptions, openEnvironmentVariables, openStartupRecovery, openHardwareProfiles, openChangeProfileType, openCopyProfile } from "./sysdm.js";
 
 const IMG = "/assets/ui/system/";
 const OX = 369,
@@ -115,7 +116,7 @@ export function openSystemProperties(ctx, { tab = 0 } = {}) {
     k.btn(76, 251, 147, 23, "Driver Signing...", { onclick: () => msg("Driver signing options are not available in this virtual desktop.", "Driver Signing Options") }),
     k.btn(230, 251, 147, 23, "Device Manager...", { onclick: () => ctx.launch("devices") }),
     ...section(300, 95, "Hardware Profiles", 315, 31, 315, "Hardware profiles provide a way for you to set up and store\ndifferent hardware configurations.", { img: "hwprof.png" }),
-    k.btn(230, 360, 147, 23, "Hardware Profiles...", { onclick: () => msg("Hardware profiles are not available in this virtual desktop.", "Hardware Profiles") }),
+    k.btn(230, 360, 147, 23, "Hardware Profiles...", { onclick: () => openHardwareProfiles(ctx) }),
   ];
   const profiles = () => [
     k.img(27, 70, IMG + "profile.png", 34, 36),
@@ -134,16 +135,16 @@ export function openSystemProperties(ctx, { tab = 0 } = {}) {
       return r;
     })(),
     k.btn(26, 390, 112, 21, "Delete", { disabled: true }),
-    k.btn(151, 390, 113, 21, "Change Type...", { onclick: () => msg("Profile type cannot be changed in this virtual desktop.", "Change Profile Type") }),
-    k.btn(274, 390, 113, 21, "Copy To...", { onclick: () => msg("Copying profiles is not available in this virtual desktop.", "Copy To") }),
+    k.btn(151, 390, 113, 21, "Change Type...", { onclick: () => openChangeProfileType(ctx, user) }),
+    k.btn(274, 390, 113, 21, "Copy To...", { onclick: () => openCopyProfile(ctx, "Administrator") }),
   ];
   const advanced = () => [
     ...section(79, 94, "Performance", 91, 34, 92, "Performance options control how applications use memory,\nwhich affects the speed of your computer.", { img: "perf.png" }),
-    k.btn(230, 137, 147, 23, "Performance Options...", { onclick: () => msg("Performance options are not available in this virtual desktop.", "Performance Options") }),
+    k.btn(230, 137, 147, 23, "Performance Options...", { onclick: () => openPerformanceOptions(ctx) }),
     ...section(186, 95, "Environment Variables", 200, 35, 201, "Environment variables tell your computer where to find certain\ntypes of information.", { img: "env.png" }),
-    k.btn(230, 246, 147, 23, "Environment Variables...", { onclick: () => msg("Environment variables are managed by the browser.", "Environment Variables") }),
+    k.btn(230, 246, 147, 23, "Environment Variables...", { onclick: () => openEnvironmentVariables(ctx) }),
     ...section(295, 100, "Startup and Recovery", 310, 35, 310, "Startup and recovery options tell your computer how to start\nand what to do if an error causes your computer to stop.", { img: "startup.png" }),
-    k.btn(230, 360, 147, 23, "Startup and Recovery...", { onclick: () => msg("Startup and recovery options are not available in this virtual desktop.", "Startup and Recovery") }),
+    k.btn(230, 360, 147, 23, "Startup and Recovery...", { onclick: () => openStartupRecovery(ctx) }),
   ];
 
   const tc = k.tabs({

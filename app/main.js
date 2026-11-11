@@ -49,6 +49,7 @@ import {
   openFreeCell,
 } from "/packages/games/index.js";
 import { openWinamp } from "/packages/accessories/winamp.js";
+import { openDiskCleanup } from "/packages/system/cleanmgr.js";
 import { openWinRAR } from "/packages/accessories/winrar.js";
 import { openNetscape } from "/packages/internet/netscape.js";
 import { openMessenger } from "/packages/internet/msn.js";
@@ -373,6 +374,13 @@ ctx.apps = [
     icon: "drive",
     aliases: ["diskmgmt.msc"],
     open: openDiskManager,
+  },
+  {
+    id: "cleanmgr",
+    name: "Disk Cleanup",
+    icon: "defragApp",
+    aliases: ["cleanmgr", "cleanmgr.exe"],
+    open: (ctx, args) => openDiskCleanup(ctx, args || {}),
   },
   {
     id: "defrag",

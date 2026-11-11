@@ -6340,3 +6340,23 @@ input.vlc-eqs[type="range"]{flex:none;writing-mode:vertical-lr;direction:rtl;hei
 .rd-wz-files{margin:0 10px;height:110px;background:#fff;border:2px inset;border-color:#808080 #fff #fff #808080;overflow:auto;font:11px Tahoma,sans-serif}
 .rd-wz-files div{padding:1px 4px}
 .rd-wz-btns{display:flex;gap:8px;padding:8px 10px}
+.sd-head{display:flex;background:#d4d0c8;border-bottom:1px solid #808080;font:11px Tahoma,sans-serif;position:sticky;top:0}
+.sd-head div{padding:1px 4px;border-right:1px solid #808080;box-sizing:border-box;overflow:hidden;white-space:nowrap}
+.sd-row{display:flex;font:11px Tahoma,sans-serif;cursor:default;white-space:nowrap}
+.sd-row div{padding:1px 4px;box-sizing:border-box;overflow:hidden;text-overflow:ellipsis}
+.sd-row.sel{background:#0a246a;color:#fff}
+.cm-prog{position:absolute;border:1px solid;border-color:#808080 #fff #fff #808080;background:#fff;box-sizing:border-box;padding:1px}
+.cm-prog i{display:block;height:100%;width:0;background:repeating-linear-gradient(90deg,#000080 0 6px,#fff 6px 8px)}
+.cm-row{display:flex;align-items:center;gap:4px;padding:1px 3px;font:11px Tahoma,sans-serif;cursor:default;white-space:nowrap}
+.cm-row .cm-name{flex:1}.cm-row .cm-size{width:70px;text-align:right}
+.cm-row.sel .cm-name{background:#0a246a;color:#fff}
+.cm-row input{margin:0}
+
+/* Explorer Details view: resizable column headers */
+.explorer-window .file-details-header button { position: relative; }
+.explorer-window .file-details-header .col-grip {
+  position: absolute; right: -3px; top: 0; bottom: 0; width: 7px; cursor: col-resize; z-index: 3;
+}
+.explorer-window .details-view .file-item > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 4px; }
+.explorer-window .file-list { position: relative; }
+.rubber-band { position: absolute; border: 1px dotted #000; background: rgba(0, 0, 128, .18); pointer-events: none; z-index: 5; }

@@ -36,6 +36,8 @@ export function openTerminal(ctx, { command = null } = {}) {
     PATH: "C:\\WINNT;C:\\WINNT\\system32",
     PROMPT: "$P$G",
   };
+  // variables saved in System Properties > Advanced > Environment Variables
+  { const sv = ctx.settings.get("envSystem") || {}, uv = ctx.settings.get("envUser") || {}; const sub = (v) => String(v).replace(/%SystemRoot%/gi, "C:\\WINNT").replace(/%USERPROFILE%/gi, "C:\\Documents and Settings\\" + (ctx.settings.get("username") || "Administrator")).replace(/%windir%/gi, "C:\\WINNT"); for (const o of [sv, uv]) for (const [k, v] of Object.entries(o)) environment[k.toUpperCase()] = sub(v); }
   const output = el("div", { class: "terminal-output", "aria-live": "polite" }),
     input = el("input", {
       class: "terminal-input",

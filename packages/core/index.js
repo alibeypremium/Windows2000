@@ -360,6 +360,17 @@ export class VirtualFileSystem {
       return path;
     });
   }
+  /** Set file attributes (hidden / readOnly / archive). */
+  setAttrs(path, attrs) {
+    path = normalizePath(path);
+    return this.#mutate(() => {
+      const n = this.get(path);
+      if (!n) throw new Error(`The system cannot find the path specified: ${path}`);
+      for (const k of ["hidden", "readOnly", "archive"]) if (k in attrs) n[k] = !!attrs[k];
+      n.modified = n.modified;
+      return n.path;
+    });
+  }
   async rename(path, name) {
     this.#validateName(name);
     return this.move(path, joinPath(dirname(path), name));
