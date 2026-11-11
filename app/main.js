@@ -271,6 +271,13 @@ ctx.apps = [
     open: (ctx, args) => openWindowsTools(ctx, args || {}),
   },
   {
+    id: "nvidia",
+    name: "Nvidia",
+    icon: "nvidia",
+    aliases: ["nvidia", "nvcpl.cpl"],
+    open: (ctx) => ctx.launch("control", { page: "display", tab: 5 }),
+  },
+  {
     id: "winrar",
     name: "WinRAR",
     icon: "winrar",

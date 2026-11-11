@@ -6,8 +6,7 @@ import {
   statusBar,
   separator,
   field,
-  popup,
-} from "../ui/index.js";
+  popup, browserFrame } from "../ui/index.js";
 import { basename, downloadFile } from "../core/index.js";
 import { buildSite, isSite, prefetchNews, homeBoxes } from "./netscape-sites.js";
 import { ieOpen, ieOptions, ieAddFavorite, ieProps, ieOrganize, iePageSetup, iePrint, IE_HELP } from "./ie-dialogs.js";
@@ -41,10 +40,7 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
   const w = ctx.wm.create({
     title: "Microsoft Internet Explorer",
     icon: "ie",
-    width: 806,
-    height: 603,
-    x: 95,
-    y: 51,
+    ...browserFrame(),
     appId: "ie",
   });
   let current = initial,

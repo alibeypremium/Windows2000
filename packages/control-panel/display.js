@@ -22,6 +22,7 @@ const WALLPAPERS = [
   ["Santa Fe Stucco", "tile"],
   ["Soap Bubbles", "paint"],
   ["Zapotec", "tile"],
+  ["Windows 2000", "paint"],
 ];
 const SAVERS = SAVER_LIST;
 const COLORS = ["16 Colors", "256 Colors", "High Color (16 bit)", "True Color (24 bit)", "True Color (32 bit)"];

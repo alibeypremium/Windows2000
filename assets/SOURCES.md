@@ -598,3 +598,4 @@ Contacts, organisations, replies and display pictures (packages/internet/msn-dat
 - `assets/icons/wintools-*.png`: kullanıcının gönderdiği "uygulama_icon.png" (şeffaf arka plan, 16/32 px).
 - `assets/vlc/cone.png`: kullanıcının gönderdiği VLC logosu (beyaz arka plan şeffaflaştırıldı).
 - Windows Tools sayfa şablonları: `netshell.dll` (ISO) — bkz. packages/system/wizards-data.js.
+- `assets/wallpapers/windows2000.png` ve `assets/icons/nvidia-*.png`: kullanıcının gönderdiği dosyalar.

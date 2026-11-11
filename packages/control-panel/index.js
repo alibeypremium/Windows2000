@@ -35,7 +35,7 @@ import {
   openHardwareWizard,
 } from "./dialogs.js";
 export { controlItems, applyTheme } from "./items.js";
-export function openControlPanel(ctx, { page = "system" } = {}) {
+export function openControlPanel(ctx, { page = "system", tab = 0 } = {}) {
   if (page === "accessibility") return openAccessibility(ctx);
   if (page === "programs") return openAddRemovePrograms(ctx);
   if (page === "hardware") return openHardwareWizard(ctx);
@@ -55,7 +55,7 @@ export function openControlPanel(ctx, { page = "system" } = {}) {
   if (page === "power") return openPowerOptions(ctx);
   if (page === "users") return openUsersAndPasswords(ctx);
   if (page === "datetime") return openDateTimeProperties(ctx);
-  if (page === "display") return openDisplayProperties(ctx, { schemes, applyTheme });
+  if (page === "display") return openDisplayProperties(ctx, { schemes, applyTheme, tab });
   if (page === "folder") return openFolderOptions(ctx);
   const entry =
       controlItems.find((p) => p.id === page) ||

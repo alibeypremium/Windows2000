@@ -1,4 +1,4 @@
-import { el, button, icon, popup, menuBar, separator } from "../ui/index.js";
+import { el, button, icon, popup, menuBar, separator, browserFrame } from "../ui/index.js";
 import { basename } from "../core/index.js";
 import { NAV_SCRIPT, buildSite, isSite, prefetchNews, homeParts } from "./netscape-sites.js";
 import { loadBM, saveBM, bookmarkItems, addBookmark, folderChoices, openBookmarkWindow } from "./netscape-bm.js";
@@ -56,10 +56,7 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
   const w = ctx.wm.create({
     title: "Netscape",
     icon: "netscape",
-    width: 806,
-    height: 603,
-    x: 80,
-    y: 40,
+    ...browserFrame(),
     appId: "netscape",
   });
   let current = "about:home";

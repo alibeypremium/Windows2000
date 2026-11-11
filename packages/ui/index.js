@@ -69,6 +69,7 @@ const icons = {
   winamp: "winamp",
   winrar: "winrar",
   wintools: "wintools",
+  nvidia: "nvidia",
   rarfile: "rarfile",
   word: "word",
   worddoc: "worddoc",
@@ -1281,4 +1282,13 @@ export class DialogService {
       queueMicrotask(() => input.focus());
     });
   }
+}
+
+/** Browser window size/position used by Internet Explorer and Netscape: 885x744 at ~21% from the left on large screens, shrunk to fit small ones. */
+export function browserFrame() {
+  const vw = innerWidth, vh = innerHeight - 30;
+  const width = Math.min(885, vw - 10), height = Math.min(744, vh - 10);
+  const x = Math.max(0, Math.min(Math.round(vw * 0.209), vw - width));
+  const y = Math.max(0, Math.min(63, vh - height));
+  return { width, height, x, y };
 }

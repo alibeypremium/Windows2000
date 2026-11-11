@@ -188,6 +188,12 @@ export class DesktopShell {
         action: () => ctx.launch("winrar"),
       },
       {
+        id: "nvidia",
+        name: "Nvidia",
+        icon: "nvidia",
+        action: () => ctx.launch("nvidia"),
+      },
+      {
         id: "wintools",
         name: "Windows Tools",
         icon: "wintools",
@@ -258,9 +264,15 @@ export class DesktopShell {
             },
           },
         );
+      let tap = null, lastTap = 0;
+      b.addEventListener("pointerdown", (e) => { tap = e.pointerType === "touch" ? { x: e.clientX, y: e.clientY } : null; });
+      b.addEventListener("pointerup", (e) => {
+        if (tap && Math.hypot(e.clientX - tap.x, e.clientY - tap.y) < 10) { lastTap = Date.now(); safely(() => item.action())(); }
+        tap = null;
+      });
       b.addEventListener(
         "dblclick",
-        safely(() => item.action()),
+        safely(() => { if (Date.now() - lastTap > 800) item.action(); }),
       );
       b.addEventListener("contextmenu", (e) => {
         e.preventDefault();
@@ -986,7 +998,7 @@ export class DesktopShell {
           icon: "programGroup",
           submenu: [{ label: "(Empty)", disabled: true }],
         },
-        ...this.appItems(["ie", "outlook", "word", "acrobat", "divx", "vlc", "winamp", "winrar", "wintools", "netscape", "msn"]),
+        ...this.appItems(["ie", "outlook", "word", "acrobat", "divx", "vlc", "winamp", "winrar", "wintools", "nvidia", "netscape", "msn"]),
       ],
       settings = [
         {

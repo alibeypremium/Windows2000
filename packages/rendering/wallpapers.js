@@ -10,5 +10,6 @@ export const WALLPAPER_FILES = {
   "River Sumida": "rvrsumid",
   "Santa Fe Stucco": "santafe",
   "Soap Bubbles": "bubbles",
-  "Zapotec": "zapotec"
+  "Zapotec": "zapotec",
+  "Windows 2000": "windows2000"
 };

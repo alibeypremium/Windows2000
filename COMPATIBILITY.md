@@ -133,3 +133,9 @@ Clipboard, recording, serial ports, media codecs, GPU, printing and external han
 - **Ayar ver/al:** masaüstü düzeni, duvar kağıdı ve renkler, TV linkleri, radyo linkleri, ses, internet, tarih-saat gruplarını `Windows2000-Settings.json` olarak dışa aktarır (kopyası Docs'a da konur); içe aktarırken dosyadan ya da varsayılan ayarlara dönülür, masaüstü yenilenir. Yeni anahtarlar `CATEGORIES` listesine eklenerek genişletilir.
 - Sınırlama: TV/radyo link grupları şimdilik VLC/DivX/WMP'nin kayıtlı ayarlarını (son açılanlar, favoriler) taşır; ayrı bir link yöneticisi sonraki aşama.
 - VLC: ekran logosu kullanıcının verdiği gerçek VLC logosu (`assets/vlc/cone.png`); ses çubuğu gradyan çakışması giderildi.
+
+## Tarayıcı penceresi, duvar kağıdı, Nvidia, dokunmatik
+- Internet Explorer ve Netscape 885x744 boyutunda, soldan ~%21 / üstten 63 px konumunda açılır (küçük ekranlarda sığacak kadar küçülür): `browserFrame()` (packages/ui).
+- Display Properties → Background listesine kullanıcının verdiği "Windows 2000" duvar kağıdı eklendi (`assets/wallpapers/windows2000.png`).
+- Masaüstüne "Nvidia" ikonu (kullanıcı ikonu) eklendi; tıklanınca Display Properties → Settings sekmesi açılır. Start → Programs'ta da var.
+- Mobil: masaüstü ikonlarına tek dokunuş uygulamayı açar (çift tıklama beklenmez).
