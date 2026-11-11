@@ -125,3 +125,11 @@ Clipboard, recording, serial ports, media codecs, GPU, printing and external han
 - Yeni diyaloglar: Go to (listeden klip seçer), Add Favorite (Favorites menüsü, ayarlarda saklanır), Windows Media Player Error (oynatma hatasında, Advanced >> ayrıntıları gösterir). Zoom %50/%100/%200 çalışır; Back/Forward çalma geçmişinde gezer.
 - **Radio (Go > Radio, Ctrl+F):** Radio Tuner penceresi; TRT Radyo 1/FM/3/Nağme/Haber, BBC World Service, Radio Paradise, KEXP, SomaFM kanalları ön tanımlı, adres kutusuna yapıştırılan `.m3u/.m3u8` listesi eklenir. Yayınların çalışması yayıncıya ve ağa bağlıdır (sandbox'ta denenemedi). Media Guide / Music / Home Page internet gerektirdiği için kapalıdır.
 - Sınırlar: `mplayer2.hlp` (WinHelp) tarayıcıda açılmaz; Help Topics mevcut yardım sayfasını açar. Windows Media Guide sayfaları, codec DLL'leri ve DRM çalışmaz.
+
+## Windows Tools (masaüstü + Start → Programs)
+- Kullanıcının verdiği bayrak ikonu (`assets/icons/wintools-16x16/32x32.png`). Pencere Wizard97 motoru ve ISO'daki `netshell.dll` Network Connection Wizard şablonlarıyla (karşılama, seçenek sayfası, bitiş) kurulu; butonlar/başlık/kenar çizgileri ISO'dan.
+- **Dosya al:** Add Files ile Word, PDF, MP3, MP4 vb. seçilir; Finish ile hepsi `Desktop/Docs` klasörüne kopyalanır ve klasör açılır.
+- **Dosya ver:** Docs / My Documents / Desktop içinden işaretlenen dosyalar tarayıcı üzerinden gerçek bilgisayara indirilir.
+- **Ayar ver/al:** masaüstü düzeni, duvar kağıdı ve renkler, TV linkleri, radyo linkleri, ses, internet, tarih-saat gruplarını `Windows2000-Settings.json` olarak dışa aktarır (kopyası Docs'a da konur); içe aktarırken dosyadan ya da varsayılan ayarlara dönülür, masaüstü yenilenir. Yeni anahtarlar `CATEGORIES` listesine eklenerek genişletilir.
+- Sınırlama: TV/radyo link grupları şimdilik VLC/DivX/WMP'nin kayıtlı ayarlarını (son açılanlar, favoriler) taşır; ayrı bir link yöneticisi sonraki aşama.
+- VLC: ekran logosu kullanıcının verdiği gerçek VLC logosu (`assets/vlc/cone.png`); ses çubuğu gradyan çakışması giderildi.

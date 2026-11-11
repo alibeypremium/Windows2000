@@ -11,7 +11,7 @@ const DLG = "/assets/ui/dialogs/";
 /**
  * pages: [{ kind: "welcome" | "finish" | "page", title, subtitle, tpl, opts(state), init(ctl,state,page), next(ctl,state) -> bool|undefined|Promise, skip(state) }]
  */
-function wizard97(ctx, { title, appId, pages, onFinish, state = {}, W = 501, H = 383 }) {
+export function wizard97(ctx, { title, appId, pages, onFinish, state = {}, W = 501, H = 383 }) {
   const w = refWindow(ctx, { title, width: W, height: H, appId, noIcon: true, className: "ref-dialog wiz-dialog" });
   const stage = el("div", { class: "wiz-stage", style: { position: "absolute", left: 0, top: 0, width: W + "px", height: H + "px" } });
   w.place(stage);
@@ -27,6 +27,7 @@ function wizard97(ctx, { title, appId, pages, onFinish, state = {}, W = 501, H =
     const nodes = [];
     ctl = {};
     const full = page.kind !== "page";
+    if (!page.tpl) return nodes;
     const tpl = WIZ[page.group][page.tpl];
     dialogFromTemplate(ctx, tpl, { ...(page.opts?.(state) || {}), ctlOut: ctl, host: { place: (...n) => nodes.push(...n.flat(Infinity)), el: null }, ox: full ? 4 : 13, oy: full ? 23 : 88 });
     return nodes;
@@ -51,7 +52,7 @@ function wizard97(ctx, { title, appId, pages, onFinish, state = {}, W = 501, H =
     for (const n of nodes) if (n.classList) { n.classList.remove("disabled"); n.querySelectorAll?.(".disabled").forEach((d) => d.classList.remove("disabled")); }
     stage.replaceChildren(...nodes);
     for (const t of [page.big ?? 21116, 1000]) if (page.kind !== "page" && ctl[t]) Object.assign(ctl[t].style, { font: "bold 18px/22px Verdana, Tahoma, sans-serif", whiteSpace: "pre-wrap" });
-    page.init?.(ctl, state, page);
+    page.init?.(ctl, state, page, stage, w);
     back.disabled = hist.length === 0; back.classList.toggle("disabled", back.disabled);
     nextB.querySelector?.("span") ? (nextB.querySelector("span").textContent = page.kind === "finish" ? "Finish" : "Next >") : (nextB.textContent = page.kind === "finish" ? "Finish" : "Next >");
   };

@@ -188,6 +188,12 @@ export class DesktopShell {
         action: () => ctx.launch("winrar"),
       },
       {
+        id: "wintools",
+        name: "Windows Tools",
+        icon: "wintools",
+        action: () => ctx.launch("wintools"),
+      },
+      {
         id: "msn",
         name: "MSN Messenger",
         icon: "msn",
@@ -980,7 +986,7 @@ export class DesktopShell {
           icon: "programGroup",
           submenu: [{ label: "(Empty)", disabled: true }],
         },
-        ...this.appItems(["ie", "outlook", "word", "acrobat", "divx", "vlc", "winamp", "winrar", "netscape", "msn"]),
+        ...this.appItems(["ie", "outlook", "word", "acrobat", "divx", "vlc", "winamp", "winrar", "wintools", "netscape", "msn"]),
       ],
       settings = [
         {

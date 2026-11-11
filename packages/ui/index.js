@@ -68,6 +68,7 @@ const icons = {
   minesweeper: "w2k/ref-minesweeper",
   winamp: "winamp",
   winrar: "winrar",
+  wintools: "wintools",
   rarfile: "rarfile",
   word: "word",
   worddoc: "worddoc",

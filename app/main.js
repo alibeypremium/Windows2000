@@ -55,6 +55,7 @@ const openWinamp = lazy(() => import("/packages/accessories/winamp.js"), "openWi
 const openNetworkConnectionWizard = lazy(() => import("/packages/system/wizards.js"), "openNetworkConnectionWizard");
 const openInternetConnectionWizard = lazy(() => import("/packages/system/wizards.js"), "openInternetConnectionWizard");
 const openDiskCleanup = lazy(() => import("/packages/system/cleanmgr.js"), "openDiskCleanup");
+const openWindowsTools = lazy(() => import("/packages/system/wintools.js"), "openWindowsTools");
 const openWinRAR = lazy(() => import("/packages/accessories/winrar.js"), "openWinRAR");
 const openNetscape = lazy(() => import("/packages/internet/netscape.js"), "openNetscape");
 const openMessenger = lazy(() => import("/packages/internet/msn.js"), "openMessenger");
@@ -81,7 +82,7 @@ const openKeyboard = lazy(() => import("/packages/system/index.js"), "openKeyboa
 const openMagnifier = lazy(() => import("/packages/system/index.js"), "openMagnifier");
 const openDiskManager = lazy(() => import("/packages/system/index.js"), "openDiskManager");
 const openDefrag = lazy(() => import("/packages/system/index.js"), "openDefrag");
-const idleLoad = ["/packages/system/consoles.js", "/packages/system/services.js", "/packages/explorer/fontview.js", "/packages/accessories/index.js", "/packages/games/index.js", "/packages/accessories/winamp.js", "/packages/system/wizards.js", "/packages/system/cleanmgr.js", "/packages/accessories/winrar.js", "/packages/internet/netscape.js", "/packages/internet/msn.js", "/packages/accessories/word.js", "/packages/accessories/acrobat.js", "/packages/accessories/vlc.js", "/packages/accessories/divx.js", "/packages/control-panel/index.js", "/packages/internet/index.js", "/packages/system/index.js"];
+const idleLoad = ["/packages/system/consoles.js", "/packages/system/services.js", "/packages/explorer/fontview.js", "/packages/accessories/index.js", "/packages/games/index.js", "/packages/accessories/winamp.js", "/packages/system/wizards.js", "/packages/system/wintools.js", "/packages/system/cleanmgr.js", "/packages/accessories/winrar.js", "/packages/internet/netscape.js", "/packages/internet/msn.js", "/packages/accessories/word.js", "/packages/accessories/acrobat.js", "/packages/accessories/vlc.js", "/packages/accessories/divx.js", "/packages/control-panel/index.js", "/packages/internet/index.js", "/packages/system/index.js"];
 
 const bus = new EventBus(),
   settings = new Settings(bus),
@@ -261,6 +262,13 @@ ctx.apps = [
     icon: "netscape",
     aliases: ["netscape.exe", "netscape", "navigator", "communicator"],
     open: (ctx, args) => openNetscape(ctx, args || {}),
+  },
+  {
+    id: "wintools",
+    name: "Windows Tools",
+    icon: "wintools",
+    aliases: ["wintools.exe", "wintools", "windows tools"],
+    open: (ctx, args) => openWindowsTools(ctx, args || {}),
   },
   {
     id: "winrar",

@@ -593,3 +593,8 @@ Contacts, organisations, replies and display pictures (packages/internet/msn-dat
 ## Windows Media Player 6.4.07.1112 (mpfull6.4.exe, kullanıcı sağladı)
 - `msdxm.ocx` içinden: tüm RT_DIALOG şablonları (`wmp-data.js`), RT_MENU 102/9102 (`assets/wmp/menus.json`, `menus2.json`), hızlandırıcı tabloları (kodda), RT_BITMAP 60–74/116/140/5202–5212 (`assets/wmp/bmp*.png`), RT_ICON/GROUP_ICON seçimi (`assets/wmp/icons/`).
 - Radio istasyon adresleri (`radio-data.js`) yayıncıların herkese açık akış adresleridir; yalnızca adres içerir.
+
+## Windows Tools / VLC logosu
+- `assets/icons/wintools-*.png`: kullanıcının gönderdiği "uygulama_icon.png" (şeffaf arka plan, 16/32 px).
+- `assets/vlc/cone.png`: kullanıcının gönderdiği VLC logosu (beyaz arka plan şeffaflaştırıldı).
+- Windows Tools sayfa şablonları: `netshell.dll` (ISO) — bkz. packages/system/wizards-data.js.
