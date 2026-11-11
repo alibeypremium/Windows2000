@@ -651,6 +651,17 @@ async function seedSampleDocs() {
     settings.set("samples.docs.v3", true);
   } catch (e) { console.warn("sample docs", e); }
 }
+async function seedDesktopDocs() {
+  if (settings.get("samples.desktop.v1")) return;
+  try {
+    for (const n of ["README.pdf", "DMCA.pdf"]) {
+      if (fs.exists(DESKTOP + "/" + n)) continue;
+      const r = await fetch("/assets/samples/Desktop/" + n);
+      if (r.ok) await fs.importFile(new File([await r.blob()], n, { type: "application/pdf" }), DESKTOP);
+    }
+    settings.set("samples.desktop.v1", true);
+  } catch (e) { console.warn("desktop docs", e); }
+}
 const PROGRAM_FILES = {
   "Winamp": { "winamp.exe": 1, "whatsnew.txt": "Winamp 2.91\r\nClassic skin and Webamp engine.\r\n", "Skins/Base-2.91.wsz": 1, "Plugins/in_mp3.dll": 1, "Plugins/out_wave.dll": 1, "Plugins/vis_nsfs.dll": 1 },
   "VideoLAN/VLC": { "vlc.exe": 1, "README.txt": "VLC media player\r\nThe VideoLAN project.\r\n", "libvlc.dll": 1, "plugins/access_http.dll": 1, "plugins/demux_ts.dll": 1, "plugins/codec_ffmpeg.dll": 1 },
@@ -687,7 +698,7 @@ async function start() {
   let samples = Promise.resolve();
   try {
     await fs.init();
-    samples = seedSampleDocs();
+    samples = seedSampleDocs().then(seedDesktopDocs);
     await seedProgramFiles();
   } catch (error) {
     console.error(error);

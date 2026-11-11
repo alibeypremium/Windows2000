@@ -74,7 +74,7 @@ export async function openAcrobat(ctx, { path = null } = {}) {
   const layout = () => {
     for (const p of pages) {
       const s = pageScale(p), vp = p.page.getViewport({ scale: s, rotation });
-      p.scale = s; p.vp = vp; p.rendered = false;
+      p.task?.cancel?.(); p.task = null; p.scale = s; p.vp = vp; p.rendered = false; p.rendering = false;
       p.div.style.width = Math.floor(vp.width) + "px"; p.div.style.height = Math.floor(vp.height) + "px";
       p.canvas.replaceWith(p.canvas = el("canvas", { class: "ar-canvas" }));
       p.text.replaceChildren();
@@ -86,18 +86,20 @@ export async function openAcrobat(ctx, { path = null } = {}) {
   const renderPage = async (p) => {
     if (p.rendered || p.rendering) return;
     p.rendering = true;
-    const dpr = window.devicePixelRatio || 1, vp = p.vp;
+    const dpr = window.devicePixelRatio || 1, vp = p.vp, cv = p.canvas;
     p.canvas.width = Math.floor(vp.width * dpr); p.canvas.height = Math.floor(vp.height * dpr);
     p.canvas.style.width = Math.floor(vp.width) + "px"; p.canvas.style.height = Math.floor(vp.height) + "px";
     try {
-      await p.page.render({ canvasContext: p.canvas.getContext("2d"), viewport: p.page.getViewport({ scale: p.scale * dpr, rotation }) }).promise;
+      p.task = p.page.render({ canvasContext: cv.getContext("2d"), viewport: p.page.getViewport({ scale: p.scale * dpr, rotation }) });
+      await p.task.promise;
+      if (cv !== p.canvas) return;
       p.text.style.setProperty("--total-scale-factor", String(p.scale)); p.text.style.setProperty("--scale-factor", String(p.scale));
       p.text.replaceChildren();
       const tl = new pdfjs.TextLayer({ textContentSource: p.page.streamTextContent(), container: p.text, viewport: vp });
       await tl.render();
       p.rendered = true;
       if (findState.page === p.index) highlight(p);
-    } catch (e) { /* cancelled by a newer layout */ }
+    } catch (e) { if (e?.name !== "RenderingCancelledException") console.warn("pdf render", e); }
     p.rendering = false;
   };
   const renderVisible = () => {

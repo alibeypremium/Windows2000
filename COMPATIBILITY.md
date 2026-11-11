@@ -139,3 +139,9 @@ Clipboard, recording, serial ports, media codecs, GPU, printing and external han
 - Display Properties → Background listesine kullanıcının verdiği "Windows 2000" duvar kağıdı eklendi (`assets/wallpapers/windows2000.png`).
 - Masaüstüne "Nvidia" ikonu (kullanıcı ikonu) eklendi; tıklanınca Display Properties → Settings sekmesi açılır. Start → Programs'ta da var.
 - Mobil: masaüstü ikonlarına tek dokunuş uygulamayı açar (çift tıklama beklenmez).
+
+## DMCA.pdf ve README.pdf (masaüstü)
+- `DMCA.pdf` (EN/TR): fan yapımı, ticari olmayan, crack/betik içermeyen, GitHub üzerinden bildirimde derhal kaldırılır; üçüncü taraf bileşenler ve markalar notu.
+- `README.pdf` (EN/TR, renkli): masaüstü kullanımı, tüm programların özellikleri, Windows Tools kullanımı, ipuçları.
+- İkisi de `scripts/make-docs.py` ile üretilir (`assets/samples/Desktop/`), ilk açılışta masaüstüne kopyalanır (`samples.desktop.v1`).
+- Acrobat Reader: pencere yeniden yerleşirken devam eden çizimin yeni sayfa tuvalini boş bırakması (PDF'ler boş görünüyordu) düzeltildi.
