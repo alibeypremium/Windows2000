@@ -149,3 +149,4 @@ Clipboard, recording, serial ports, media codecs, GPU, printing and external han
 ## Sekme simgesi ve Windows Tools görselleri
 - Tarayıcı sekmesi: başlık "Windows 2000", simge kullanıcının verdiği bayrak logosu (`assets/icons/favicon.png`, `apple-touch-icon.png`).
 - Windows Tools: Wizard97 yan paneli ve başlık simgesi temaya uygun yeniden çizildi (`assets/wintools/side.png`, `banner.png`), dosya aktarma sayfalarında küçük (4 KB) animasyonlu kopyalama GIF'i (`copy.gif`). Toplam ~10 KB.
+- Sihirbaz pencerelerinde (Windows Tools, Network/Internet Connection Wizard) başlık çubuğundaki kapatma (X) düğmesi, pencereyi kaplayan sayfa katmanı tıklamayı yuttuğu için çalışmıyordu; düzeltildi. Windows Tools yan paneli kurumsal tasarımla yenilendi.
