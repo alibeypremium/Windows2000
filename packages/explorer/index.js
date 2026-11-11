@@ -4,6 +4,7 @@ import { openProperties, typeName } from "./props.js";
 import { rarMenuItems } from "../accessories/winrar-shell.js";
 import {
   DOCS,
+  UPLOADS,
   DESKTOP,
   basename,
   dirname,
@@ -380,7 +381,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
   const importFiles = async () => {
     const files = await pickFiles({ multiple: true });
     for (const file of files)
-      await ctx.fs.importFile(file, shellNames[current] ? DOCS : current);
+      await ctx.fs.importFile(file, UPLOADS);
   };
   const restore = async () => {
     for (const p of selected) await ctx.fs.restore(p);
@@ -1557,7 +1558,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
   w.navigate = navigate;
   return w;
 }
-const SYSTEM_FOLDERS = ["c:/program files", "c:/winnt", "c:/winnt/system32"];
+const SYSTEM_FOLDERS = ["c:/winnt", "c:/winnt/system32"];
 const isSystemFolder = (path) =>
   SYSTEM_FOLDERS.includes(String(path).toLowerCase().replace(/\/$/, ""));
 const isDrive = (path) => /^[a-z]:[\\/]?$/i.test(path);

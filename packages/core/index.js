@@ -45,6 +45,8 @@ export const formatBytes = (n) =>
       : `${(n / 1048576).toFixed(2)} MB`;
 export const DOCS = "C:/Documents and Settings/Administrator/My Documents";
 export const DESKTOP = "C:/Documents and Settings/Administrator/Desktop";
+/** Everything imported from outside (uploads, drops) is kept here. */
+export const UPLOADS = DESKTOP + "/Docs";
 const encoder = new TextEncoder();
 
 class DurableStore {
@@ -508,7 +510,8 @@ export class VirtualFileSystem {
       candidate = `${base} (${i++})${ext ? "." + ext : ""}`;
     return candidate;
   }
-  async importFile(file, folder = DOCS) {
+  async importFile(file, folder = UPLOADS) {
+    if (folder === UPLOADS && !this.get(UPLOADS)) await this.mkdir(UPLOADS);
     const text =
       /^(text\/|application\/(json|javascript|xml))/.test(file.type) ||
       /\.(txt|log|ini|csv|json|js|html|css|md|bat|reg|wdoc|srt|vtt|sub|m3u|m3u8|pls)$/i.test(file.name);

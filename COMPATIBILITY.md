@@ -109,3 +109,12 @@ Clipboard, recording, serial ports, media codecs, GPU, printing and external han
 - **Windows Media Player:** VLC ile aynı: altyazı (SRT/VTT, yan dosyadan otomatik, View > Captions ve CC düğmesi), File > Open'a adres veya `.m3u/.m3u8/.pls` yazma, Open Channel List/Open Playlist, TV düğmesi ve kanal listesi penceresi, HLS yayınlar (hls.js). Ayrıca örnek `.webm/.mp4` dosyaları artık blob üzerinden oynatılıyor (eskiden octet-stream data URL'si nedeniyle çalışmıyordu).
 - **Add/Remove Programs:** yalnızca bu masaüstünde gerçekten bulunan programlar listelenir (Acrobat Reader, DivX, Java, IE 6, Word 2000, MSN Messenger, Netscape, VLC, Winamp, WinRAR). Change/Remove onay sorar ve "kaldırıldı" der, ama hiçbir şey silinmez (simülasyon notu görünür).
 - **Program Files:** Winamp, VideoLAN\VLC, DivX, Netscape, WinRAR, Adobe, Microsoft Office, MSN Messenger, Windows Media Player, Outlook Express, Internet Explorer, Accessories klasörleri küçük yer tutucu dosyalarla oluşturulur (ilk açılışta, mevcut disklere de eklenir). Klasördeki `.exe` dosyaları (vlc.exe, winamp.exe, WINWORD.EXE…) ilgili yerleşik programı açar; gerçek ikili değildirler.
+
+## Hız ve altyapı, yüklemeler
+- **Tembel yükleme:** programlar (Word, WinRAR, VLC, WMP, MSN, Netscape, Paint, Control Panel diyalogları vb.) ilk açıldıklarında yüklenir; açılışta yalnızca kabuk, Explorer ve pencere sistemi gelir (114 → 22 JS dosyası, ~1,7 MB → ~0,36 MB, yerelde açılış 2,3 sn → 1,5 sn). Masaüstü hazır olduktan 3 sn sonra modüller boştayken sırayla arka planda ısıtılır (veri tasarrufu açıksa yapılmaz), böylece ilk açılışta bekleme olmaz.
+- **Servis çalışanı:** yalnızca `/`, `main.js`, `desktop.css` önbelleğe alınır; ~1.500 ikonu ön indirme kaldırıldı, ikonlar ve modüller ilk kullanımda önbelleğe girer.
+- **Büyük dosyalar:** Yardım (5,7 MB), pdf.js, Webamp, WinRAR ve hls.js yalnızca ilgili program açılınca yüklenir. 1.467 PNG kayıpsız sıkıştırıldı (≈2,0 MB → 1,2 MB).
+- **Yüklemeler:** dışarıdan alınan tüm dosyalar (Import Files, WMP/Imaging içe aktarma, masaüstüne bırakma) `Desktop\Docs` klasörüne kaydedilir.
+- **Program Files:** artık sistem klasörü uyarı sayfası yerine dosyalar doğrudan görünür.
+- **VLC logosu:** koni logosu orijinal VLC koni logosuna benzer şekilde yeniden çizildi (orijinal büyük dosya sandbox'tan alınamadığı için SVG çizimidir).
+- **WMP:** doğrudan URL akışları Web Audio grafiğinden geçirilmez (çapraz kaynaklı akışta ses sessiz kalıyordu).

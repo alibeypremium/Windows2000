@@ -1,4 +1,4 @@
-const CACHE = "win2k-desktop-v2";
+const CACHE = "win2k-desktop-v3";
 const isAsset = (u) => /\/assets\/.+\.(png|gif|ico|woff2?|ttf)$/i.test(u.pathname);
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -6,12 +6,7 @@ self.addEventListener("install", (event) => {
       .open(CACHE)
       .then(async (cache) => {
         await cache.addAll(["/", "/main.js", "/desktop.css"]).catch(() => {});
-        // Warm every icon in the background so later windows never wait on the network.
-        try {
-          const list = await (await fetch(new URL("assets-manifest.json", self.location))).json();
-          for (let i = 0; i < list.length; i += 24)
-            await Promise.all(list.slice(i, i + 24).map((f) => cache.add(new Request(new URL(f, self.location), { cache: "reload" })).catch(() => {})));
-        } catch {}
+        // Only the shell is pre-cached; icons and program modules are cached the first time they are used.
       }),
   );
   self.skipWaiting();

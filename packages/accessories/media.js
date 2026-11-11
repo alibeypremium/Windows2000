@@ -97,6 +97,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
     source = null,
     raf = 0,
     hls = null,
+    directUrl = false,
     tracks = [],
     curSub = null,
     chList = null;
@@ -150,6 +151,8 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
   const entryTitle = (p) => (typeof p === "string" ? p.split("/").pop() : p?.title || p?.url || "");
   const load = async (p, autoplay = false) => {
     const url = entryUrl(p);
+    directUrl = false;
+    video.removeAttribute("crossorigin");
     current = url ? null : p;
     tracks = []; curSub = null; subEl.textContent = "";
     if (hls) { hls.destroy(); hls = null; }
@@ -171,7 +174,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
           hls.loadSource(url);
           hls.attachMedia(video);
         } catch { status.children[0].textContent = "The stream could not be played."; }
-      } else video.src = url;
+      } else { directUrl = true; if (ac) video.crossOrigin = "anonymous"; video.src = url; }
     } else if (p) {
       const node = ctx.fs.stat(p);
       try { const r = await sourceFor(ctx, { path: p }); video.src = r.url; if (r.blob) objectURL = r.url; } catch { video.src = node.content; }
@@ -194,6 +197,8 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
     if (autoplay) await toggle(true);
   };
   const setupAudio = async () => {
+    // a cross-origin stream played through Web Audio is silent: leave such streams on the plain element
+    if (!ac && directUrl) return;
     if (!ac) {
       ac = new (window.AudioContext || window.webkitAudioContext)();
       source = ac.createMediaElementSource(video);
@@ -234,7 +239,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
       multiple: true,
     });
     for (const file of files)
-      playlist.push(await ctx.fs.importFile(file, DOCS + "/My Music"));
+      playlist.push(await ctx.fs.importFile(file));
     if (files.length) {
       index = playlist.length - files.length;
       await load(playlist[index], true);
@@ -682,7 +687,7 @@ export function openImaging(ctx, { path = null } = {}) {
         label: "Acquire Image...",
         action: async () => {
           const [file] = await pickFiles({ accept: "image/*" });
-          if (file) load(await ctx.fs.importFile(file, DOCS + "/My Pictures"));
+          if (file) load(await ctx.fs.importFile(file));
         },
       },
       off("Select Device..."),

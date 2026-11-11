@@ -29,62 +29,59 @@ import {
   openAbout,
 } from "/packages/shell/index.js";
 import { openExplorer } from "/packages/explorer/index.js";
-import { openLocalSecurityPolicy, openComponentServices, openOdbc, openTelnetAdmin, openAddNetworkPlace } from "/packages/system/consoles.js";
-import { openServices } from "/packages/system/services.js";
-import { openFontViewer } from "/packages/explorer/fontview.js";
-import {
-  openNotepad,
-  openWordPad,
-  openCalculator,
-  openPaint,
-  openMediaPlayer,
-  openCdPlayer,
-  openVolume,
-  openSoundRecorder,
-  openImaging,
-} from "/packages/accessories/index.js";
-import {
-  openMinesweeper,
-  openSolitaire,
-  openFreeCell,
-} from "/packages/games/index.js";
-import { openWinamp } from "/packages/accessories/winamp.js";
-import { openNetworkConnectionWizard, openInternetConnectionWizard } from "/packages/system/wizards.js";
-import { openDiskCleanup } from "/packages/system/cleanmgr.js";
-import { openWinRAR } from "/packages/accessories/winrar.js";
-import { openNetscape } from "/packages/internet/netscape.js";
-import { openMessenger } from "/packages/internet/msn.js";
-import { openWord } from "/packages/accessories/word.js";
-import { openAcrobat } from "/packages/accessories/acrobat.js";
-import { openVLC } from "/packages/accessories/vlc.js";
-import { openDivX } from "/packages/accessories/divx.js";
-import {
-  openControlPanel,
-  controlItems,
-  applyTheme,
-} from "/packages/control-panel/index.js";
-import {
-  openInternetExplorer,
-  openMail,
-  openAddressBook,
-  openHyperTerminal,
-  openPhoneDialer,
-  openSynchronize,
-} from "/packages/internet/index.js";
-import {
-  openTerminal,
-  openTaskManager,
-  openRegistry,
-  openSystemInfo,
-  openEventViewer,
-  openTasks,
-  openCharacterMap,
-  openClipboardViewer,
-  openKeyboard,
-  openMagnifier,
-  openDiskManager,
-  openDefrag,
-} from "/packages/system/index.js";
+import { controlItems, applyTheme } from "/packages/control-panel/items.js";
+
+const lazy = (load, name) => (...args) => load().then((m) => m[name](...args));
+const openLocalSecurityPolicy = lazy(() => import("/packages/system/consoles.js"), "openLocalSecurityPolicy");
+const openComponentServices = lazy(() => import("/packages/system/consoles.js"), "openComponentServices");
+const openOdbc = lazy(() => import("/packages/system/consoles.js"), "openOdbc");
+const openTelnetAdmin = lazy(() => import("/packages/system/consoles.js"), "openTelnetAdmin");
+const openAddNetworkPlace = lazy(() => import("/packages/system/consoles.js"), "openAddNetworkPlace");
+const openServices = lazy(() => import("/packages/system/services.js"), "openServices");
+const openFontViewer = lazy(() => import("/packages/explorer/fontview.js"), "openFontViewer");
+const openNotepad = lazy(() => import("/packages/accessories/index.js"), "openNotepad");
+const openWordPad = lazy(() => import("/packages/accessories/index.js"), "openWordPad");
+const openCalculator = lazy(() => import("/packages/accessories/index.js"), "openCalculator");
+const openPaint = lazy(() => import("/packages/accessories/index.js"), "openPaint");
+const openMediaPlayer = lazy(() => import("/packages/accessories/index.js"), "openMediaPlayer");
+const openCdPlayer = lazy(() => import("/packages/accessories/index.js"), "openCdPlayer");
+const openVolume = lazy(() => import("/packages/accessories/index.js"), "openVolume");
+const openSoundRecorder = lazy(() => import("/packages/accessories/index.js"), "openSoundRecorder");
+const openImaging = lazy(() => import("/packages/accessories/index.js"), "openImaging");
+const openMinesweeper = lazy(() => import("/packages/games/index.js"), "openMinesweeper");
+const openSolitaire = lazy(() => import("/packages/games/index.js"), "openSolitaire");
+const openFreeCell = lazy(() => import("/packages/games/index.js"), "openFreeCell");
+const openWinamp = lazy(() => import("/packages/accessories/winamp.js"), "openWinamp");
+const openNetworkConnectionWizard = lazy(() => import("/packages/system/wizards.js"), "openNetworkConnectionWizard");
+const openInternetConnectionWizard = lazy(() => import("/packages/system/wizards.js"), "openInternetConnectionWizard");
+const openDiskCleanup = lazy(() => import("/packages/system/cleanmgr.js"), "openDiskCleanup");
+const openWinRAR = lazy(() => import("/packages/accessories/winrar.js"), "openWinRAR");
+const openNetscape = lazy(() => import("/packages/internet/netscape.js"), "openNetscape");
+const openMessenger = lazy(() => import("/packages/internet/msn.js"), "openMessenger");
+const openWord = lazy(() => import("/packages/accessories/word.js"), "openWord");
+const openAcrobat = lazy(() => import("/packages/accessories/acrobat.js"), "openAcrobat");
+const openVLC = lazy(() => import("/packages/accessories/vlc.js"), "openVLC");
+const openDivX = lazy(() => import("/packages/accessories/divx.js"), "openDivX");
+const openControlPanel = lazy(() => import("/packages/control-panel/index.js"), "openControlPanel");
+const openInternetExplorer = lazy(() => import("/packages/internet/index.js"), "openInternetExplorer");
+const openMail = lazy(() => import("/packages/internet/index.js"), "openMail");
+const openAddressBook = lazy(() => import("/packages/internet/index.js"), "openAddressBook");
+const openHyperTerminal = lazy(() => import("/packages/internet/index.js"), "openHyperTerminal");
+const openPhoneDialer = lazy(() => import("/packages/internet/index.js"), "openPhoneDialer");
+const openSynchronize = lazy(() => import("/packages/internet/index.js"), "openSynchronize");
+const openTerminal = lazy(() => import("/packages/system/index.js"), "openTerminal");
+const openTaskManager = lazy(() => import("/packages/system/index.js"), "openTaskManager");
+const openRegistry = lazy(() => import("/packages/system/index.js"), "openRegistry");
+const openSystemInfo = lazy(() => import("/packages/system/index.js"), "openSystemInfo");
+const openEventViewer = lazy(() => import("/packages/system/index.js"), "openEventViewer");
+const openTasks = lazy(() => import("/packages/system/index.js"), "openTasks");
+const openCharacterMap = lazy(() => import("/packages/system/index.js"), "openCharacterMap");
+const openClipboardViewer = lazy(() => import("/packages/system/index.js"), "openClipboardViewer");
+const openKeyboard = lazy(() => import("/packages/system/index.js"), "openKeyboard");
+const openMagnifier = lazy(() => import("/packages/system/index.js"), "openMagnifier");
+const openDiskManager = lazy(() => import("/packages/system/index.js"), "openDiskManager");
+const openDefrag = lazy(() => import("/packages/system/index.js"), "openDefrag");
+const idleLoad = ["/packages/system/consoles.js", "/packages/system/services.js", "/packages/explorer/fontview.js", "/packages/accessories/index.js", "/packages/games/index.js", "/packages/accessories/winamp.js", "/packages/system/wizards.js", "/packages/system/cleanmgr.js", "/packages/accessories/winrar.js", "/packages/internet/netscape.js", "/packages/internet/msn.js", "/packages/accessories/word.js", "/packages/accessories/acrobat.js", "/packages/accessories/vlc.js", "/packages/accessories/divx.js", "/packages/control-panel/index.js", "/packages/internet/index.js", "/packages/system/index.js"];
 
 const bus = new EventBus(),
   settings = new Settings(bus),
@@ -672,9 +669,10 @@ async function seedProgramFiles() {
   } catch (e) { console.warn("program files", e); }
 }
 async function start() {
+  let samples = Promise.resolve();
   try {
     await fs.init();
-    await seedSampleDocs();
+    samples = seedSampleDocs();
     await seedProgramFiles();
   } catch (error) {
     console.error(error);
@@ -695,6 +693,9 @@ async function start() {
   await ctx.renderer.init();
   applyTheme(settings);
   ctx.shell = new DesktopShell(ctx).init();
+  samples.catch(() => {});
+  // warm the program modules one by one while the desktop is idle (opening an app is then instant)
+  if (!navigator.connection?.saveData) setTimeout(() => { const queue = [...idleLoad]; const next = () => { const u = queue.shift(); if (u) import(u).catch(() => {}).finally(() => (window.requestIdleCallback || setTimeout)(next, { timeout: 2000 })); }; next(); }, 3000);
   ctx.log("Information", "System", "Windows 2000 browser desktop started");
   bus.on("fs:change", () =>
     ctx.log(

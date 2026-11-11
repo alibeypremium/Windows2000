@@ -92,7 +92,7 @@ export class DesktopShell {
           await ctx.clipboard.transfer(ctx.fs, JSON.parse(paths).filter((p) => !p.toLowerCase().startsWith(DESKTOP.toLowerCase() + "/")), DESKTOP, { copy: e.ctrlKey });
         } else
           for (const file of e.dataTransfer.files)
-            await ctx.fs.importFile(file, DESKTOP);
+            await ctx.fs.importFile(file);
       }),
     );
     this.scheduler = setInterval(() => {
