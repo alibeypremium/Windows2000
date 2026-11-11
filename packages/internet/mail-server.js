@@ -2,6 +2,7 @@
 // believable e-mails from many fictional senders over time, answers messages you send to people
 // in your Address Book, and applies the user's message rules to everything that arrives.
 import { DOCS } from "../core/index.js";
+import { dailyPick } from "./netscape-sites.js";
 
 export const MAIL = DOCS + "/Mail.json";
 export const CONTACTS = DOCS + "/Address Book.json";
@@ -11,6 +12,9 @@ const day = 86400000, min = 60000;
 export const addr = (name, email) => `${name} <${email}>`;
 export const emailOf = (s) => (String(s || "").match(/<([^>]+)>/)?.[1] || String(s || "").trim()).toLowerCase();
 export const nameOf = (s) => String(s || "").replace(/<[^>]*>/, "").replace(/["']/g, "").trim() || emailOf(s);
+/** The user's own address: <computer name>@hotmail.com, shown with the user name. */
+export const myEmail = (ctx) => (String(ctx.settings.get("computerName") || "user").toLowerCase().replace(/[^a-z0-9._-]/g, "") || "user") + "@hotmail.com";
+export const myAddr = (ctx) => addr(ctx.settings.get("username") || "Administrator", myEmail(ctx));
 export const splitAddrs = (s) => String(s || "").split(/[;,]/).map((x) => x.trim()).filter(Boolean);
 
 const PEOPLE = {
@@ -129,13 +133,13 @@ export function queueReplies(ctx, sent) {
     const auto = /^(support|noreply|info|siparis|bilgi)@/.test(key);
     const n = nameOf(person).split(" ")[0];
     const body = auto ? lines("Mesajınız alındı.", "", `Destek talebi numaranız: #${Math.floor(10000 + Math.random() * 89999)}`, "En kısa sürede dönüş yapılacaktır.") : REPLIES[Math.floor(Math.random() * REPLIES.length)](n, sent.subject || "");
-    q.push({ due: Date.now() + (8 + Math.random() * 14) * 1000, msg: { from: person, to: ctx.settings.get("username") ? addr(ctx.settings.get("username"), "kullanici@hotmail.com") : "Kullanıcı <kullanici@hotmail.com>", subject: /^re:/i.test(sent.subject || "") ? sent.subject : "Re: " + (sent.subject || "(No subject)"), body: body + "\n\n-----Original Message-----\nFrom: " + (sent.from || "") + "\nTo: " + sent.to + "\nSubject: " + (sent.subject || "") + "\n\n" + (sent.body || "") } });
+    q.push({ due: Date.now() + (8 + Math.random() * 14) * 1000, msg: { from: person, to: myAddr(ctx), subject: /^re:/i.test(sent.subject || "") ? sent.subject : "Re: " + (sent.subject || "(No subject)"), body: body + "\n\n-----Original Message-----\nFrom: " + (sent.from || "") + "\nTo: " + sent.to + "\nSubject: " + (sent.subject || "") + "\n\n" + (sent.body || "") } });
   }
   ctx.settings.set("oeQueue", q);
 }
 
 /* ------------------------------------------------------------------ delivery */
-const newMsg = (p, when) => ({ id: crypto.randomUUID(), folder: "Inbox", from: p.from, to: "Kullanıcı <kullanici@hotmail.com>", subject: p.subject, body: p.body, date: when, unread: true, attachments: p.attach ? [makeAttachment(p.attach)] : [] });
+const newMsg = (p, when, to) => ({ id: crypto.randomUUID(), folder: "Inbox", from: p.from, to, subject: p.subject, body: p.body, date: when, unread: true, attachments: p.attach ? [makeAttachment(p.attach)] : [] });
 
 /** Delivers new mail. force: Send/Receive pressed. Returns the delivered messages. */
 export async function checkMail(ctx, { force = false } = {}) {
@@ -146,7 +150,7 @@ export async function checkMail(ctx, { force = false } = {}) {
   let idx = ctx.settings.get("oeServerIdx");
   if (idx == null) { // first visit: a few messages from the last days are already waiting
     idx = 0;
-    for (let i = 0; i < 4; i++) { const m = newMsg(POOL[idx++], now - (4 - i) * 5 * 3600000 - Math.random() * 3600000); m.unread = i > 1; out.push(applyRules(ctx, m)); }
+    for (let i = 0; i < 4; i++) { const m = newMsg(POOL[idx++], now - (4 - i) * 5 * 3600000 - Math.random() * 3600000, myAddr(ctx)); m.unread = i > 1; out.push(applyRules(ctx, m)); }
     ctx.settings.set("oeLastCheck", now);
   } else {
     const last = ctx.settings.get("oeLastCheck") || now, gap = now - last;
@@ -158,10 +162,11 @@ export async function checkMail(ctx, { force = false } = {}) {
       const cycle = Math.floor(idx / POOL.length);
       if (cycle) p = { ...p, subject: p.subject + ` (${cycle + 1})` };
       idx++;
-      out.push(applyRules(ctx, newMsg(p, now - Math.floor(Math.random() * 90) * 1000)));
+      out.push(applyRules(ctx, newMsg(p, now - Math.floor(Math.random() * 90) * 1000, myAddr(ctx))));
     }
   }
   ctx.settings.set("oeServerIdx", idx);
+  out.push(...(await dailyMails(ctx, now)).map((m) => applyRules(ctx, m)));
   await addMessages(ctx, out);
   return out;
 }
@@ -176,3 +181,26 @@ export async function flushOutbox(ctx, olderThanMs = 0, includeLater = false) {
 export async function sendLaterToOutbox(ctx, msg) { await ctx.fs.updateJSON(MAIL, (mail) => [...(mail || []).filter((m) => m.id !== msg.id), { ...msg, folder: "Outbox", later: true, unread: false }]); }
 
 export const fmtSize = (n) => (n < 1024 ? n + " B" : n < 1048576 ? Math.max(1, Math.round(n / 1024)) + " KB" : (n / 1048576).toFixed(1) + " MB");
+
+/* ------------------------------------------------------------------ daily mails (once per day, when Outlook Express opens) */
+const TR_MONTHS = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+async function onThisDay(d) {
+  const mm = String(d.getMonth() + 1).padStart(2, "0"), dd = String(d.getDate()).padStart(2, "0");
+  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 4000);
+  try {
+    const j = await (await fetch(`https://tr.wikipedia.org/api/rest_v1/feed/onthisday/all/${mm}/${dd}`, { signal: ctl.signal })).json();
+    const list = (title, items, n) => (items?.length ? `${title}\n` + items.slice(0, n).map((e) => `  ${e.year} - ${String(e.text).replace(/\s+/g, " ")}`).join("\n") + "\n\n" : "");
+    const body = list("OLAYLAR", j.selected?.length ? j.selected : j.events, 10) + list("DOĞUMLAR", j.births, 6) + list("ÖLÜMLER", j.deaths, 6) + list("BAYRAMLAR VE ANMA GÜNLERİ", j.holidays, 5);
+    return body || null;
+  } catch { return null; } finally { clearTimeout(t); }
+}
+async function dailyMails(ctx, now) {
+  const d = new Date(now), key = d.toDateString();
+  if (ctx.settings.get("oeDailyDate") === key) return [];
+  ctx.settings.set("oeDailyDate", key);
+  const label = `${d.getDate()} ${TR_MONTHS[d.getMonth()]}`, to = myAddr(ctx), p = dailyPick(0, d);
+  const wiki = await onThisDay(d);
+  const hist = { from: addr("Tarihte Bugün", "tarihtebugun@netcenter.com"), subject: `Tarihte Bugün - ${label}`, body: `Tarihte bugün (${label})\n\n` + (wiki || "Vikipedi'ye şu anda ulaşılamadı. Netscape veya Internet Explorer'da about:today adresinden bugünün olaylarını okuyabilirsiniz.\n\n") + "Kaynak: Vikipedi (tr.wikipedia.org) - Tarihte bugün" };
+  const dini = { from: addr("Günün Ayeti, Hadisi ve Esması", "gunun@netcenter.com"), subject: `Günün Ayeti, Hadisi ve Esması - ${label}`, body: `${label} ${d.getFullYear()}\n\nGÜNÜN AYETİ\n${p.ayet[1]}\n(${p.ayet[0]})\n\nGÜNÜN HADİSİ\n${p.hadis[0]}\n(${p.hadis[1]})\n\nGÜNÜN ESMASI (${p.i + 1}/99)\n${p.esma[0]}  -  ${p.esma[1]}\n${p.esma[2]}\n\nNot: Ayet ve hadis metinleri kısa Türkçe anlatımlardır (mealen), resmî meal değildir.` };
+  return [dini, hist].map((m, i) => ({ id: crypto.randomUUID(), folder: "Inbox", to, date: now - i * 1000, unread: true, attachments: [], ...m }));
+}

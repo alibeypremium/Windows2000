@@ -3,7 +3,7 @@ import { DOCS, downloadFile, pickFiles } from "../core/index.js";
 import { loadOeMenus, oeMenu } from "./oe-menu.js";
 import { oeAbout, oeNewFolder, oeFind, oeLayout, oeOptions } from "./oe-dialogs.js";
 import { openRules } from "./oe-rules.js";
-import { MAIL, CONTACTS, addr, emailOf, nameOf, splitAddrs, checkMail, flushOutbox, sendLaterToOutbox, applyRules, fmtSize } from "./mail-server.js";
+import { MAIL, CONTACTS, addr, emailOf, nameOf, splitAddrs, checkMail, myAddr, myEmail, flushOutbox, sendLaterToOutbox, applyRules, fmtSize } from "./mail-server.js";
 
 const read = (ctx, path, initial) => {
   try {
@@ -14,7 +14,7 @@ const read = (ctx, path, initial) => {
 };
 const ATT_DIR = DOCS + "/Mail Attachments";
 const TEXT_EXT = /\.(txt|json|wdoc|html?|csv|log|ini|md|xml)$/i;
-const me = (ctx) => addr(ctx.settings.get("username") || "Administrator", "kullanici@hotmail.com");
+const me = (ctx) => myAddr(ctx);
 const quote = (m) => `\n\n-----Original Message-----\nFrom: ${m.from || ""}\nSent: ${new Date(m.date).toLocaleString("en-US")}\nTo: ${m.to || ""}\nSubject: ${m.subject || ""}\n\n${m.body || ""}`;
 const readFileAs = (f, asText) => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; asText ? r.readAsText(f) : r.readAsDataURL(f); });
 
@@ -76,7 +76,7 @@ function openCompose(ctx, { to, reply, replyAll, forward, existingDraft, subj = 
     ? { ...existingDraft }
     : reply
       ? {
-          to: replyAll ? [reply.from, ...splitAddrs(reply.to).filter((x) => emailOf(x) !== "kullanici@hotmail.com")].join("; ") : reply.from || "",
+          to: replyAll ? [reply.from, ...splitAddrs(reply.to).filter((x) => emailOf(x) !== myEmail(ctx))].join("; ") : reply.from || "",
           cc: replyAll ? reply.cc || "" : "",
           subject: /^re:/i.test(reply.subject || "") ? reply.subject : "Re: " + (reply.subject || ""),
           body: (sig[1100] ? "" : sigText) + quote(reply),
@@ -202,7 +202,7 @@ function openCompose(ctx, { to, reply, replyAll, forward, existingDraft, subj = 
 /* ======================================================================= main window */
 function openInbox(ctx) {
   const w = ctx.wm.create({ title: "Inbox - Outlook Express", icon: "oe", width: 903, height: 652, x: 67, y: 22, appId: "outlook" });
-  let folder = "Inbox", selected = null, sortAsc = true, lastNew = 0, markTimer = null;
+  let folder = "Inbox", selected = null, sortAsc = false, sortKey = "date", lastNew = 0, markTimer = null;
   const OE = "/assets/ui/oe/";
   const ISO_OE = new Set(["new", "reply", "replyall", "fwd", "print", "delete", "sendrecv", "addr", "find", "prev", "next"]);
   const hotTb = (b, name) => {
@@ -214,7 +214,8 @@ function openInbox(ctx) {
   };
   const im = (name, cls = "", style = {}) => el("img", { src: OE + name + ".png", class: cls, draggable: "false", alt: "", style });
   const welcome = { id: "welcome", folder: "Inbox", from: "Microsoft Outlook Express Team", to: "New Outlook Express User", subject: "Welcome to Outlook Express 6", date: (ctx.settings.get("oeInstall") || ctx.settings.set("oeInstall", Date.now() - 6 * 86400000) || ctx.settings.get("oeInstall")), unread: !ctx.settings.get("mailWelcomeRead"), welcome: true, body: "", attachments: [] };
-  const messages = () => [...read(ctx, MAIL, []), ...(ctx.settings.get("mailWelcomeDeleted") ? [] : [welcome])];
+  const oldTo = /Kullanıcı <kullanici@hotmail\.com>|kullanici@hotmail\.com/g;
+  const messages = () => [...read(ctx, MAIL, []).map((m) => (m.to && oldTo.test(m.to) ? { ...m, to: m.to.replace(/Kullanıcı <kullanici@hotmail\.com>|kullanici@hotmail\.com/g, () => myAddr(ctx)) } : m)), ...(ctx.settings.get("mailWelcomeDeleted") ? [] : [welcome])];
   const root = el("div", { class: "oe-root" }), toolbarEl = el("div", { class: "oe-toolbar" }), band = el("div", { class: "oe-band" }), foldersEl = el("div", { class: "oe-folders" }),
     contacts = el("div", { class: "oe-contacts" }), listEl = el("div", { class: "oe-list" }), rowsEl = el("div", { class: "oe-rows" }), preview = el("div", { class: "oe-preview" }),
     pvHead = el("div", { class: "oe-pvhead" }), pvBody = el("div", { class: "oe-pvbody" }), status = el("div", { class: "oe-status" }), cbody = el("div", { class: "oe-cbody" });
@@ -291,8 +292,9 @@ function openInbox(ctx) {
   );
 
   const select = (m) => {
-    selected = m.id; clearTimeout(markTimer); render();
-    if (m.unread) markTimer = setTimeout(() => { if (selected === m.id) markRead(cur()); }, 1500);
+    selected = m.id; clearTimeout(markTimer);
+    if (m.unread) markRead(m);
+    render();
   };
   const rowMenu = (e, m) => {
     e.preventDefault(); selected = m.id; render();
@@ -330,10 +332,12 @@ function openInbox(ctx) {
         return r;
       }),
     );
-    const list = all.filter((m) => m.folder === folder).sort((a, b) => (sortAsc ? a.date - b.date : b.date - a.date));
-    const message = list.find((m) => m.id === selected) || list[sortAsc ? list.length - 1 : 0];
+    const keyOf = (m) => (sortKey === "from" ? nameOf(((folder === "Sent Items" || folder === "Outbox" || folder === "Drafts") ? m.to : m.from) || "").toLowerCase() : sortKey === "subject" ? String(m.subject || "").toLowerCase() : m.date);
+    const list = all.filter((m) => m.folder === folder).sort((a, b) => { const x = keyOf(a), y = keyOf(b); return (x < y ? -1 : x > y ? 1 : 0) * (sortAsc ? 1 : -1) || b.date - a.date; });
+    const message = list.find((m) => m.id === selected) || list[0];
     selected = message?.id ?? null;
     tbDelete.classList.toggle("off", !message);
+    queueMicrotask(() => typeof paintSort === "function" && paintSort());
     const d2 = (t) => { const d = new Date(t); return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()} ${d.getHours() % 12 || 12}:${String(d.getMinutes()).padStart(2, "0")}:${String(d.getSeconds()).padStart(2, "0")} ${d.getHours() < 12 ? "AM" : "PM"}`; };
     rowsEl.replaceChildren(...list.map((m) => {
       const r = el("div", { class: "oe-row" + (m.unread ? " unread" : "") + (selected === m.id ? " sel" : ""), onclick: () => select(m), ondblclick: () => (m.folder === "Drafts" ? openMail(ctx, { compose: true, draft: m }) : openRead(m)) },
@@ -459,7 +463,7 @@ function openInbox(ctx) {
       40142: { action: () => ((sortAsc = true), render()) }, 40143: { action: () => ((sortAsc = false), render()) },
       40158: { action: render }, 40193: { action: () => sendRecv("all") }, 40194: { action: () => sendRecv("recv") }, 40195: { action: () => sendRecv("send") },
       40121: { action: () => { ctx.settings.set("oeOffline", !ctx.settings.get("oeOffline")); render(); }, checked: !!ctx.settings.get("oeOffline") },
-      40203: { action: () => ctx.dialogs.message("Mail account: Kullanıcı <kullanici@hotmail.com>\nIncoming mail: mail.hotmail.com (simulated)\n\nThis desktop uses a local simulated mail server; no real e-mail is sent or received.", { title: "Internet Accounts", icon: "mail" }) },
+      40203: { action: () => ctx.dialogs.message("Mail account: " + myAddr(ctx) + "\nIncoming mail: mail.hotmail.com (simulated)\n\nThis desktop uses a local simulated mail server; no real e-mail is sent or received.", { title: "Internet Accounts", icon: "mail" }) },
     };
     return t[id];
   };
@@ -468,6 +472,22 @@ function openInbox(ctx) {
   contacts.append(el("div", { class: "oe-phead" }, el("span", {}, el("u", { text: "C" }), "ontacts"), el("i", { class: "oe-dd" }), el("b", { class: "oe-x", text: "×" })), cbody);
   const hdr = (cls, inner) => el("div", { class: "oe-h " + cls }, ...inner);
   listEl.append(el("div", { class: "oe-lhead" }, hdr("h1", [im("hdr1")]), hdr("h2", [im("hdr2")]), hdr("h3", [im("hdr3")]), hdr("h4", [el("span", { text: "From" })]), hdr("h5", [el("span", { text: "Subject" })]), hdr("h6", [el("span", { text: "Received" }), el("i", { class: "oe-sort" })]), hdr("h7", [])), rowsEl);
+  const sortArrow = listEl.querySelector(".oe-sort");
+  const paintSort = () => {
+    const map = { from: ".h4", subject: ".h5", date: ".h6" };
+    const target = listEl.querySelector(".oe-lhead " + map[sortKey]);
+    if (target && sortArrow) {
+      target.append(sortArrow);
+      sortArrow.style.left = target.offsetWidth ? target.offsetWidth - 16 + "px" : ({ from: 139, subject: 265, date: 95 })[sortKey] + "px";
+      Object.assign(sortArrow.style, sortAsc ? { borderTop: "0", borderBottom: "6px solid #808080" } : { borderBottom: "0", borderTop: "6px solid #808080" });
+    }
+  };
+  for (const [k, cls] of [["from", ".h4"], ["subject", ".h5"], ["date", ".h6"]]) {
+    const h = listEl.querySelector(".oe-lhead " + cls);
+    h.style.cursor = "default";
+    h.addEventListener("click", () => { if (sortKey === k) sortAsc = !sortAsc; else { sortKey = k; sortAsc = k !== "date"; } render(); });
+  }
+  paintSort(); w.addCleanup(ctx.bus.on("mail:change", paintSort));
   preview.append(pvHead, pvBody);
   root.append(toolbarEl, band, foldersEl, contacts, listEl, preview, status);
   w.setContent(root);

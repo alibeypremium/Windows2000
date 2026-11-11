@@ -87,8 +87,13 @@ Clipboard, recording, serial ports, media codecs, GPU, printing and external han
 - Sınırlar: dial-up bağlantıları gerçekten arama yapmaz (modem yok); NCW'de telefon numarası/VPN/gelen bağlantı ara sayfaları yok; ICW'de "sign up/transfer" yolu yalnızca Dialing information sayfasına gider; sayfa başlık/alt başlık metinlerinden bazıları (ICW "Setting up your Internet connection") ISO'da bulunamadı, tahmin edildi; Disk Cleanup işleyici açıklamaları (Recycle Bin hariç) bilinen metinlerdir; salt-okunur öznitelik yazmayı engellemez.
 
 ### Netscape / Internet Explorer: yerleşik sayfalar
-- News Reader'dan Hacker News ve YouTube kaldırıldı. Yeni kaynak: **Diyanet Haber** (diyanethaber.com.tr RSS; Diyanet İşleri Başkanlığı'nın resmî sitesi değil, haber sitesidir).
+- News Reader'dan Hacker News ve YouTube kaldırıldı. Kaynaklar BBC News ve BBC Türkçe RSS (önbellek kırıcı istek, 3 kademeli yedek, tarihe göre sıralı, 5 dakikada bir yenilenir).
 - **Günün Ayeti, Hadisi ve Esması** (`about:daily`): 99 Esmaü'l-Hüsnâ (Arapça ad, okunuş, anlam), 49 ayet, 46 hadis; gün sırasına göre seçilir, önceki/sonraki gün ve tam listeler (`?all=esma|ayet|hadis`). Ayet ve hadis metinleri bu projede yazılmış kısa Türkçe anlatımlardır (resmî meal değildir); kaynaklar `dini-data.js` içinde.
 - **Tarihte Bugün** (`about:today`): Vikipedi "On this day" REST API'sinden (Türkçe/İngilizce); Netscape ve IE ana sayfalarında kısa kutu olarak da gösterilir.
 - Aynı sayfalar (Google, News, Günün Ayeti/Hadisi/Esması, Tarihte Bugün) artık Internet Explorer'da da çalışır (`about:` adresleri ve ana sayfa).
-- Sınırlar: canlı sayfalar internet ve Vikipedi/Diyanet Haber erişimi gerektirir.
+- Sınırlar: canlı sayfalar internet ve Vikipedi ve BBC erişimi gerektirir.
+
+### Outlook Express: günlük postalar, sıralama, adres
+- Outlook Express her gün ilk açılışta iki ayrı posta alır: "Günün Ayeti, Hadisi ve Esması" ve "Tarihte Bugün" (Vikipedi'ye ulaşılamazsa kısa not).
+- Posta listesi en yeni üstte; From, Subject ve Received başlıklarına tıklayınca sıralama (yön oku ile) değişir.
+- Postaya tek tıklayınca okundu olur. "To" adresi bilgisayar adından gelir: `<bilgisayar adı>@hotmail.com` (eski postalar da güncellenir).

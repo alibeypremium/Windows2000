@@ -81,7 +81,7 @@ export const dailyPick = (offset = 0, now = new Date()) => {
 };
 export function dailyPage(q = {}) {
   const off = parseInt(q.d || "0", 10) || 0, all = q.all;
-  const head = `<div class="hd"><h1>G&uuml;n&uuml;n Ayeti, Hadisi ve Esmas&#305;</h1><small>Diyanet Haber ile birlikte okunmak &uuml;zere</small></div><div class="nav"><a href="about:home">Netcenter</a><a href="about:daily">Bug&uuml;n</a><a href="about:daily?all=esma">99 Esmaü'l-H&uuml;sn&acirc;</a><a href="about:daily?all=ayet">Ayetler</a><a href="about:daily?all=hadis">Hadisler</a><a href="about:news?s=diyanet">Diyanet Haber</a></div>`;
+  const head = `<div class="hd"><h1>G&uuml;n&uuml;n Ayeti, Hadisi ve Esmas&#305;</h1></div><div class="nav"><a href="about:home">Netcenter</a><a href="about:daily">Bug&uuml;n</a><a href="about:daily?all=esma">99 Esmaü'l-H&uuml;sn&acirc;</a><a href="about:daily?all=ayet">Ayetler</a><a href="about:daily?all=hadis">Hadisler</a><a href="about:news">Haberler</a></div>`;
   const foot = `<div class="ft">Ayet ve hadis metinleri k&acirc;fi derecede k&#305;sa T&uuml;rk&ccedil;e anlat&#305;mlard&#305;r (mealen); resm&icirc; bir meal ya da hadis ciltlerinin yerini tutmaz.</div>`;
   if (all === "esma")
     return page("99 Esmaü'l-Hüsnâ", DAILY_CSS, head + `<div class="wrap"><div class="card"><h2>Esmaü'l-H&uuml;sn&acirc; &mdash; Allah'&#305;n 99 g&uuml;zel ismi</h2><div class="b"><table>${ESMA.map((e, i) => `<tr><td class="n">${i + 1}</td><td class="a">${e[0]}</td><td><b>${esc(e[1])}</b><br>${esc(e[2])}</td></tr>`).join("")}</table></div></div></div>` + foot);
@@ -158,7 +158,6 @@ export async function buildSite(u) {
 const NEWS_SOURCES = [
   { key: "bbc", name: "BBC News", rss: "https://feeds.bbci.co.uk/news/world/rss.xml" },
   { key: "bbctr", name: "BBC Türkçe", rss: "https://feeds.bbci.co.uk/turkce/rss.xml" },
-  { key: "diyanet", name: "Diyanet Haber", rss: "https://www.diyanethaber.com.tr/rss" },
 ];
 export const newsPage = (key = "bbc") => {
   const src = NEWS_SOURCES.find((s) => s.key === key) || NEWS_SOURCES[0];
@@ -170,10 +169,13 @@ var a=document.createElement('a');a.href=it.link;a.textContent=it.title;d.append
 if(it.meta){var m=document.createElement('div');m.className='meta';m.textContent=it.meta;d.appendChild(m)}
 if(it.desc){var p=document.createElement('div');p.className='ds';p.textContent=it.desc;d.appendChild(p)}box.appendChild(d)});}
 function fail(){box.innerHTML='<p class="err">The news server could not be reached. Check your Internet connection and click Reload.</p>';}
-function rssJson(){return fetch('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(SRC.rss)).then(function(r){return r.json()}).then(function(j){return j.items.map(function(i){return{title:i.title,link:i.link,meta:i.pubDate,desc:(i.description||'').replace(/<[^>]*>/g,'').slice(0,220)}})});}
-function rssDirect(){return fetch(SRC.rss).then(function(r){return r.text()}).then(function(t){var x=new DOMParser().parseFromString(t,'text/xml');
-return Array.prototype.map.call(x.querySelectorAll('item'),function(i){function g(n){var e=i.querySelector(n);return e?e.textContent:''}return{title:g('title'),link:g('link'),meta:g('pubDate'),desc:g('description').replace(/<[^>]*>/g,'').slice(0,220)}})});}
-{rssDirect().then(function(l){if(!l.length)throw 0;show(l)}).catch(function(){return rssJson().then(show)}).catch(fail);}
+function parse(t){var x=new DOMParser().parseFromString(t,'text/xml');return Array.prototype.map.call(x.querySelectorAll('item'),function(i){function g(n){var e=i.querySelector(n);return e?e.textContent:''}var d=g('pubDate');return{title:g('title'),link:g('link'),ts:Date.parse(d)||0,meta:d?new Date(d).toLocaleString():'',desc:g('description').replace(/<[^>]*>/g,'').slice(0,220)}})}
+function viaText(u){return fetch(u,{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.text()}).then(parse)}
+function rssDirect(){var b=SRC.rss+(SRC.rss.indexOf('?')<0?'?':'&')+'_='+Date.now();return viaText(b)}
+function rssProxy(){return viaText('https://api.allorigins.win/raw?url='+encodeURIComponent(SRC.rss+'?_='+Date.now()))}
+function rssJson(){return fetch('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(SRC.rss)+'&_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){return j.items.map(function(i){return{title:i.title,link:i.link,ts:Date.parse(String(i.pubDate).replace(' ','T')+'Z')||0,meta:i.pubDate,desc:(i.description||'').replace(/<[^>]*>/g,'').slice(0,220)}})})}
+function load(){box.innerHTML=box.innerHTML||'';var chain=[rssDirect,rssProxy,rssJson];(function next(i){if(i>=chain.length)return fail();chain[i]().then(function(l){if(!l.length)throw 0;l.sort(function(a,b){return b.ts-a.ts});show(l)}).catch(function(){next(i+1)})})(0);}
+load();setInterval(load,300000);
 })();<\/script>`;
   return page(
     `News - ${src.name}`,
