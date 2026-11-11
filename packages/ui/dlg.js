@@ -3,6 +3,7 @@
  * (see scripts/dump-dialogs.py). Template units are dialog units; for the
  * 8pt MS Shell Dlg font one unit is 1.5 px horizontally and 1.625 px vertically.
  */
+import { t } from "./i18n.js";
 import { el, popup } from "./index.js";
 import { refWindow, btn, check, radio, group, sunken, text, link } from "../control-panel/refkit.js";
 
@@ -12,6 +13,8 @@ const FRAME_X = 4, FRAME_Y = 22; // left/top frame of a fixed dialog (border + c
 
 const withMnemonic = (node, label) => {
   if (!/&[^&]/.test(label)) return;
+  const tr = t(label.replace(/&(?=[^&])/g, ""));
+  if (tr !== label.replace(/&(?=[^&])/g, "")) { node.replaceChildren(tr); return; }
   node.replaceChildren(...label.split(/&(?=[^&])/).flatMap((part, i) => (i === 0 ? [part.replace(/&&/g, "&")] : [el("u", { text: part[0] }), part.slice(1).replace(/&&/g, "&")])));
 };
 

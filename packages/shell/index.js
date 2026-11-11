@@ -10,6 +10,7 @@ import {
   field,
   safely,
 } from "../ui/index.js";
+import { getLang, setLang } from "../ui/i18n.js";
 import { DESKTOP, DOCS, joinPath, basename, pickFiles } from "../core/index.js";
 import { openTaskbarProperties } from "../control-panel/dialogs.js";
 import { refWindow, kit, btn } from "../control-panel/refkit.js";
@@ -632,6 +633,21 @@ export class DesktopShell {
       y,
     );
   }
+  /** Input-language indicator in the notification area (TR / EN); the menu switches the interface language. */
+  languageTray() {
+    const ctx = this.ctx;
+    const b = button("", (e) => {
+      const r = b.getBoundingClientRect(), cur = getLang();
+      popup([
+        { label: "TR  Türkçe (Türkiye)", checked: cur === "tr", action: () => setLang("tr") },
+        { label: "EN  English (United States)", checked: cur === "en", action: () => setLang("en") },
+      ], r.left, r.top - 52);
+    }, { class: "tray-button language", "aria-label": "Language", title: "Language" });
+    const sync = () => { b.textContent = getLang() === "tr" ? "TR" : "EN"; b.title = getLang() === "tr" ? "Dil: Türkçe (Türkiye)" : "Language: English (United States)"; b.setAttribute("aria-label", b.title); this.updateClock?.(); };
+    ctx.bus.on("lang:change", sync);
+    sync();
+    return b;
+  }
   /** Network tray icon (netshell.dll 16px LAN icons); blinks on activity. */
   lanTray() {
     const ctx = this.ctx;
@@ -728,6 +744,7 @@ export class DesktopShell {
       el(
         "div",
         { class: "system-tray inset" },
+        this.languageTray(),
         this.lanTray(),
         button(icon("speaker"), () => ctx.launch("volume"), {
           class: "tray-button",
@@ -850,13 +867,14 @@ export class DesktopShell {
       date = new Date(Date.now() + (s.get("clockOffset") || 0)),
       clock = document.querySelector("#taskbar-clock");
     if (!clock) return;
-    clock.textContent = date.toLocaleTimeString(s.get("locale") || "en-US", {
+    const tr = getLang() === "tr";
+    clock.textContent = date.toLocaleTimeString(s.get("locale") || (tr ? "tr-TR" : "en-US"), {
       hour: "numeric",
       minute: "2-digit",
       second: s.get("showSeconds") ? "2-digit" : undefined,
-      hour12: s.get("timeFormat") !== "24",
+      hour12: !tr && s.get("timeFormat") !== "24",
     });
-    clock.title = date.toLocaleDateString(undefined, {
+    clock.title = date.toLocaleDateString(tr ? "tr-TR" : undefined, {
       weekday: "long",
       year: "numeric",
       month: "long",

@@ -3213,7 +3213,8 @@ button.selected:focus {
     padding-right: 2px;
   }
   .tray-button.language {
-    display: none;
+    width: 21px;
+    font-size: 11px;
   }
   .tray-button.clock {
     min-width: 55px;
@@ -6373,3 +6374,5 @@ input.vlc-eqs[type="range"]{flex:none;writing-mode:vertical-lr;direction:rtl;hei
 /* The wizard stage spans the whole window, so it must not swallow clicks meant for the title bar buttons. */
 .wiz-stage { pointer-events: none; }
 .wiz-stage > * { pointer-events: auto; }
+
+.tray-button.language { font-weight: 700; font-size: 11px; letter-spacing: 0; min-width: 24px; }

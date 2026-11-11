@@ -1,4 +1,5 @@
 import { refWindow } from "../control-panel/refkit.js";
+import { t } from "../ui/i18n.js";
 import { dialogFromTemplate, px, py } from "../ui/dlg.js";
 import { ABOUT } from "./about-data.js";
 import { el, button, icon, statusBar, tabs, checkbox, popup } from "../ui/index.js";
@@ -421,7 +422,7 @@ export function openWelcome(ctx) {
   const at = (x, y) => ({ left: x + "px", top: y + "px" });
   const menuItem = (label, y, i, onclick) => {
     const n = el("div", { class: "gs-item", style: at(13, y), role: "button", tabindex: 0 });
-    n.append(el("u", { text: label[0] }), label.slice(1));
+    { const tr = t(label); tr !== label ? n.append(tr) : n.append(el("u", { text: label[0] }), label.slice(1)); }
     n.addEventListener("click", onclick);
     n.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") onclick(); });
     n.addEventListener("mouseenter", () => showHover(i));
@@ -475,10 +476,10 @@ export function openWelcome(ctx) {
     tx.classList.add("wrap");
     tx.replaceChildren(...text.split("\n").map((l) => el("div", { class: l.startsWith("\u2022") ? "gs-li" : "gs-ln", text: l.replace(/^\u2022 /, "") || "\u00a0" })));
   }
-  const exit = el("div", { class: "gs-exit", role: "button" }, el("u", { text: "E" }), "xit");
+  const exit = el("div", { class: "gs-exit", role: "button" }, ...(t("Exit") !== "Exit" ? [t("Exit")] : [el("u", { text: "E" }), "xit"]));
   exit.addEventListener("click", () => w.close());
   const box = el("span", { class: "gs-box" + (ctx.settings.get("showWelcome") ? " on" : "") });
-  const startup = el("div", { class: "gs-startup", role: "checkbox", tabindex: 0 }, box, el("span", { class: "gs-startup-label" }, el("u", { text: "S" }), "how this screen at startup"));
+  const startup = el("div", { class: "gs-startup", role: "checkbox", tabindex: 0 }, box, el("span", { class: "gs-startup-label" }, ...(t("Show this screen at startup") !== "Show this screen at startup" ? [t("Show this screen at startup")] : [el("u", { text: "S" }), "how this screen at startup"])));
   startup.addEventListener("click", () => {
     const v = !box.classList.contains("on");
     box.classList.toggle("on", v);

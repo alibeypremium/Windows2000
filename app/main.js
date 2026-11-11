@@ -88,6 +88,8 @@ const bus = new EventBus(),
   settings = new Settings(bus),
   fs = new VirtualFileSystem(bus),
   wm = new WindowManager(bus);
+import { initI18n, setLang, getLang } from "/packages/ui/i18n.js";
+initI18n(settings);
 const ctx = {
   bus,
   settings,

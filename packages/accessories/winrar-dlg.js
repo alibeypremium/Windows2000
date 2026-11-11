@@ -1,5 +1,6 @@
 // Renders the real WinRAR 4.11 dialog templates (extracted from WinRAR.exe RT_DIALOG resources into
 // assets/ui/winrar/rar411/dialogs.json) as absolutely positioned HTML controls, in dialog units.
+import { t as trText } from "../ui/i18n.js";
 import { el } from "../ui/index.js";
 
 const BASE = new URL("../../assets/ui/winrar/rar411/", import.meta.url).href;
@@ -12,7 +13,7 @@ const px = (v, k) => Math.round(v * k);
 const WS_VISIBLE = 0x10000000, WS_DISABLED = 0x08000000, WS_GROUP = 0x20000;
 const mnemonic = (t) => {
   const span = document.createDocumentFragment();
-  const s = String(t || "");
+  const s0 = String(t || ""), s = (() => { const p = s0.replace(/&(?=[^&])/g, ""), r = trText(p); return r !== p ? r : s0; })();
   let buf = "";
   for (let i = 0; i < s.length; i++) {
     if (s[i] === "&") {

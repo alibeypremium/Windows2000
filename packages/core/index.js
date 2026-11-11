@@ -576,6 +576,7 @@ export class Settings {
     this.bus = bus;
     this.defaults = {
       desktopColor: "#3a6ea5",
+      lang: "tr",
       wallpaper: "none",
       scheme: "Windows Standard",
       fontSize: 13,

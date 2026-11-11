@@ -601,3 +601,6 @@ Contacts, organisations, replies and display pictures (packages/internet/msn-dat
 - `assets/wallpapers/windows2000.png` ve `assets/icons/nvidia-*.png`: kullanıcının gönderdiği dosyalar.
 - .pdf dosya ikonu: kullanıcının verdiği Acrobat Reader 4 PDF ikonu (`assets/icons/pdffile-*.png`).
 - `assets/icons/favicon.png`: kullanıcının gönderdiği Windows logosu. `assets/wintools/*`: bu proje için üretilmiş özgün görseller (PIL ile).
+
+## Türkçe dil katmanı
+Arayüz metinlerinin Türkçe karşılıkları bu projeye özgü olarak yazılmıştır (packages/ui/tr/*.js); Windows 2000 Türkçe sürümündeki terimler esas alınmıştır.
