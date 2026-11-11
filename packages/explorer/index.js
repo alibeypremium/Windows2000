@@ -29,6 +29,7 @@ const shellNames = {
   computer: "My Computer",
   documents: "My Documents",
   network: "My Network Places",
+  connections: "Network and Dial-up Connections",
   recycle: "Recycle Bin",
   control: "Control Panel",
   admintools: "Administrative Tools",
@@ -217,6 +218,12 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
       ];
     if (current === "tasks")
       return [{ name: "Add Scheduled Task", path: "tasks:add", type: "special", icon: "addTask" }];
+    if (current === "connections")
+      return [
+        { name: "Make New Connection", path: "connections:new", type: "special", icon: "netAdd", description: "Creates a new network connection." },
+        { name: "Local Area Connection", path: "connections:lan", type: "special", icon: "cpNetwork", description: "Local Area Connection" },
+        ...(ctx.settings.get("connections") || []).map((c) => ({ name: c.name, path: "connections:" + c.name, type: "special", icon: "dialup", detail: c.type, description: c.type })),
+      ];
     if (current === "network")
       return [
         {
@@ -255,6 +262,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
       else if (id === "printers") ctx.launch("explorer", { path: "printers" });
       else if (id === "fonts") ctx.launch("explorer", { path: "fonts" });
       else if (id === "tasks") ctx.launch("explorer", { path: "tasks" });
+      else if (id === "network") navigate("connections");
       else if (n.unavailable)
         ctx.dialogs.message(
           `${n.name} is not available in this browser simulation.`,
@@ -277,6 +285,9 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     else if (n.path === "network:all" || n.path === "network:near")
       ctx.launch("control", { page: "network" });
     else if (n.path === "network:add") ctx.launch("addnet");
+    else if (n.path === "connections:new") ctx.launch("ncw");
+    else if (n.path === "connections:lan") ctx.launch("control", { page: "network" });
+    else if (n.path.startsWith("connections:")) ctx.dialogs.message(`${n.name} cannot dial: this simulation has no modem.`, { title: n.name, icon: "info" });
     else if (n.type === "folder" || shellNames[n.path]) navigate(n.path);
     else ctx.openFile(n.path);
   };
@@ -1555,6 +1566,7 @@ function locationIcon(path) {
   if (path === "admintools") return "adminToolsFolder";
   if (path === "fonts") return "cpFonts";
   if (path === "tasks") return "scheduledTasks";
+  if (path === "connections") return "dialup";
   if (shellNames[path] && path !== "search") return path === "computer" ? "computer" : path;
   if (isDrive(path))
     return { A: "floppy", D: "cd" }[path[0].toUpperCase()] || "drive";

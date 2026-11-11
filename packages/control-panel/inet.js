@@ -180,7 +180,7 @@ export function openInternetProperties(ctx, { tab = 0 } = {}) {
   const connections = () => [
     k.img(389, 141, IMG + "connect.png", 32, 31),
     k.text(432, 142, "To set up an Internet connection, click\nSetup."),
-    k.btn(652, 141, 81, 23, "Setup..."),
+    k.btn(652, 141, 81, 23, "Setup...", { onclick: () => ctx.launch("icw") }),
     k.group(389, 185, 356, 203, "Dial-up and Virtual Private Network settings"),
     k.sunken(400, 196, 247, 52),
     k.btn(653, 196, 80, 23, "Add..."),

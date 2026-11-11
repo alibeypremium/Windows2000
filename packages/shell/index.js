@@ -653,7 +653,7 @@ export class DesktopShell {
           { label: st.up ? "Disable" : "Enable", action: () => { st.up = !st.up; if (st.up) st.since = Date.now(); paint(); } },
           { label: "Status", action: () => this.lanStatus() },
           separator(),
-          { label: "Open Network and Dial-up Connections", action: () => ctx.launch("control", { page: "network" }) },
+          { label: "Open Network and Dial-up Connections", action: () => ctx.launch("explorer", { path: "connections" }) },
         ],
         e.clientX,
         e.clientY,
@@ -970,7 +970,7 @@ export class DesktopShell {
         {
           label: "Network and Dial-up Connections",
           icon: "dialup",
-          action: () => ctx.launch("control", { page: "network" }),
+          action: () => ctx.launch("explorer", { path: "connections" }),
         },
         {
           label: "Printers",

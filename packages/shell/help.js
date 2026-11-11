@@ -1,4 +1,6 @@
 import { refWindow } from "../control-panel/refkit.js";
+import { dialogFromTemplate, px, py } from "../ui/dlg.js";
+import { ABOUT } from "./about-data.js";
 import { el, button, icon, statusBar, tabs, checkbox, popup } from "../ui/index.js";
 const topics = {
   welcome: {
@@ -431,7 +433,7 @@ export function openWelcome(ctx) {
   const items = [
     menuItem("Register Now", 120, 0, () => ctx.dialogs.message("Registration is not available in this virtual desktop.", { title: "Register Windows 2000", icon: "info" })),
     menuItem("Discover Windows", 145, 1, () => ctx.launch("help", { topic: "welcome" })),
-    menuItem("Connect to the Internet", 170, 2, () => ctx.launch("ie")),
+    menuItem("Connect to the Internet", 170, 2, () => ctx.launch("icw")),
   ];
   const pane = el("div", { class: "gs-pane" });
   let timer = 0,
@@ -498,55 +500,24 @@ export function openWelcome(ctx) {
   return w;
 }
 export function openAbout(ctx) {
-  const w = ctx.wm.create({
+  const ctl = {};
+  const d = dialogFromTemplate(ctx, ABOUT, {
     title: "About Windows",
     icon: "computer",
-    width: 460,
-    height: 325,
     appId: "about",
-    dialog: true,
-    resizable: false,
-    maximizable: false,
-    minimizable: false,
+    ctlOut: ctl,
+    labels: {
+      13568: "Microsoft (R) Windows 2000",
+      13579: "Version 5.0 (Build 2195: Service Pack 4)",
+      13581: "",
+      13575: ctx.settings.get("username") || "Administrator",
+      13576: ctx.settings.get("organization") || "",
+      13571: "261,616 KB",
+    },
+    on: { 1: () => d.close() },
   });
-  w.setContent(
-    el(
-      "div",
-      { class: "about-banner" },
-      icon("windows", 32),
-      el(
-        "div",
-        {},
-        el("span", { text: "Microsoft" }),
-        el("h1", { text: "Windows 2000" }),
-        el("b", { text: "Professional" }),
-      ),
-    ),
-    el(
-      "div",
-      { class: "about-content" },
-      el("p", {
-        text: "Microsoft Windows 2000\nVersion 5.0 (Build 2195) · Browser recreation",
-      }),
-      el("p", {
-        text: "This product is registered to:\n" + ctx.settings.get("username"),
-      }),
-      el("hr"),
-      el("p", {
-        text:
-          "Browser desktop 1.0.0\nRendering: " + ctx.renderer.surface.backend,
-      }),
-      button(
-        "Implementation and compatibility",
-        () => ctx.launch("help", { topic: "architecture" }),
-        { class: "text-link" },
-      ),
-    ),
-    el(
-      "div",
-      { class: "dialog-buttons" },
-      button("OK", () => w.close(), { class: "default-button" }),
-    ),
-  );
-  return w;
+  d.place(el("img", { src: "/assets/ui/dialogs/about-banner.png", style: { position: "absolute", left: "4px", top: "22px", width: "413px", height: "76px" } }));
+  d.place(el("div", { style: { position: "absolute", left: px(21) + 4 + "px", top: py(55) + 22 + "px" } }, icon("windows", 32)));
+  d.place(button("Implementation and compatibility", () => ctx.launch("help", { topic: "architecture" }), { class: "text-link", style: { position: "absolute", left: "14px", top: py(170) + 22 + "px" } }));
+  return d;
 }

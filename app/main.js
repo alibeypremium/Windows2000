@@ -49,6 +49,7 @@ import {
   openFreeCell,
 } from "/packages/games/index.js";
 import { openWinamp } from "/packages/accessories/winamp.js";
+import { openNetworkConnectionWizard, openInternetConnectionWizard } from "/packages/system/wizards.js";
 import { openDiskCleanup } from "/packages/system/cleanmgr.js";
 import { openWinRAR } from "/packages/accessories/winrar.js";
 import { openNetscape } from "/packages/internet/netscape.js";
@@ -439,6 +440,9 @@ ctx.apps = [
   { id: "compsvc", name: "Component Services", icon: "adminCompSvc", aliases: ["comexp.msc"], singleton: true, open: openComponentServices },
   { id: "odbc", name: "Data Sources (ODBC)", icon: "adminOdbc", aliases: ["odbcad32"], singleton: true, open: openOdbc },
   { id: "telnetadmin", name: "Telnet Server Administration", icon: "adminTelnet", aliases: ["tlntadmn"], singleton: true, open: openTelnetAdmin },
+  { id: "ncw", name: "Network Connection Wizard", icon: "dialup", hidden: true, open: openNetworkConnectionWizard },
+  { id: "icw", name: "Internet Connection Wizard", icon: "ie", hidden: true, open: openInternetConnectionWizard },
+  { id: "connections", name: "Network and Dial-up Connections", icon: "dialup", hidden: true, open: (ctx) => ctx.launch("explorer", { path: "connections" }) },
   { id: "addnet", name: "Add Network Place", icon: "netAdd", hidden: true, open: openAddNetworkPlace },
   { id: "fontview", name: "Font Viewer", icon: "fontTT", hidden: true, open: openFontViewer },
   {

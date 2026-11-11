@@ -574,3 +574,8 @@ Contacts, organisations, replies and display pictures (packages/internet/msn-dat
 
 ## WinRAR
 - Find/Info/Settings/Wizard/Context-menu dialogları mevcut `assets/ui/winrar/rar411/dialogs.json` kaynaklarından üretilir. RAR yazıcısı (store) bu proje için yazıldı; RAR 3.x dosya formatı belgelerine göre, unrar ve 7-Zip ile doğrulandı.
+
+## Genel sistem (sysdm, cleanmgr, shell32 Properties, wizards, About)
+- Diyalog şablonları ISO'dan `scripts/dump-dialogs.py` ile çıkarıldı: `sysdm.cpl` (packages/control-panel/sysdm-data.js), `cleanmgr.exe` (packages/system/cleanmgr-data.js), `shell32.dll` Properties/ShellAbout (packages/explorer/props-data.js, packages/shell/about-data.js), `netshell.dll` + `icwconn1.exe` (packages/system/wizards-data.js).
+- `assets/ui/dialogs/about-banner.png`: `shell32.dll` RT_BITMAP 131 (Windows 2000 afişi). Sihirbaz kenar çubuğu ve başlık resimleri mevcut `wiz-hardware-side.png` / `wiz-components-banner.png`.
+- NCW karşılama metninin sonu ("will help you to...") ISO'da dinamik olduğu için bu projede yazıldı; ICW sayfa başlıkları tahmindir.
