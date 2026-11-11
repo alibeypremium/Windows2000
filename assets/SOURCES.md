@@ -579,3 +579,6 @@ Contacts, organisations, replies and display pictures (packages/internet/msn-dat
 - Diyalog şablonları ISO'dan `scripts/dump-dialogs.py` ile çıkarıldı: `sysdm.cpl` (packages/control-panel/sysdm-data.js), `cleanmgr.exe` (packages/system/cleanmgr-data.js), `shell32.dll` Properties/ShellAbout (packages/explorer/props-data.js, packages/shell/about-data.js), `netshell.dll` + `icwconn1.exe` (packages/system/wizards-data.js).
 - `assets/ui/dialogs/about-banner.png`: `shell32.dll` RT_BITMAP 131 (Windows 2000 afişi). Sihirbaz kenar çubuğu ve başlık resimleri mevcut `wiz-hardware-side.png` / `wiz-components-banner.png`.
 - NCW karşılama metninin sonu ("will help you to...") ISO'da dinamik olduğu için bu projede yazıldı; ICW sayfa başlıkları tahmindir.
+
+## Dini içerik ve Tarihte Bugün
+- `packages/internet/dini-data.js`: Esmaü'l-Hüsnâ anlamları, ayet ve hadis özetleri bu proje için yazıldı (hadis kaynakları: Buhârî, Müslim, Tirmizî vb. atıf). Tarihte Bugün verisi çalışma anında Vikipedi REST API'sinden gelir; Diyanet Haber RSS'i diyanethaber.com.tr'den.

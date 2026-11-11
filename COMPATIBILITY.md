@@ -85,3 +85,10 @@ Clipboard, recording, serial ports, media codecs, GPU, printing and external han
 - **Network Connection Wizard** (`netshell.dll`) ve **Internet Connection Wizard** (`icwconn1.exe`): sayfa yerleşimleri ve metinleri ISO'dan. "Network and Dial-up Connections" klasörü (Make New Connection, Local Area Connection, kullanıcı bağlantıları); Internet Options → Connections → Setup ve Getting Started → Connect to the Internet ICW'yi açar.
 - **About Windows / winver**: `shell32.dll` ShellAbout şablonu ve ISO'daki Windows 2000 afişi.
 - Sınırlar: dial-up bağlantıları gerçekten arama yapmaz (modem yok); NCW'de telefon numarası/VPN/gelen bağlantı ara sayfaları yok; ICW'de "sign up/transfer" yolu yalnızca Dialing information sayfasına gider; sayfa başlık/alt başlık metinlerinden bazıları (ICW "Setting up your Internet connection") ISO'da bulunamadı, tahmin edildi; Disk Cleanup işleyici açıklamaları (Recycle Bin hariç) bilinen metinlerdir; salt-okunur öznitelik yazmayı engellemez.
+
+### Netscape / Internet Explorer: yerleşik sayfalar
+- News Reader'dan Hacker News ve YouTube kaldırıldı. Yeni kaynak: **Diyanet Haber** (diyanethaber.com.tr RSS; Diyanet İşleri Başkanlığı'nın resmî sitesi değil, haber sitesidir).
+- **Günün Ayeti, Hadisi ve Esması** (`about:daily`): 99 Esmaü'l-Hüsnâ (Arapça ad, okunuş, anlam), 49 ayet, 46 hadis; gün sırasına göre seçilir, önceki/sonraki gün ve tam listeler (`?all=esma|ayet|hadis`). Ayet ve hadis metinleri bu projede yazılmış kısa Türkçe anlatımlardır (resmî meal değildir); kaynaklar `dini-data.js` içinde.
+- **Tarihte Bugün** (`about:today`): Vikipedi "On this day" REST API'sinden (Türkçe/İngilizce); Netscape ve IE ana sayfalarında kısa kutu olarak da gösterilir.
+- Aynı sayfalar (Google, News, Günün Ayeti/Hadisi/Esması, Tarihte Bugün) artık Internet Explorer'da da çalışır (`about:` adresleri ve ana sayfa).
+- Sınırlar: canlı sayfalar internet ve Vikipedi/Diyanet Haber erişimi gerektirir.

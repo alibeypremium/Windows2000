@@ -9,6 +9,7 @@ import {
   popup,
 } from "../ui/index.js";
 import { basename, downloadFile } from "../core/index.js";
+import { buildSite, isSite, homeBoxes } from "./netscape-sites.js";
 import { ieOpen, ieOptions, ieAddFavorite, ieProps, ieOrganize, iePageSetup, iePrint, IE_HELP } from "./ie-dialogs.js";
 const normalizeAddress = (input) => {
   let target = String(input || "about:home").trim();
@@ -22,6 +23,7 @@ const normalizeAddress = (input) => {
   if (/^https?:/i.test(target)) target = new URL(target).href;
   if (
     /^about:/i.test(target) &&
+    !isSite(target) &&
     ![
       "about:home",
       "about:welcome",
@@ -76,10 +78,32 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
     }
     render();
   };
+  const siteFrames = new Set();
+  const onSiteMessage = (e) => {
+    const d = e.data;
+    if (!d || d.ns !== "go" || ![...siteFrames].some((f) => f.contentWindow === e.source)) return;
+    if (d.ext) window.open(d.url, "_blank", "noopener,noreferrer");
+    else {
+      try { navigate(d.url); } catch (err) { ctx.dialogs.message(err.message, { title: "Microsoft Internet Explorer", icon: "error" }); }
+    }
+  };
+  window.addEventListener("message", onSiteMessage);
+  const _close = w.close.bind(w);
+  w.close = (...a) => (window.removeEventListener("message", onSiteMessage), _close(...a));
+  const siteFrame = (html, title) => {
+    const f = el("iframe", { class: "ie-frame", sandbox: "allow-scripts allow-forms", title });
+    f.srcdoc = html;
+    siteFrames.add(f);
+    return f;
+  };
   const _setTitle = w.setTitle.bind(w);
   w.setTitle = (t) => _setTitle(ctx.settings.get("ieOffline") && !t.includes("[Working Offline]") ? t + " [Working Offline]" : t.replace(" [Working Offline]", ""));
   const favorites = () =>
     ctx.settings.get("favorites") || [
+      { title: "Google", url: "about:google" },
+      { title: "News Reader", url: "about:news" },
+      { title: "Günün Ayeti, Hadisi ve Esması", url: "about:daily" },
+      { title: "Tarihte Bugün", url: "about:today" },
       { title: "Microsoft", url: "https://www.microsoft.com/" },
       { title: "Wikipedia", url: "https://www.wikipedia.org/" },
       { title: "The Internet Archive", url: "https://archive.org/" },
@@ -154,6 +178,7 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
               button("Search", () => navigate(search.value)),
             ),
           ),
+          (() => { siteFrames.clear(); const f = siteFrame(homeBoxes(), "Günün Ayeti, Hadisi ve Esması / Tarihte Bugün"); f.style.cssText = "width:100%;height:230px;border:0;margin:6px 0"; return f; })(),
           el("h3", { text: "A few places to start" }),
           el(
             "div",
@@ -182,6 +207,19 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
         if (e.key === "Enter") navigate(search.value);
       });
       viewport.append(page);
+      return;
+    }
+    if (isSite(current)) {
+      siteFrames.clear();
+      status.children[0].textContent = "Opening page " + current + "...";
+      const my = (render.token = (render.token || 0) + 1);
+      buildSite(current).then((r) => {
+        if (my !== render.token || !r) return;
+        status.children[0].textContent = "Done";
+        if (r.go) return navigate(r.go, false);
+        viewport.replaceChildren(siteFrame(r.html, r.title));
+        w.setTitle(r.title + " - Microsoft Internet Explorer");
+      });
       return;
     }
     if (current === "about:favorites" || current === "about:history") {

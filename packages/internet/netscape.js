@@ -1,6 +1,6 @@
 import { el, button, icon, popup, menuBar, separator } from "../ui/index.js";
 import { basename } from "../core/index.js";
-import { NAV_SCRIPT, googleHome, googleResults, youtubeHome, youtubeWatch, newsPage } from "./netscape-sites.js";
+import { NAV_SCRIPT, buildSite, isSite, homeParts } from "./netscape-sites.js";
 import { loadBM, saveBM, bookmarkItems, addBookmark, folderChoices, openBookmarkWindow } from "./netscape-bm.js";
 import { recordVisit, setVisitTitle, expireHistory, openHistoryWindow, openPageInfo, openPreferences } from "./netscape-tools.js";
 
@@ -28,16 +28,16 @@ a{color:#0000cc}li{margin:3px 0}ul{padding-left:18px;margin:6px 0}
 .ft{border-top:1px solid #999;margin:10px 14px;padding-top:6px;font-size:11px;color:#444}
 </style></head><body>
 <div class="hd">Netscape <small>Netcenter</small></div>
-<div class="nav"><a href="about:home">Home</a><a href="about:google">Google</a><a href="about:youtube">YouTube</a><a href="about:news">News</a><a href="about:plugins">Plug-ins</a><a href="about:license">License</a><a href="about:netscape">About</a></div>
+<div class="nav"><a href="about:home">Home</a><a href="about:google">Google</a><a href="about:news">News</a><a href="about:daily">Ayet/Hadis/Esma</a><a href="about:today">Tarihte Bug&uuml;n</a><a href="about:plugins">Plug-ins</a><a href="about:license">License</a><a href="about:netscape">About</a></div>
 <div class="cols">
 <div class="c"><h3>Search</h3><p>Type an address in the Location box, or enter a word or phrase to search the Web.</p>
-<ul><li><a href="about:google">Google</a></li><li><a href="about:youtube">YouTube</a></li><li><a href="about:news">News Reader</a></li><li><a href="https://www.wikipedia.org/">Wikipedia</a></li><li><a href="https://archive.org/">The Internet Archive</a></li><li><a href="https://web.archive.org/">Wayback Machine</a></li></ul></div>
+<ul><li><a href="about:google">Google</a></li><li><a href="about:news">News Reader</a></li><li><a href="about:daily">G&uuml;n&uuml;n Ayeti, Hadisi ve Esmas&#305;</a></li><li><a href="about:today">Tarihte Bug&uuml;n</a></li><li><a href="https://www.wikipedia.org/">Wikipedia</a></li><li><a href="https://archive.org/">The Internet Archive</a></li><li><a href="https://web.archive.org/">Wayback Machine</a></li></ul></div>
 <div class="c"><h3>Make This Your Home Page</h3><p>Use <b>Edit &gt; Preferences</b> to choose the page Netscape shows when it starts.</p>
 <ul><li><a href="http://home.netscape.com/">home.netscape.com</a></li><li><a href="https://www.microsoft.com/">microsoft.com</a></li></ul></div>
 <div class="c"><h3>Chat with your friends</h3><p>Instant Messenger lets you talk to friends online.</p>
 <ul><li><a href="about:netscape">What's new in Netscape?</a></li></ul></div>
 </div>
-<div class="ft">Some web sites do not allow embedded browsing and may appear blank.</div>
+<!--BOXES--><div class="ft">Some web sites do not allow embedded browsing and may appear blank.</div>
 </body></html>`;
 
 const ABOUT_HTML = `<!DOCTYPE html><html><head><title>About Netscape</title><style>
@@ -97,25 +97,9 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
   };
 
   const withNav = (h) => h.replace("</body>", NAV_SCRIPT + "</body>");
-  const pages = { "about:home": withNav(HOME_HTML), "about:netscape": withNav(ABOUT_HTML), "about:license": withNav(ABOUT_HTML), "about:plugins": withNav(ABOUT_HTML.replace("About Netscape", "About Plug-ins")) };
+  const homeHtml = () => { const h = homeParts(); return withNav(HOME_HTML.replace("</style>", h.css + "</style>").replace("<!--BOXES-->", h.body + h.script)); };
+  const pages = { get "about:home"() { return homeHtml(); }, "about:netscape": withNav(ABOUT_HTML), "about:license": withNav(ABOUT_HTML), "about:plugins": withNav(ABOUT_HTML.replace("About Netscape", "About Plug-ins")) };
   let dynamic = null; // html of the current generated page (google, youtube, news)
-
-  const SITE_TITLES = { "about:google": "Google", "about:youtube": "YouTube - Broadcast Yourself.", "about:news": "News Reader" };
-  async function buildSite(u) {
-    const [base, qs] = u.split("?"), p = new URLSearchParams(qs || "");
-    if (base === "about:google") return { html: googleHome(), title: "Google" };
-    if (base === "about:search") {
-      const r = await googleResults(p.get("q"), p.get("lang") || "en", p.has("lucky"));
-      if (r.first) return { go: r.first };
-      return { html: r.html, title: p.get("q") ? `Google Search: ${p.get("q")}` : "Google" };
-    }
-    if (base === "about:youtube") return { html: youtubeHome(), title: SITE_TITLES[base] };
-    if (base === "about:watch") return { html: youtubeWatch(p.get("v")), title: "YouTube" };
-    if (base === "about:youtube-search") return { external: "https://www.youtube.com/results?search_query=" + encodeURIComponent(p.get("q") || ""), keep: true };
-    if (base === "about:news") return { html: newsPage(p.get("s") || "bbc"), title: "News Reader" };
-    return null;
-  }
-  const isSite = (u) => /^about:(google|search|youtube|watch|youtube-search|news)(\?|$)/.test(u);
 
   function render() {
     viewport.replaceChildren();
