@@ -2,6 +2,7 @@
 import { refWindow, kit, btn } from "../control-panel/refkit.js";
 import { dialogFromTemplate, px, py } from "../ui/dlg.js";
 import { el } from "../ui/index.js";
+import { mn } from "../ui/i18n.js";
 import { lanStatusTemplate } from "./lan-data.js";
 
 const fmt = (n) => n.toLocaleString("en-US");
@@ -40,7 +41,7 @@ export function openLanStatus(ctx, st) {
     },
   });
   const dis = ctl[1025];
-  const setDis = () => { if (!dis) return; dis.replaceChildren(...(st.up ? [el("u", { text: "D" }), "isable"] : [el("u", { text: "E" }), "nable"])); };
+  const setDis = () => { if (!dis) return; dis.replaceChildren(...(st.up ? mn("Disable") : mn("Enable"))); };
   setDis();
   // activity picture (template icon 1010): LAN computers, lit while traffic flows
   const c = lanStatusTemplate.controls.find((x) => x.id === 1010);

@@ -6,7 +6,15 @@ import { MORE1 } from "./more1.js";
 import { MORE2 } from "./more2.js";
 import { MORE3 } from "./more3.js";
 import { MORE4 } from "./more4.js";
-export const DICT = new Map(Object.entries({ ...CORE, ...APPS1, ...APPS2, ...MORE, ...MORE1, ...MORE2, ...MORE3, ...MORE4 }));
+import { MORE5 } from "./more5.js";
+import { MORE6 } from "./more6.js";
+import { MORE7 } from "./more7.js";
+import { MORE8 } from "./more8.js";
+import { MORE9 } from "./more9.js";
+import { MORE10 } from "./more10.js";
+import { MORE11, RULES11 } from "./more11.js";
+const nk = (k) => k.replace(/&(?=[A-Za-z0-9])/g, "").trim();
+export const DICT = new Map(Object.entries({ ...CORE, ...APPS1, ...APPS2, ...MORE, ...MORE1, ...MORE2, ...MORE3, ...MORE4, ...MORE5, ...MORE6, ...MORE7, ...MORE8, ...MORE9, ...MORE10, ...MORE11 }).map(([k, v]) => [nk(k), v]));
 const fmt = (s) => s;
 /** Pattern rules for strings that contain numbers/names: [RegExp, (…groups) => Turkish]. */
 export const RULES = [
@@ -36,10 +44,12 @@ export const RULES = [
   [/^Shortcut to (.+)$/, (n) => `${n} Kısayolu`],
   [/^Error: (.+)$/, (n) => `Hata: ${n}`],
   [/^Page (\d+) of (\d+)$/, (a, b) => `Sayfa ${a} / ${b}`],
-  [/^(.+) \((\w):\)$/, (n, d) => ({ "Local Disk": "Yerel Disk", "Floppy": "Disket", "CD-ROM": "CD-ROM", "Compact Disc": "Compact Disc" }[n] ? `${({ "Local Disk": "Yerel Disk", "Floppy": "Disket", "CD-ROM": "CD-ROM", "Compact Disc": "Compact Disc" })[n]} (${d}:)` : null)],
+  [/^(.+) \((\w):\)$/, (n, d) => ({ "Local Disk": "Yerel Disk", "Floppy": "Disket", "CD-ROM": "CD-ROM", "Compact Disc": "Kompakt Disk" }[n] ? `${({ "Local Disk": "Yerel Disk", "Floppy": "Disket", "CD-ROM": "CD-ROM", "Compact Disc": "Kompakt Disk" })[n]} (${d}:)` : null)],
   [/^Score: (\d+)$/, (n) => `Puan: ${n}`],
   [/^Time: (\d+)$/, (n) => `Süre: ${n}`],
   [/^Cards Left: (\d+)$/, (n) => `Kalan Kart: ${n}`],
   [/^Processes: (\d+)$/, (n) => `İşlemler: ${n}`],
   [/^(\d+) by (\d+) pixels$/, (a, b) => `${a} x ${b} piksel`],
 ];
+
+RULES.push(...RULES11);

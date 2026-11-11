@@ -1,3 +1,4 @@
+import { t } from "../ui/i18n.js";
 /** @package @win2k/explorer — shell namespace, file management and search. */
 import { confirmDelete } from "../ui/shconfirm.js";
 import { openProperties, typeName } from "./props.js";
@@ -894,7 +895,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
   function navigateInput() {
     const input = address.value;
     const match = Object.entries(shellNames).find(
-      ([k, v]) => v.toLowerCase() === input.toLowerCase(),
+      ([k, v]) => v.toLowerCase() === input.toLowerCase() || t(v).toLowerCase() === input.toLowerCase(),
     );
     const drive = /\(([a-z]):\)\s*$/i.exec(input);
     navigate(match ? match[0] : drive ? drive[1] + ":/" : input);
@@ -1393,7 +1394,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
   }
   function render() {
     w.setTitle(title || locationName(current));
-    address.value = displayPath(current);
+    address.value = t(displayPath(current));
     renderSide();
     side.style.display = current === "fonts" ? "none" : "";
     const fontsMode = current === "fonts";

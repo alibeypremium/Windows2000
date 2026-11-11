@@ -157,3 +157,8 @@ Clipboard, recording, serial ports, media codecs, GPU, printing and external han
 - Çeviri, kaynak kodundaki İngilizce metinlere dokunmadan çalışma anında (`packages/ui/i18n.js`, sözlükler `packages/ui/tr/`) uygulanır; İngilizceye dönüldüğünde özgün metinler geri yüklenir.
 - Saat Türkçe biçimde (24 saat) gösterilir.
 - Sınırlar: `.hlp` yardım içerikleri, Web/belge içeriği, terminal çıktısı, canvas içindeki metinler ve sözlükte olmayan nadir metinler İngilizce kalabilir.
+
+### Türkçe katmanı — kapsam notu
+- Menüler, iletişim kutusu şablonları (Denetim Masası, Outlook Express, Internet Explorer, MSN, WinRAR, ekran koruyucular, disk/sistem araçları vb.), sihirbazlar, oyunlar ve ipucu metinleri sözlük ve kurallarla (`packages/ui/tr/`) çevrilir; altı çizili kısayol harfi olan etiketler bütün olarak çevrilir.
+- Windows Araçları sihirbazının yan paneli için Türkçe görsel (`assets/wintools/side.tr.png`, `scripts/make-wintools-art.py`) kullanılır.
+- Ürün adları (Winamp, VLC, WinRAR…), yazı tipi adları, dosya yolları ve kayıt defteri anahtarları özgün haliyle kalır.

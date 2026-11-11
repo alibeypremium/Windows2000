@@ -50,15 +50,29 @@ function doAttrs(el) {
     else if (rec) m.delete(a);
   }
 }
+// Labels split by an accelerator underline (<u>N</u>ame:) are translated as one whole label.
+const mnRec = new WeakMap();
+function doMn(el) {
+  if (mnRec.has(el) || !el.querySelector?.(":scope > u")) return false;
+  for (const c of el.childNodes) if (c.nodeType !== 3 && c.nodeName !== "U") return false;
+  const label = el.textContent, r = t(label);
+  if (r === label) return false;
+  mnRec.set(el, { kids: [...el.childNodes], tr: r });
+  el.replaceChildren(document.createTextNode(r));
+  return true;
+}
 function walk(root) {
-  if (root.nodeType === 3) { if (!root.parentElement?.closest(SKIP)) doText(root); return; }
+  if (root.nodeType === 3) { const p = root.parentElement; if (!p?.closest(SKIP)) { if (p && doMn(p)) return; doText(root); } return; }
   if (root.nodeType !== 1 || root.matches?.(SKIP) || root.closest?.(SKIP)) return;
+  if (doMn(root)) return;
   doAttrs(root);
   for (const c of root.childNodes) walk(c);
 }
 function restore(root) {
   if (root.nodeType === 3) { const r = textRec.get(root); if (r && root.nodeValue === r.t) root.nodeValue = r.o; textRec.delete(root); return; }
   if (root.nodeType !== 1) return;
+  const mr = mnRec.get(root);
+  if (mr) { if (root.textContent === mr.tr) root.replaceChildren(...mr.kids); mnRec.delete(root); }
   const m = attrRec.get(root);
   if (m) { for (const [a, r] of m) if (root.getAttribute(a) === r.t) root.setAttribute(a, r.o); attrRec.delete(root); }
   for (const c of root.childNodes) restore(c);
@@ -76,6 +90,13 @@ function start() {
   walk(document.body);
 }
 export const getLang = () => lang;
+// Label with an accelerator-underlined first letter: translated labels are used whole (no underline).
+export function mn(label, doc = document) {
+  const tr = t(label);
+  if (tr !== label) return [tr];
+  const u = doc.createElement("u"); u.textContent = label[0];
+  return [u, label.slice(1)];
+}
 export function setLang(l) {
   if (l === lang) return;
   lang = l;

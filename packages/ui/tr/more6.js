@@ -1,0 +1,8 @@
+// Turkish strings: leftovers found by runtime crawl.
+export const MORE6 = {
+  "Compact Disc\n(D:)": "Kompakt Disk\n(D:)", "Turkish": "Türkçe", "Row": "Satır", "REC": "KAY", "TRK": "İZL", "EXT": "GEN", "OVR": "ÜYZ", "NUM": "NUM", "Get Next 300 Headers": "Sonraki 300 Başlığı Al", "Normal": "Normal", "Video": "Video",
+  "This wizard brings files and settings into this computer, or takes them out: Word documents, PDFs, music, videos, the desktop layout, TV and radio links.\n\nImported files are kept in the Docs folder.": "Bu sihirbaz dosyaları ve ayarları bu bilgisayara getirir veya dışarı aktarır: Word belgeleri, PDF'ler, müzik, videolar, masaüstü düzeni, TV ve radyo bağlantıları.\n\nİçe aktarılan dosyalar Docs klasöründe tutulur.",
+  "Magnifier is intended to provide a minimum level of functionality for users with slight visual impairments. Most users with visual impairments will need a magnification utility program with higher functionality for daily use.": "Büyüteç, hafif görme bozukluğu olan kullanıcılara asgari düzeyde işlevsellik sağlamak için tasarlanmıştır. Görme bozukluğu olan kullanıcıların çoğu günlük kullanım için daha gelişmiş bir büyütme yardımcı programına ihtiyaç duyacaktır.",
+  "Unicode (UTF-8)": "Unicode (UTF-8)", "Web Audio": "Web Ses", "SW Synth": "SW Sentezleyici", "Windows Welcome — a desktop melody - Windows Media Player": "Windows Karşılama — bir masaüstü melodisi - Windows Media Player", "Windows 2000 - Tada": "Windows 2000 - Tada", "Mail.json": "Posta.json", "To Do.txt": "Yapılacaklar.txt", "Welcome.txt": "Hoş Geldiniz.txt",
+  "Şimdi Kaydol": "Şimdi Kaydol",
+};

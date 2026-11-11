@@ -1,3 +1,4 @@
+import { mn, getLang } from "../ui/i18n.js";
 import { el, button, icon, field, toolbar, statusBar, separator, popup } from "../ui/index.js";
 import { DOCS, downloadFile, pickFiles } from "../core/index.js";
 import { loadOeMenus, oeMenu } from "./oe-menu.js";
@@ -370,7 +371,7 @@ function openInbox(ctx) {
   }
   const welcomeBody = () => el("div", { class: "oe-welcome" }, im("banner", "oe-banner"), el("div", { class: "oe-feat", text: "Featuring" }), el("div", { class: "oe-featline" }),
     el("ul", {}, ...["E-mail and Newsgroups", "Multiple accounts and Identities", "HTML message support", "Address Book and directory services", "Offline synchronization", "Improved Inbox rules", "Message-level security", "Stationery and file attachments"].map((t) => el("li", {}, el("i"), t))),
-    el("div", { class: "oe-msn" }, im("msn"), el("p", {}, "Tired of sharing your e-", el("br"), "mail account with others", el("br"), "in your household? ", el("u", { text: "Get a" }), el("br"), el("u", { text: "free Hotmail account!" }), el("br"), "Then read your mail from", el("br"), "any place on earth. ", el("u", { text: "Click" }), el("br"), el("u", { text: "here to sign up" }), " right now!")));
+    el("div", { class: "oe-msn" }, im("msn"), el("p", {}, ...(getLang() === "tr" ? ["Hotmail hesabınızı evdeki", el("br"), "diğer kişilerle paylaşmaktan", el("br"), "bıktınız mı? ", el("u", { text: "Ücretsiz bir" }), el("br"), el("u", { text: "Hotmail hesabı alın!" }), el("br"), "Sonra postanızı dünyanın", el("br"), "her yerinden okuyun. ", el("u", { text: "Hemen" }), el("br"), el("u", { text: "kaydolmak için tıklayın" }), "!"] : ["Tired of sharing your e-", el("br"), "mail account with others", el("br"), "in your household? ", el("u", { text: "Get a" }), el("br"), el("u", { text: "free Hotmail account!" }), el("br"), "Then read your mail from", el("br"), "any place on earth. ", el("u", { text: "Click" }), el("br"), el("u", { text: "here to sign up" }), " right now!"]))));
 
   /* ------------------------------------------------------------- read window */
   const openRead = async (m) => {
@@ -469,7 +470,7 @@ function openInbox(ctx) {
   };
   loadOeMenus().then((mm) => w.setMenu(oeMenu(mm.main, cmd, { Help: [{ label: "Contents and Index", action: () => ctx.launch("help", { topic: "outlook" }) }, separator(), { label: "About Outlook Express", action: () => oeAbout(ctx) }] })));
   w.el.querySelector(":scope > .menu-bar")?.append(im("throbber", "throbber oe-throbber"), el("i", { class: "oe-mgrip" }));
-  contacts.append(el("div", { class: "oe-phead" }, el("span", {}, el("u", { text: "C" }), "ontacts"), el("i", { class: "oe-dd" }), el("b", { class: "oe-x", text: "×" })), cbody);
+  contacts.append(el("div", { class: "oe-phead" }, el("span", {}, ...mn("Contacts")), el("i", { class: "oe-dd" }), el("b", { class: "oe-x", text: "×" })), cbody);
   const hdr = (cls, inner) => el("div", { class: "oe-h " + cls }, ...inner);
   listEl.append(el("div", { class: "oe-lhead" }, hdr("h1", [im("hdr1")]), hdr("h2", [im("hdr2")]), hdr("h3", [im("hdr3")]), hdr("h4", [el("span", { text: "From" })]), hdr("h5", [el("span", { text: "Subject" })]), hdr("h6", [el("span", { text: "Received" }), el("i", { class: "oe-sort" })]), hdr("h7", [])), rowsEl);
   const sortArrow = listEl.querySelector(".oe-sort");

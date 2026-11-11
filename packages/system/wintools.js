@@ -1,3 +1,4 @@
+import { getLang } from "../ui/i18n.js";
 // Windows Tools — brings files and settings in and out of the virtual computer.
 // Look and layout: Wizard97 (the same engine and ISO templates as the Network Connection Wizard).
 // Everything imported from outside is kept in the Docs folder (UPLOADS).
@@ -100,7 +101,7 @@ export function openWindowsTools(ctx, args = {}) {
     {
       kind: "page", title: "Export Files", subtitle: "Tick the files you want to save to your computer.", skip: () => S.task !== "export",
       init: (_c, _s, _p, stage) => {
-        const where = el("select", { class: "wt-where", style: { position: "absolute", left: "70px", top: "90px", width: "250px", font: "11px Tahoma, sans-serif" } },
+        const where = el("select", { class: "wt-where", style: { position: "absolute", left: getLang() === "tr" ? "104px" : "70px", top: "90px", width: getLang() === "tr" ? "216px" : "250px", font: "11px Tahoma, sans-serif" } },
           el("option", { value: UPLOADS, text: "Docs" }), el("option", { value: DOCS, text: "My Documents" }), el("option", { value: DESKTOP, text: "Desktop" }));
         where.value = S.where;
         stage.append(text(13, 93, "Look in:"), where);
@@ -213,5 +214,5 @@ export function openWindowsTools(ctx, args = {}) {
     }
   };
 
-  return wizard97(ctx, { title: "Windows Tools", appId: "wintools", pages, state: S, onFinish, art: { side: "/assets/wintools/side.png", banner: "/assets/wintools/banner.png" } });
+  return wizard97(ctx, { title: "Windows Tools", appId: "wintools", pages, state: S, onFinish, art: { side: getLang() === "tr" ? "/assets/wintools/side.tr.png" : "/assets/wintools/side.png", banner: "/assets/wintools/banner.png" } });
 }
