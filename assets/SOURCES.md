@@ -568,3 +568,6 @@ Menus and dialogs are my own reconstruction in the Word 2000 style. The spelling
 
 ## MSN Messenger additions
 Contacts, organisations, replies and display pictures (packages/internet/msn-data.js) are my own fictional data; display pictures are generated SVG drawings. The nudge sound is synthesized with Web Audio (MSN 5.0 had no nudge; this feature is borrowed from later versions). Layouts follow the existing MSN 5.0 resources.
+
+## Media engine
+- Sample Docs subtitle/playlist files (Gün Batımı.srt, Yıldızlar.vtt, Favoriler.m3u) were written for this project. Winamp colour skins are CSS filters over the Webamp default skin.

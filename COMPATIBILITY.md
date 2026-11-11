@@ -15,7 +15,7 @@ This project recreates the Windows 2000 desktop interface and selected workflows
 | WordPad              | Partial | Rich text, lists, alignment, images, HTML export, .wdoc save.                    | Only custom .wdoc preserves formatting; RTF is basic text import.                    |
 | Paint                | Partial | Drawing, fill, shapes, selection, undo, transforms, import and PNG save.         | 4096×4096 limit; free-form selection uses a rectangle; curves/text simplified.       |
 | Calculator           | Partial | Arithmetic, memory, repeated equals and selected scientific functions.           | JavaScript numeric precision; incomplete original scientific/base/bitwise functions. |
-| Windows Media Player | Core    | Audio/video, seeking, playlist, repeat, speed and spectrum.                      | Uses browser codecs; no Windows codec DLLs or legacy DRM.                            |
+| Windows Media Player | Core    | Audio/video, seeking, playlist, repeat, speed and spectrum; plays all Docs media. | Uses browser codecs; no Windows codec DLLs or legacy DRM.                            |
 | CD Player            | Adapter | Imported-audio playback with CD Player title.                                    | No physical audio CD or CD-ROM access.                                               |
 | Sound Recorder       | Partial | Microphone capture, playback and PCM WAV save with dirty guards.                 | Permission/codecs apply; playback-speed effects do not rewrite saved audio.          |
 | Volume Control       | Partial | Desktop master/wave level, mute and stereo balance where supported.              | Controls app audio, not the host OS mixer or independent hardware channels.          |
@@ -63,3 +63,9 @@ The UI uses Windows 2000-era colors, square beveled controls, title gradients, c
 Files use IndexedDB; settings use localStorage. The JSON filesystem backup contains files/folders and registry data, but not separate settings, task definitions or browser permissions. Multiple desktop windows share serialized writes; stale writes from another tab are rejected instead of merged. Large imported media consumes extra memory/storage because it is retained as data URLs and committed in full-volume snapshots.
 
 Clipboard, recording, serial ports, media codecs, GPU, printing and external handlers depend on browser support and permissions. Embedded websites can refuse frames. Scheduled tasks require a live page. Offline use requires relevant resources to have been cached. This implementation does not turn browser storage into a native protected filesystem.
+
+## Media players — shared media engine (`packages/accessories/media-engine.js`)
+- VLC, DivX Player and Winamp use one engine: Docs-folder media (`sourceFor`, `mediaFiles`), 10-band equalizer with presets (settings `mediaEq`, shared by VLC/DivX), subtitle parsing (SRT/VTT/MicroDVD) with automatic loading of a sibling subtitle file. Winamp uses Webamp's own EQ and playlist editor.
+- VLC: real Media/Playback/Audio/Video/View/Settings menus, playlist window (drag-reorder, M3U/PLS open/save, Add Folder), Adjustments and Effects (equalizer with live spectrum, video effects, subtitle delay), Preferences, subtitle loading.
+- DivX Player: subtitles, equalizer menu, 4 colour skins. Winamp: Alt+S skin browser (7 colour skins via CSS filter, not .wsz files), Docs files in the add-file menu, `.m3u/.pls` open in VLC.
+- Limitation: Winamp colour skins recolour the default skin; the playlist text keeps its green colour.

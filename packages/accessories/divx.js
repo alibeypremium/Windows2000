@@ -1,6 +1,7 @@
 // DivX Player 5.x look-alike. Playback uses the browser's HTML5 media engine; the DivX codec itself is not available.
 import { el, popup } from "../ui/index.js";
 import { basename, normalizePath, pickFiles, DOCS } from "../core/index.js";
+import { sourceFor, AudioChain, loadEq, saveEq, EQ_PRESETS, siblingSubtitles, loadSubtitleFile } from "./media-engine.js";
 
 const fmt = (s) => {
   if (!isFinite(s) || s < 0) s = 0;
@@ -34,11 +35,13 @@ const LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 100" widt
 export function openDivX(ctx, { path = null } = {}) {
   const w = ctx.wm.create({ title: "DivX Player™", icon: "divx", width: 460, height: 322, x: 170, y: 60, appId: "divx", maximizable: false, className: "dx-window" });
   const st = Object.assign({ volume: 80, recent: [] }, ctx.settings.get("divx") || {});
-  let list = [], idx = -1, muted = false, blobUrl = null, current = null;
+  let list = [], idx = -1, muted = false, blobUrl = null, current = null, track = null, chain = null;
+  const eq = loadEq(ctx);
   const video = el("video", { class: "dx-video", playsinline: "true" });
   const logo = el("div", { class: "dx-logo" });
   logo.innerHTML = LOGO;
-  const screen = el("div", { class: "dx-screen" }, logo, video);
+  const subEl = el("div", { class: "vlc-sub dx-sub" });
+  const screen = el("div", { class: "dx-screen" }, logo, video, subEl);
   const seek = el("input", { class: "dx-seek", type: "range", min: "0", max: "1000", value: "0", "aria-label": "Seek" });
   const vol = el("input", { class: "dx-vol", type: "range", min: "0", max: "100", value: String(st.volume), "aria-label": "Volume" });
   const tCur = el("span", { text: "00:00:00" }), tTot = el("span", { text: "00:00:00" });
@@ -48,19 +51,14 @@ export function openDivX(ctx, { path = null } = {}) {
   const err = (m) => ctx.dialogs.message(m, { title: "DivX Player", icon: "error" });
   const saveSt = () => ctx.settings.set("divx", st);
 
-  const applyVolume = () => { video.volume = muted ? 0 : st.volume / 100; vol.value = String(muted ? 0 : st.volume); speaker.replaceChildren(gi(muted || st.volume === 0 ? "mute" : "vol", 16)); };
+  const applyVolume = () => { video.volume = muted ? 0 : st.volume / 100; chain?.apply(eq); vol.value = String(muted ? 0 : st.volume); speaker.replaceChildren(gi(muted || st.volume === 0 ? "mute" : "vol", 16)); };
   const tick = () => {
+    const c = track?.at(video.currentTime); subEl.textContent = c || ""; subEl.style.display = c ? "" : "none";
     tCur.textContent = fmt(video.currentTime);
     tTot.textContent = fmt(video.duration);
     if (isFinite(video.duration) && video.duration > 0 && document.activeElement !== seek) seek.value = String(Math.round((video.currentTime / video.duration) * 1000));
   };
-  const sourceUrl = async (e) => {
-    if (e.file) return { url: URL.createObjectURL(e.file), blob: true };
-    if (e.url) return { url: e.url, blob: false };
-    const c = ctx.fs.stat(e.path).content || "";
-    if (/^data:/.test(c)) return { url: URL.createObjectURL(await (await fetch(c)).blob()), blob: true };
-    throw new Error("This file does not contain playable media.");
-  };
+  const sourceUrl = (e) => sourceFor(ctx, e);
   const remember = (e) => {
     if (!e.path && !e.url) return;
     st.recent = [{ title: e.title, path: e.path, url: e.url }, ...st.recent.filter((r) => (r.path || r.url) !== (e.path || e.url))].slice(0, 5);
@@ -73,7 +71,10 @@ export function openDivX(ctx, { path = null } = {}) {
       const { url, blob } = await sourceUrl(current);
       if (blobUrl) URL.revokeObjectURL(blobUrl);
       blobUrl = blob ? url : null;
-      video.src = url; applyVolume();
+      video.src = url; track = null; subEl.textContent = "";
+      if (blob && !chain) { chain = new AudioChain(video); chain.attach(); }
+      applyVolume();
+      if (current.path) { const f = siblingSubtitles(ctx, current.path); if (f[0]) try { track = loadSubtitleFile(ctx, f[0]); } catch { /* ignore */ } }
       await video.play();
       logo.style.display = "none";
       remember(current);
@@ -83,7 +84,7 @@ export function openDivX(ctx, { path = null } = {}) {
       await err(`DivX Player cannot play '${current.title}'.\n\nThe video or audio format is not supported (the DivX codec is not available in this browser version).`);
     }
   };
-  const stop = () => { video.pause(); video.removeAttribute("src"); video.load(); logo.style.display = ""; seek.value = "0"; tCur.textContent = "00:00:00"; tTot.textContent = "00:00:00"; w.setTitle("DivX Player™"); };
+  const stop = () => { track = null; subEl.textContent = ""; video.pause(); video.removeAttribute("src"); video.load(); logo.style.display = ""; seek.value = "0"; tCur.textContent = "00:00:00"; tTot.textContent = "00:00:00"; w.setTitle("DivX Player™"); };
   const toggle = () => { if (!video.src) return list.length ? playIndex(Math.max(idx, 0)) : openFile(); video.paused ? video.play() : video.pause(); };
   const next = () => list.length && playIndex((idx + 1) % list.length), prev = () => list.length && playIndex((idx - 1 + list.length) % list.length);
   const add = (e, play) => { list.push(e); if (play) playIndex(list.length - 1); };
@@ -96,13 +97,21 @@ export function openDivX(ctx, { path = null } = {}) {
   const about = () => ctx.dialogs.message("DivX® Player 5.x\n\nDivX is a trademark of DivX, Inc. This is a browser re-creation; playback uses the formats your browser supports.", { title: "About DivX Player", icon: "divx" });
   const note = (m) => ctx.dialogs.message(m, { title: "DivX Player", icon: "info" });
 
+  const SKINS = [["default", "DivX Player Default"], ["night", "Night"], ["silver", "Silver"], ["sunset", "Sunset"]];
+  const setSkin = (id) => { st.skin = id; saveSt(); w.el.dataset.dxSkin = id; };
+  const loadSubs = async () => {
+    const p = await ctx.dialogs.file({ mode: "open", path: DOCS, title: "Load Subtitles", types: [["Subtitles (*.srt;*.vtt;*.sub)", ["srt", "vtt", "sub"]]] });
+    if (p) { try { track = loadSubtitleFile(ctx, p); } catch (e) { err("Could not read the subtitle file."); } return; }
+  };
   const menuItems = () => [
     { label: "Open...", shortcut: "Ctrl+O", action: openFile },
     { label: "Open URL...", action: openUrl },
     { label: "Open Recent File", submenu: () => (st.recent.length ? st.recent.map((r) => ({ label: r.title, action: () => add(r, true) })) : [{ label: "(empty)", disabled: true }]) },
     { separator: true },
     { label: "Show Playback Properties", shortcut: "Alt+P", disabled: !current, action: info },
-    { label: "Choose Player Skin...", action: () => note("The skin 'DivX Player Default' is the only skin installed.") },
+    { label: "Load Subtitles...", action: loadSubs },
+    { label: "Remove Subtitles", disabled: !track, action: () => { track = null; subEl.textContent = ""; } },
+    { label: "Choose Player Skin", submenu: SKINS.map(([id, n]) => ({ label: n, checked: (st.skin || "default") === id, action: () => setSkin(id) })) },
     { separator: true },
     { label: "Playback", submenu: [
       { label: video.paused ? "Play" : "Pause", action: toggle }, { label: "Stop", action: stop },
@@ -118,7 +127,7 @@ export function openDivX(ctx, { path = null } = {}) {
       { label: "16:9", action: () => setAspect("16:9") },
     ] },
     { separator: true },
-    { label: "Preferences...", shortcut: "Ctrl+P", action: () => note("DivX Player preferences are not available in this browser version.") },
+    { label: "Equalizer", submenu: [{ label: eq.on ? "Turn off" : "Turn on", action: () => { eq.on = !eq.on; saveEq(ctx, eq); applyVolume(); } }, { separator: true }, ...Object.keys(EQ_PRESETS).map((n) => ({ label: n, checked: eq.on && eq.preset === n, action: () => { eq.on = true; eq.preset = n; eq.bands = [...EQ_PRESETS[n]]; saveEq(ctx, eq); applyVolume(); } }))] },
     { separator: true },
     { label: "DivX Video on Demand", submenu: [{ label: "Register this player...", action: () => note("DivX Video on Demand requires an internet connection to the DivX servers.") }, { label: "About DivX VOD...", action: () => note("DivX Video on Demand is not available offline.") }] },
     { separator: true },
@@ -161,7 +170,7 @@ export function openDivX(ctx, { path = null } = {}) {
     else if (e.altKey && k === "p" && current) { e.preventDefault(); info(); }
   });
   w.onClose = () => { try { video.pause(); if (blobUrl) URL.revokeObjectURL(blobUrl); } catch { /* ignore */ } return true; };
-  applyVolume();
+  setSkin(st.skin || "default"); applyVolume();
   if (path && ctx.fs.exists(path)) add({ title: basename(path), path: normalizePath(path) }, true);
   return w;
 }

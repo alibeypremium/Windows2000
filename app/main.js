@@ -219,7 +219,7 @@ ctx.apps = [
     name: "Winamp",
     icon: "winamp",
     aliases: ["winamp.exe"],
-    open: (ctx) => openWinamp(ctx),
+    open: (ctx, args) => openWinamp(ctx, args || {}),
   },
   {
     id: "acrobat",
@@ -511,6 +511,7 @@ ctx.openFile = async (path) => {
     /^(audio|video)\//.test(node.mime)
   )
     return ctx.launch("mediaplayer", { path });
+  if (["m3u", "m3u8", "pls"].includes(ext)) return ctx.launch("vlc", { path });
   if (["zip", "rar"].includes(ext)) return ctx.launch("winrar", { path });
   if (ext === "pdf" || node.mime === "application/pdf") return ctx.launch("acrobat", { path });
   if (["html", "htm"].includes(ext)) return ctx.launch("ie", { path });
@@ -608,9 +609,9 @@ ctx.printImage = (data) => {
   printHTML('<img src="' + escapeHTML(data) + '">');
 };
 async function seedSampleDocs() {
-  if (settings.get("samples.docs.v1")) return;
+  if (settings.get("samples.docs.v2")) return;
   const desk = "C:/Documents and Settings/Administrator/Desktop";
-  const names = ["Güzel Sözler.txt", "Mektup.wdoc", "ayarlar.json", "Gün Batımı.png", "Ay Işığı.png", "Hayat Rehberi.pdf", "Sabah Melodisi.mp3", "Gece Rüyası.ogg", "Zil.wav", "Gün Batımı.mp4", "Yıldızlar.webm"];
+  const names = ["Güzel Sözler.txt", "Mektup.wdoc", "ayarlar.json", "Gün Batımı.png", "Ay Işığı.png", "Hayat Rehberi.pdf", "Sabah Melodisi.mp3", "Gece Rüyası.ogg", "Zil.wav", "Gün Batımı.mp4", "Yıldızlar.webm", "Gün Batımı.srt", "Yıldızlar.vtt", "Favoriler.m3u"];
   try {
     if (!fs.exists(desk + "/Docs")) await fs.mkdir(desk + "/Docs");
     for (const n of names) {
@@ -618,7 +619,7 @@ async function seedSampleDocs() {
       const r = await fetch("/assets/samples/Docs/" + encodeURIComponent(n));
       if (r.ok) await fs.importFile(new File([await r.blob()], n, { type: r.headers.get("content-type") || "" }), desk + "/Docs");
     }
-    settings.set("samples.docs.v1", true);
+    settings.set("samples.docs.v2", true);
   } catch (e) { console.warn("sample docs", e); }
 }
 async function start() {
