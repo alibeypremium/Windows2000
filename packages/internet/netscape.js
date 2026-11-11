@@ -1,5 +1,8 @@
 import { el, button, icon, popup, menuBar, separator } from "../ui/index.js";
 import { basename } from "../core/index.js";
+import { NAV_SCRIPT, googleHome, googleResults, youtubeHome, youtubeWatch, newsPage } from "./netscape-sites.js";
+import { loadBM, saveBM, bookmarkItems, addBookmark, folderChoices, openBookmarkWindow } from "./netscape-bm.js";
+import { recordVisit, setVisitTitle, expireHistory, openHistoryWindow, openPageInfo, openPreferences } from "./netscape-tools.js";
 
 const IMG = "/assets/ui/netscape/";
 const TITLE = "Netscape";
@@ -10,7 +13,7 @@ const normalize = (input) => {
   if (!t) return "about:home";
   if (/^(about:|https?:\/\/|file:|[A-Z]:[\\/])/i.test(t)) return t;
   if (t.includes(".") && !t.includes(" ")) return "http://" + t;
-  return "https://www.google.com/search?q=" + encodeURIComponent(t);
+  return "about:search?q=" + encodeURIComponent(t);
 };
 
 const HOME_HTML = `<!DOCTYPE html><html><head><title>Netscape Netcenter</title><style>
@@ -25,10 +28,10 @@ a{color:#0000cc}li{margin:3px 0}ul{padding-left:18px;margin:6px 0}
 .ft{border-top:1px solid #999;margin:10px 14px;padding-top:6px;font-size:11px;color:#444}
 </style></head><body>
 <div class="hd">Netscape <small>Netcenter</small></div>
-<div class="nav"><a href="about:home">Home</a><a href="about:plugins">Plug-ins</a><a href="about:license">License</a><a href="about:netscape">About</a></div>
+<div class="nav"><a href="about:home">Home</a><a href="about:google">Google</a><a href="about:youtube">YouTube</a><a href="about:news">News</a><a href="about:plugins">Plug-ins</a><a href="about:license">License</a><a href="about:netscape">About</a></div>
 <div class="cols">
 <div class="c"><h3>Search</h3><p>Type an address in the Location box, or enter a word or phrase to search the Web.</p>
-<ul><li><a href="https://www.wikipedia.org/">Wikipedia</a></li><li><a href="https://archive.org/">The Internet Archive</a></li><li><a href="https://web.archive.org/">Wayback Machine</a></li></ul></div>
+<ul><li><a href="about:google">Google</a></li><li><a href="about:youtube">YouTube</a></li><li><a href="about:news">News Reader</a></li><li><a href="https://www.wikipedia.org/">Wikipedia</a></li><li><a href="https://archive.org/">The Internet Archive</a></li><li><a href="https://web.archive.org/">Wayback Machine</a></li></ul></div>
 <div class="c"><h3>Make This Your Home Page</h3><p>Use <b>Edit &gt; Preferences</b> to choose the page Netscape shows when it starts.</p>
 <ul><li><a href="http://home.netscape.com/">home.netscape.com</a></li><li><a href="https://www.microsoft.com/">microsoft.com</a></li></ul></div>
 <div class="c"><h3>Chat with your friends</h3><p>Instant Messenger lets you talk to friends online.</p>
@@ -60,6 +63,8 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
   let current = "about:home";
   let hist = [],
     idx = -1,
+    loadedAt = Date.now(),
+    token = 0,
     title = "Netscape Netcenter",
     loading = false,
     timer = null,
@@ -81,23 +86,69 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
     syncNav();
   };
 
+  const visited = (t) => {
+    recordVisit(ctx, current, t);
+    if (hist[idx]) hist[idx].title = t || current;
+    ctx.settings.set("nsLast", current);
+  };
   const setTitle = (t) => {
     title = t;
     w.setTitle(t ? `${TITLE} - [${t}]` : TITLE);
   };
 
-  const pages = { "about:home": HOME_HTML, "about:netscape": ABOUT_HTML, "about:license": ABOUT_HTML, "about:plugins": ABOUT_HTML.replace("About Netscape", "About Plug-ins") };
+  const withNav = (h) => h.replace("</body>", NAV_SCRIPT + "</body>");
+  const pages = { "about:home": withNav(HOME_HTML), "about:netscape": withNav(ABOUT_HTML), "about:license": withNav(ABOUT_HTML), "about:plugins": withNav(ABOUT_HTML.replace("About Netscape", "About Plug-ins")) };
+  let dynamic = null; // html of the current generated page (google, youtube, news)
+
+  const SITE_TITLES = { "about:google": "Google", "about:youtube": "YouTube - Broadcast Yourself.", "about:news": "News Reader" };
+  async function buildSite(u) {
+    const [base, qs] = u.split("?"), p = new URLSearchParams(qs || "");
+    if (base === "about:google") return { html: googleHome(), title: "Google" };
+    if (base === "about:search") {
+      const r = await googleResults(p.get("q"), p.get("lang") || "en", p.has("lucky"));
+      if (r.first) return { go: r.first };
+      return { html: r.html, title: p.get("q") ? `Google Search: ${p.get("q")}` : "Google" };
+    }
+    if (base === "about:youtube") return { html: youtubeHome(), title: SITE_TITLES[base] };
+    if (base === "about:watch") return { html: youtubeWatch(p.get("v")), title: "YouTube" };
+    if (base === "about:youtube-search") return { external: "https://www.youtube.com/results?search_query=" + encodeURIComponent(p.get("q") || ""), keep: true };
+    if (base === "about:news") return { html: newsPage(p.get("s") || "bbc"), title: "News Reader" };
+    return null;
+  }
+  const isSite = (u) => /^about:(google|search|youtube|watch|youtube-search|news)(\?|$)/.test(u);
 
   function render() {
     viewport.replaceChildren();
     address.value = current === "about:home" ? "" : current;
     const mk = (props) => el("iframe", { class: "ns-frame", ...props });
+    loadedAt = Date.now();
+    if (isSite(current)) {
+      const my = ++token;
+      msg.textContent = "Connecting to " + current.replace("about:", "") + "...";
+      setLoading(true);
+      buildSite(current).then((r) => {
+        if (my !== token) return;
+        setLoading(false);
+        if (!r) return;
+        if (r.go) { current = r.go; hist[idx] = { url: current, title: "" }; return render(); }
+        if (r.external) { window.open(r.external, "_blank", "noopener,noreferrer"); msg.textContent = "Opened in your browser"; back(); return; }
+        const f = mk({ sandbox: "allow-scripts allow-forms", title: r.title });
+        f.srcdoc = r.html;
+        viewport.replaceChildren(f);
+        setTitle(r.title);
+        msg.textContent = "Document: Done";
+        visited(r.title);
+      });
+      syncNav();
+      return;
+    }
     if (pages[current] || current === "about:blank") {
-      const f = mk({ sandbox: "allow-forms", title: "Document" });
+      const f = mk({ sandbox: "allow-scripts allow-forms", title: "Document" });
       f.srcdoc = current === "about:blank" ? "" : pages[current];
       viewport.append(f);
       setTitle(current === "about:home" ? "Netscape Netcenter" : current === "about:blank" ? "" : current.replace("about:", "About "));
       msg.textContent = "Document: Done";
+      visited(title);
       syncNav();
       return;
     }
@@ -111,6 +162,7 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
       viewport.append(f);
       setTitle(basename(current));
       msg.textContent = "Document: Done";
+      visited(title);
       syncNav();
       return;
     }
@@ -122,6 +174,7 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
       return;
     }
     setTitle(u.hostname);
+    visited(u.hostname);
     msg.textContent = `Connecting to ${u.hostname}...`;
     setLoading(true);
     ctx.bus?.emit?.("network:activity");
@@ -144,13 +197,14 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
     current = normalize(target);
     if (push) {
       hist = hist.slice(0, idx + 1);
-      hist.push(current);
+      hist.push({ url: current, title: "" });
       idx = hist.length - 1;
     }
     render();
   };
-  const back = () => idx > 0 && ((current = hist[--idx]), render());
-  const fwd = () => idx < hist.length - 1 && ((current = hist[++idx]), render());
+  const jump = (i) => { if (i < 0 || i >= hist.length) return; idx = i; current = hist[i].url; render(); };
+  const back = () => jump(idx - 1);
+  const fwd = () => jump(idx + 1);
   const home = () => go(ctx.settings.get("nsHome") || "about:home");
   const stop = () => {
     viewport.querySelector("iframe")?.remove();
@@ -201,6 +255,7 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
       off("Offline"),
       separator(),
       off("Page Setup..."),
+      { label: "Open Page in Real Browser", action: external },
       { label: "Print Preview", disabled: true },
       { label: "Print...", shortcut: "Ctrl+P", action: () => ctx.printText?.(viewport.innerText || "", current) },
       separator(),
@@ -220,7 +275,7 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
       { label: "Find in Page...", shortcut: "Ctrl+F", action: async () => { const t = await ctx.dialogs.prompt("Find:", "", { title: "Find" }); if (t) window.find(t); } },
       off("Find Again", { shortcut: "Ctrl+G" }),
       separator(),
-      { label: "Preferences...", action: async () => { const t = await ctx.dialogs.prompt("Home page location:", ctx.settings.get("nsHome") || "about:home", { title: "Preferences" }); if (t) ctx.settings.set("nsHome", t); } },
+      { label: "Preferences...", action: () => openPreferences(ctx, { onApply: applyPrefs }) },
     ],
     View: [
       { label: "Show", submenu: [{ label: "Navigation Toolbar", checked: true }, { label: "Location Toolbar", checked: true }, { label: "Personal Toolbar", checked: true }] },
@@ -234,7 +289,7 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
       { label: "Stop Page Loading", shortcut: "Esc", action: stop },
       separator(),
       { label: "Page Source", shortcut: "Ctrl+U", action: viewSource },
-      off("Page Info", { shortcut: "Ctrl+I" }),
+      { label: "Page Info", shortcut: "Ctrl+I", action: () => openPageInfo(ctx, { url: current, title, loadedAt }) },
       separator(),
       { label: "Encoding", submenu: [{ label: "Western (ISO-8859-1)", checked: true }, { label: "Unicode (UTF-8)" }] },
     ],
@@ -243,9 +298,9 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
       { label: "Forward", shortcut: "Alt+Right", disabled: idx >= hist.length - 1, action: fwd },
       { label: "Home", action: home },
       separator(),
-      ...hist.slice(-9).reverse().map((h, i) => ({ label: `${i + 1}  ${h}`, action: () => go(h) })),
+      ...histItems(),
     ],
-    Communicator: [
+    Communicator: () => [
       { label: "Navigator", shortcut: "Ctrl+1", checked: true },
       { label: "Messenger Mailbox", shortcut: "Ctrl+2", action: () => ctx.launch("outlook") },
       off("Collabra Discussions", { shortcut: "Ctrl+3" }),
@@ -253,11 +308,11 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
       off("Conference"),
       separator(),
       off("Show Component Bar"),
-      off("Bookmarks"),
-      off("History"),
+      { label: "Bookmarks", submenu: bmMenu() },
+      { label: "History", shortcut: "Ctrl+H", action: () => openHistoryWindow(ctx, { go }) },
       separator(),
       off("Java Console"),
-      off("Security Info"),
+      { label: "Security Info", action: () => bSec.click() },
     ],
     Help: [
       off("Help Contents"),
@@ -271,39 +326,82 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
   });
 
   const bookmarksBtn = el("button", { class: "ns-bm", type: "button", title: "Bookmarks" }, el("img", { src: IMG + "bookmarks.png", alt: "", draggable: "false" }));
-  const bms = () => ctx.settings.get("nsBookmarks") || [
-    { title: "Netscape Netcenter", url: "about:home" },
-    { title: "Wikipedia", url: "https://www.wikipedia.org/" },
-    { title: "The Internet Archive", url: "https://archive.org/" },
+  const bmMenu = () => [
+    { label: "Add Bookmark", shortcut: "Ctrl+D", action: () => addBookmark(ctx, title || current, current) },
+    { label: "File Bookmark", submenu: folderChoices(ctx, title || current, current) },
+    { label: "Edit Bookmarks...", shortcut: "Ctrl+B", action: () => openBookmarkWindow(ctx, { go, current }) },
+    separator(),
+    ...bookmarkItems(ctx, loadBM(ctx), go),
   ];
   bookmarksBtn.addEventListener("click", () => {
     const r = bookmarksBtn.getBoundingClientRect();
-    popup([
-      { label: "Add Bookmark", shortcut: "Ctrl+D", action: () => ctx.settings.set("nsBookmarks", [...bms(), { title, url: current }]) },
-      off("File Bookmark"),
-      off("Edit Bookmarks...", { shortcut: "Ctrl+B" }),
-      separator(),
-      ...bms().map((b) => ({ label: b.title || b.url, icon: "nshtml", action: () => go(b.url) })),
-    ], r.left, r.bottom, { anchor: bookmarksBtn });
+    popup(bmMenu(), r.left, r.bottom, { anchor: bookmarksBtn });
   });
+  const histItems = () => {
+    const from = Math.max(0, hist.length - 10);
+    return hist.slice(from).map((h, i) => ({ label: `${hist.length - from - i}  ${h.title || h.url}`, checked: from + i === idx, action: () => jump(from + i) })).reverse();
+  };
+  const listMenu = (btn, dir) => (e) => {
+    e.preventDefault();
+    if (btn.classList.contains("disabled")) return;
+    const items = [];
+    for (let i = idx + dir; i >= 0 && i < hist.length && items.length < 15; i += dir) { const j = i; items.push({ label: hist[j].title || hist[j].url, action: () => jump(j) }); }
+    const r = btn.getBoundingClientRect();
+    popup(items, e.clientX || r.left, e.clientY || r.bottom);
+  };
+  bBack.addEventListener("contextmenu", listMenu(bBack, -1));
+  bFwd.addEventListener("contextmenu", listMenu(bFwd, 1));
+  let holdT = null;
+  for (const [b, d] of [[bBack, -1], [bFwd, 1]]) {
+    b.addEventListener("pointerdown", (e) => { if (e.button === 0) holdT = setTimeout(() => { holdT = null; b.dataset.held = "1"; listMenu(b, d)(e); }, 600); });
+    b.addEventListener("pointerup", () => holdT && (clearTimeout(holdT), (holdT = null)));
+    b.addEventListener("click", (e) => { if (b.dataset.held) { delete b.dataset.held; e.stopImmediatePropagation(); } }, true);
+  }
 
   const personal = (label, action) => button([el("img", { src: "/assets/icons/nshtml-16x16.png", alt: "", width: 16, height: 16 }), el("span", { text: label })], action, { class: "ns-pt" });
 
   const nav = el("div", { class: "ns-bar ns-nav" }, el("span", { class: "ns-grip" }), bBack, bFwd, bReload, bHome, bSearch, bNs, bPrint, bSec, bStop, el("span", { class: "ns-spacer" }), throbber);
   const loc = el("div", { class: "ns-bar ns-loc" }, el("span", { class: "ns-grip" }), bookmarksBtn, el("span", { class: "ns-loc-label", text: "Location:" }), el("div", { class: "ns-loc-field" }, el("img", { src: "/assets/icons/nshtml-16x16.png", alt: "", draggable: "false" }), address), el("img", { class: "ns-related", src: IMG + "related.png", alt: "What's Related", draggable: "false" }));
-  const pers = el("div", { class: "ns-bar ns-pers" }, el("span", { class: "ns-grip" }), personal("Internet", () => go("about:home")), personal("Lookup", () => go("about:home")), personal("New&Cool", () => go("about:netscape")));
+  const pers = el("div", { class: "ns-bar ns-pers" }, el("span", { class: "ns-grip" }), personal("Internet", () => go("about:home")), personal("Lookup", () => go("about:google")), personal("New&Cool", () => go("about:youtube")), personal("News", () => go("about:news")));
   const status = el("div", { class: "ns-status" }, el("img", { src: IMG + "st-lock.png", alt: "", draggable: "false" }), msg, el("img", { class: "ns-comp", src: IMG + "st-comp.png", alt: "", draggable: "false" }));
 
   w.setContent(menus, nav, loc, pers, viewport, status);
-  w.onClose = () => { clearInterval(timer); return true; };
+  w.onClose = () => { clearInterval(timer); window.removeEventListener("message", onMsg); return true; };
 
-  address.addEventListener("keydown", (e) => e.key === "Enter" && go(address.value));
+  const applyPrefs = () => {
+    const m = ctx.settings.get("nsToolbar") || "both";
+    nav.classList.toggle("ns-textonly", m === "text");
+    nav.classList.toggle("ns-picsonly", m === "pictures");
+    expireHistory(ctx);
+  };
+  const typed = () => ctx.settings.get("nsTyped") || [];
+  const list = el("datalist", { id: "ns-typed-" + Math.random().toString(36).slice(2) });
+  address.setAttribute("list", list.id);
+  const refreshTyped = () => list.replaceChildren(...typed().map((t) => el("option", { value: t })));
+  refreshTyped();
+  loc.append(list);
+  address.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter") return;
+    const v = address.value.trim();
+    if (v && /^(https?:|[a-z0-9-]+\.[a-z]{2,})/i.test(v)) ctx.settings.set("nsTyped", [v, ...typed().filter((x) => x !== v)].slice(0, 20));
+    refreshTyped();
+    go(address.value);
+  });
+  const onMsg = (e) => {
+    const f = viewport.querySelector("iframe");
+    if (!f || e.source !== f.contentWindow || e.data?.ns !== "go") return;
+    if (e.data.ext) window.open(e.data.url, "_blank", "noopener,noreferrer");
+    else go(String(e.data.url));
+  };
+  window.addEventListener("message", onMsg);
+  applyPrefs();
   throbber.addEventListener("click", () => home());
   w.el.addEventListener("keydown", (e) => {
     if (e.key === "Escape") stop();
     if (e.ctrlKey && e.key.toLowerCase() === "r") { e.preventDefault(); render(); }
   });
-  const first = path || url || ctx.settings.get("nsHome") || "about:home";
+  const startMode = ctx.settings.get("nsStart") || "home";
+  const first = path || url || (startMode === "blank" ? "about:blank" : startMode === "last" ? ctx.settings.get("nsLast") || ctx.settings.get("nsHome") : ctx.settings.get("nsHome")) || "about:home";
   go(first);
   return w;
 }
