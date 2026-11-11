@@ -8,14 +8,18 @@ import {
   field,
   checkbox,
   safely,
+  popup,
 } from "../ui/index.js";
 import {
+  normalizePath,
   basename,
   extension,
   downloadFile,
   pickFiles,
   DOCS,
 } from "../core/index.js";
+import { openChannelList } from "./channel-list.js";
+import { sourceFor, siblingSubtitles, loadSubtitleFile, subtitleFromFile, SUB_RE, loadHls, isHls, parseM3U, fetchPlaylistText, isHlsManifest } from "./media-engine.js";
 import { wmpOpen, wmpAbout, wmpStats, wmpProps, wmpOptions } from "./wmp-dialogs.js";
 export function encodeWav(channels, sampleRate) {
   const length = channels[0].length,
@@ -91,7 +95,11 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
     analyser = null,
     panner = null,
     source = null,
-    raf = 0;
+    raf = 0,
+    hls = null,
+    tracks = [],
+    curSub = null,
+    chList = null;
   const video = el("video", {
       class: "media-video",
       playsinline: true,
@@ -103,6 +111,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
       height: 245,
       "aria-label": "Audio visualization",
     }),
+    subEl = el("div", { class: "wmp-sub" }),
     canvasCtx = visual.getContext("2d"),
     title = el("div", { class: "media-now-playing", text: "Windows Welcome" }),
     seek = el("input", {
@@ -135,18 +144,42 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
       : String(Math.floor(s / 60)).padStart(2, "0") +
         ":" +
         String(Math.floor(s % 60)).padStart(2, "0");
+  const showSub = () => { const t = curSub ? curSub.at(video.currentTime) : ""; if (subEl.textContent !== t) subEl.textContent = t; };
+  const addTrack = (t) => { tracks.push(t); curSub = t; showSub(); status.children[0].textContent = "Captions: " + t.name; };
+  const entryUrl = (p) => (typeof p === "string" ? (/^https?:\/\//i.test(p) ? p : null) : p?.url || null);
+  const entryTitle = (p) => (typeof p === "string" ? p.split("/").pop() : p?.title || p?.url || "");
   const load = async (p, autoplay = false) => {
-    current = p;
+    const url = entryUrl(p);
+    current = url ? null : p;
+    tracks = []; curSub = null; subEl.textContent = "";
+    if (hls) { hls.destroy(); hls = null; }
     if (objectURL) {
       URL.revokeObjectURL(objectURL);
       objectURL = null;
     }
-    if (p) {
+    if (url) {
+      title.textContent = entryTitle(p);
+      video.hidden = false;
+      visual.hidden = true;
+      if (isHls(url) && !video.canPlayType("application/vnd.apple.mpegurl")) {
+        try {
+          status.children[0].textContent = "Buffering...";
+          const Hls = await loadHls();
+          if (!Hls.isSupported()) throw new Error("HLS is not supported");
+          hls = new Hls({ lowLatencyMode: true });
+          hls.on(Hls.Events.ERROR, (_, d) => { if (d.fatal) status.children[0].textContent = "The stream could not be played (" + d.details + ")."; });
+          hls.loadSource(url);
+          hls.attachMedia(video);
+        } catch { status.children[0].textContent = "The stream could not be played."; }
+      } else video.src = url;
+    } else if (p) {
       const node = ctx.fs.stat(p);
-      video.src = node.content;
+      try { const r = await sourceFor(ctx, { path: p }); video.src = r.url; if (r.blob) objectURL = r.url; } catch { video.src = node.content; }
       title.textContent = node.name;
-      video.hidden = !node.mime?.startsWith("video/");
+      video.hidden = !(node.mime?.startsWith("video/") || /\.(mp4|webm|ogv|m4v|mov|mkv)$/i.test(node.name));
       visual.hidden = !video.hidden;
+      for (const sp of siblingSubtitles(ctx, p)) { try { tracks.push(loadSubtitleFile(ctx, sp)); } catch { /* skip */ } }
+      if (tracks.length) { curSub = tracks[0]; }
     } else {
       objectURL = URL.createObjectURL(await makeDemoAudio());
       video.src = objectURL;
@@ -157,6 +190,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
     w.setTitle(
       title.textContent + " - " + (cd ? "CD Player" : "Windows Media Player"),
     );
+    chList?.refresh();
     if (autoplay) await toggle(true);
   };
   const setupAudio = async () => {
@@ -178,7 +212,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
   const toggle = async (force = false) => {
     if (video.paused || force) {
       await setupAudio();
-      await video.play();
+      await video.play().catch((e) => { if (e?.name !== "AbortError") status.children[0].textContent = "The media could not be played."; });
     } else video.pause();
   };
   const open = async () => {
@@ -219,6 +253,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
     status.children[0].textContent = "Paused";
   });
   video.addEventListener("timeupdate", () => {
+    showSub();
     seek.value = video.duration
       ? String((video.currentTime / video.duration) * 1000)
       : "0";
@@ -243,6 +278,54 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
     status.children[0].textContent =
       "This media format could not be played by your browser.";
   });
+  const addSubFile = async () => {
+    const p = await ctx.dialogs.file({ title: "Open Captions File", filter: (n) => SUB_RE.test(n.name) });
+    if (!p) return;
+    try { addTrack(loadSubtitleFile(ctx, p)); } catch (e) { ctx.dialogs.message(e.message || String(e), { title: "Windows Media Player", icon: "error" }); }
+  };
+  const addSubLocal = async () => {
+    const [f] = await pickFiles({ accept: ".srt,.vtt,.sub" }); if (!f) return;
+    try { addTrack(await subtitleFromFile(f)); } catch (e) { ctx.dialogs.message(e.message || String(e), { title: "Windows Media Player", icon: "error" }); }
+  };
+  const capMenu = () => [
+    { label: "Off", checked: !curSub, action: () => { curSub = null; showSub(); } },
+    ...tracks.map((t) => ({ label: t.name, checked: curSub === t, action: () => { curSub = t; showSub(); } })),
+    separator(), { label: "Add Captions File...", action: addSubFile }, { label: "Add Captions from your computer...", action: addSubLocal },
+  ];
+  const showChannels = () => {
+    if (chList && !chList.win.closed) { chList.win.focus(); chList.refresh(); return; }
+    chList = openChannelList(ctx, { getList: () => playlist.map((e) => (typeof e === "string" ? { title: entryTitle(e), group: "" } : e)), getIndex: () => index, play: async (i) => { index = i; await load(playlist[i], true); }, loadUrl: loadListUrl, openFile: openListFile, onClose: () => { chList = null; } });
+  };
+  const addEntries = async (items) => {
+    const first = playlist.length;
+    items.forEach((e) => playlist.push(e.url ? e : e.path));
+    showChannels(); chList?.refresh();
+    if (video.paused && !video.currentTime) { index = first; await load(playlist[first], true); }
+  };
+  const loadListText = async (text, base, label) => {
+    const items = parseM3U(text, base, (q) => ctx.fs.exists(q));
+    if (!items.length) return ctx.dialogs.message(`The playlist '${label}' does not contain any playable items.`, { title: "Windows Media Player", icon: "error" });
+    await addEntries(items);
+  };
+  const loadListUrl = async (v) => {
+    try { await loadListText(await fetchPlaylistText(v), "", v); }
+    catch (e) { ctx.dialogs.message(`The channel list '${v}' could not be read.\n\n${e?.message || e}\n\nThe server may not allow access from a web page; download the list and use File > Open instead.`, { title: "Windows Media Player", icon: "error" }); }
+  };
+  const openListFile = async () => {
+    const p = await ctx.dialogs.file({ title: "Open Playlist", filter: (n) => /\.(m3u8?|pls)$/i.test(n.name) });
+    if (p) await openList(p);
+  };
+  const openList = async (p) => loadListText(ctx.fs.readFile(p), normalizePath(p).replace(/\/[^/]*$/, ""), p);
+  // an address or path typed into File > Open: media file, stream, playlist or channel list
+  const openAny = async (v) => {
+    if (/^https?:\/\//i.test(v) && (isHls(v) || /\.pls(\?|#|$)/i.test(v))) {
+      try { const t = await fetchPlaylistText(v); if (!isHlsManifest(t)) return loadListText(t, "", v); } catch { /* try as a stream */ }
+    }
+    if (/^https?:\/\//i.test(v)) { playlist.push({ url: v, title: v, live: true }); index = playlist.length - 1; return load(playlist[index], true); }
+    if (!ctx.fs.exists(v)) return ctx.dialogs.message(`Windows Media Player cannot find '${v}'.`, { title: "Windows Media Player", icon: "error" });
+    if (/\.(m3u8?|pls)$/i.test(v)) return openList(v);
+    playlist.push(v); index = playlist.length - 1; await load(v, true);
+  };
   const bars = new Uint8Array(128);
   const draw = () => {
     if (w.closed) return;
@@ -296,15 +379,17 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
   };
   w.setMenu({
     File: [
-      { label: "Open...", shortcut: "Ctrl+O", action: () => wmpOpen(ctx, async (v) => { if (ctx.fs.exists(v)) { playlist.push(v); index = playlist.length - 1; await load(v, true); } else { video.src = v; title.textContent = v; await toggle(true); } }, async (dlg) => { dlg.close(); await importMedia(); }) },
-      { label: "Close", disabled: !current, action: () => { video.pause(); video.removeAttribute("src"); video.load(); current = null; } },
+      { label: "Open...", shortcut: "Ctrl+O", action: () => wmpOpen(ctx, (v) => openAny(v), async (dlg) => { dlg.close(); await importMedia(); }) },
+      { label: "Open Channel List...", action: () => { showChannels(); } },
+      { label: "Open Playlist...", action: openListFile },
+      { label: "Close", disabled: !current, action: () => { video.pause(); video.removeAttribute("src"); video.load(); current = null; tracks = []; curSub = null; subEl.textContent = ""; } },
       separator(),
       { label: "Save As...", shortcut: "Ctrl+S", disabled: true },
       separator(),
       {
         label: "Properties",
         action: () => {
-          const n = current ? ctx.fs.stat(current) : null;
+          const n = current && ctx.fs.exists(current) ? ctx.fs.stat(current) : null;
           wmpProps(ctx, { name: n?.name || "Windows Welcome", type: n?.mime || "Wave Sound", size: n?.size ? n.size + " bytes" : "", length: format(video.duration), videoSize: video.videoWidth ? video.videoWidth + " x " + video.videoHeight : "" });
         },
       },
@@ -324,7 +409,8 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
       separator(),
       off("Settings", { submenu: [] }),
       separator(),
-      off("Captions"),
+      { label: "Captions", submenu: capMenu },
+      { label: "Channel List", shortcut: "Ctrl+H", action: showChannels },
       { label: "Always on Top", shortcut: "Ctrl+T", checked: onTop, action: () => (onTop = !onTop) },
       { label: "Options...", action: () => wmpOptions(ctx, { onTop }, (st) => (onTop = !!st.onTop)) },
     ],
@@ -484,7 +570,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
   seek.className = "wmp-seek";
   w.setContent(
     el("div", { class: "wmp-root", "data-view": "standard" },
-      el("div", { class: "wmp-screen" }, video, visual, logo),
+      el("div", { class: "wmp-screen" }, video, visual, logo, subEl),
       el("div", { class: "wmp-seekrow" }, seek),
       el("div", { class: "wmp-controls" },
         wmpPlay,
@@ -496,6 +582,8 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
         wb(5, "Fast Forward", () => (video.currentTime = Math.min(video.duration || 0, video.currentTime + 5))),
         wb(6, "Skip Forward", skipFwd),
         el("span", { class: "wmp-flex" }),
+        el("button", { class: "wmp-txtbtn", type: "button", title: "Channel list", onclick: showChannels, text: "TV" }),
+        el("button", { class: "wmp-txtbtn", type: "button", title: "Captions", text: "CC", onclick: (e) => { const r = e.currentTarget.getBoundingClientRect(); popup(capMenu(), r.left, r.top - 4, {}); } }),
         vol,
       ),
       el("div", { class: "wmp-info" }, info("Show:", ""), info("Clip:", (title.className = "wmp-clip", title)), info("Author:", ""), info("Copyright:", "")),
@@ -513,6 +601,8 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
     video.load();
     if (objectURL) URL.revokeObjectURL(objectURL);
     ac?.close();
+    if (hls) hls.destroy();
+    if (chList && !chList.win.closed) chList.win.close();
   });
   w.el.addEventListener(
     "keydown",

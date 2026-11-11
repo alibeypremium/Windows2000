@@ -6366,3 +6366,7 @@ input.vlc-eqs[type="range"]{flex:none;writing-mode:vertical-lr;direction:rtl;hei
 .vlc-ch-group{min-width:110px}
 .vlc-ch-search{flex:1;min-width:0}
 .vlc-ch{flex:1;overflow:auto}
+.vlc-ch-url{flex:1;min-width:0}
+.wmp-sub{position:absolute;left:8px;right:8px;bottom:10px;text-align:center;color:#fff;font:bold 15px Arial,sans-serif;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;white-space:pre-wrap;pointer-events:none;z-index:2}
+.wmp-txtbtn{height:20px;min-width:26px;margin:0 2px;padding:0 4px;font:bold 10px Tahoma,sans-serif;color:#000;background:#d4d0c8;border:1px solid;border-color:#fff #404040 #404040 #fff;cursor:default}
+.wmp-txtbtn:active{border-color:#404040 #fff #fff #404040}

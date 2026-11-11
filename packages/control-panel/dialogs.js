@@ -340,22 +340,20 @@ export function openTaskbarProperties(ctx) {
 /* ---------- Add/Remove Programs ---------- */
 
 const ARP = "/assets/icons/arp/";
+// [name, desktop icon, size, last used]; every entry is a program that exists on this desktop.
 const PROGRAMS = [
-  ["Audacity 1.0.0", "audacity", "3.08MB"],
-  ["Borland Delphi 6", "delphi", "322MB"],
-  ["Dev-C++ 5 beta 9 release (4.9.9.2)", "devcpp"],
-  ["Freeciv 2.1.11 (GTK+ client)", "freeciv"],
-  ["Gimp 2.6.1", "gimp", "36.8MB"],
-  ["IDA Pro Free v5.0", "ida", "24.5MB"],
-  ["JASSPA MicroEmacs 2009", "jasspa", "11.4MB"],
-  ["Java 2 Runtime Environment Standard Edition v1.3.1_01", "java", "17.1MB", "1/7/2025"],
-  ["MadOnion.com/PCMark2002", "pcmark", "948KB"],
-  ["MadOnion.com/ResultBrowser2002", "resultbrowser", "5.91MB"],
+  ["Adobe Acrobat Reader 5.0", "acrobat", "11.4MB"],
+  ["DivX Player 5.2", "divx", "6.12MB"],
+  ["Java 2 Runtime Environment Standard Edition v1.3.1_01", "java", "17.1MB"],
   ["Microsoft Internet Explorer 6 SP1", "ie"],
-  ["Notepad++", "notepadpp", "13.8MB"],
-  ["Python 2.0.1", "python", "18.5MB"],
-  ["The Off By One Web Browser", "offbyone"],
+  ["Microsoft Word 2000", "word", "68.0MB"],
+  ["MSN Messenger 5.0", "msn", "9.55MB"],
+  ["Netscape Navigator 4.8", "netscape", "24.3MB"],
+  ["VLC media player 0.9.2", "vlc", "28.1MB"],
+  ["Winamp 2.91", "winamp", "4.37MB"],
+  ["WinRAR archiver", "winrar", "3.05MB"],
 ];
+const PROGRAM_ICON = { acrobat: "acrobat", divx: "divx", word: "word", msn: "msn", netscape: "netscape", vlc: "vlc", winamp: "winamp", winrar: "winrar" };
 const parseSize = (s) =>
   s ? parseFloat(s) * (/KB/.test(s) ? 1 : 1024) : -1;
 
@@ -425,7 +423,7 @@ export function openAddRemovePrograms(ctx, page = "change") {
 
   const pages = {
     change() {
-      let sel = 7,
+      let sel = 0,
         sort = "Name";
       const list = el("div", { class: "arp-list" });
       const render = () => {
@@ -438,7 +436,7 @@ export function openAddRemovePrograms(ctx, page = "change") {
           const row = el(
             "div",
             { class: "arp-row" + (on ? " selected" : "") },
-            el("img", { src: ARP + ic + ".png", alt: "", draggable: "false" }),
+            PROGRAM_ICON[ic] ? icon(PROGRAM_ICON[ic], 16) : el("img", { src: ARP + ic + ".png", alt: "", draggable: "false" }),
             el("div", { class: "arp-name", text: name }),
           );
           if (size)
@@ -455,8 +453,11 @@ export function openAddRemovePrograms(ctx, page = "change") {
                 text: "To change this program or remove it from your\ncomputer, click Change/Remove.",
               }),
               k.btn(619, 404, 123, 21, "Change/Remove", {
-                onclick: () =>
-                  ctx.dialogs.message("This program cannot be removed from the browser desktop.", { title: "Add/Remove Programs" }),
+                onclick: async () => {
+                  const nm = PROGRAMS[i][0];
+                  if (!(await ctx.dialogs.confirm(`Are you sure you want to remove '${nm}' from your computer?`, "Add/Remove Programs"))) return;
+                  await ctx.dialogs.message(`'${nm}' was successfully removed.\n\n(Simulation: the program files stay on this desktop.)`, { title: "Add/Remove Programs", icon: "info" });
+                },
               }),
             );
             const b = row.lastChild;
@@ -465,6 +466,7 @@ export function openAddRemovePrograms(ctx, page = "change") {
             row.dataset.tall = "1";
           }
           row.addEventListener("mousedown", () => {
+            if (sel === i) return;
             sel = i;
             render();
           });

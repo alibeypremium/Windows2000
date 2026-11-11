@@ -1,7 +1,7 @@
 // VLC media player 0.8.6 look-alike. Playback uses the browser's HTML5 media engine (mp4/webm/ogg/mp3/wav/...).
 import { el, button, menuBar, popup } from "../ui/index.js";
 import { basename, normalizePath, pickFiles, DOCS } from "../core/index.js";
-import { AV_RE, fmtTime, sourceFor, mediaFiles, AudioChain, EQ_FREQS, EQ_LABELS, EQ_PRESETS, loadEq, saveEq, siblingSubtitles, loadSubtitleFile, subtitleFromFile, SUB_RE } from "./media-engine.js";
+import { AV_RE, fmtTime, sourceFor, mediaFiles, AudioChain, EQ_FREQS, EQ_LABELS, EQ_PRESETS, loadEq, saveEq, siblingSubtitles, loadSubtitleFile, subtitleFromFile, SUB_RE, loadHls, isHls, parseM3U, fetchPlaylistText, isHlsManifest } from "./media-engine.js";
 
 const svg = (inner, w = 16, h = 16) => `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 16 16">${inner}</svg>`;
 const K = "#555";
@@ -24,55 +24,18 @@ const G = {
 const gi = (n, s = 16) => el("img", { src: "data:image/svg+xml;utf8," + encodeURIComponent(G[n]), width: s, height: s, alt: "", draggable: "false" });
 const WEDGE = `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="24" viewBox="0 0 80 24"><defs><linearGradient id="vw" x1="0" x2="1"><stop offset="0" stop-color="#3cb43c"/><stop offset=".5" stop-color="#e6e600"/><stop offset="1" stop-color="#ff4000"/></linearGradient><clipPath id="vc"><rect class="vlc-wedge-clip" x="0" y="0" width="40" height="24"/></clipPath></defs><polygon points="0.5,23.5 79.5,23.5 79.5,1.5" fill="#ece9e0" stroke="#808080"/><polygon points="1,23 79,23 79,2" fill="url(#vw)" clip-path="url(#vc)"/></svg>`;
 const CONE = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120" width="100" height="120"><defs><linearGradient id="c" x1="0" x2="1"><stop offset="0" stop-color="#ff9a1a"/><stop offset="1" stop-color="#e06a00"/></linearGradient></defs><path d="M50 4L88 98H12z" fill="url(#c)"/><path d="M42 30h16l4 12H38zM33 54h34l5 14H28zM24 78h52l5 14H19z" fill="#fff" opacity=".85"/><path d="M4 100h92l-8 14H12z" fill="#f0f0f0"/><path d="M4 100h92" stroke="#c0c0c0"/></svg>`;
-let hlsLoad = null;
-const loadHls = () => hlsLoad ||= new Promise((res, rej) => {
-  if (window.Hls) return res(window.Hls);
-  const sc = document.createElement("script");
-  sc.src = new URL("../../assets/vendor/hlsjs/hls.min.js", import.meta.url).href;
-  sc.onload = () => (window.Hls ? res(window.Hls) : rej(new Error("hls.js")));
-  sc.onerror = () => { hlsLoad = null; rej(new Error("hls.js")); };
-  document.head.append(sc);
-});
-const isHls = (u) => /\.m3u8?(\?|#|$)/i.test(u || "");
-/** #EXTM3U / plain / .pls playlists. Keeps #EXTINF titles, group-title, tvg-logo, so IPTV lists become channel lists. */
-export function parseM3U(text, base, exists = () => true) {
-  const out = []; let meta = null;
-  if (/^\s*\[playlist\]/i.test(text)) {
-    const f = {}, t = {};
-    for (const l of text.split(/\r?\n/)) { const m = /^(File|Title)(\d+)=(.*)$/i.exec(l.trim()); if (m) (m[1].toLowerCase() === "file" ? f : t)[m[2]] = m[3]; }
-    return Object.keys(f).map((k) => (/^[a-z][a-z0-9+.-]*:\/\//i.test(f[k]) ? { title: t[k] || f[k], url: f[k], live: true } : { title: t[k] || basename(f[k]), path: normalizePath(f[k].startsWith("/") || /^[A-Za-z]:/.test(f[k]) ? f[k] : base + "/" + f[k]) })).filter((e) => e.url || exists(e.path));
-  }
-  for (const raw of text.replace(/^\uFEFF/, "").split(/\r?\n/)) {
-    const l = raw.trim(); if (!l) continue;
-    if (l.startsWith("#EXTINF")) {
-      const comma = l.indexOf(",", l.lastIndexOf('"') + 1 || 0), c2 = comma < 0 ? l.lastIndexOf(",") : comma;
-      const attrs = {}; for (const m of l.matchAll(/([\w-]+)="([^"]*)"/g)) attrs[m[1].toLowerCase()] = m[2];
-      const dur = parseFloat(l.slice(8)) || 0;
-      meta = { title: (c2 >= 0 ? l.slice(c2 + 1).trim() : "") || attrs["tvg-name"] || "", group: attrs["group-title"] || "", logo: attrs["tvg-logo"] || "", dur: dur > 0 ? dur : 0 };
-    } else if (l.startsWith("#EXTGRP:")) { meta = { ...(meta || {}), group: l.slice(8).trim() }; }
-    else if (l.startsWith("#")) continue;
-    else {
-      const isUrl = /^[a-z][a-z0-9+.-]*:\/\//i.test(l);
-      const e = isUrl ? { title: meta?.title || l, url: l, live: !meta?.dur } : { title: meta?.title || basename(l), path: normalizePath(l.startsWith("/") || /^[A-Za-z]:/.test(l) ? l : base + "/" + l) };
-      if (meta?.group) e.group = meta.group; if (meta?.logo) e.logo = meta.logo; if (meta?.dur) e.dur = meta.dur;
-      if (e.url || exists(e.path)) out.push(e);
-      meta = null;
-    }
-  }
-  return out;
-}
 export function openVLC(ctx, { path = null } = {}) {
-  const w = ctx.wm.create({ title: "VLC media player", icon: "vlc", width: 364, height: 131, x: 150, y: 60, appId: "vlc" });
+  const w = ctx.wm.create({ title: "VLC media player", icon: "vlc", width: 480, height: 391, x: 150, y: 60, appId: "vlc" });
   const st = Object.assign({ volume: 100, recent: [], autoSub: true, loop: false, random: false, fx: { brightness: 100, contrast: 100, saturate: 100, hue: 0 } }, ctx.settings.get("vlc") || {});
   const eq = loadEq(ctx);
   let hls = null, chain = null, tracks = [], curSub = null, subDelay = 0, fxWin = null, rawDrawEq = null;
   let list = [], idx = -1, muted = false, loop = !!st.loop, random = !!st.random, aspect = "default", current = null, blobUrl = null, ac = null, gain = null, plWin = null, drawPl = () => {};
   const video = el("video", { class: "vlc-video", playsinline: "true" });
+  video.hidden = true;
   const cone = el("div", { class: "vlc-cone" });
   cone.innerHTML = CONE;
   const subEl = el("div", { class: "vlc-sub" });
   const screen = el("div", { class: "vlc-screen" }, cone, video, subEl);
-  screen.style.display = "none";
   const slider = el("input", { class: "vlc-seek", type: "range", min: "0", max: "1000", value: "0", "aria-label": "Seek", disabled: true });
   const timeTxt = el("div", { class: "vlc-time vlc-field", text: "--:--/--:--" });
   const wedgeBox = el("div", { class: "vlc-wedge", role: "slider", "aria-label": "Volume", tabindex: "0" });
@@ -81,18 +44,7 @@ export function openVLC(ctx, { path = null } = {}) {
   wedgeBox.append(volTxt);
   const status = el("div", { class: "vlc-status vlc-field", text: "" });
   const rate = el("button", { class: "vlc-rate vlc-field", type: "button", text: "1.00x", title: "Normal speed" });
-  let baseGeo = null;
-  const showVideo = (on) => {
-    if (on && screen.style.display === "none") {
-      baseGeo = { ...w.geometry };
-      screen.style.display = "flex";
-      w.geometry = { ...w.geometry, width: Math.max(w.geometry.width, 480), height: w.geometry.height + 260 };
-      ctx.wm.applyGeometry(w);
-    } else if (!on && screen.style.display !== "none") {
-      screen.style.display = "none";
-      if (baseGeo) { w.geometry = { ...w.geometry, width: baseGeo.width, height: baseGeo.height }; ctx.wm.applyGeometry(w); baseGeo = null; }
-    }
-  };
+  const showVideo = () => {};
   const err = (m) => ctx.dialogs.message(m, { title: "VLC media player", icon: "error" });
 
   // ---------- volume (0-200 %) and equalizer: both go through the shared audio chain ----------
@@ -152,7 +104,6 @@ export function openVLC(ctx, { path = null } = {}) {
       } else video.src = url;
       applyVolume();
       await video.play();
-      cone.style.display = "none";
       slider.disabled = false; showVideo(true);
       if (current.path || current.url) { st.recent = [{ title: current.title, path: current.path, url: current.url }, ...(st.recent || []).filter((r) => (r.path || r.url) !== (current.path || current.url))].slice(0, 8); ctx.settings.set("vlc", st); }
       w.setTitle(`${current.title} - VLC media player`);
@@ -165,7 +116,7 @@ export function openVLC(ctx, { path = null } = {}) {
     }
     drawPl();
   };
-  const stop = () => { if (hls) { hls.destroy(); hls = null; } tracks = []; curSub = null; subEl.textContent = ""; video.pause(); video.removeAttribute("src"); video.load(); cone.style.display = ""; slider.value = "0"; slider.disabled = true; showVideo(false); timeTxt.textContent = "--:--/--:--"; w.setTitle("VLC media player"); setStatus("Stopped"); };
+  const stop = () => { if (hls) { hls.destroy(); hls = null; } tracks = []; curSub = null; subEl.textContent = ""; video.pause(); video.removeAttribute("src"); video.load(); cone.style.display = ""; video.hidden = true; slider.value = "0"; slider.disabled = true; timeTxt.textContent = "--:--/--:--"; w.setTitle("VLC media player"); setStatus("Stopped"); };
   const togglePlay = () => {
     if (!list.length) return openFile();
     if (!video.src) return playIndex(Math.max(idx, 0));
@@ -183,9 +134,24 @@ export function openVLC(ctx, { path = null } = {}) {
     const files = await pickFiles({ accept: "audio/*,video/*", multiple: true });
     files.forEach((f, i) => add({ title: f.name, file: f }, i === 0));
   };
+  const loadChannelText = (text, label) => {
+    const items = parseM3U(text, "", () => false);
+    if (!items.length) { err(`The playlist '${label}' does not contain any playable items.`); return false; }
+    const first = list.length;
+    items.forEach((e) => list.push(e)); drawPl(); showChannels(); drawCh();
+    setStatus(`${items.length} channels loaded`);
+    return first;
+  };
   const openNetwork = async () => {
-    const v = await ctx.dialogs.prompt("Please enter a network address (HTTP, HTTPS or a direct media URL):", "http://", { title: "Open Network Stream" });
-    if (v && v !== "http://") add({ title: v, url: v }, true);
+    const v = (await ctx.dialogs.prompt("Please enter a network address (stream URL, or the address of an .m3u / .m3u8 channel list):", "http://", { title: "Open Network Stream" }) || "").trim();
+    if (!v || v === "http://") return;
+    if (isHls(v) || /\.pls(\?|#|$)/i.test(v)) {
+      try {
+        const t = await fetchPlaylistText(v);
+        if (!isHlsManifest(t)) { loadChannelText(t, v); return; }
+      } catch { /* not readable from a web page: try it as a stream */ }
+    }
+    add({ title: v, url: v, live: true }, true);
   };
   const jump = async () => {
     const v = await ctx.dialogs.prompt("Jump to time (mm:ss):", fmtTime(video.currentTime), { title: "Jump to time" });
@@ -217,23 +183,22 @@ export function openVLC(ctx, { path = null } = {}) {
     if (!p) return;
     const base = normalizePath(p).replace(/\/[^/]*$/, ""), items = parseM3U(ctx.fs.readFile(p), base, (q) => ctx.fs.exists(q));
     if (!items.length) return err("The playlist does not contain any playable items.");
-    const first = list.length; items.forEach((e) => list.push(e)); drawPl(); drawCh(); if (items.some((e) => e.group || e.live) && (!chWin || chWin.closed)) showChannels(); if (!video.src) playIndex(first);
+    const first = list.length; items.forEach((e) => list.push(e)); drawPl(); drawCh(); if (!chWin || chWin.closed) showChannels(); if (!video.src) playIndex(first);
   };
-  const openChannelUrl = async () => {
-    const v = await ctx.dialogs.prompt("Channel list address (.m3u / .m3u8 playlist URL):", "http://", { title: "Open Channel List" });
-    if (!v || v === "http://") return;
-    try {
-      const r = await fetch(v); if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      const items = parseM3U(await r.text(), "", () => false);
-      if (!items.length) return err("The playlist does not contain any playable items.");
-      items.forEach((e) => list.push(e)); drawPl(); showChannels();
-    } catch (e) { err(`VLC cannot read the channel list '${v}'.\n\n${e?.message || e}\n\nThe server may not allow access from a web page; download the list and use Open Playlist instead.`); }
+  const loadChannelUrl = async (v) => {
+    v = (v || "").trim(); if (!v || v === "http://") return;
+    try { loadChannelText(await fetchPlaylistText(v), v); }
+    catch (e) { err(`VLC cannot read the channel list '${v}'.\n\n${e?.message || e}\n\nThe server may not allow access from a web page; download the list and use Open Playlist instead.`); }
   };
+  const openChannelUrl = async () => loadChannelUrl(await ctx.dialogs.prompt("Channel list address (.m3u / .m3u8 playlist URL):", "http://", { title: "Open Channel List" }));
   let chWin = null, drawCh = () => {};
   const showChannels = () => {
     if (chWin && !chWin.closed) { chWin.focus(); drawCh(); return; }
-    chWin = ctx.wm.create({ title: "Channel List", icon: "vlc", width: 380, height: 400, x: 240, y: 90, appId: "vlc-channels" });
+    chWin = ctx.wm.create({ title: "Channel List", icon: "vlc", width: 380, height: 420, x: 240, y: 90, appId: "vlc-channels" });
     let group = "", q = "";
+    const urlBox = el("input", { type: "text", class: "vlc-ch-url", placeholder: "Paste an .m3u / .m3u8 address here and press Enter" });
+    urlBox.addEventListener("keydown", (e) => { if (e.key === "Enter") { loadChannelUrl(urlBox.value); urlBox.value = ""; } });
+    urlBox.addEventListener("paste", () => setTimeout(() => { if (/^https?:\/\/\S+$/i.test(urlBox.value.trim())) { loadChannelUrl(urlBox.value); urlBox.value = ""; } }, 0));
     const sel = el("select", { class: "vlc-ch-group" }), search = el("input", { type: "text", class: "vlc-ch-search", placeholder: "Search channels..." }), body = el("div", { class: "vlc-pl vlc-ch" });
     const count = el("span", { class: "vlc-pl-count" });
     drawCh = () => {
@@ -253,7 +218,7 @@ export function openVLC(ctx, { path = null } = {}) {
     sel.addEventListener("change", () => { group = sel.value; drawCh(); });
     search.addEventListener("input", () => { q = search.value.trim().toLowerCase(); drawCh(); });
     const cm = menuBar({ File: [{ label: "Open Playlist...", action: () => openPlaylist().then(drawCh) }, { label: "Open Channel List from address...", action: openChannelUrl }, { separator: true }, { label: "Close", action: () => chWin.close() }] });
-    chWin.setContent(cm, el("div", { class: "vlc-ch-bar" }, sel, search), body, el("div", { class: "vlc-pl-bar" }, button("Play", () => { const r = body.querySelector(".vlc-pl-row.cur") || body.querySelector(".vlc-pl-row"); r?.dispatchEvent(new MouseEvent("dblclick")); }), count));
+    chWin.setContent(cm, el("div", { class: "vlc-ch-bar" }, urlBox), el("div", { class: "vlc-ch-bar" }, sel, search), body, el("div", { class: "vlc-pl-bar" }, button("Play", () => { const r = body.querySelector(".vlc-pl-row.cur") || body.querySelector(".vlc-pl-row"); r?.dispatchEvent(new MouseEvent("dblclick")); }), count));
     chWin.onClose = () => { chWin = null; drawCh = () => {}; return true; };
     drawCh();
   };
@@ -449,7 +414,7 @@ export function openVLC(ctx, { path = null } = {}) {
     set(e); wedgeBox.onpointermove = set; wedgeBox.onpointerup = () => { wedgeBox.onpointermove = null; wedgeBox.onpointerup = null; };
   });
   wedgeBox.addEventListener("keydown", (e) => { if (e.key === "ArrowRight" || e.key === "ArrowUp") { e.preventDefault(); setVolume(st.volume + 5); } else if (e.key === "ArrowLeft" || e.key === "ArrowDown") { e.preventDefault(); setVolume(st.volume - 5); } });
-  video.addEventListener("loadedmetadata", () => { cone.style.display = video.videoWidth ? "none" : ""; });
+  video.addEventListener("loadedmetadata", () => { const v = !!video.videoWidth; cone.style.display = v ? "none" : ""; video.hidden = !v; });
 
   video.addEventListener("timeupdate", tick);
   video.addEventListener("loadedmetadata", tick);

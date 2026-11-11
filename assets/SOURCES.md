@@ -586,3 +586,6 @@ Contacts, organisations, replies and display pictures (packages/internet/msn-dat
 ## hls.js (VLC canlı yayın)
 - `assets/vendor/hlsjs/hls.min.js` — hls.js 1.7.4 (light build), Dailymotion, Apache-2.0 (`assets/vendor/hlsjs/LICENSE`). npm paketinden alındı.
 - `assets/samples/Docs/Televizyon.m3u` — örnek kanal listesi (TRT'nin herkese açık HLS adresleri ile Apple/Mux test yayınları); yalnızca adres içerir.
+
+## Program Files yer tutucuları
+- `C:\Program Files\...` altındaki dosyalar kodla üretilen birkaç baytlık yer tutuculardır; gerçek program dosyası veya telifli içerik içermez.

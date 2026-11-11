@@ -527,6 +527,11 @@ ctx.openFile = async (path) => {
   if (["zip", "rar"].includes(ext)) return ctx.launch("winrar", { path });
   if (ext === "pdf" || node.mime === "application/pdf") return ctx.launch("acrobat", { path });
   if (["html", "htm"].includes(ext)) return ctx.launch("ie", { path });
+  if (ext === "exe") {
+    const nm = basename(path).toLowerCase(), bare = nm.replace(/\.exe$/, "");
+    const app = ctx.apps.find((a) => !a.hidden && (a.aliases || []).some((x) => x === nm || x === bare));
+    if (app) return ctx.launch(app.id);
+  }
   if (["exe", "dll", "sys", "msi"].includes(ext))
     return ctx.dialogs.message(
       "This is a native Windows binary. The browser desktop does not include an x86/NT emulator to execute it.\n\nUse a built-in browser program or open it in a compatible emulator.",
@@ -634,10 +639,43 @@ async function seedSampleDocs() {
     settings.set("samples.docs.v3", true);
   } catch (e) { console.warn("sample docs", e); }
 }
+const PROGRAM_FILES = {
+  "Winamp": { "winamp.exe": 1, "whatsnew.txt": "Winamp 2.91\r\nClassic skin and Webamp engine.\r\n", "Skins/Base-2.91.wsz": 1, "Plugins/in_mp3.dll": 1, "Plugins/out_wave.dll": 1, "Plugins/vis_nsfs.dll": 1 },
+  "VideoLAN/VLC": { "vlc.exe": 1, "README.txt": "VLC media player\r\nThe VideoLAN project.\r\n", "libvlc.dll": 1, "plugins/access_http.dll": 1, "plugins/demux_ts.dll": 1, "plugins/codec_ffmpeg.dll": 1 },
+  "DivX/DivX Player": { "divx.exe": 1, "readme.txt": "DivX Player 5\r\n", "divx.dll": 1, "skins/default.skn": 1 },
+  "Netscape/Navigator": { "netscape.exe": 1, "README.txt": "Netscape Navigator\r\n", "bookmark.htm": "<html><body><a href=\"http://www.netscape.com/home\">Netscape</a></body></html>\r\n", "plugins/npnul32.dll": 1, "defaults/prefs.js": "// Netscape preferences\r\n" },
+  "WinRAR": { "WinRAR.exe": 1, "Rar.txt": "WinRAR\r\nArchiver for RAR and ZIP.\r\n", "License.txt": "WinRAR license\r\n", "Default.SFX": 1, "Zip.SFX": 1 },
+  "Adobe/Acrobat 5.0/Reader": { "AcroRd32.exe": 1, "AcroRd32.dll": 1, "plug_ins/Search.api": 1 },
+  "Microsoft Office/Office": { "WINWORD.EXE": 1, "WINWORD.OLB": 1, "1033/wwintl.dll": 1, "Templates/Normal.dot": 1 },
+  "MSN Messenger": { "msnmsgr.exe": 1, "msgsc.dll": 1, "Sounds/newalert.wav": 1, "Emoticons/smile.gif": 1 },
+  "Windows Media Player": { "wmplayer.exe": 1, "mplayer2.exe": 1, "wmp.dll": 1 },
+  "Outlook Express": { "msimn.exe": 1, "msoe.dll": 1, "wab.exe": 1 },
+  "Internet Explorer": { "iexplore.exe": 1, "hmmapi.dll": 1, "connect/icwconn1.exe": 1 },
+  "Accessories": { "wordpad.exe": 1, "mspaint.exe": 1, "hypertrm.exe": 1, "dialer.exe": 1 },
+};
+async function seedProgramFiles() {
+  if (settings.get("programfiles.v1")) return;
+  try {
+    for (const [dir, files] of Object.entries(PROGRAM_FILES)) {
+      let cur = "C:/Program Files";
+      for (const part of dir.split("/")) { cur += "/" + part; if (!fs.exists(cur)) await fs.mkdir(cur); }
+      for (const [rel, body] of Object.entries(files)) {
+        const parts = rel.split("/"); let d = "C:/Program Files/" + dir;
+        for (const part of parts.slice(0, -1)) { d += "/" + part; if (!fs.exists(d)) await fs.mkdir(d); }
+        const f = d + "/" + parts.at(-1);
+        if (fs.exists(f)) continue;
+        const isTxt = typeof body === "string";
+        await fs.writeFile(f, isTxt ? body : "MZ\u0090\u0000 This program cannot be run in DOS mode.\r\n", { mime: isTxt ? "text/plain" : "application/octet-stream" });
+      }
+    }
+    settings.set("programfiles.v1", true);
+  } catch (e) { console.warn("program files", e); }
+}
 async function start() {
   try {
     await fs.init();
     await seedSampleDocs();
+    await seedProgramFiles();
   } catch (error) {
     console.error(error);
     document.querySelector("#overlay-layer").append(

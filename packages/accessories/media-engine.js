@@ -117,3 +117,51 @@ export function loadSubtitleFile(ctx, path) {
 }
 export const subtitleFromFile = async (file) => { const cues = parseSubs(await file.text()); if (!cues.length) throw new Error("No subtitles were found in this file."); return new SubtitleTrack(file.name, cues); };
 export { extension };
+
+let hlsLoad = null;
+export const loadHls = () => hlsLoad ||= new Promise((res, rej) => {
+  if (window.Hls) return res(window.Hls);
+  const sc = document.createElement("script");
+  sc.src = new URL("../../assets/vendor/hlsjs/hls.min.js", import.meta.url).href;
+  sc.onload = () => (window.Hls ? res(window.Hls) : rej(new Error("hls.js")));
+  sc.onerror = () => { hlsLoad = null; rej(new Error("hls.js")); };
+  document.head.append(sc);
+});
+export const isHls = (u) => /\.m3u8?(\?|#|$)/i.test(u || "");
+/** #EXTM3U / plain / .pls playlists. Keeps #EXTINF titles, group-title, tvg-logo, so IPTV lists become channel lists. */
+export function parseM3U(text, base, exists = () => true) {
+  const out = []; let meta = null;
+  if (/^\s*\[playlist\]/i.test(text)) {
+    const f = {}, t = {};
+    for (const l of text.split(/\r?\n/)) { const m = /^(File|Title)(\d+)=(.*)$/i.exec(l.trim()); if (m) (m[1].toLowerCase() === "file" ? f : t)[m[2]] = m[3]; }
+    return Object.keys(f).map((k) => (/^[a-z][a-z0-9+.-]*:\/\//i.test(f[k]) ? { title: t[k] || f[k], url: f[k], live: true } : { title: t[k] || basename(f[k]), path: normalizePath(f[k].startsWith("/") || /^[A-Za-z]:/.test(f[k]) ? f[k] : base + "/" + f[k]) })).filter((e) => e.url || exists(e.path));
+  }
+  for (const raw of text.replace(/^\uFEFF/, "").split(/\r?\n/)) {
+    const l = raw.trim(); if (!l) continue;
+    if (l.startsWith("#EXTINF")) {
+      const comma = l.indexOf(",", l.lastIndexOf('"') + 1 || 0), c2 = comma < 0 ? l.lastIndexOf(",") : comma;
+      const attrs = {}; for (const m of l.matchAll(/([\w-]+)="([^"]*)"/g)) attrs[m[1].toLowerCase()] = m[2];
+      const dur = parseFloat(l.slice(8)) || 0;
+      meta = { title: (c2 >= 0 ? l.slice(c2 + 1).trim() : "") || attrs["tvg-name"] || "", group: attrs["group-title"] || "", logo: attrs["tvg-logo"] || "", dur: dur > 0 ? dur : 0 };
+    } else if (l.startsWith("#EXTGRP:")) { meta = { ...(meta || {}), group: l.slice(8).trim() }; }
+    else if (l.startsWith("#")) continue;
+    else {
+      const isUrl = /^[a-z][a-z0-9+.-]*:\/\//i.test(l);
+      const e = isUrl ? { title: meta?.title || l, url: l, live: !meta?.dur } : { title: meta?.title || basename(l), path: normalizePath(l.startsWith("/") || /^[A-Za-z]:/.test(l) ? l : base + "/" + l) };
+      if (meta?.group) e.group = meta.group; if (meta?.logo) e.logo = meta.logo; if (meta?.dur) e.dur = meta.dur;
+      if (e.url || exists(e.path)) out.push(e);
+      meta = null;
+    }
+  }
+  return out;
+}
+
+/** Fetches a playlist as text; tries the address directly, then a public CORS relay. */
+export async function fetchPlaylistText(url) {
+  const tryFetch = async (u) => { const r = await fetch(u); if (!r.ok) throw new Error("HTTP " + r.status); return r.text(); };
+  try { return await tryFetch(url); } catch (e) {
+    try { return await tryFetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(url)); } catch { throw e; }
+  }
+}
+/** true when the text is an HLS media/master playlist (a single stream) rather than a channel list. */
+export const isHlsManifest = (t) => /#EXT-X-(STREAM-INF|TARGETDURATION|MEDIA-SEQUENCE)/.test(t);
