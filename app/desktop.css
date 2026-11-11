@@ -6331,3 +6331,12 @@ input.vlc-eqs[type="range"]{flex:none;writing-mode:vertical-lr;direction:rtl;hei
 .dx-window[data-dx-skin="silver"] .dx-skin{filter:grayscale(1) brightness(1.08)}
 .dx-window[data-dx-skin="sunset"] .dx-skin{filter:sepia(.7) saturate(2.2) hue-rotate(-18deg)}
 .dx-window[data-dx-skin] .dx-video,.dx-window[data-dx-skin] .dx-sub{filter:none}
+.wr-list.wr-grid .wr-row{border-bottom:1px solid #d4d0c8}
+.wr-tools.nolabel .wr-tool span{display:none}
+.wr-tools.nolabel .wr-tool{min-width:0}
+.rd-wizard{background:var(--face,#d4d0c8)}
+.rd-wz-top{display:flex;gap:10px;padding:10px;align-items:flex-start;font:11px Tahoma,sans-serif;width:420px;box-sizing:border-box}
+.rd-wz-top p{margin:0}
+.rd-wz-files{margin:0 10px;height:110px;background:#fff;border:2px inset;border-color:#808080 #fff #fff #808080;overflow:auto;font:11px Tahoma,sans-serif}
+.rd-wz-files div{padding:1px 4px}
+.rd-wz-btns{display:flex;gap:8px;padding:8px 10px}

@@ -1,5 +1,6 @@
 /** @package @win2k/explorer — shell namespace, file management and search. */
 import { confirmDelete } from "../ui/shconfirm.js";
+import { rarMenuItems } from "../accessories/winrar-shell.js";
 import {
   DOCS,
   DESKTOP,
@@ -415,6 +416,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
             },
           },
           separator(),
+          ...(selected.size ? rarMenuItems(ctx, [...selected].filter((p) => ctx.fs.get(p))) : []),
           {
             label: "Cut",
             shortcut: "Ctrl+X",

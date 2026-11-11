@@ -571,3 +571,6 @@ Contacts, organisations, replies and display pictures (packages/internet/msn-dat
 
 ## Media engine
 - Sample Docs subtitle/playlist files (Gün Batımı.srt, Yıldızlar.vtt, Favoriler.m3u) were written for this project. Winamp colour skins are CSS filters over the Webamp default skin.
+
+## WinRAR
+- Find/Info/Settings/Wizard/Context-menu dialogları mevcut `assets/ui/winrar/rar411/dialogs.json` kaynaklarından üretilir. RAR yazıcısı (store) bu proje için yazıldı; RAR 3.x dosya formatı belgelerine göre, unrar ve 7-Zip ile doğrulandı.

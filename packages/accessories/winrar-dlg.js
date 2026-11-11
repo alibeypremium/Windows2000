@@ -136,6 +136,7 @@ export const ctl = {
     const s = c?.tagName === "SELECT" ? c : c?.querySelector("select");
     if (!s) return;
     s.replaceChildren(...list.map((o) => el("option", { text: o })));
+    if (c.isDrop && !s.dataset.wired) { s.dataset.wired = "1"; s.selectedIndex = -1; s.addEventListener("change", () => { c.querySelector("input").value = s.value; }); }
     if (selected != null) { if (c.isDrop) c.querySelector("input").value = list[selected] ?? selected; else s.selectedIndex = typeof selected === "number" ? selected : list.indexOf(selected); }
   },
   setEnabled(c, on) { if (!c) return; c.classList.toggle("disabled", !on); c.querySelectorAll("input,select,textarea").forEach((i) => (i.disabled = !on)); if (c.tagName === "BUTTON") c.disabled = !on; },

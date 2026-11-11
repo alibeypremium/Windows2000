@@ -15,6 +15,7 @@ import { openTaskbarProperties } from "../control-panel/dialogs.js";
 import { refWindow, kit, btn } from "../control-panel/refkit.js";
 import { dialogFromTemplate, px, py } from "../ui/dlg.js";
 import { confirmDelete } from "../ui/shconfirm.js";
+import { rarMenuItems } from "../accessories/winrar-shell.js";
 import { startSaver } from "../rendering/savers.js";
 import { openLanStatus } from "./lan-status.js";
 export { openHelp, openWelcome, openAbout } from "./help.js";
@@ -304,7 +305,7 @@ export class DesktopShell {
     const map = [{ label: "Map Network Drive...", action: nd }, { label: "Disconnect Network Drive...", action: nd }];
     if (item.path) {
       const paste = { label: "Paste", disabled: !item.folder || !ctx.clipboard.files.length, action: () => ctx.clipboard.pasteFiles(ctx.fs, item.path) };
-      return [open, ...(item.folder ? [explore] : []), sep(), { label: "Cut", action: () => ctx.clipboard.setFiles(this.selectedPaths(item), "cut") }, { label: "Copy", action: () => ctx.clipboard.setFiles(this.selectedPaths(item)) }, ...(item.folder ? [paste] : []), sep(), shortcut, { label: "Delete", action: () => this.deleteSelected() }, rename, sep(), props];
+      return [open, ...(item.folder ? [explore] : []), sep(), ...rarMenuItems(ctx, this.selectedPaths(item)), { label: "Cut", action: () => ctx.clipboard.setFiles(this.selectedPaths(item), "cut") }, { label: "Copy", action: () => ctx.clipboard.setFiles(this.selectedPaths(item)) }, ...(item.folder ? [paste] : []), sep(), shortcut, { label: "Delete", action: () => this.deleteSelected() }, rename, sep(), props];
     }
     if (item.id === "recycle") {
       const n = ctx.fs.recycled().length;

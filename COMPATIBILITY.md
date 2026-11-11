@@ -69,3 +69,9 @@ Clipboard, recording, serial ports, media codecs, GPU, printing and external han
 - VLC: real Media/Playback/Audio/Video/View/Settings menus, playlist window (drag-reorder, M3U/PLS open/save, Add Folder), Adjustments and Effects (equalizer with live spectrum, video effects, subtitle delay), Preferences, subtitle loading.
 - DivX Player: subtitles, equalizer menu, 4 colour skins. Winamp: Alt+S skin browser (7 colour skins via CSS filter, not .wsz files), Docs files in the add-file menu, `.m3u/.pls` open in VLC.
 - Limitation: Winamp colour skins recolour the default skin; the playlist text keeps its green colour.
+
+### WinRAR geliştirmeleri (dialoglar, arşiv oluşturma, kabuk eklentisi)
+- Dialoglar gerçek WinRAR 4.11 kaynaklarından (dialogs.json): Find files + Search results (isim maskesi, metin/hex arama, alt klasör, arşivlerin içinde arama), Info (Archive/Statistics sekmeleri, sıkıştırma tahmini), Settings (7 sekme, değerler kalıcı; liste çizgileri, saniye gösterimi, düğme yazısı, arşivler önce, başlangıç klasörü ve açılışta Wizard gerçekten uygulanır), Context menu items, Wizard (Unpack / Create / Add adımları), Archive name and parameters (RAR/ZIP seçimi).
+- Uçtan uca test: dosyalar → .zip/.rar oluştur → aç → test → çıkar → bayt boyutları aynı; RAR içinden silme çalışır.
+- Explorer ve masaüstü sağ tık menülerine WinRAR satırları eklendi (Extract files/Here/to folder, Add to archive..., Add to \"x.rar\", Compress and email); "Context menu items" ayarı bu satırları açıp kapatır. Email seçenekleri Outlook Express'te arşivi ek olarak açar.
+- Sınırlar: RAR yalnızca "Store" ile yazılır (sıkıştırma seviyesi RAR'da etkisiz; ZIP'te çalışır). Parola, bölünmüş (volume) arşiv, SFX, recovery record, Repair, Benchmark, Favorites, Report kullanılamaz. Başlat menüsündeki WinRAR satırları sanal olduğu için yalnızca WinRAR'ı açar.

@@ -1081,6 +1081,7 @@ export class DialogService {
     types = null,
     title,
     normalizeName = null,
+    foldersOnly = false,
   } = {}) {
     return new Promise((resolve) => {
       const w = this.wm.create({
@@ -1130,7 +1131,7 @@ export class DialogService {
         address.value = folder;
         listing.replaceChildren();
         for (const n of this.fs.list(folder)) {
-          if (n.type === "file" && filter && !filter(n)) continue;
+          if (n.type === "file" && (foldersOnly || (filter && !filter(n)))) continue;
           if (n.type === "file" && typeSel && mode === "open") {
             const exts = types[typeSel.selectedIndex]?.[1];
             if (exts && !exts.includes(extension(n.name))) continue;
@@ -1163,7 +1164,7 @@ export class DialogService {
         }
       };
       const submit = async () => {
-        if (!input.value.trim()) return;
+        if (!input.value.trim()) { if (foldersOnly) finish(folder); return; }
         const entered =
           mode === "save" && normalizeName
             ? normalizeName(input.value.trim())
@@ -1172,6 +1173,7 @@ export class DialogService {
           ? normalizePath(entered)
           : joinPath(folder, entered);
         const node = this.fs.get(full);
+        if (node?.type === "folder" && foldersOnly) return finish(full);
         if (node?.type === "folder") {
           folder = full;
           input.value = "";
