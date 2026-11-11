@@ -20,7 +20,8 @@ import {
 } from "../core/index.js";
 import { openChannelList } from "./channel-list.js";
 import { sourceFor, siblingSubtitles, loadSubtitleFile, subtitleFromFile, SUB_RE, loadHls, isHls, parseM3U, fetchPlaylistText, isHlsManifest } from "./media-engine.js";
-import { wmpOpen, wmpAbout, wmpStats, wmpProps, wmpOptions } from "./wmp-dialogs.js";
+import { wmpOpen, wmpAbout, wmpStats, wmpProps, wmpOptions, wmpGoto, wmpAddFavorite, wmpError } from "./wmp-dialogs.js";
+import { RADIO_STATIONS } from "./radio-data.js";
 export function encodeWav(channels, sampleRate) {
   const length = channels[0].length,
     count = channels.length,
@@ -282,6 +283,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
   video.addEventListener("error", () => {
     status.children[0].textContent =
       "This media format could not be played by your browser.";
+    if (video.getAttribute("src") || hls) wmpError(ctx, { message: "The file or stream cannot be played.", details: "Clip: " + title.textContent + "\nThe format or the address is not supported by this player, or the server is not reachable." });
   });
   const addSubFile = async () => {
     const p = await ctx.dialogs.file({ title: "Open Captions File", filter: (n) => SUB_RE.test(n.name) });
@@ -382,81 +384,94 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
     if (r) r.dataset.view = m;
     if (!w.el.classList.contains("maximized")) w.el.style.height = (m === "standard" ? 455 : m === "compact" ? 385 : 335) + "px";
   };
-  w.setMenu({
-    File: [
-      { label: "Open...", shortcut: "Ctrl+O", action: () => wmpOpen(ctx, (v) => openAny(v), async (dlg) => { dlg.close(); await importMedia(); }) },
-      { label: "Open Channel List...", action: () => { showChannels(); } },
-      { label: "Open Playlist...", action: openListFile },
-      { label: "Close", disabled: !current, action: () => { video.pause(); video.removeAttribute("src"); video.load(); current = null; tracks = []; curSub = null; subEl.textContent = ""; } },
-      separator(),
-      { label: "Save As...", shortcut: "Ctrl+S", disabled: true },
-      separator(),
-      {
-        label: "Properties",
-        action: () => {
-          const n = current && ctx.fs.exists(current) ? ctx.fs.stat(current) : null;
-          wmpProps(ctx, { name: n?.name || "Windows Welcome", type: n?.mime || "Wave Sound", size: n?.size ? n.size + " bytes" : "", length: format(video.duration), videoSize: video.videoWidth ? video.videoWidth + " x " + video.videoHeight : "" });
-        },
-      },
-      { label: "More Information", submenu: [off("Show"), off("Clip"), off("Banner")] },
-      separator(),
-      { label: "Exit", action: () => w.close() },
-    ],
-    View: () => [
-      { label: "Standard", shortcut: "Ctrl+1", checked: viewMode === "standard", action: () => setView("standard") },
-      { label: "Compact", shortcut: "Ctrl+2", checked: viewMode === "compact", action: () => setView("compact") },
-      { label: "Minimal", shortcut: "Ctrl+3", checked: viewMode === "minimal", action: () => setView("minimal") },
-      separator(),
-      { label: "Full Screen", shortcut: "Alt+Enter", action: () => w.maximize() },
-      { label: "Zoom", submenu: [off("50%", { shortcut: "Alt+1" }), { label: "100%", shortcut: "Alt+2", checked: true, action: () => {} }, off("200%", { shortcut: "Alt+3" })] },
-      separator(),
-      { label: "Statistics", action: () => wmpStats(ctx, video) },
-      separator(),
-      off("Settings", { submenu: [] }),
-      separator(),
-      { label: "Captions", submenu: capMenu },
-      { label: "Channel List", shortcut: "Ctrl+H", action: showChannels },
-      { label: "Always on Top", shortcut: "Ctrl+T", checked: onTop, action: () => (onTop = !onTop) },
-      { label: "Options...", action: () => wmpOptions(ctx, { onTop }, (st) => (onTop = !!st.onTop)) },
-    ],
-    Play: () => [
-      { label: "Play/Pause", shortcut: "Space", action: () => toggle() },
-      { label: "Stop", shortcut: "Period", action: () => { video.pause(); video.currentTime = 0; } },
-      separator(),
-      { label: "Skip Back", shortcut: "Page Up", action: () => { if (index > 0) load(playlist[--index], true); else video.currentTime = 0; } },
-      { label: "Skip Forward", shortcut: "Page Down", action: () => { if (index < playlist.length - 1) load(playlist[++index], true); } },
-      { label: "Rewind", shortcut: "Ctrl+Left", action: () => (video.currentTime = Math.max(0, video.currentTime - 5)) },
-      { label: "Fast Forward", shortcut: "Ctrl+Right", action: () => (video.currentTime = Math.min(video.duration || 0, video.currentTime + 5)) },
-      separator(),
-      off("Preview", { shortcut: "Ctrl+V" }),
-      off("Go to...", { shortcut: "Ctrl+G" }),
-      separator(),
-      { label: "Language", submenu: [off("(not available)")] },
-      {
-        label: "Volume",
-        submenu: [
-          { label: "Up", shortcut: "Up Arrow", action: () => ctx.settings.set("volume", Math.min(100, (ctx.settings.get("volume") ?? 65) + 10)) },
-          { label: "Down", shortcut: "Down Arrow", action: () => ctx.settings.set("volume", Math.max(0, (ctx.settings.get("volume") ?? 65) - 10)) },
-          { label: "Mute", shortcut: "Ctrl+M", checked: !!ctx.settings.get("muted"), action: () => ctx.settings.set("muted", !ctx.settings.get("muted")) },
-        ],
-      },
-    ],
-    Favorites: [off("Add to Favorites...")],
-    Go: [
-      off("Back", { shortcut: "Alt+Left" }),
-      off("Forward", { shortcut: "Alt+Right" }),
-      separator(),
-      off("Media Guide", { shortcut: "Ctrl+Home" }),
-      off("Music", { shortcut: "Ctrl+U" }),
-      off("Radio", { shortcut: "Ctrl+F" }),
-      off("Windows Media Player Home Page"),
-    ],
-    Help: [
-      { label: "Help Topics", action: () => ctx.launch("help", { topic: "media" }) },
-      separator(),
-      off("Check for Player Upgrade"),
-      { label: "About Windows Media Player", action: () => wmpAbout(ctx) },
-    ],
+  // ---- menus, context menu and accelerators come from the msdxm.ocx resources (assets/wmp/menus2.json) ----
+  const favorites = () => ctx.settings.get("wmpFavorites") || [];
+  let zoom = 100;
+  const setZoom = (z) => { zoom = z; video.style.transform = z === 100 ? "" : `scale(${z / 100})`; };
+  const hist = { back: [], fwd: [] };
+  const saveAs = () => {
+    if (!current || !ctx.fs.exists(current)) return;
+    const n = ctx.fs.stat(current);
+    const a = el("a", { href: n.content, download: n.name }); a.click();
+  };
+  const goTo = () => wmpGoto(ctx, playlist.length ? playlist.map(entryTitle) : [title.textContent], Math.max(index, 0), async (i) => { if (!playlist.length) return toggle(true); index = i; await load(playlist[i], true); });
+  const addFavorite = () => wmpAddFavorite(ctx, title.textContent, (name) => ctx.settings.set("wmpFavorites", [...favorites(), { name, item: playlist[index] ?? current }]));
+  const props = () => {
+    const n = current && ctx.fs.exists(current) ? ctx.fs.stat(current) : null;
+    wmpProps(ctx, { name: n?.name || title.textContent, type: n?.mime || "Wave Sound", size: n?.size ? n.size + " bytes" : "", length: format(video.duration), videoSize: video.videoWidth ? video.videoWidth + " x " + video.videoHeight : "" });
+  };
+  const closeClip = () => { video.pause(); video.removeAttribute("src"); video.load(); current = null; tracks = []; curSub = null; subEl.textContent = ""; };
+  const volStep = (d) => ctx.settings.set("volume", Math.max(0, Math.min(100, (ctx.settings.get("volume") ?? 65) + d)));
+  const openDlg = () => wmpOpen(ctx, (v) => openAny(v), async (dlg) => { dlg.close(); await importMedia(); });
+  const A = {
+    open: { run: openDlg }, close: { run: closeClip, off: () => !current && !entryUrl(playlist[index]) }, saveas: { run: saveAs, off: () => !current || !ctx.fs.exists(current) }, exit: { run: () => w.close() },
+    props: { run: props }, stats: { run: () => wmpStats(ctx, video) }, options: { run: () => wmpOptions(ctx, { onTop }, (st) => (onTop = !!st.onTop)) },
+    std: { run: () => setView("standard"), chk: () => viewMode === "standard" }, compact: { run: () => setView("compact"), chk: () => viewMode === "compact" }, min: { run: () => setView("minimal"), chk: () => viewMode === "minimal" },
+    full: { run: () => w.maximize() }, z50: { run: () => setZoom(50), chk: () => zoom === 50 }, z100: { run: () => setZoom(100), chk: () => zoom === 100 }, z200: { run: () => setZoom(200), chk: () => zoom === 200 },
+    top: { run: () => (onTop = !onTop), chk: () => onTop },
+    play: { run: () => toggle() }, stop: { run: () => { video.pause(); video.currentTime = 0; } },
+    skipback: { run: () => { if (index > 0) load(playlist[--index], true); else video.currentTime = 0; } }, skipfwd: { run: () => { if (index < playlist.length - 1) load(playlist[++index], true); } },
+    rewind: { run: () => (video.currentTime = Math.max(0, video.currentTime - 5)) }, ff: { run: () => (video.currentTime = Math.min(video.duration || 0, video.currentTime + 5)) },
+    goto: { run: goTo },
+    volup: { run: () => volStep(10) }, voldown: { run: () => volStep(-10) }, mute: { run: () => ctx.settings.set("muted", !ctx.settings.get("muted")), chk: () => !!ctx.settings.get("muted") },
+    radio: { run: () => showRadio() }, help: { run: () => ctx.launch("help", { topic: "media" }) }, about: { run: () => wmpAbout(ctx) },
+    upgrade: { run: () => ctx.dialogs.message("You already have the most recent version of Windows Media Player installed.", { title: "Windows Media Player", icon: "info" }) },
+    errdetails: { run: () => wmpError(ctx, { message: status.children[0].textContent, details: `Clip: ${title.textContent}\nLocation: ${entryUrl(playlist[index]) || current || "(none)"}` }) },
+    back: { run: () => { const h = hist.back.pop(); if (h != null) { hist.fwd.push(index); index = h; load(playlist[index], true); } }, off: () => !hist.back.length },
+    fwd: { run: () => { const h = hist.fwd.pop(); if (h != null) { hist.back.push(index); index = h; load(playlist[index], true); } }, off: () => !hist.fwd.length },
+  };
+  const BY_ID = { 3009: "open", 3022: "close", 3010: "saveas", 1010: "saveas", 3008: "exit", 3036: "props", 1009: "props", 3061: "stats", 3209: "stats", 3031: "options", 1007: "options", 3044: "std", 3045: "compact", 3046: "min", 3042: "full", 3203: "full", 3039: "z50", 3200: "z50", 3040: "z100", 3201: "z100", 3041: "z200", 3202: "z200", 3032: "top", 3047: "play", 3204: "play", 3048: "stop", 1002: "stop", 3049: "skipback", 3205: "skipback", 3050: "skipfwd", 3206: "skipfwd", 3051: "rewind", 1004: "rewind", 3052: "ff", 1003: "ff", 3054: "goto", 3208: "goto", 3055: "volup", 3213: "volup", 3056: "voldown", 3214: "voldown", 3057: "mute", 3215: "mute", 129: "radio", 3062: "help", 3035: "about", 1008: "about", 3064: "upgrade", 3216: "errdetails", 125: "back", 126: "fwd" };
+  const handle = (id, it, ctxMenu) => {
+    if (it.label.replace("&", "") === "Captions") return { submenu: capMenu };
+    const a = A[ctxMenu && id === 3003 ? "help" : BY_ID[id]];
+    if (!a) return undefined;
+    return { action: a.run, disabled: a.off?.(), checked: a.chk ? a.chk() : undefined };
+  };
+  const build = (items, ctxMenu) => {
+    const out = [];
+    for (const it of items) {
+      if (it.sep) { if (out.length && !out.at(-1).separator) out.push(separator()); continue; }
+      if (it.sub) { const sub = build(it.sub, ctxMenu); out.push(sub.some((s) => s.label && !s.disabled) ? { label: it.label, submenu: sub } : { label: it.label, disabled: true }); continue; }
+      const r = handle(it.id, it, ctxMenu);
+      if (r?.submenu) { out.push({ label: it.label, submenu: r.submenu }); continue; }
+      out.push({ label: it.label, shortcut: it.shortcut, ...(r?.action ? { action: r.action } : { disabled: true }), ...(r?.disabled ? { disabled: true } : {}), ...(r?.checked != null ? { checked: r.checked } : {}) });
+    }
+    while (out.length && out.at(-1).separator) out.pop();
+    return out;
+  };
+  // ---- Radio (Go > Radio, Ctrl+F): preset stations plus your own .m3u address ----
+  let radio = null, radioIdx = -1;
+  const stations = RADIO_STATIONS.map((x) => ({ ...x }));
+  const showRadio = () => {
+    if (radio && !radio.win.closed) { radio.win.focus(); return; }
+    radio = openChannelList(ctx, {
+      title: "Radio Tuner", getList: () => stations, getIndex: () => radioIdx,
+      play: async (i) => { radioIdx = i; await load(stations[i], true); radio?.refresh(); },
+      loadUrl: async (v) => { try { const items = parseM3U(await fetchPlaylistText(v), "", () => false); items.forEach((e) => stations.push({ ...e, group: e.group || "Benim İstasyonlarım", live: true })); radio?.refresh(); } catch (e) { ctx.dialogs.message(`The station list '${v}' could not be read.\n\n${e?.message || e}`, { title: "Windows Media Player", icon: "error" }); } },
+      onClose: () => { radio = null; },
+    });
+  };
+  w.addCleanup(() => { if (radio && !radio.win.closed) radio.win.close(); });
+  const strip = (items) => items.map((i) => ({ ...i, label: i.label?.replace(/&/g, ""), ...(i.sub ? { sub: strip(i.sub) } : {}) }));
+  const menuTree = Object.fromEntries(Object.entries(await (await fetch("/assets/wmp/menus2.json")).json()).map(([k, v]) => [k, strip(v)]));
+  const mainMenu = {};
+  for (const top of menuTree["9102"]) mainMenu[top.label] = () => build(top.sub, false);
+  mainMenu["Favorites"] = () => [{ label: "Add to Favorites...", action: addFavorite }, separator(), ...(favorites().length ? favorites().map((f) => ({ label: f.name, action: async () => { playlist.push(f.item); index = playlist.length - 1; await load(f.item, true); } })) : [{ label: "(Empty)", disabled: true }])];
+  mainMenu["Go"] = () => build(menuTree["9102"].find((t) => t.label === "Go").sub, false).map((m) => (/Media Guide|Music|Windows Media Player Home/.test(m.label || "") ? { ...m, disabled: true } : m));
+  w.setMenu(mainMenu);
+  w.el.addEventListener("contextmenu", (e) => {
+    if (!e.target.closest(".wmp-screen")) return;
+    e.preventDefault();
+    popup(build(menuTree["102"], true), e.clientX, e.clientY, {});
+  });
+  // accelerator tables 113 / 2700 of msdxm.ocx: [virtual key, modifiers (1 ctrl, 2 alt, 4 shift), command id]
+  const ACCEL = [[49,1,3044],[50,1,3045],[51,1,3046],[79,1,3009],[83,1,3010],[84,1,3032],[36,1,127],[85,1,128],[70,1,129],[37,2,125],[39,2,126],[190,0,1002],[77,1,3215],[77,0,3215],[37,1,1004],[39,1,1003],[49,2,3200],[50,2,3201],[51,2,3202],[38,0,3213],[40,0,3214],[13,2,3203],[34,0,3206],[33,0,3205],[71,1,3208]];
+  w.el.addEventListener("keydown", (e) => {
+    if (e.target.matches?.("input, textarea, select")) return;
+    const mod = (e.ctrlKey ? 1 : 0) | (e.altKey ? 2 : 0) | (e.shiftKey ? 4 : 0);
+    const hit = ACCEL.find(([k, m]) => k === e.keyCode && m === mod);
+    const a = hit && A[BY_ID[hit[2]]];
+    if (a && !a.off?.()) { e.preventDefault(); a.run(); }
   });
   if (cd)
     w.setMenu({

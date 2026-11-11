@@ -118,3 +118,10 @@ Clipboard, recording, serial ports, media codecs, GPU, printing and external han
 - **Program Files:** artık sistem klasörü uyarı sayfası yerine dosyalar doğrudan görünür.
 - **VLC logosu:** koni logosu orijinal VLC koni logosuna benzer şekilde yeniden çizildi (orijinal büyük dosya sandbox'tan alınamadığı için SVG çizimidir).
 - **WMP:** doğrudan URL akışları Web Audio grafiğinden geçirilmez (çapraz kaynaklı akışta ses sessiz kalıyordu).
+
+## Windows Media Player 6.4 (kullanıcının mpfull6.4.exe paketinden)
+- Kaynak: kullanıcının verdiği `Windows-Media-Player-6.rar` → `mpfull6.4.exe` (Wextract CAB, sürüm 6.4.07.1112) → `msdxm.ocx`. Diyalog şablonları (26), menüler (ana menü 9102 ve sağ tık menüsü 102), kısayol tabloları (113/2700), bitmap ve ikonlar bu dosyadan alındı (`packages/accessories/wmp-data.js`, `assets/wmp/`).
+- Menü çubuğu ve video alanına sağ tık menüsü gerçek menü ağacından kurulur (menus2.json); Ctrl+O, Ctrl+1/2/3, Ctrl+T, Ctrl+G, Ctrl+F, Alt+Enter, Alt+1/2/3, PgUp/PgDn, Ctrl+Sol/Sağ, Yön tuşları, M vb. gerçek kısayol tablosundan.
+- Yeni diyaloglar: Go to (listeden klip seçer), Add Favorite (Favorites menüsü, ayarlarda saklanır), Windows Media Player Error (oynatma hatasında, Advanced >> ayrıntıları gösterir). Zoom %50/%100/%200 çalışır; Back/Forward çalma geçmişinde gezer.
+- **Radio (Go > Radio, Ctrl+F):** Radio Tuner penceresi; TRT Radyo 1/FM/3/Nağme/Haber, BBC World Service, Radio Paradise, KEXP, SomaFM kanalları ön tanımlı, adres kutusuna yapıştırılan `.m3u/.m3u8` listesi eklenir. Yayınların çalışması yayıncıya ve ağa bağlıdır (sandbox'ta denenemedi). Media Guide / Music / Home Page internet gerektirdiği için kapalıdır.
+- Sınırlar: `mplayer2.hlp` (WinHelp) tarayıcıda açılmaz; Help Topics mevcut yardım sayfasını açar. Windows Media Guide sayfaları, codec DLL'leri ve DRM çalışmaz.

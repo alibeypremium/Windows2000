@@ -3,7 +3,7 @@ import { el, button, menuBar } from "../ui/index.js";
 
 /** api: { title, getList(): entries, getIndex(), play(i), loadUrl(url), openFile?() } — returns { refresh, close, win } */
 export function openChannelList(ctx, api) {
-  const win = ctx.wm.create({ title: "Channel List", icon: api.icon || "media", width: 380, height: 420, x: 240, y: 90, appId: "channel-list" });
+  const win = ctx.wm.create({ title: api.title || "Channel List", icon: api.icon || "media", width: 380, height: 420, x: 240, y: 90, appId: api.appId || "channel-list" });
   let group = "", q = "";
   const urlBox = el("input", { type: "text", class: "vlc-ch-url", placeholder: "Paste an .m3u / .m3u8 address here and press Enter" });
   const go = () => { const v = urlBox.value.trim(); urlBox.value = ""; if (v) api.loadUrl(v); };

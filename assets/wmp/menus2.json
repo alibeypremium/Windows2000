@@ -1,0 +1,441 @@
+{
+ "102": [
+  {
+   "label": "&Play/Pause",
+   "id": 3204
+  },
+  {
+   "label": "&Stop",
+   "id": 1002
+  },
+  {
+   "sep": 1
+  },
+  {
+   "label": "Save &As...",
+   "id": 1010
+  },
+  {
+   "sep": 1
+  },
+  {
+   "label": "&Navigate",
+   "sub": [
+    {
+     "label": "Skip &Back",
+     "id": 3205
+    },
+    {
+     "label": "Skip &Forward",
+     "id": 3206
+    },
+    {
+     "label": "Re&wind",
+     "id": 1004
+    },
+    {
+     "label": "Fast F&orward",
+     "id": 1003
+    },
+    {
+     "sep": 1
+    },
+    {
+     "label": "Pre&view",
+     "id": 3207
+    },
+    {
+     "label": "&Go to...",
+     "id": 3208
+    }
+   ]
+  },
+  {
+   "sep": 1
+  },
+  {
+   "label": "&Language",
+   "sub": [
+    {
+     "label": "(not available)",
+     "id": 65535
+    }
+   ]
+  },
+  {
+   "label": "Vol&ume",
+   "sub": [
+    {
+     "label": "&Up",
+     "id": 3213,
+     "shortcut": "Up Arrow"
+    },
+    {
+     "label": "&Down",
+     "id": 3214,
+     "shortcut": "Down Arrow"
+    },
+    {
+     "label": "&Mute",
+     "id": 3215
+    }
+   ]
+  },
+  {
+   "sep": 1
+  },
+  {
+   "label": "&Full Screen",
+   "id": 3203
+  },
+  {
+   "label": "&Zoom",
+   "sub": [
+    {
+     "label": "&50%",
+     "id": 3200
+    },
+    {
+     "label": "&100%",
+     "id": 3201
+    },
+    {
+     "label": "&200%",
+     "id": 3202
+    }
+   ]
+  },
+  {
+   "sep": 1
+  },
+  {
+   "label": "P&roperties",
+   "id": 1009
+  },
+  {
+   "label": "S&tatistics",
+   "id": 3209
+  },
+  {
+   "label": "More &Information",
+   "sub": [
+    {
+     "label": "&Show",
+     "id": 3210
+    },
+    {
+     "label": "&Clip",
+     "id": 3211
+    },
+    {
+     "label": "&Banner",
+     "id": 3212
+    }
+   ]
+  },
+  {
+   "sep": 1
+  },
+  {
+   "label": "&Options...",
+   "id": 1007
+  },
+  {
+   "label": "&Error details",
+   "id": 3216
+  },
+  {
+   "label": "&Help",
+   "id": 3003
+  },
+  {
+   "label": "A&bout",
+   "id": 1008
+  }
+ ],
+ "9102": [
+  {
+   "label": "&File",
+   "sub": [
+    {
+     "label": "&Open...",
+     "id": 3009,
+     "shortcut": "Ctrl+O"
+    },
+    {
+     "label": "&Close",
+     "id": 3022
+    },
+    {
+     "sep": 1
+    },
+    {
+     "label": "Save &As...",
+     "id": 3010,
+     "shortcut": "Crtl+S"
+    },
+    {
+     "sep": 1
+    },
+    {
+     "label": "P&roperties",
+     "id": 3036
+    },
+    {
+     "label": "More &Information",
+     "sub": [
+      {
+       "label": "&Show",
+       "id": 3058
+      },
+      {
+       "label": "&Clip",
+       "id": 3059
+      },
+      {
+       "label": "&Banner",
+       "id": 3060
+      }
+     ]
+    },
+    {
+     "sep": 1
+    },
+    {
+     "label": "E&xit",
+     "id": 3008
+    }
+   ]
+  },
+  {
+   "label": "&View",
+   "sub": [
+    {
+     "label": "&Standard",
+     "id": 3044,
+     "shortcut": "Ctrl+1"
+    },
+    {
+     "label": "&Compact",
+     "id": 3045,
+     "shortcut": "Ctrl+2"
+    },
+    {
+     "label": "&Minimal",
+     "id": 3046,
+     "shortcut": "Ctrl+3"
+    },
+    {
+     "sep": 1
+    },
+    {
+     "label": "&Full Screen",
+     "id": 3042,
+     "shortcut": "Alt+Enter"
+    },
+    {
+     "label": "&Zoom",
+     "sub": [
+      {
+       "label": "&50%",
+       "id": 3039,
+       "shortcut": "Alt+1"
+      },
+      {
+       "label": "&100%",
+       "id": 3040,
+       "shortcut": "Alt+2"
+      },
+      {
+       "label": "&200%",
+       "id": 3041,
+       "shortcut": "Alt+3"
+      }
+     ]
+    },
+    {
+     "sep": 1
+    },
+    {
+     "label": "S&tatistics",
+     "id": 3061
+    },
+    {
+     "sep": 1
+    },
+    {
+     "label": "S&ettings",
+     "sub": [
+      {
+       "sep": 1
+      }
+     ]
+    },
+    {
+     "sep": 1
+    },
+    {
+     "label": "C&aptions",
+     "id": 3003
+    },
+    {
+     "label": "Al&ways on Top",
+     "id": 3032,
+     "shortcut": "Ctrl+T"
+    },
+    {
+     "label": "&Options...",
+     "id": 3031
+    }
+   ]
+  },
+  {
+   "label": "&Play",
+   "sub": [
+    {
+     "label": "&Play/Pause",
+     "id": 3047,
+     "shortcut": "Space"
+    },
+    {
+     "label": "&Stop",
+     "id": 3048,
+     "shortcut": "Period"
+    },
+    {
+     "sep": 1
+    },
+    {
+     "label": "Skip &Back",
+     "id": 3049,
+     "shortcut": "Page Up"
+    },
+    {
+     "label": "Skip &Forward",
+     "id": 3050,
+     "shortcut": "Page Down"
+    },
+    {
+     "label": "Re&wind",
+     "id": 3051,
+     "shortcut": "Ctrl+Left"
+    },
+    {
+     "label": "Fast F&orward",
+     "id": 3052,
+     "shortcut": "Ctrl+Right"
+    },
+    {
+     "sep": 1
+    },
+    {
+     "label": "Pre&view",
+     "id": 3053,
+     "shortcut": "Ctrl+V"
+    },
+    {
+     "label": "&Go to...",
+     "id": 3054,
+     "shortcut": "Ctrl+G"
+    },
+    {
+     "sep": 1
+    },
+    {
+     "label": "&Language",
+     "sub": [
+      {
+       "label": "(not available)",
+       "id": 65535
+      }
+     ]
+    },
+    {
+     "label": "Vol&ume",
+     "sub": [
+      {
+       "label": "&Up",
+       "id": 3055,
+       "shortcut": "Up Arrow"
+      },
+      {
+       "label": "&Down",
+       "id": 3056,
+       "shortcut": "Down Arrow"
+      },
+      {
+       "label": "&Mute",
+       "id": 3057,
+       "shortcut": "Ctrl+M"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "label": "F&avorites",
+   "sub": [
+    {
+     "sep": 1
+    }
+   ]
+  },
+  {
+   "label": "&Go",
+   "sub": [
+    {
+     "label": "Back",
+     "id": 125,
+     "shortcut": "Alt+Left"
+    },
+    {
+     "label": "Forward",
+     "id": 126,
+     "shortcut": "Alt+Right"
+    },
+    {
+     "sep": 1
+    },
+    {
+     "label": "Media &Guide",
+     "id": 127,
+     "shortcut": "Ctrl+Home"
+    },
+    {
+     "label": "&Music",
+     "id": 128,
+     "shortcut": "Ctrl+U"
+    },
+    {
+     "label": "&Radio",
+     "id": 129,
+     "shortcut": "Ctrl+F"
+    },
+    {
+     "label": "&Windows Media Player Home Page",
+     "id": 150
+    }
+   ]
+  },
+  {
+   "label": "&Help",
+   "sub": [
+    {
+     "label": "&Help Topics",
+     "id": 3062
+    },
+    {
+     "sep": 1
+    },
+    {
+     "label": "Check for Player &Upgrade",
+     "id": 3064
+    },
+    {
+     "label": "&About Windows Media Player",
+     "id": 3035
+    }
+   ]
+  }
+ ]
+}

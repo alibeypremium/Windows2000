@@ -1,4 +1,5 @@
 // Windows Media Player 6.4 dialogs built from the msdxm.ocx templates.
+import { el } from "../ui/index.js";
 import { dialogFromTemplate, px, py } from "../ui/dlg.js";
 import { WMP_DIALOGS as D } from "./wmp-data.js";
 import { refWindow, tabControl, btn } from "../control-panel/refkit.js";
@@ -52,11 +53,58 @@ export function wmpProps(ctx, { name, type, size, length, videoSize }) {
   return d;
 }
 
-export function wmpGoto(ctx, onGo, items) {
+export function wmpGoto(ctx, titles, index, onGo) {
+  let sel = Math.max(0, index);
   const d = dialogFromTemplate(ctx, D[211], {
+    title: "Go to",
     icon: "media",
-    on: { 1: () => d.close(), 2: () => d.close() },
+    on: { 1: () => { d.close(); if (titles.length) onGo(sel); }, 2: () => d.close() },
   });
+  const t = D[211].controls.find((c) => c.id === 266);
+  const box = el("div", { class: "vlc-pl", style: { position: "absolute", left: px(t.x) + "px", top: py(t.y) + "px", width: px(t.cx) + "px", height: py(t.cy) + "px", background: "#fff", border: "2px inset #808080", boxSizing: "border-box" } });
+  const draw = () => box.replaceChildren(...(titles.length ? titles.map((n, i) => { const r = el("div", { class: "vlc-pl-row" + (i === sel ? " sel" : "") + (i === index ? " cur" : ""), text: n }); r.addEventListener("click", () => { sel = i; draw(); }); r.addEventListener("dblclick", () => d.ctl[1].click()); return r; }) : [el("div", { class: "vlc-pl-empty", text: "There are no clips in the play list." })]));
+  draw();
+  d.place(box);
+  return d;
+}
+
+/** Add Favorite (template 4052 without the folder tree). */
+export function wmpAddFavorite(ctx, name, onOk) {
+  const tpl = { ...D[4052], cy: 112, controls: D[4052].controls.filter((c) => c.y < 110 && ![4053, 4054, 4051].includes(c.id)) };
+  const d = dialogFromTemplate(ctx, tpl, {
+    title: "Add Favorite",
+    icon: "media",
+    values: { 4050: name },
+    checked: { 4052: true },
+    groups: [[4052, 4049]],
+    on: { 1: () => { const v = d.ctl[4050].value.trim(); d.close(); if (v) onOk(v); }, 2: () => d.close() },
+  });
+  return d;
+}
+
+/** Windows Media Player Error (template 101). */
+export function wmpError(ctx, { message, details }) {
+  const tpl = { ...D[101], controls: D[101].controls.filter((c) => c.id !== 254) };
+  const dt = D[101].controls.find((c) => c.id === 254);
+  let box = null;
+  const d = dialogFromTemplate(ctx, tpl, {
+    title: "Windows Media Player Error",
+    icon: "media",
+    values: { 283: message, 405: "" },
+    hidden: [406, 322, 141],
+    on: {
+      255: () => d.close(),
+      282: () => {
+        if (box) { box.remove(); box = null; d.ctl[282].textContent = "Advanced >>"; return; }
+        box = el("div", { class: "rk-sunken", text: details, style: { position: "absolute", left: px(dt.x) + "px", top: py(dt.y) + "px", width: px(dt.cx) + "px", height: py(dt.cy) + "px", background: "#fff", border: "2px inset #808080", boxSizing: "border-box", whiteSpace: "pre-wrap", overflow: "auto", padding: "2px" } });
+        d.place(box); d.ctl[282].textContent = "<< Advanced";
+      },
+      289: () => ctx.launch("help", { topic: "media" }),
+    },
+  });
+  const m = d.ctl[283];
+  if (m) { const t = el("div", { class: "rk-text", text: message, style: { position: "absolute", left: m.style.left, top: m.style.top, width: m.style.width, height: m.style.height, whiteSpace: "pre-wrap", overflow: "hidden" } }); m.replaceWith(t); }
+  d.place(el("img", { src: "assets/wmp/icons/5295.png", width: 32, height: 32, alt: "", style: { position: "absolute", left: px(13) + "px", top: py(15) + "px" } }));
   return d;
 }
 
