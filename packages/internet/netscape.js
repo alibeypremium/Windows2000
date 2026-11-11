@@ -1,6 +1,6 @@
 import { el, button, icon, popup, menuBar, separator } from "../ui/index.js";
 import { basename } from "../core/index.js";
-import { NAV_SCRIPT, buildSite, isSite, homeParts } from "./netscape-sites.js";
+import { NAV_SCRIPT, buildSite, isSite, prefetchNews, homeParts } from "./netscape-sites.js";
 import { loadBM, saveBM, bookmarkItems, addBookmark, folderChoices, openBookmarkWindow } from "./netscape-bm.js";
 import { recordVisit, setVisitTitle, expireHistory, openHistoryWindow, openPageInfo, openPreferences } from "./netscape-tools.js";
 
@@ -8,9 +8,10 @@ const IMG = "/assets/ui/netscape/";
 const TITLE = "Netscape";
 const FRAMES = 39;
 
+const NS_HOME = "www.netscape.com/home";
 const normalize = (input) => {
   let t = String(input || "").trim();
-  if (!t) return "about:home";
+  if (!t || /^(https?:\/\/)?www\.netscape\.com\/home\/?$/i.test(t)) return "about:home";
   if (/^(about:|https?:\/\/|file:|[A-Z]:[\\/])/i.test(t)) return t;
   if (t.includes(".") && !t.includes(" ")) return "http://" + t;
   return "about:search?q=" + encodeURIComponent(t);
@@ -51,6 +52,7 @@ body{margin:0;background:#fff;font:13px Arial,sans-serif;color:#000}
 <p>Fan simulation running entirely in your browser.</p></div></body></html>`;
 
 export function openNetscape(ctx, { url = null, path = null } = {}) {
+  prefetchNews();
   const w = ctx.wm.create({
     title: "Netscape",
     icon: "netscape",
@@ -103,7 +105,7 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
 
   function render() {
     viewport.replaceChildren();
-    address.value = current === "about:home" ? "" : current;
+    address.value = current === "about:home" ? NS_HOME : current;
     const mk = (props) => el("iframe", { class: "ns-frame", ...props });
     loadedAt = Date.now();
     if (isSite(current)) {
@@ -346,7 +348,7 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
 
   const nav = el("div", { class: "ns-bar ns-nav" }, el("span", { class: "ns-grip" }), bBack, bFwd, bReload, bHome, bSearch, bNs, bPrint, bSec, bStop, el("span", { class: "ns-spacer" }), throbber);
   const loc = el("div", { class: "ns-bar ns-loc" }, el("span", { class: "ns-grip" }), bookmarksBtn, el("span", { class: "ns-loc-label", text: "Location:" }), el("div", { class: "ns-loc-field" }, el("img", { src: "/assets/icons/nshtml-16x16.png", alt: "", draggable: "false" }), address), el("img", { class: "ns-related", src: IMG + "related.png", alt: "What's Related", draggable: "false" }));
-  const pers = el("div", { class: "ns-bar ns-pers" }, el("span", { class: "ns-grip" }), personal("Internet", () => go("about:home")), personal("Lookup", () => go("about:google")), personal("New&Cool", () => go("about:youtube")), personal("News", () => go("about:news")));
+  const pers = el("div", { class: "ns-bar ns-pers" }, el("span", { class: "ns-grip" }), personal("Internet", () => go("about:home")), personal("Lookup", () => go("about:google")), personal("News", () => go("about:news")));
   const status = el("div", { class: "ns-status" }, el("img", { src: IMG + "st-lock.png", alt: "", draggable: "false" }), msg, el("img", { class: "ns-comp", src: IMG + "st-comp.png", alt: "", draggable: "false" }));
 
   w.setContent(menus, nav, loc, pers, viewport, status);

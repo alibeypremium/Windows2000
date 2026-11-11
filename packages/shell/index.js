@@ -780,9 +780,10 @@ export class DesktopShell {
     const ctx = this.ctx,
       root = document.querySelector("#task-buttons");
     if (!root) return;
+    this.renderTrayWindows();
     root.replaceChildren(
       ...ctx.wm.windows
-        .filter((w) => !w.dialog && !w.closed)
+        .filter((w) => !w.dialog && !w.closed && !(w.trayIcon && w.minimized))
         .map((w) => {
           const b = button(
             [icon(w.icon), el("span", { text: w.title })],
@@ -805,6 +806,26 @@ export class DesktopShell {
           return b;
         }),
     );
+  }
+  /** Windows that set `trayIcon` hide their taskbar button when minimized and show an icon in the notification area instead. */
+  renderTrayWindows() {
+    const tray = document.querySelector(".system-tray");
+    if (!tray) return;
+    const ctx = this.ctx;
+    const want = ctx.wm.windows.filter((w) => w.trayIcon && w.minimized && !w.closed);
+    for (const old of [...tray.querySelectorAll(".tray-app")]) if (!want.some((w) => w.id === old.dataset.winId)) old.remove();
+    for (const w of want) {
+      if (tray.querySelector(`.tray-app[data-win-id="${w.id}"]`)) continue;
+      const b = button(icon(w.trayIcon, 16), () => w.focus(), { class: "tray-button tray-app", title: w.trayTitle?.() || w.title, "aria-label": w.title });
+      b.dataset.winId = w.id;
+      b.addEventListener("dblclick", () => w.focus());
+      b.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        popup(w.trayMenu?.() || [{ label: "Open", action: () => w.focus() }, { label: "Close", action: () => w.close() }], e.clientX, e.clientY - 120);
+      });
+      tray.insertBefore(b, tray.firstChild);
+    }
   }
   updateClock() {
     const s = this.ctx.settings,

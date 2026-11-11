@@ -147,7 +147,7 @@ export async function buildSite(u) {
     if (r.first) return { go: r.first };
     return { html: r.html, title: p.get("q") ? `Google Search: ${p.get("q")}` : "Google" };
   }
-  if (base === "about:news") return { html: newsPage(p.get("s") || "bbc"), title: "News Reader" };
+  if (base === "about:news") return { html: newsPage(await newsData(p.get("s") || "bbc", p.has("fresh"))), title: "News Reader" };
   if (base === "about:daily") return { html: dailyPage(Object.fromEntries(p)), title: "Günün Ayeti, Hadisi ve Esması" };
   if (base === "about:today") return { html: todayPage(p.get("lang") || "tr"), title: "Tarihte Bugün" };
   if (base === "about:homeboxes") return { html: homeBoxes(), title: "Netcenter" };
@@ -159,31 +159,44 @@ const NEWS_SOURCES = [
   { key: "bbc", name: "BBC News", rss: "https://feeds.bbci.co.uk/news/world/rss.xml" },
   { key: "bbctr", name: "BBC Türkçe", rss: "https://feeds.bbci.co.uk/turkce/rss.xml" },
 ];
-export const newsPage = (key = "bbc") => {
+const withTimeout = (p, ms) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), ms))]);
+const parseRss = (t) => Array.from(new DOMParser().parseFromString(t, "text/xml").querySelectorAll("item")).map((i) => {
+  const g = (n) => i.querySelector(n)?.textContent || "", d = g("pubDate");
+  return { title: g("title"), link: g("link"), ts: Date.parse(d) || 0, desc: g("description").replace(/<[^>]*>/g, "").slice(0, 220) };
+});
+const viaText = async (u) => { const r = await fetch(u, { cache: "no-store" }); if (!r.ok) throw new Error("http"); const l = parseRss(await r.text()); if (!l.length) throw new Error("empty"); return l; };
+const viaJson = async (u) => { const j = await (await fetch(u, { cache: "no-store" })).json(); const l = j.items.map((i) => ({ title: i.title, link: i.link, ts: Date.parse(String(i.pubDate).replace(" ", "T") + "Z") || 0, desc: String(i.description || "").replace(/<[^>]*>/g, "").slice(0, 220) })); if (!l.length) throw new Error("empty"); return l; };
+const fetchFeed = (src) => Promise.any([
+  withTimeout(viaText(src.rss + "?_=" + Date.now()), 6000),
+  withTimeout(viaText("https://api.allorigins.win/raw?url=" + encodeURIComponent(src.rss)), 6000),
+  withTimeout(viaJson("https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(src.rss)), 6000),
+]).then((l) => l.sort((a, b) => b.ts - a.ts));
+const mem = new Map();
+const lsGet = (k) => { try { return JSON.parse(localStorage.getItem("w2k-news-" + k)); } catch { return null; } };
+const lsSet = (k, v) => { try { localStorage.setItem("w2k-news-" + k, JSON.stringify(v)); } catch {} };
+const refresh = (src) => fetchFeed(src).then((items) => { const v = { items, at: Date.now() }; mem.set(src.key, v); lsSet(src.key, v); return v; });
+/** Stale-while-revalidate: cached headlines show immediately; a fresh copy is fetched in the background (or awaited briefly when the cache is old). */
+export async function newsData(key, fresh = false) {
   const src = NEWS_SOURCES.find((s) => s.key === key) || NEWS_SOURCES[0];
+  const c = mem.get(src.key) || lsGet(src.key);
+  const age = c ? Date.now() - c.at : Infinity;
+  if (c && !fresh && age < 3 * 60000) return { src, ...c };
+  const p = refresh(src);
+  if (c && !fresh) { p.catch(() => {}); return Promise.race([p, new Promise((r) => setTimeout(() => r(c), 1500))]).then((v) => ({ src, ...v })); }
+  try { return { src, ...(await p) }; } catch { return { src, items: [], at: 0 }; }
+}
+export const prefetchNews = () => NEWS_SOURCES.forEach((s) => { const c = mem.get(s.key) || lsGet(s.key); if (!c || Date.now() - c.at > 3 * 60000) refresh(s).catch(() => {}); });
+export const newsPage = ({ src, items, at }) => {
   const tabs = NEWS_SOURCES.map((s) => `<a href="about:news?s=${s.key}"${s.key === src.key ? ' class="on"' : ""}>${esc(s.name)}</a>`).join("");
-  const script = `<script>(function(){
-var SRC=${JSON.stringify(src)},box=document.getElementById('items');
-function show(list){box.innerHTML='';list.forEach(function(it){var d=document.createElement('div');d.className='it';
-var a=document.createElement('a');a.href=it.link;a.textContent=it.title;d.appendChild(a);
-if(it.meta){var m=document.createElement('div');m.className='meta';m.textContent=it.meta;d.appendChild(m)}
-if(it.desc){var p=document.createElement('div');p.className='ds';p.textContent=it.desc;d.appendChild(p)}box.appendChild(d)});}
-function fail(){box.innerHTML='<p class="err">The news server could not be reached. Check your Internet connection and click Reload.</p>';}
-function parse(t){var x=new DOMParser().parseFromString(t,'text/xml');return Array.prototype.map.call(x.querySelectorAll('item'),function(i){function g(n){var e=i.querySelector(n);return e?e.textContent:''}var d=g('pubDate');return{title:g('title'),link:g('link'),ts:Date.parse(d)||0,meta:d?new Date(d).toLocaleString():'',desc:g('description').replace(/<[^>]*>/g,'').slice(0,220)}})}
-function viaText(u){return fetch(u,{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.text()}).then(parse)}
-function rssDirect(){var b=SRC.rss+(SRC.rss.indexOf('?')<0?'?':'&')+'_='+Date.now();return viaText(b)}
-function rssProxy(){return viaText('https://api.allorigins.win/raw?url='+encodeURIComponent(SRC.rss+'?_='+Date.now()))}
-function rssJson(){return fetch('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(SRC.rss)+'&_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){return j.items.map(function(i){return{title:i.title,link:i.link,ts:Date.parse(String(i.pubDate).replace(' ','T')+'Z')||0,meta:i.pubDate,desc:(i.description||'').replace(/<[^>]*>/g,'').slice(0,220)}})})}
-function load(){box.innerHTML=box.innerHTML||'';var chain=[rssDirect,rssProxy,rssJson];(function next(i){if(i>=chain.length)return fail();chain[i]().then(function(l){if(!l.length)throw 0;l.sort(function(a,b){return b.ts-a.ts});show(l)}).catch(function(){next(i+1)})})(0);}
-load();setInterval(load,300000);
-})();<\/script>`;
+  const rows = items.length
+    ? items.map((i) => `<div class="it"><a href="${esc(i.link)}">${esc(i.title)}</a>${i.ts ? `<div class="meta">${esc(new Date(i.ts).toLocaleString())}</div>` : ""}${i.desc ? `<div class="ds">${esc(i.desc)}</div>` : ""}</div>`).join("")
+    : '<p class="err">The news server could not be reached. Check your Internet connection and click Refresh.</p>';
   return page(
     `News - ${src.name}`,
     `body{margin:0;font:13px Arial,sans-serif;background:#fff;color:#000}.hd{background:#990000;color:#fff;padding:8px 14px;font:bold 22px 'Times New Roman',serif}
-.tabs{background:#eee;border-bottom:1px solid #999;padding:5px 14px}.tabs a{margin-right:6px;padding:3px 10px;color:#000;text-decoration:none;border:1px solid #bbb;background:#ddd}.tabs a.on{background:#fff;font-weight:bold;border-bottom-color:#fff}
-.it{padding:8px 14px;border-bottom:1px dotted #bbb}.it a{font-size:14px;font-weight:bold;color:#0000cc}.meta{color:#777;font-size:11px;margin-top:2px}.ds{margin-top:3px}.err,.ld{padding:14px;color:#555}.ft{padding:8px 14px;font-size:11px;color:#666}`,
-    `<div class="hd">News Reader</div><div class="tabs">${tabs}</div><div id="items"><p class="ld">Loading headlines from ${esc(src.name)}...</p></div><div class="ft">Headlines open inside Netscape. If a site refuses to be shown, use File &gt; Open Page in Real Browser.</div>`,
-    script,
+.tabs{background:#eee;border-bottom:1px solid #999;padding:5px 14px}.tabs a{margin-right:6px;padding:3px 10px;color:#000;text-decoration:none;border:1px solid #bbb;background:#ddd}.tabs a.on{background:#fff;font-weight:bold}
+.it{padding:8px 14px;border-bottom:1px dotted #bbb}.it a{font-size:14px;font-weight:bold;color:#0000cc}.meta{color:#777;font-size:11px;margin-top:2px}.ds{margin-top:3px}.err{padding:14px;color:#555}.ft{padding:8px 14px;font-size:11px;color:#666}`,
+    `<div class="hd">News Reader</div><div class="tabs">${tabs} <a href="about:news?s=${src.key}&fresh=1" style="float:right;margin-right:0">Refresh</a></div>${rows}<div class="ft">${at ? "Updated " + esc(new Date(at).toLocaleTimeString()) + ". " : ""}Headlines open inside the browser. If a site refuses to be framed, use Open in Browser.</div>`,
   );
 };
 

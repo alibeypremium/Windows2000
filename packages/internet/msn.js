@@ -2,7 +2,7 @@
 // Menus, dialog templates, strings, icons, emoticons and sounds come from the real MSN Messenger 5.0 installer
 // (msnmsgr.exe / msgslang.dll), extracted into assets/ui/msn and assets/sounds/msn.
 import { el, button, popup, menuBar, icon, separator } from "../ui/index.js";
-import { DIRECTORY, GROUPS, DISPLAY_PICS, avatar, pickReply } from "./msn-data.js";
+import { DIRECTORY, GROUPS, DISPLAY_PICS, avatar, pickReply, randomNote } from "./msn-data.js";
 import { buildDialog, buildTabs, openDlgWindow, ctl, plain, mnemonic } from "../accessories/winrar-dlg.js";
 
 const U = "/assets/ui/msn/";
@@ -41,6 +41,15 @@ export async function openMessenger(ctx) {
   const R = await load();
   const saved = ctx.settings.get("msn") || {};
   const w = ctx.wm.create({ title: "MSN Messenger", icon: "msn", width: 246, height: 500, x: 700, y: 40, appId: "msn", maximizable: false });
+  w.trayIcon = "msn";
+  w.trayTitle = () => "MSN Messenger" + (me ? " - " + me.name + " (" + STATUS[me.status].label + ")" : " - not signed in");
+  w.trayMenu = () => [
+    { label: "Open MSN Messenger", bold: true, action: () => w.focus() },
+    { separator: true },
+    ...(me ? Object.entries(STATUS).map(([k, st]) => ({ label: st.label, checked: me.status === k, action: () => setStatus(k) })) : []),
+    ...(me ? [{ separator: true }, { label: "Sign Out", action: () => signOut() }] : []),
+    { label: "Exit", action: () => w.close() },
+  ];
   let me = null; // { email, name, status }
   const prof = Object.assign({ status: "online", groups: [...GROUPS], removed: [], added: [], moved: {}, byGroup: false, history: {}, blocked: [], pic: "msn", name: null }, ctx.settings.get("msnProfile") || {});
   const saveProf = () => ctx.settings.set("msnProfile", prof);
@@ -51,7 +60,7 @@ export async function openMessenger(ctx) {
       const d = DIRECTORY.find((x) => x.email === a.email);
       list.push(d ? { ...d, group: a.group || d.group } : { name: a.name, email: a.email, group: a.group, status: "offline", replies: [], photo: avatar("smiley", a.email.charCodeAt(0) % 8), custom: true });
     }
-    list.forEach((c) => { if (prof.moved[c.email]) c.group = prof.moved[c.email]; c.blocked = prof.blocked.includes(c.email); });
+    list.forEach((c) => { c.psm = c.note ?? randomNote(); if (prof.moved[c.email]) c.group = prof.moved[c.email]; c.blocked = prof.blocked.includes(c.email); });
     return list;
   };
   const myPic = () => (DISPLAY_PICS.find((x) => x.id === prof.pic) || DISPLAY_PICS.find((x) => x.id === "msn")).src;
@@ -124,8 +133,8 @@ export async function openMessenger(ctx) {
       if (key.startsWith("g:")) head.addEventListener("contextmenu", (e) => { e.preventDefault(); popup([{ label: "Rename Group...", action: () => renameGroup(key.slice(2)) }, { label: "Delete Group", action: () => deleteGroup(key.slice(2)) }], e.clientX, e.clientY, {}); });
       head.addEventListener("click", () => { collapsed[key] = !collapsed[key]; listView(); });
       const rows = collapsed[key] ? [] : list.map((c) => {
-        const r = el("div", { class: "msn-contact" + (c.status === "offline" ? " off" : ""), tabindex: "0" }, statusIcon(c.status), el("span", { class: "msn-cname", text: c.name }), c.status !== "online" && c.status !== "offline" ? el("span", { class: "msn-cst", text: ` (${STATUS[c.status].label})` }) : null);
-        r.title = `${c.name}\n${c.email}`;
+        const r = el("div", { class: "msn-contact" + (c.status === "offline" ? " off" : ""), tabindex: "0" }, statusIcon(c.status), el("span", { class: "msn-cname", text: c.name }), c.status !== "online" && c.status !== "offline" ? el("span", { class: "msn-cst", text: ` (${STATUS[c.status].label})` }) : null, c.psm && c.status !== "offline" ? el("span", { class: "msn-psm", text: " - " + c.psm }) : null);
+        r.title = `${c.name}\n${c.email}` + (c.psm && c.status !== "offline" ? "\n" + c.psm : "");
         r.addEventListener("dblclick", () => openConversation(c));
         r.addEventListener("click", () => { body.querySelectorAll(".msn-contact.sel").forEach((x) => x.classList.remove("sel")); r.classList.add("sel"); sel = c; });
         r.addEventListener("contextmenu", (e) => { e.preventDefault(); sel = c; popup(contactMenu(c), e.clientX, e.clientY, {}); });
@@ -317,6 +326,7 @@ const T = (m) => m.label.split("\t");
     if (evTimer) clearTimeout(evTimer);
     evTimer = later(() => {
       evTimer = null; if (!me) return;
+      if (Math.random() < 0.5) { const n = rnd(contacts.filter((x) => x.status !== "offline" && !x.bot)); if (n) { n.psm = randomNote(); listView(); } }
       const r = Math.random(), quiet = me.status === "busy" || me.status === "offline";
       if (r < 0.45) {
         const c = rnd(contacts.filter((x) => !x.blocked)); if (c) {
@@ -325,7 +335,7 @@ const T = (m) => m.label.split("\t");
         }
       } else if (r < 0.8 && !quiet) {
         const c = rnd(contacts.filter((x) => x.status === "online" && !x.blocked && x.replies?.length));
-        if (c) { openConversation(c, { incoming: true }); const cv = convs.get(c.email); cv?.receive(rnd(c.replies)); }
+        if (c) { openConversation(c, { incoming: true }); const cv = convs.get(c.email); cv?.receive(c.bot ? pickReply(c, "") : rnd(c.replies)); }
       } else if (r < 0.92 && !quiet) {
         const open = [...convs.keys()].map((e) => contacts.find((x) => x.email === e)).filter((x) => x && x.status !== "offline" && !x.blocked);
         const c = open.length ? rnd(open) : null; if (c) convs.get(c.email)?.receiveNudge();

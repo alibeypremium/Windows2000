@@ -9,7 +9,7 @@ import {
   popup,
 } from "../ui/index.js";
 import { basename, downloadFile } from "../core/index.js";
-import { buildSite, isSite, homeBoxes } from "./netscape-sites.js";
+import { buildSite, isSite, prefetchNews, homeBoxes } from "./netscape-sites.js";
 import { ieOpen, ieOptions, ieAddFavorite, ieProps, ieOrganize, iePageSetup, iePrint, IE_HELP } from "./ie-dialogs.js";
 const normalizeAddress = (input) => {
   let target = String(input || "about:home").trim();
@@ -37,6 +37,7 @@ const normalizeAddress = (input) => {
 };
 export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
   const initial = normalizeAddress(path || url || ctx.settings.get("homePage"));
+  prefetchNews();
   const w = ctx.wm.create({
     title: "Microsoft Internet Explorer",
     icon: "ie",

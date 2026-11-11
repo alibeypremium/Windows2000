@@ -6360,3 +6360,9 @@ input.vlc-eqs[type="range"]{flex:none;writing-mode:vertical-lr;direction:rtl;hei
 .explorer-window .details-view .file-item > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 4px; }
 .explorer-window .file-list { position: relative; }
 .rubber-band { position: absolute; border: 1px dotted #000; background: rgba(0, 0, 128, .18); pointer-events: none; z-index: 5; }
+.msn-psm { color: #808080; font-style: italic; }
+.msn-contact.sel .msn-psm { color: #fff; }
+.vlc-ch-bar{display:flex;gap:4px;padding:3px;background:#d4d0c8}
+.vlc-ch-group{min-width:110px}
+.vlc-ch-search{flex:1;min-width:0}
+.vlc-ch{flex:1;overflow:auto}

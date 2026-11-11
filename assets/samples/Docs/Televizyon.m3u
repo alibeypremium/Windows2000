@@ -1,0 +1,11 @@
+#EXTM3U
+#EXTINF:-1 tvg-name="TRT 1" group-title="Ulusal",TRT 1
+https://tv-trt1.medya.trt.com.tr/master.m3u8
+#EXTINF:-1 tvg-name="TRT Haber" group-title="Haber",TRT Haber
+https://tv-trthaber.medya.trt.com.tr/master.m3u8
+#EXTINF:-1 tvg-name="TRT World" group-title="Haber",TRT World
+https://tv-trtworld.medya.trt.com.tr/master.m3u8
+#EXTINF:-1 tvg-name="Apple Bipbop" group-title="Test Yayını",Apple Bipbop (test)
+https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8
+#EXTINF:-1 tvg-name="Mux Test" group-title="Test Yayını",Mux Test Stream
+https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8

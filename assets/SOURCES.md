@@ -582,3 +582,7 @@ Contacts, organisations, replies and display pictures (packages/internet/msn-dat
 
 ## Dini içerik ve Tarihte Bugün
 - `packages/internet/dini-data.js`: Esmaü'l-Hüsnâ anlamları, ayet ve hadis özetleri bu proje için yazıldı (hadis kaynakları: Buhârî, Müslim, Tirmizî vb. atıf). Tarihte Bugün verisi çalışma anında Vikipedi REST API'sinden gelir; Diyanet Haber RSS'i diyanethaber.com.tr'den.
+
+## hls.js (VLC canlı yayın)
+- `assets/vendor/hlsjs/hls.min.js` — hls.js 1.7.4 (light build), Dailymotion, Apache-2.0 (`assets/vendor/hlsjs/LICENSE`). npm paketinden alındı.
+- `assets/samples/Docs/Televizyon.m3u` — örnek kanal listesi (TRT'nin herkese açık HLS adresleri ile Apple/Mux test yayınları); yalnızca adres içerir.

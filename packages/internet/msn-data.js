@@ -34,6 +34,7 @@ export const GROUPS = ["Arkadaşlar", "Aile", "Okul", "İş", "Kurumlar"];
 
 // pic: [shape, background index]; auto: auto-reply text used while away/busy; replies: free chatter
 export const DIRECTORY = [
+  { name: "Diyanet Kütüphanesi", email: "diyanet.kutuphanesi@hotmail.com", group: "Kurumlar", status: "online", pic: ["book", 4], bot: "dini", note: "Günün ayeti, hadisi ve esması için yazın: ayet / hadis / esma", replies: ["Ayet, hadis ya da esma yazın; size gönderelim."] },
   { name: "Ayşe", email: "ayse_k@hotmail.com", group: "Arkadaşlar", status: "online", pic: ["flower", 1], replies: ["selam! nasılsın?", "bugün ders çok sıkıcıydı :(", "akşam msn'de buluşalım mı?", "haha :D", "ay çok güldüm (L)"] },
   { name: "Mehmet", email: "mehmet.c@hotmail.com", group: "Arkadaşlar", status: "busy", auto: "Şu an ödev yapıyorum, sonra yazarım.", replies: ["şu an biraz meşgulüm", "sonra yazarım", "tamam :)"] },
   { name: "Zeynep", email: "zeynep_88@hotmail.com", group: "Arkadaşlar", status: "away", auto: "Bilgisayarın başında değilim.", replies: ["ben yokum şu an...", "geri dönünce yazarım"] },
@@ -85,7 +86,44 @@ export const RULES = [
   [/(:\(|üzgün|kötü)/i, ["ya üzülme :(", "geçer, merak etme (H)"]],
 ];
 export const pickReply = (c, text) => {
+  if (c.bot === "dini") return diniReply(text);
   for (const [re, list] of RULES) if (re.test(text) && Math.random() < 0.8) return list[Math.floor(Math.random() * list.length)];
   const pool = c.replies?.length ? c.replies : ["..."];
   return pool[Math.floor(Math.random() * pool.length)];
+};
+
+// ---- Personal status messages ("özlü sözler") and "now listening" music shown next to contacts
+export const QUOTES = [
+  "Ya olduğun gibi görün, ya göründüğün gibi ol.", "Damlaya damlaya göl olur.", "Sabreden derviş muradına ermiş.", "Bugünün işini yarına bırakma.",
+  "Güzel söz sadakadır.", "Bir fincan kahvenin kırk yıl hatırı vardır.", "Aşk olmadan hiçbir şey olmaz.", "Zaman her yarayı iyileştirir.",
+  "Gülümse, dünya sana gülümsesin :)", "Hayat bir yolculuk, bilet senin elinde.", "Yarın bugünden daha güzel olacak.", "Kalbini dinle, o hiç yanılmaz.",
+  "Dost acı söyler.", "Az konuş, çok dinle.", "Ne ekersen onu biçersin.", "Her şey güzel olacak (L)", "Mutluluk paylaştıkça çoğalır.",
+  "Sınavlar bitsin de bi rahatlayalım...", "Hafta sonu geldi mi acaba?", "Çay demle, dünya düzelir :)", "Ders çalışmıyorum, çalışıyor gibi yapıyorum.",
+  "Bir gülüşün yeter bana.", "Önce insan.", "İyilik yap denize at, balık bilmezse Halik bilir.", "Sessizlik de bir cevaptır.",
+];
+export const MUSIC = [
+  "Tarkan - Şımarık", "Sertab Erener - Everyway That I Can", "Mustafa Sandal - Araba", "Gülşen - Be Adam", "Sezen Aksu - Firuze",
+  "Linkin Park - In the End", "Evanescence - Bring Me To Life", "Eminem - Lose Yourself", "Coldplay - Clocks", "Avril Lavigne - Complicated",
+  "Michael Jackson - Billie Jean", "Metallica - Nothing Else Matters", "Nirvana - Smells Like Teen Spirit", "Shakira - Whenever, Wherever",
+];
+export const randomNote = (rnd = Math.random) => {
+  const r = rnd();
+  if (r < 0.25) return "";
+  return r < 0.6 ? "\u201c" + QUOTES[Math.floor(rnd() * QUOTES.length)] + "\u201d" : "\u266b " + MUSIC[Math.floor(rnd() * MUSIC.length)];
+};
+
+// ---- Diyanet Kütüphanesi: a bot that sends verses, hadiths and the names of Allah
+import { ESMA, AYET, HADIS } from "./dini-data.js";
+const pick = (a) => a[Math.floor(Math.random() * a.length)];
+const ayet = () => { const a = pick(AYET); return `${a[1]} (${a[0]})`; };
+const hadis = () => { const h = pick(HADIS); return `${h[0]} (${h[1]})`; };
+const esma = () => { const e = pick(ESMA); return `${e[1]} - ${e[2]}`; };
+export const diniReply = (text = "") => {
+  if (/ayet|kur.?an|sure/i.test(text)) return "Bir ayet: " + ayet();
+  if (/hadis|peygamber|sünnet/i.test(text)) return "Bir hadis: " + hadis();
+  if (/esma|isim|esmaül|esmaü/i.test(text)) return "Bir esma: " + esma();
+  if (/selam|merhaba|\bsa\b|\bas\b/i.test(text)) return "Aleyküm selam ve rahmetullah! Size ayet, hadis veya esma gönderebilirim. 'ayet', 'hadis' ya da 'esma' yazmanız yeterli.";
+  if (/teşekkür|sağ ol|eyvallah/i.test(text)) return "Rica ederim, Allah razı olsun. Başka bir ayet, hadis ya da esma ister misiniz?";
+  if (/nasıl|naber/i.test(text)) return "Hamdolsun, iyiyiz. Size nasıl yardımcı olabilirim? 'ayet', 'hadis' ya da 'esma' yazabilirsiniz.";
+  return pick([() => "Bir ayet: " + ayet(), () => "Bir hadis: " + hadis(), () => "Bir esma: " + esma()])();
 };

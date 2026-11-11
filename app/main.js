@@ -621,9 +621,9 @@ ctx.printImage = (data) => {
   printHTML('<img src="' + escapeHTML(data) + '">');
 };
 async function seedSampleDocs() {
-  if (settings.get("samples.docs.v2")) return;
+  if (settings.get("samples.docs.v3")) return;
   const desk = "C:/Documents and Settings/Administrator/Desktop";
-  const names = ["Güzel Sözler.txt", "Mektup.wdoc", "ayarlar.json", "Gün Batımı.png", "Ay Işığı.png", "Hayat Rehberi.pdf", "Sabah Melodisi.mp3", "Gece Rüyası.ogg", "Zil.wav", "Gün Batımı.mp4", "Yıldızlar.webm", "Gün Batımı.srt", "Yıldızlar.vtt", "Favoriler.m3u"];
+  const names = ["Güzel Sözler.txt", "Mektup.wdoc", "ayarlar.json", "Gün Batımı.png", "Ay Işığı.png", "Hayat Rehberi.pdf", "Sabah Melodisi.mp3", "Gece Rüyası.ogg", "Zil.wav", "Gün Batımı.mp4", "Yıldızlar.webm", "Gün Batımı.srt", "Yıldızlar.vtt", "Favoriler.m3u", "Televizyon.m3u"];
   try {
     if (!fs.exists(desk + "/Docs")) await fs.mkdir(desk + "/Docs");
     for (const n of names) {
@@ -631,7 +631,7 @@ async function seedSampleDocs() {
       const r = await fetch("/assets/samples/Docs/" + encodeURIComponent(n));
       if (r.ok) await fs.importFile(new File([await r.blob()], n, { type: r.headers.get("content-type") || "" }), desk + "/Docs");
     }
-    settings.set("samples.docs.v2", true);
+    settings.set("samples.docs.v3", true);
   } catch (e) { console.warn("sample docs", e); }
 }
 async function start() {

@@ -97,3 +97,9 @@ Clipboard, recording, serial ports, media codecs, GPU, printing and external han
 - Outlook Express her gün ilk açılışta iki ayrı posta alır: "Günün Ayeti, Hadisi ve Esması" ve "Tarihte Bugün" (Vikipedi'ye ulaşılamazsa kısa not).
 - Posta listesi en yeni üstte; From, Subject ve Received başlıklarına tıklayınca sıralama (yön oku ile) değişir.
 - Postaya tek tıklayınca okundu olur. "To" adresi bilgisayar adından gelir: `<bilgisayar adı>@hotmail.com` (eski postalar da güncellenir).
+
+## Netscape/IE haber hızı, MSN durum güncellemeleri, VLC kanal listesi
+- **Haber sayfaları:** BBC News/BBC Türkçe artık üst pencerede, üç kaynaktan (doğrudan RSS, allorigins, rss2json) aynı anda istenir; ilk gelen kullanılır, her biri 6 sn ile sınırlıdır. Sonuç localStorage'a kaydedilir (3 dk taze), tarayıcı açılırken arka planda önceden yüklenir; "Refresh" bağlantısı zorla yeniler. Ağ yoksa son önbellek gösterilir.
+- **Netscape:** adres çubuğu varsayılan `www.netscape.com/home`; New&Cool kaldırıldı.
+- **MSN Messenger:** simge durumuna küçülünce görev çubuğu yerine bildirim alanında (tray) simge olarak durur (tıkla: geri aç, sağ tık: menü). Kişilerin yanında özlü söz/dinlediği müzik durumu görünür ve zamanla değişir. "Diyanet Kütüphanesi" kişisi ayet, hadis, esma gönderir (anahtar kelimelerle: ayet/hadis/esma).
+- **VLC:** altyazılar artık oynatma başlamadan yüklenir (eski sürümde oynatma tamamlanana dek yüklenmediği için görünmüyordu); araç çubuğunda Altyazı ve Kanal Listesi düğmeleri. `.m3u/.m3u8/.pls` ayrıştırma: `#EXTINF` başlıkları, `group-title`, `tvg-logo`. Kanal Listesi penceresi (grup süzgeci + arama), adresten kanal listesi açma, `.m3u8` (HLS) canlı yayınlar hls.js ile (yerel kopya `assets/vendor/hlsjs`, Safari'de yerel). Sınırlar: yayının CORS izni gerekir; adresten liste çekme de sunucunun CORS iznine bağlıdır; örnek `Televizyon.m3u` adresleri üçüncü tarafın canlı yayınlarıdır, kullanılabilirlikleri garanti değildir.
