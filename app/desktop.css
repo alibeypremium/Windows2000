@@ -1,5 +1,19 @@
 @font-face {
   font-family: W2KSans;
+  src: url("/assets/fonts/tahoma.ttf") format("truetype");
+  font-weight: 400;
+  font-display: block;
+  unicode-range: U+011E-011F, U+0130-0131, U+015E-015F;
+}
+@font-face {
+  font-family: W2KSans;
+  src: url("/assets/fonts/tahomabd.ttf") format("truetype");
+  font-weight: 700;
+  font-display: block;
+  unicode-range: U+011E-011F, U+0130-0131, U+015E-015F;
+}
+@font-face {
+  font-family: W2KSans;
   src: url("/assets/fonts/ms-sans-serif.ttf") format("truetype");
   font-weight: 400;
   font-display: block;
@@ -889,7 +903,9 @@ button.selected:focus {
   bottom: 24px;
   left: 2px;
   display: flex;
-  width: 254px;
+  width: max-content;
+  min-width: 254px;
+  max-width: calc(100vw - 8px);
   max-height: calc(100dvh - 32px);
   pointer-events: auto;
   background: var(--face);
@@ -913,6 +929,7 @@ button.selected:focus {
   padding-top: 1px;
 }
 .start-item {
+  white-space: nowrap;
   height: 32px;
   min-height: 32px;
   width: 100%;
