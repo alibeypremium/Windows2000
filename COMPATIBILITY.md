@@ -145,3 +145,7 @@ Clipboard, recording, serial ports, media codecs, GPU, printing and external han
 - `README.pdf` (EN/TR, renkli): masaüstü kullanımı, tüm programların özellikleri, Windows Tools kullanımı, ipuçları.
 - İkisi de `scripts/make-docs.py` ile üretilir (`assets/samples/Desktop/`), ilk açılışta masaüstüne kopyalanır (`samples.desktop.v1`).
 - Acrobat Reader: pencere yeniden yerleşirken devam eden çizimin yeni sayfa tuvalini boş bırakması (PDF'ler boş görünüyordu) düzeltildi.
+
+## Sekme simgesi ve Windows Tools görselleri
+- Tarayıcı sekmesi: başlık "Windows 2000", simge kullanıcının verdiği bayrak logosu (`assets/icons/favicon.png`, `apple-touch-icon.png`).
+- Windows Tools: Wizard97 yan paneli ve başlık simgesi temaya uygun yeniden çizildi (`assets/wintools/side.png`, `banner.png`), dosya aktarma sayfalarında küçük (4 KB) animasyonlu kopyalama GIF'i (`copy.gif`). Toplam ~10 KB.

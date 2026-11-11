@@ -600,3 +600,4 @@ Contacts, organisations, replies and display pictures (packages/internet/msn-dat
 - Windows Tools sayfa şablonları: `netshell.dll` (ISO) — bkz. packages/system/wizards-data.js.
 - `assets/wallpapers/windows2000.png` ve `assets/icons/nvidia-*.png`: kullanıcının gönderdiği dosyalar.
 - .pdf dosya ikonu: kullanıcının verdiği Acrobat Reader 4 PDF ikonu (`assets/icons/pdffile-*.png`).
+- `assets/icons/favicon.png`: kullanıcının gönderdiği Windows logosu. `assets/wintools/*`: bu proje için üretilmiş özgün görseller (PIL ile).

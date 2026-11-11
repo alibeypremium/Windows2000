@@ -11,7 +11,7 @@ const DLG = "/assets/ui/dialogs/";
 /**
  * pages: [{ kind: "welcome" | "finish" | "page", title, subtitle, tpl, opts(state), init(ctl,state,page), next(ctl,state) -> bool|undefined|Promise, skip(state) }]
  */
-export function wizard97(ctx, { title, appId, pages, onFinish, state = {}, W = 501, H = 383 }) {
+export function wizard97(ctx, { title, appId, pages, onFinish, state = {}, art = {}, W = 501, H = 383 }) {
   const w = refWindow(ctx, { title, width: W, height: H, appId, noIcon: true, className: "ref-dialog wiz-dialog" });
   const stage = el("div", { class: "wiz-stage", style: { position: "absolute", left: 0, top: 0, width: W + "px", height: H + "px" } });
   w.place(stage);
@@ -41,10 +41,10 @@ export function wizard97(ctx, { title, appId, pages, onFinish, state = {}, W = 5
         el("div", { class: "wiz-rule", style: { top: "80px", width: W - 4 + "px" } }),
         el("div", { class: "wiz-title", style: { left: "15px", top: "29px", font: "bold 11px Tahoma, sans-serif" } }, page.title),
         text(30, 46, page.subtitle, { w: W - 120 }),
-        el("img", { src: DLG + "wiz-components-banner.png", style: { position: "absolute", left: W - 59 + "px", top: "26px", width: "49px", height: "49px" } }),
+        el("img", { src: art.banner || DLG + "wiz-components-banner.png", style: { position: "absolute", left: W - 59 + "px", top: "26px", width: "49px", height: "49px" } }),
       );
     } else {
-      nodes.push(el("div", { class: "wiz-white", style: { left: "2px", top: "21px", width: W - 4 + "px", height: H - 70 + "px" } }), el("div", { style: { position: "absolute", left: "4px", top: "23px", width: "164px", height: H - 70 - 2 + "px", background: `#000080 url(${DLG}wiz-hardware-side.png) no-repeat top left` } }));
+      nodes.push(el("div", { class: "wiz-white", style: { left: "2px", top: "21px", width: W - 4 + "px", height: H - 70 + "px" } }), el("div", { style: { position: "absolute", left: "4px", top: "23px", width: "164px", height: H - 70 - 2 + "px", background: `#000080 url(${art.side || DLG + "wiz-hardware-side.png"}) no-repeat top left` } }));
     }
     const sub = nodes.find((n) => n.textContent === page.subtitle);
     if (sub) Object.assign(sub.style, { whiteSpace: "pre-wrap", width: W - 120 + "px" });

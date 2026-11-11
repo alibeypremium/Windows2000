@@ -6,6 +6,7 @@ import { check, radio, btn, text } from "../control-panel/refkit.js";
 import { UPLOADS, DESKTOP, DOCS, pickFiles, downloadFile, formatBytes, joinPath } from "../core/index.js";
 import { wizard97 } from "./wizards.js";
 
+const anim = (x, y) => el("img", { src: "/assets/wintools/copy.gif", alt: "", draggable: "false", style: { position: "absolute", left: x + "px", top: y + "px", width: "96px", height: "56px" } });
 const FORMAT = "Windows2000 Settings";
 const TASKS = [
   ["21118", "import", "&Import files into Docs", "Copy Word, PDF, MP3, MP4 and other files in."],
@@ -87,6 +88,7 @@ export function openWindowsTools(ctx, args = {}) {
           btn(392, 92, 90, 23, "Add Files...", { onclick: async () => { const got = await pickFiles({ multiple: true }); S.files.push(...got); draw(); } }),
           btn(392, 120, 90, 23, "Remove", { onclick: () => { if (sel >= 0) { S.files.splice(sel, 1); sel = -1; draw(); } } }),
           btn(392, 148, 90, 23, "Clear", { onclick: () => { S.files = []; sel = -1; draw(); } }),
+          anim(389, 185),
           text(13, 290, "Destination: C:\\Documents and Settings\\Administrator\\Desktop\\Docs", { w: 470 }),
         );
         draw();
@@ -112,6 +114,7 @@ export function openWindowsTools(ctx, args = {}) {
         };
         where.onchange = draw;
         stage.append(
+          anim(387, 270),
           btn(13, 288, 90, 23, "Select All", { onclick: () => { (S.listed || []).forEach((n) => S.paths.add(n.path)); draw(); } }),
           btn(108, 288, 90, 23, "Clear All", { onclick: () => { (S.listed || []).forEach((n) => S.paths.delete(n.path)); draw(); } }),
         );
@@ -210,5 +213,5 @@ export function openWindowsTools(ctx, args = {}) {
     }
   };
 
-  return wizard97(ctx, { title: "Windows Tools", appId: "wintools", pages, state: S, onFinish });
+  return wizard97(ctx, { title: "Windows Tools", appId: "wintools", pages, state: S, onFinish, art: { side: "/assets/wintools/side.png", banner: "/assets/wintools/banner.png" } });
 }
