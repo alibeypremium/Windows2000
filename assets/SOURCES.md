@@ -559,3 +559,6 @@ Right-click on Programs-menu items: menu layout (Open, WinRAR shell-extension ro
 
 ## Netscape additions (Bookmarks, History, Page Info, Preferences, built-in sites)
 Layouts of the Bookmarks, History, Page Info and Preferences windows follow Netscape Communicator 4.x from memory (not extracted from the original resources); Google, YouTube and News Reader are local pages (Google results come from the Wikipedia search API, YouTube plays embeddable Blender videos via youtube-nocookie, news comes from public BBC and Hacker News feeds). Google logo is plain text, not the original image.
+
+## Outlook Express mail simulation
+Menus and dialogs still come from msoeres.dll; the mail server, inbox messages, attachments, rules window and send/receive dialog are my own local simulation (all senders and texts are fictional, written for this project). The paperclip icon `assets/ui/oe/clip16.png` is drawn by me, not the original.

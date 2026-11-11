@@ -90,7 +90,7 @@ export function oeSheet(ctx, { title, pages, store, onApply, cx = 275, cy = 210,
 export const oeOptions = (ctx, store, onApply) =>
   oeSheet(ctx, {
     title: "Options", store, onApply, rows: 2,
-    pages: [["General", 51], ["Read", 50], ["Receipts", 233], ["Send", 52], ["Compose", 55], ["Signatures", 54], ["Spelling", 48], ["Security", 47], ["Connection", 49], ["Maintenance", 53]].map(([label, k]) => ({ label, tpl: D[k] })),
+    pages: [["General", 51], ["Read", 50], ["Receipts", 233], ["Send", 52], ["Compose", 55], ["Signatures", 54], ["Spelling", 48], ["Security", 47], ["Connection", 49], ["Maintenance", 53]].map(([label, k]) => ({ label, tpl: D[k], ...(label === "Signatures" ? { after: (ctl, st) => { const e = ctl[1023]; if (e) { e.value = st.sigText || ""; e.addEventListener("input", () => (st.sigText = e.value)); } } } : {}) })),
   });
 
 export const oeRules = (ctx, store, onApply) =>

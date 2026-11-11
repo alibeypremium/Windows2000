@@ -6250,3 +6250,15 @@ body.icon-dragging, body.icon-dragging * { cursor: default; }
 .nsp-tree{width:170px;flex:none;background:#fff;border:2px inset #fff;overflow:auto;padding:2px 0}.nsp-node{display:flex;gap:2px;height:18px;align-items:center;cursor:default}.nsp-node.sel span:last-child{background:#000080;color:#fff;padding:0 2px}.nsp-ar{width:12px;font-size:11px}
 .nsp-pane{flex:1;overflow:auto;border:1px solid #808080;padding:8px;background:var(--face)}.nsp-h{font:bold 14px Arial,sans-serif;margin:0 0 4px}.nsp-p{margin:0 0 10px}.nsp-grp{border:1px solid #808080;margin:0 0 10px;padding:6px 10px}.nsp-grp legend{padding:0 4px}
 .nsp-opt{display:block;margin:3px 0}.nsp-field{display:flex;align-items:center;gap:6px;margin:4px 0}.nsp-in{font:11px Arial,sans-serif;padding:2px}.nsp-row{display:flex;gap:8px;margin-top:6px}.nsp-btns{display:flex;gap:8px;justify-content:flex-end;padding:0 8px 8px}
+/* Outlook Express: rules, attachments, contacts, scrolling */
+.oer{padding:10px;font:11px Tahoma,sans-serif;display:flex;flex-direction:column;flex:1;min-height:0}.oer-p{margin:4px 0}.oer-cols{display:flex;gap:8px}.oer-list{flex:1;height:150px;overflow:auto;background:#fff;border:2px inset #fff}
+.oer-row{display:flex;align-items:center;gap:4px;height:18px;padding:0 2px;white-space:nowrap;cursor:default}.oer-row.sel{background:#000080;color:#fff}.oer-btns{display:flex;flex-direction:column;gap:6px;width:80px}.oer-desc{white-space:pre-wrap;background:#fff;border:2px inset #fff;flex:1;padding:4px;min-height:50px;overflow:auto}
+.oe-rows{position:absolute;left:0;top:19px;right:0;bottom:0;overflow-x:hidden;overflow-y:auto}.oe-row{margin-left:65px}
+.oe-pvbody{right:0;overflow:auto}.oe-vs{display:none}
+.oe-pvhead.att{height:53px}.oe-pvhead.att+.oe-pvbody{top:54px}
+.oe-attrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:1px}.oe-attrow .lbl{font-weight:bold}.oe-att{display:inline-flex;align-items:center;gap:3px;color:#00c;text-decoration:underline;cursor:default;white-space:nowrap}.oe-att img{width:16px;height:16px}
+.oe-cbody{overflow:auto}.oe-cbody .oe-ct{display:flex;align-items:center;gap:3px;height:17px;padding:0 3px;white-space:nowrap;cursor:default}.oe-cbody .oe-ct:hover{background:#d4d0c8}
+.oe-clip{position:absolute;left:21px;top:1px}
+.mail-attach{display:flex;flex-wrap:wrap;gap:6px;padding:3px 6px;background:var(--face);border-bottom:1px solid #808080;font:11px Tahoma,sans-serif}.mail-attach.hidden{display:none}.mail-attach .chip{display:inline-flex;align-items:center;gap:3px;border:1px solid #808080;background:#fff;padding:0 4px;height:18px}
+.oe-sr{padding:12px;font:11px Tahoma,sans-serif;display:flex;flex-direction:column;gap:6px}.oe-sr progress{width:100%;height:16px}.oe-sr .ln{white-space:nowrap}
+.oe-cbody{bottom:0}
