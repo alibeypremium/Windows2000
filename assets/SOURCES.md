@@ -565,3 +565,6 @@ Menus and dialogs still come from msoeres.dll; the mail server, inbox messages, 
 
 ## Word additions (tables, pictures, header/footer, spell check, .docx)
 Menus and dialogs are my own reconstruction in the Word 2000 style. The spelling dictionary assets/word/dict-en.txt is generated from the open-source `wordfreq` English frequency list (Apache-2.0 code, CC-BY-SA data), filtered against the hunspell en_US stem list so typos are excluded. The .docx writer/reader (packages/accessories/word-io.js) is written from the public OOXML specification.
+
+## MSN Messenger additions
+Contacts, organisations, replies and display pictures (packages/internet/msn-data.js) are my own fictional data; display pictures are generated SVG drawings. The nudge sound is synthesized with Web Audio (MSN 5.0 had no nudge; this feature is borrowed from later versions). Layouts follow the existing MSN 5.0 resources.

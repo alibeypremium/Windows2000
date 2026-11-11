@@ -6284,3 +6284,25 @@ body.icon-dragging, body.icon-dragging * { cursor: default; }
 .wd-spmain .wd-list { width: 100%; }
 .wd-spbtns { display: flex; flex-direction: column; gap: 4px; }
 .wd-spbtns button { min-width: 0; }
+
+/* MSN: add contact, display pictures, history, file transfer */
+.msn-adddlg{display:flex;flex-direction:column;gap:5px;padding:8px;width:340px;font:11px Tahoma,sans-serif}
+.msn-addin{width:100%;box-sizing:border-box}.msn-addlist{width:100%;box-sizing:border-box;font:11px Tahoma,sans-serif}
+.msn-addgrp{display:flex;align-items:center;gap:4px}
+.msn-pics-wrap{padding:8px;font:11px Tahoma,sans-serif;width:330px}
+.msn-pics{display:grid;grid-template-columns:repeat(5,56px);gap:4px;margin-top:6px}
+.msn-picb{all:unset;width:52px;height:52px;display:flex;align-items:center;justify-content:center;border:2px solid transparent;cursor:default}
+.msn-picb.sel{border-color:#316ac5;background:#cfdcf5}
+.msn-side img{cursor:default}.msn-pic-me img{cursor:pointer}
+.msn-hist{display:flex;height:100%;gap:6px;padding:6px;box-sizing:border-box;background:var(--face);font:11px Tahoma,sans-serif}
+.msn-hlist{width:150px;flex:none;font:11px Tahoma,sans-serif}
+.msn-hright{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.msn-hview{flex:1;min-height:0;overflow:auto;background:#fff;border:2px inset;border-color:#808080 #fff #fff #808080;padding:4px 6px;font:12px Tahoma,sans-serif;user-select:text}
+.msn-hday{margin:6px 0 2px;font-weight:bold;color:#1a3d8f;border-bottom:1px solid #c8d4ee}.msn-ht{color:#888;font-size:10px}
+.msn-hbtns{display:flex;gap:6px;justify-content:flex-end}
+.msn-old{color:#888;font-size:11px;margin-bottom:4px}
+.msn-sys a{color:#0000ee;text-decoration:underline;cursor:pointer}
+.msn-xfer{margin:4px 0;padding:4px;border:1px solid #c8d4ee;background:#f3f6fd;font-size:11px}
+.msn-xbar{height:12px;border:2px inset;border-color:#808080 #fff #fff #808080;background:#fff;margin:3px 0}
+.msn-xfill{height:100%;width:0;background:repeating-linear-gradient(90deg,#000080 0 6px,#fff 6px 8px)}
+.msn-xc a{color:#0000ee;text-decoration:underline;cursor:pointer}
