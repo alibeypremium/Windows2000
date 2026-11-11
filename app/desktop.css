@@ -1,19 +1,5 @@
 @font-face {
   font-family: W2KSans;
-  src: url("/assets/fonts/tahoma.ttf") format("truetype");
-  font-weight: 400;
-  font-display: block;
-  unicode-range: U+011E-011F, U+0130-0131, U+015E-015F;
-}
-@font-face {
-  font-family: W2KSans;
-  src: url("/assets/fonts/tahomabd.ttf") format("truetype");
-  font-weight: 700;
-  font-display: block;
-  unicode-range: U+011E-011F, U+0130-0131, U+015E-015F;
-}
-@font-face {
-  font-family: W2KSans;
   src: url("/assets/fonts/ms-sans-serif.ttf") format("truetype");
   font-weight: 400;
   font-display: block;
