@@ -1,0 +1,512 @@
+700|Outlook Express klavye kısayolları
+701|Outlook Express ileti listesi simgeleri
+702|Bağlantınızdaki sorunları giderme
+703|Bağlantınızla ilgili bir sorun varsa
+704|Erişilebilirlik
+705|Adres Defteri
+706|Telefon Çevirici
+707|Telefon Çevirici'ye genel bakış
+708|Arama Yapma veya Cevaplama
+709|Arama yapma
+710|Aramayı beklemeye alma
+711|Hızlı arama numarasını çevirme
+712|Aramayı cevaplama veya reddetme
+713|Telefon Çevirici'yi Yapılandırma
+714|Internet dizinine bağlanma
+715|Ağ dizininize kullanıcı ekleme
+716|Telefon ayarlarını değiştirme
+717|Ses ayarlarını değiştirme
+718|Arayanı görüntüleme
+719|Ses ve videoyu önizleme
+720|Kullanılacak hattı seçme
+721|Telefon Çevirici'yi gizleme
+722|Arama günlüğünü görüntüleme
+723|Görüntülü ve Sesli Konferans Araması Yapma
+724|Görüntülü ve sesli konferans aramaları
+725|Konferans araması zamanlama
+726|Konferans aramasına katılma
+727|Telefon Çevirici Sorunlarını Giderme
+728|HyperTerminal
+729|HyperTerminal'e genel bakış
+730|Yeni bağlantı kurma
+731|Uzak bilgisayarı aramak için kayıtlı bağlantıyı kullanma
+732|HyperTerminal ile modemi sınama
+733|HyperTerminal penceresinin boyutunu ayarlama
+734|HyperTerminal oturumunu metin dosyasına kaydetme
+735|Dosya Aktarma
+736|Uzak bilgisayara dosya gönderme
+737|Uzak bilgisayardan dosya alma
+738|İletişim Ayarlarını Değiştirme
+739|İletişim ayarlarını değiştirme
+740|Modemin bağlantı noktası ayarlarını değiştirme
+741|Arama yapma ayarlarını değiştirme
+742|HyperTerminal'i Minitel ile kullanma
+743|Minitel öykünmesi için işlev tuşları
+744|Eşitleme Yöneticisi
+745|Eşitleme Yöneticisi'ne genel bakış
+746|Çevrimdışı öğeleri eşitleme
+747|Bilgisayarda oturum açarken veya kapatırken çevrimdışı öğeleri eşitleme
+748|Bilgisayarınız boştayken çevrimdışı öğeleri eşitleme
+749|Çevrimdışı öğelerin eşitlenmesini zamanlama
+750|Ekran Klavyesi
+751|Ekran Klavyesi'ne genel bakış
+752|Klavye düzeni seçme
+753|Ekran Klavyesi tuşları için yazı tipini seçme
+754|Sesli tıklama kullanma
+755|Tıklama modunu kullanma
+756|Üzerinde durma modunu kullanma
+757|Tarama modunu kullanma
+758|CD Çalar
+759|CD Çalar'a genel bakış
+760|CD Çalma
+761|CD çalma
+762|CD'yi duraklatma veya sürdürme
+763|Farklı bir parçaya geçme
+764|Farklı bir CD'ye geçme
+765|Parça tanıtımlarını çalma
+766|Parça tanıtımlarının uzunluğunu ayarlama
+767|Parçaları rastgele sırayla çalma
+768|CD Çalar ekranını özelleştirme
+769|CD ses düzeyini değiştirme
+770|Ses düzeyi ayarlarınızı değiştirme
+771|CD sesini kapatma
+772|Otomatik Yürütme'yi devre dışı bırakma
+773|Klavye kısayollarını kullanma
+774|Web'den Bilgi Alma
+775|Parça bilgilerini indirme
+776|Sanatçı ve albüm bilgilerini arama
+777|CD Parça ve Başlık Bilgilerini Değiştirme
+778|Albüm veya başlık bilgilerini düzenleme
+779|Kendi çalma listenizi oluşturma
+780|CD bilgilerini yazma
+781|wab
+782|Adres Defteri'ni Açma
+783|Kişi Bilgilerini Saklama
+784|Adres defterinize kişi ekleme
+785|Kişi bilgilerini değiştirme
+786|Kişi grubu oluşturma
+787|Mevcut bir gruba kişi ekleme
+788|Kartvizit oluşturma
+789|Adres defterinize kişinin dijital kimliğini ekleme
+790|Adres Defterinizi Düzenleme
+791|Adres defterinizdeki adları düzenleme
+792|Kimlikler nedir?
+793|Kişileri ve alt klasörleri düzenleme
+794|Adres defterinizden kişi silme
+795|Adres defteri bilgilerini yazdırma
+796|Dizin Hizmetlerini Kullanarak Kişi Bulma
+797|Dizin hizmetleri nedir?
+798|Dizin hizmeti ekleme
+799|Internet'te kişi ve işletme bulma
+800|E-posta adlarını denetlemek için dizin hizmetlerini ayarlama
+801|Adres Defterinizi Diğer Programlarla Kullanma
+802|Adres defteri kişilerinizi dışa aktarma
+803|Adres Defteri'nden konferans araması ayarlama
+804|MP_w
+805|Günlüğe sayaç ekleme
+806|Sistem İzleyicisi'ne sayaç ekleme
+807|Başlık, kılavuz ve diğer öznitelikleri ekleme
+808|Performans verilerini çözümleme
+809|En iyi uygulamalar
+810|Arka plan, grafik ve metin renklerini değiştirme
+811|Sayaçları ve sayaç özelliklerini değiştirme
+812|Yazı tipi özelliklerini değiştirme
+813|Grafik görünümünden değiştirme
+814|Örnekleme seçeneklerini değiştirme
+815|Hangi sayaçların kullanılacağını seçme
+816|Windows Yönetim Araçları (WMI) ile performans verilerini toplama
+817|Sayaç verilerini Sistem İzleyicisi örnekleri arasında kopyalama
+818|Sayaç günlüğü oluşturma
+819|Özel izleme konsolu oluşturma
+820|İzleme günlüğü oluşturma
+821|Uyarı oluşturma
+822|Uyarı için eylemleri tanımlama
+823|Uyarı için sayaçları ve eşikleri tanımlama
+824|Günlük veya uyarı için başlatma ya da durdurma parametrelerini tanımlama
+825|İzleme günlüğü arabelleklerini tanımlama
+826|İzleme günlüğü sağlayıcılarını ve olaylarını tanımlama
+827|Günlük veya uyarı silme
+828|Sistem İzleyicisi'nden sayaç silme
+829|Bilgisayarınızdaki RAM miktarını belirleme
+830|Sayaçlar için kabul edilebilir değerleri belirleme
+831|Performans izleme için program geliştirme
+832|Ağ Kesimi sayaçlarını etkinleştirme
+833|Eğilimleri değerlendirme ve ek kaynakları planlama
+834|Disk darboğazlarını bulma
+835|Bellek darboğazlarını bulma
+836|Ağ darboğazlarını bulma
+837|Yazıcı darboğazlarını bulma
+838|İşlemci darboğazlarını bulma
+839|Sayaçlar hakkında ayrıntı alma
+840|Sayaç verilerini vurgulama
+841|Sistem İzleyicisi denetimini Microsoft Word belgesine ekleme
+842|Performansa Giriş
+843|Farklı bir bilgisayarı izleme
+844|DHCP'yi izleme
+845|Dizin hizmeti etkinliğini izleme
+846|Disk etkinliğini izleme
+847|Dağıtılmış İşlem Eşgüdümcüsü'nü izleme
+848|Faks Hizmeti'ni izleme
+849|Dizin Oluşturma Hizmeti'ni izleme
+850|Internet Kimlik Doğrulama Hizmeti'ni izleme
+851|Internet Information Services'ı izleme
+852|Eski programları izleme
+853|Ağ etkinliğini izleme
+854|İşlemci etkinliğini izleme
+855|QoS Kabul Denetimi'ni izleme
+856|SMTP'yi izleme
+857|Telefon sayaçlarını izleme
+858|Tarayıcı hizmetini izleme
+859|Telefon Defteri hizmetini izleme
+860|WINS'i izleme
+861|Bilinen görevleri yapmanın yeni yolları
+862|Performans Günlükleri ve Uyarıları
+863|Performans Günlükleri ve Uyarıları arabirimi
+864|Performans Günlükleri ve Uyarıları'na genel bakış
+865|Windows NT 4.0 ve Windows 2000'de performans izleme
+866|Performans nesneleri ve sayaçları
+867|Performans Hizmetleri
+868|Performans aracı mimarisi
+869|Performans verilerini yazdırma
+870|Sistem İzleyicisi ayarları hızlı başvurusu
+871|Günlükten veya uyarıdan sayaç kaldırma
+872|Kaynaklar
+873|sag_mpchecklist
+874|SAG_MPmonperf_15
+875|sag_mpmonperf_memtop
+876|sag_mpmonperf_ntsvctop
+877|Grafik verilerini HTML sayfası olarak kaydetme
+878|Günlük veya uyarı ayarlarını HTML sayfası olarak kaydetme
+879|İzleme konsolunu kaydetme
+880|Sunucuya özgü
+881|Günlük için dosya parametrelerini ayarlama
+882|İzleme yapılandırması kurma
+883|Performans sorunlarını çözme
+884|Sayaç günlüğünü, izleme günlüğünü veya uyarıyı el ile başlatma ya da durdurma
+885|Sistem İzleyicisi arabirimi
+886|Sistem İzleyicisi'ne genel bakış
+887|Sistem İzleyicisi araç çubuğu başvurusu
+888|Performansı Anlama
+889|Performans verilerindeki değişimleri anlama
+890|Günlüğe kaydedilen verileri kullanma
+891|Sistem İzleyicisi'ni kullanma
+892|Windows NT 4.0 Performans İzleyicisi ayar dosyalarını kullanma
+893|Performans araçlarını kullanma
+894|Günlüğün veya uyarının özelliklerini görüntüleme ya da değiştirme
+895|Programların sistem kaynaklarını nasıl kullandığını izleme
+896|Windows 2000 Açılış Sayfası
+897|Hoş Geldiniz
+898|Kurulum
+899|Gelişmiş Kurulum
+900|Windows Temelleri
+901|İleri Konular
+902|Bu Kitabı Yazdırma
+903|Arama İpuçları
+904|Engelli Kişiler İçin Erişilebilirlik
+905|Durdurma Hatalarını Giderme
+906|Yaygın görevler: Paint
+907|Geçerli resme bit eşlem ekleme
+908|Opak veya saydam çizimi belirtme
+909|Yaygın görevler: WordPad
+910|Bağlama ve gömmeye genel bakış
+911|Ağ üzerinden bir kayıt defterine bağlanma
+912|Kayıt defterinin tamamını veya bir bölümünü metin dosyasına aktarma
+913|Kayıt defterinin tamamını veya bir bölümünü içe aktarma
+914|Görev Yöneticisi'nde görüntü seçeneklerini değiştirme
+915|Görev Yöneticisi ile işlemi sonlandırma
+916|Görev Yöneticisi ile programı sonlandırma
+917|Görev Yöneticisi ile bilgisayarınızın performansını izleme
+918|İşlem sayaçları
+919|Görev Yöneticisi'ni başlatma
+920|Çince, Japonca veya Korece karakteri okunuşuna göre arama
+921|Karakter Haritası için Kısayol Tuşları
+922|Yaygın görevler: Pano Görüntüleyicisi
+923|Paylaşılan Pano Defteri sayfalarına erişmek için başka bir bilgisayardaki Pano Defteri'ne bağlanma
+924|Ekran koruyucu parolası kullanarak dosyalarınızı koruma
+925|Masaüstünüzün arka planını ayarlama veya değiştirme
+926|Tek tek masaüstü öğelerinin görünümünü ayarlama veya değiştirme
+927|Masaüstü desenini özelleştirme
+928|Windows 2000'de görsel efektleri ayarlama veya değiştirme
+929|Yaygın görevler: Ekran Özellikleri
+930|Ekrana genel bakış
+931|Web sitesindeki bir grafiği duvar kağıdı olarak ayarlama
+932|Ekran koruyucuyu ayarlama veya değiştirme
+933|Yaygın görevler: Erişilebilirlik Seçenekleri
+934|Denetim Masası erişilebilirlik seçenekleri
+935|FilterKeys'i açma
+936|Windows 2000'i sağır veya işitme engelli kişiler için yapılandırma
+937|Yüksek Karşıtlık'ı açma
+938|Windows 2000'i hareket engeli olan kişiler için yapılandırma
+939|MouseKeys'i açma
+940|MouseKeys ile tıklama
+941|MouseKeys ile sürükleme
+942|MouseKeys ile fare işaretçisini hareket ettirme
+943|Fare veya klavyeyi başka aygıtlarla değiştirme
+944|ShowSounds'ı açma
+945|SoundSentry'yi açma
+946|StickyKeys'i açma
+947|Erişilebilirlik özelliklerini belirli bir süre sonra kapatma
+948|ToggleKeys'i açma
+949|Windows 2000'i görme engelli veya az gören kişiler için yapılandırma
+950|Erişilebilirlik özellikleri açıldığında veya kapatıldığında uyarı alma
+951|Erişilebilirlik sihirbazına genel bakış
+952|Özel gereksinimler için erişilebilirliğe genel bakış
+953|Internet Explorer'da erişilebilirlik özelliklerini kullanma
+954|Sayfayı sık kullanılan sayfalar koleksiyonunuza ekleme
+955|Sayfayı Bağlantılar çubuğunuza ekleme
+956|Sayfaları çevrimdışı görüntülemeye hazır hale getirme
+957|Otomatik Tamamlama ayarlarını düzenleme
+958|Web bilgilerini daha kolay girme
+959|Web'de daha hızlı ve kolay gezinmeyi öğrenme
+960|Internet'e bağlı olmadan Web sayfalarını görüntüleme
+961|Kanal çubuğunu masaüstünde görüntüleme
+962|Güvenlik sertifikalarını görüntüleme
+963|Internet üzerinde kimliğinizi koruma
+964|Metni farklı bir yazı tipiyle görüntüleme
+965|Geçmiş listesinde kaç sayfanın saklanacağını belirtme
+966|Giriş sayfanızı değiştirme
+967|Internet Explorer seslerini değiştirme
+968|Araç çubuğunun görünümünü değiştirme
+969|Sayfa renklerinin görüntülenme biçimini değiştirme
+970|Kanalı masaüstünde görüntüleme
+971|Kanalı ekran koruyucu olarak görüntüleme
+972|Yazı tiplerini ve arka plan renklerini değiştirme
+973|Tüm Web sayfalarını daha hızlı görüntülemek için grafikleri kapatma
+974|Web siteleri için kişisel bilgileri saklama
+975|Dosya İndirme
+976|Metni daha büyük veya daha küçük görüntüleme
+977|CERN uyumlu bir ara sunucu üzerinden FTP sitelerine erişme
+978|FTP sitelerine doğrudan erişme
+979|FTP hakkında bilmeniz gerekenler
+980|Geçici Internet dosyalarıyla çalışma
+981|Internet Explorer Web Tarayıcısı'na Giriş
+982|Internet Explorer ile Başlarken
+983|Internet Explorer klavye kısayolları
+984|Netscape kullanıcıları için ipuçları
+985|Mevcut bir sık kullanılan öğeyi çevrimdışı kullanılabilir hale getirme
+986|Navigator ve Internet Explorer'daki tarayıcı terimleri
+987|Sık kullanılan sayfalarınızı klasörler halinde düzenleme
+988|Sık kullanılan sayfalarınızı hızlı görüntüleme için listeleme
+989|Her zaman kullanılacak yazı tipi ve renk ayarlarını belirtme
+990|Bir sayfanın yazdırıldığında görünümünü değiştirme
+991|Geçici Internet sayfaları için daha fazla alan oluşturma
+992|Web sayfası yazdırma
+993|Kişisel bilgileri güvenle paylaşma
+994|Bilgisayarınızı güvenli olmayan yazılımlardan koruma
+995|Internet Explorer için Benioku çevrimiçi belgesini görüntüleme
+996|Internet Explorer Web ayarlarını sıfırlama
+997|Internet bağlantısı kurma
+998|Web sayfasındaki resimleri veya metni kaydetme
+999|İşlemler için güvenli Internet sitelerini kullanma
+1000|İstediğiniz bilgiyi bulma
+1001|Web sitesini bir güvenlik bölgesine atama
+1002|Çerezler hakkında bilmeniz gerekenler
+1003|İmzasız denetimler
+1004|Her bölge için güvenlik düzeyi ayarlama
+1005|Yer işaretlerini ve sık kullanılanları paylaşma
+1006|Internet Explorer'ın kullanacağı programları belirtme
+1007|Aramalarınızı iyileştirme
+1008|Aramalarınızı özelleştirme
+1009|Web sayfası içeriği için başka bir dil belirtme
+1010|Çevrimdışı sayfalar için ayarları değiştirme
+1011|Geçerli Web sayfasını çevrimdışı kullanılabilir hale getirme
+1012|Web sayfasını bilgisayarınıza kaydetme
+1013|Internet adresleri hakkında bilmeniz gerekenler
+1014|Adres çubuğundan arama
+1015|Herhangi bir dilde kodlanmış Web sayfalarını doğru görüntüleme
+1016|Web Klasörleri'ni kullanma
+1017|Yakın zamanda ziyaret ettiğiniz sayfaları bulma
+1018|Microsoft Ürün Destek Hizmetleri Çevrimiçi
+1019|Güvenlik bölgeleri hakkında bilmeniz gerekenler
+1020|Media Player penceresindeki ölçeği değiştirme
+1021|Yaygın görevler: Media Player
+1022|Belge içindeki çoklu ortam dosyaları için ayarları belirtme
+1023|Çoklu ortam dosyasını otomatik geri sarma veya yineleme
+1024|Yaygın görevler: Ses Kaydedicisi
+1025|Arama sorgusunu kaydetme
+1026|Dosya veya klasörleri nerede aramalı
+1027|Joker karakterleri kullanma
+1028|Yaygın görevler: Klasör Seçenekleri
+1029|Klasör ve masaüstü öğeleri için açılır açıklamaları gösterme
+1030|Active Desktop özelliğini kapatma
+1031|Active Desktop özelliğini açma
+1032|Dosya ve klasörlerin tam yolunu görüntüleme
+1033|Bilgisayarınıza yeni yazı tipi ekleme
+1034|Bilgisayarınızdaki bir yazı tipini görüntüleme
+1035|Yazdırılmayı bekleyen belgelerin yazdırma önceliğini değiştirme
+1036|Tüm belgelerin yazdırılmasını iptal etme
+1037|Tüm belgelerin yazdırılmasını duraklatma veya sürdürme
+1038|Yazıcı denetim kodlarını kullanma
+1039|Yazıcılara genel bakış
+1040|Yazıcı sürücülerine genel bakış
+1041|Yazıcı yazı tipleri
+1042|Tarayıcı kullanarak yazıcıya bağlanma
+1043|Bilgisayarınıza bağlı bir yazıcı ekleme
+1044|Yaygın görevler: Yazdırma
+1045|Diğer istemciler için yazıcı sürücüleri ekleme
+1046|Yeni veya güncelleştirilmiş yazıcı sürücüleri yükleme
+1047|TrueType yazı tiplerini grafik olarak yazdırma
+1048|Yazdırma kuyruğuna genel bakış
+1049|Belgeleri başka bir yazıcıya aktarma
+1050|Yazdırma güvenlik izinleri
+1051|Gruplara atanan yazdırma izinleri
+1052|Sınama sayfası yazdırma
+1053|Ayırıcı sayfalar
+1054|Yaygın görevler: Donanım Ekle/Kaldır
+1055|Tak ve Kullan olmayan aygıt yükleme
+1056|Donanım profillerine genel bakış
+1057|Donanım türlerine genel bakış
+1058|Tak ve Kullan aygıtı yüklerken gücü yönetme
+1059|Fareniz için çift tıklama hızını ayarlama
+1060|Bilgisayarınızın saatini değiştirme
+1061|Yaygın görevler: Ses ve Çoklu Ortam
+1062|Yardım gezinti bölmesini gizleme veya gösterme
+1063|Yardım Görüntüleyicisi klavye kısayolları
+1064|Görüntülediğiniz Yardım konuları arasında gezinme
+1065|Paragrafı biçimlendirme
+1066|Internet bağlantınızdan uzaktayken iletileri okuma
+1067|Çevrimiçi süreyi azaltmak için Outlook Express'i ayarlama
+1068|Outlook Express'e Giriş
+1069|Adres defterini dışa aktarma
+1070|İletiye dosya ekleme
+1071|İletiye köprü veya HTML sayfası ekleme
+1072|İletiye resim ekleme
+1073|İletiye ses ekleme
+1074|Adres defterlerini içe aktarma
+1075|Posta hesabı ayarlarını içe aktarma
+1076|Haber hesabı ayarlarını içe aktarma
+1077|Outlook Express Sorun Gidericisi
+1078|Internet servis sağlayıcınızla iletişim kurma
+1079|İletiye öğe ekleme
+1080|Gelişmiş güvenlik bilgileri
+1081|Dijital kimliğin güven durumunu değiştirme
+1082|Dijital kimlik edinme
+1083|İleti deposunun konumunu değiştirme
+1084|IMAP veya HTTP posta iletilerini okuma ve yanıtlama
+1085|IMAP klasörlerini gösterme ve gizleme
+1086|Neyin indirileceğini belirtme
+1087|Outlook Express ileti listesi simgeleri
+1088|İptal denetimini kullanma
+1089|Güvenlik bölgelerini ayarlama
+1090|E-posta adresini tamamlamak için Outlook Express'i kullanma
+1091|Dijital olarak imzalanmış ve/veya şifrelenmiş ileti gönderme
+1092|Outlook Express'i birden çok sertifika kullanacak şekilde ayarlama
+1093|İletileri Outlook veya Exchange'e aktarma
+1094|İletileri diğer posta programlarından içe aktarma
+1095|Araç çubuğunu özelleştirme
+1096|İleti klasörlerinizde posta iletilerini bulma
+1097|İletiyi işaretleme
+1098|Metnin yazı tipini, stilini ve boyutunu değiştirme
+1099|Konuşmayı yok sayma
+1100|Outlook Express'e öğe aktarma
+1101|Numaralı veya madde işaretli liste oluşturma
+1102|Yeni iletiler için sesli bildirim alma
+1103|Uluslararası ileti okuma ve gönderme
+1104|Giden iletileriniz alındığında bildirim alma
+1105|Giden iletilere imza ekleme
+1106|Tüm iletilere kartvizit ekleme
+1107|Giden iletilerde kağıt kullanma
+1108|Giden iletiler için kağıt oluşturma
+1109|HTML biçimlendirmesini kullanma
+1110|Özel görünümler oluşturma ve kullanma
+1111|İletileri okumak için görünümleri kullanma
+1112|İletileri otomatik olarak dijital imzalama ve/veya şifreleme
+1113|Sunucu zaman aşımı süresini artırma
+1114|Posta hesabı ayarlarınızı denetleme
+1115|ISS'nizle bağlantıyı denetleme
+1116|IMAP sunucusundaki posta kutunuzun yolunu yapılandırma
+1117|İletileri posta sunucularında saklama
+1118|Geçerli kimliğin ayarlarını değiştirme
+1119|Kimlik silme
+1120|Farklı bir kimliğe geçme
+1121|Yeni kimlik ekleme
+1122|Birden çok kimlik ayarlama
+1123|Gönderilmiş iletiyi iptal etme
+1124|İletilerde yazım denetimi yapma
+1125|Çok parçalı iletileri birleştirme
+1126|Posta klasörlerini sıkıştırma ve yedekleme
+1127|Sorun giderme: Sunucu ayarlarını denetleme
+1128|Sorun gidermede kullanılan günlük dosyalarını silme
+1129|Haber grubunda ileti bulma
+1130|İlgi çekici haber gruplarını bulma
+1131|Çevrimdışı haber okuma için ayarlama
+1132|Haber grubu iletilerini çevrimdışı okuma
+1133|Büyük ileti gönderme
+1134|Saklanan haber grubu iletilerini silerek disk alanını artırma
+1135|Posta ve haber okuma arasında geçiş yapma
+1136|Haber grubu iletisinin şifresini çözme
+1137|Dosya ekini görüntüleme
+1138|Yalnızca haber grubu iletilerinize gelen yanıtları görüntüleme
+1139|Yalnızca okunmamış haber grubu iletilerini görüntüleme
+1140|Giden haber grubu iletilerinde satır uzunluğunu ayarlama
+1141|Haber sunucusu ayarlarınızı denetleme
+1142|İleti listesinde görüntülenen sütunları değiştirme
+1143|İletileri otomatik olarak okundu işaretleme
+1144|İletileri görüntülemede kullanılan yazı tipini değiştirme
+1145|Giden iletinin önceliğini değiştirme
+1146|Posta veya haber hesabı ekleme
+1147|Outlook Express klasör listesini değiştirme
+1148|Önizleme bölmesinin görünümünü değiştirme
+1149|İletileri tek tek indirme
+1150|Haber grubuna yeni ileti gönderme
+1151|Haber grubu iletisini yanıtlama
+1152|Haber grubu iletilerini okuma
+1153|Giden posta iletilerinin kopyalarını kaldırma
+1154|Haber grubuna abone olmadan görüntüleme
+1155|Klasör ekleme, silme veya klasörlere geçme
+1156|Mevcut posta veya haber hesabının ayarlarını değiştirme
+1157|Yeni iletileri hemen denetleme
+1158|Posta iletisini silme
+1159|HTTP posta hesabından ileti silme
+1160|IMAP hesabından ileti silme
+1161|Haber iletisini silme
+1162|Posta iletisini iletme
+1163|İletiyi başka bir klasöre taşıma veya kopyalama
+1164|İletiyi yazdırma
+1165|E-posta iletisi gönderme
+1166|Microsoft Outlook Express erişilebilirlik özelliklerini kullanma
+1167|Dijital olarak imzalanmış ve/veya şifrelenmiş iletileri okuma
+1168|Posta iletilerini kurallarla yönetme
+1169|İndirilen iletilere kural uygulama
+1170|Posta iletileri için kural oluşturma
+1171|Kuralı değiştirme
+1172|Bir göndericiden veya etki alanından gelen iletileri engelleme
+1173|Engellenen gönderenler listesini yönetme
+1174|Kuralı kaldırma
+1175|Haber grubu iletileri için kural oluşturma
+1176|Haber grubu iletilerini verimli görüntüleme
+1177|Outlook Express'i kaldırma
+1178|Ağ dizininize kullanıcı ekleme
+1179|Birden çok hattınız olduğunda kullanılacak hattı seçme
+1180|Yaygın görevler: Telefon Çevirici
+1181|Arama yapmak için ek numaraları el ile yazma
+1182|Hızlı arama listenize ad ekleme
+1183|Arama için ses ve videoyu önizleme
+1184|Gelen aramayı cevaplama veya reddetme
+1185|Arayanı görüntülü görme
+1186|Uzak bilgisayarı arama
+1187|Yaygın görevler: HyperTerminal
+1188|HyperTerminal'in aramayı beklemesini sağlama
+1189|Yaygın görevler: CD Çalar
+1190|Ek sanatçı ve albüm bilgilerini arama
+1191|İndirme yardımı
+1192|Albüm bilgilerini toplu arama
+1193|Adres defterinize kişi ekleme
+1194|E-posta iletilerinden adres defterinize ad ekleme
+1195|Dizin hizmetlerinin denetlenme sırasını değiştirme
+1196|Dizin sunucusu için sunucu bağlantı noktası numarasını değiştirme
+1197|E-posta adreslerini denetlemek için dizin sunucusu ayarlama
+1198|Alt klasör oluşturma
+1199|Adres defteri listesinden grup silme
+1200|Gruptan kişi silme
+1201|Adres defterinizden kişi silme
+1202|Dizin hizmetini silme
+1203|Dizin hizmeti için arama ayarlarını değiştirme
+1204|Profilinizi düzenleme
+1205|Adres defteri kişilerinizi diğer programlara aktarma
+1206|Adres Defteri'ni açma
+1207|Başka bir programdan adres defterini içe aktarma
+1208|Kartvizit içe aktarma
+1209|Kişiyi veya grubu taşıma
+1210|Kişileri paylaşma
+1211|Adres Defteri'ne Giriş

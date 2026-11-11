@@ -1,0 +1,267 @@
+11|Notlar
+17|[[İlgili Konular]]
+27|Not
+1275|[[Düzen]] menüsünde [[Yapıştır]]'a tıklayın.
+1394|[[Dosya]] menüsünde [[Aç]]'a tıklayın.
+1410|[[Düzen]] menüsünde [[Kopyala]]'ya tıklayın.
+1480|Program içinde son eyleminizi iptal etme
+1481|[[Program içinde son eyleminizi iptal etmek için]]
+1482|[[Düzen]] menüsünde [[Geri Al]]'a tıklayın.
+1483|Gerçekleştirdiğiniz bazı eylemler geri alınamaz. [[Geri Al]] kullanılamıyorsa son eyleminizi iptal edemezsiniz.
+1484|Bazı programlar belirli bir sınıra kadar birden çok eylemi geri alabilir.
+1485|Bilgileri başka bir belgeye gömme
+1486|[[Bilgileri başka bir belgeye gömmek için]]
+1487|Başka bir belgeye [[gömmek]] istediğiniz bilgileri seçin.
+1488|Yeni belgede bilgileri eklemek istediğiniz konuma tıklayın.
+1489|[[Düzen]] menüsünde [[Özel Yapıştır]]'a, ardından [[Yapıştır]]'a ve [[Tamam]]'a tıklayın.
+1490|Tüm programlar gömmeyi desteklemez. Gömme desteklenmiyorsa bilgileriniz kopyalanır.
+1491|Bilgileri farklı programlarda oluşturulmuş belgelere gömebilirsiniz.
+1492|Gömülü bilgilerin özgün belgede değiştirildiğinde güncelleştirilmesini istiyorsanız, bilgileri gömmek yerine [[bağlayabilirsiniz]].
+1493|Dosyayı farklı bir adla veya biçimde kaydetme
+1494|[[Dosyayı farklı bir adla veya biçimde kaydetmek için]]
+1495|Üzerinde çalıştığınız programın [[Dosya]] menüsünde [[Farklı Kaydet]]'e tıklayın.
+1496|Kaydettiğiniz dosya için yeni bir ad veya farklı bir biçim belirtin.
+1497|Dosya daha önce farklı bir adla veya biçimde kaydedilmişse, o sürüm değişmeden kalır.
+1498|Belgeler arasında bilgi bağlama
+1499|[[Belgeler arasında bilgi bağlamak için]]
+1500|Başka bir belgeye bağlamak istediğiniz bilgileri seçin.
+1501|Yeni belgede [[bağlı nesneyi]] yerleştirmek istediğiniz konuma tıklayın.
+1502|[[Düzen]] menüsünde [[Özel Yapıştır]]'a tıklayın.
+1503|[[Bağlantı Yapıştır]]'a, ardından [[Tamam]]'a tıklayın.
+1504|Bazı programlar bağlamayı desteklemez. Bağlama kullanılamıyorsa [[Düzen]] menüsündeki [[Özel Yapıştır]] kullanılamaz.
+1505|Bilgileri farklı programlarda oluşturulmuş belgeler arasında bağlayabilirsiniz.
+1506|Belgeler arasında bilgi taşıma
+1507|[[Belgeler arasında bilgi taşımak için]]
+1508|Taşımak istediğiniz bilgileri seçin.
+1509|[[Düzen]] menüsünde [[Kes]]'e tıklayın.
+1510|Bilginin görünmesini istediğiniz belgede, bilgiyi yerleştirmek istediğiniz konuma tıklayın.
+1511|Bilgi özgün belgeden kaldırılır ve yeni konumuna yerleştirilir.
+1512|Program içinden belge açma
+1513|[[Program içinden belge açmak için]]
+1514|Açmak istediğiniz dosyaya tıklayın. Belgeyi içeren sürücüyü veya klasörü aramanız gerekebilir.
+1515|Programdan çıkma
+1516|[[Programdan çıkmak için]]
+1517|Kullandığınız programın [[Dosya]] menüsünde [[Çıkış]]'a tıklayın.
+1518|Başlık çubuğunun en sağındaki düğmeye tıklayarak da programdan çıkabilirsiniz.
+1519|Dosya kaydetme
+1520|[[Dosya kaydetmek için]]
+1521|Üzerinde çalıştığınız programın [[Dosya]] menüsünde [[Kaydet]]'e tıklayın.
+1522|Dosyayı daha önce kaydetmediyseniz, [[Dosya adı]] kutusuna dosya için bir ad yazın.
+1523|Bir dosyanın kopyasını farklı bir adla veya farklı bir konuma kaydetmek için [[Dosya]] menüsünde [[Farklı Kaydet]]'e tıklayın, ardından dosya adını ve dosyayı kaydetmek istediğiniz konumu belirtin.
+1524|Program içinde durum çubuğunu gösterme veya gizleme
+1525|[[Program içinde durum çubuğunu göstermek veya gizlemek için]]
+1526|Kullandığınız programın [[Görünüm]] menüsünde [[Durum Çubuğu]]'na tıklayın. Komutun yanında onay işareti varsa [[durum çubuğu]] görüntüleniyor demektir.
+1527|Bazı programlar durum çubuğu görüntülemez ve [[Durum Çubuğu]] [[Görünüm]] menüsünde yer almaz.
+1528|Klasör penceresinde araç çubuğunu gösterme veya gizleme
+1529|[[Klasör penceresinde araç çubuğunu göstermek veya gizlemek için]]
+1530|Bir klasör veya program penceresinin [[Görünüm]] menüsünde [[Araç Çubukları]]'na ve ardından göstermek veya gizlemek istediğiniz araç çubuğuna tıklayın.
+1531|Şu anda görüntülenen araç çubuklarının [[Görünüm]] menüsünde yanlarında onay işareti bulunur.
+1532|Bazı programlar araç çubuklarını gizlemenize izin vermeyebilir ve [[Araç Çubuğu]] [[Görünüm]] menüsünde yer almayabilir.
+1533|Pencere veya ekran içeriğini kopyalama
+1534|[[Pencere veya ekran içeriğini kopyalamak için]]
+1535|Yalnızca etkin pencerenin kopyasını almak için ALT+PRINT SCREEN tuşlarına basın.
+1536|Ekranın tamamını monitörde göründüğü gibi kopyalamak için PRINT SCREEN tuşuna basın.
+1537|Resmi bir belgeye yapıştırmak için belge penceresinde [[Düzen]] menüsüne ve ardından [[Yapıştır]]'a tıklayın.
+1538|Bilgileri başka bir belgeye kopyalama
+1539|[[Bilgileri başka bir belgeye kopyalamak için]]
+1540|Kopyalamak istediğiniz bilgileri seçin.
+1541|Bilgileri [[bağlayabilir]] veya [[gömebilirsiniz]].
+1542|Bilgileri birden çok kez yapıştırabilirsiniz.
+1558|[[Bilgisayar Yönetimi]]
+1565|[[Olay Görüntüleyicisi]]
+1580|[[Performans]]
+1587|[[Hizmetler]]
+1772|[[Yönetimsel Araçlar]]
+1825|Aşağıdaki yönetimsel araçlar hem Windows 2000 Professional'da hem de Windows 2000 Server'da bulunur:
+1826|[[Bileşen Hizmetleri]]
+1827|Sistem [[yöneticileri]] tarafından COM+ programlarını grafik kullanıcı arabiriminden dağıtmak ve yönetmek veya yönetimsel görevleri bir komut dosyası ya da programlama dili kullanarak otomatikleştirmek için kullanılır. Yazılım geliştiricileri, güvenlik ve işlemlere katılım gibi olağan bileşen ve program davranışlarını görsel olarak yapılandırmak ve bileşenleri COM+ programlarıyla bütünleştirmek için Bileşen Hizmetleri'ni kullanabilir. Daha fazla bilgi için bkz. [[Bileşen Hizmetleri'ni Kullanma]].
+1828|Yerel veya [[uzak bilgisayarları]] tek ve bütünleşik bir masaüstü yardımcı programından yönetmek için kullanılır. Bilgisayar Yönetimi, çeşitli Windows 2000 yönetimsel aracını tek bir [[konsol ağacında]] birleştirerek belirli bir bilgisayarın yönetimsel özelliklerine kolay erişim sağlar. Daha fazla bilgi için bkz. [[Bilgisayar Yönetimi'ni Kullanma]].
+1829|[[Veri Kaynakları (ODBC)]]
+1830|Açık Veritabanı Bağlantısı (ODBC), programların veri erişim standardı olarak Yapılandırılmış Sorgu Dili'ni (SQL) kullanan veritabanı yönetim sistemlerindeki verilere erişmesini sağlayan bir programlama arabirimidir. Daha fazla bilgi için bkz. [[Veri Kaynakları'nı (ODBC) Kullanma]].
+1831|Bilgisayarınızdaki sistem, program ve güvenlik olaylarının günlüklerini görüntülemek ve yönetmek için kullanılır. Olay Görüntüleyicisi donanım ve yazılım sorunları hakkında bilgi toplar ve Windows 2000 güvenlik olaylarını izler. Daha fazla bilgi için bkz. [[Olay Görüntüleyicisi'ni Kullanma]].
+1832|[[Yerel Güvenlik İlkesi]]
+1833|Yerel bilgisayarın güvenlik ayarlarını yapılandırmak için kullanılır. Bu ayarlar arasında Parola ilkesi, Hesap Kilitleme ilkesi, Denetim ilkesi, IP Güvenlik ilkesi, kullanıcı hakları atamaları, şifrelenmiş veriler için kurtarma aracıları ve diğer güvenlik seçenekleri bulunur. Yerel Güvenlik İlkesi yalnızca etki alanı denetleyicisi olmayan Windows 2000 bilgisayarlarında kullanılabilir. Bilgisayar bir etki alanının üyesiyse bu ayarlar etki alanından alınan ilkelerle geçersiz kılınabilir.
+1834|Bellek, disk, işlemci, ağ ve diğer etkinliklerle ilgili gerçek zamanlı verileri grafik, [[histogram]] veya rapor biçiminde toplamak ve görüntülemek için kullanılır. Daha fazla bilgi için bkz. [[Performans'ı Kullanma]].
+1835|Bilgisayarınızdaki hizmetleri yönetmek, bir hizmet başarısız olursa yapılacak kurtarma eylemlerini ayarlamak ve hizmetleri kolayca tanımlayabilmeniz için özel adlar ve açıklamalar oluşturmak için kullanılır. Daha fazla bilgi için bkz. [[Hizmetler'i Kullanma]].
+1836|Denetim Masası'nda [[Yönetimsel Araçlar]]'ı açın.
+1837|Ek yönetimsel araçlar Windows 2000 Server'da bulunur.
+1838|Yönetimsel Araçlar, Microsoft Yönetim Konsolu'ndan veya [[Başlat]]'a tıklayıp [[Ayarlar]]'ı göstererek, [[Denetim Masası]]'na tıklayıp ardından [[Yönetimsel Araçlar]]'a çift tıklayarak da açılabilir.
+1839|Internet Seçenekleri
+1840|Bu Denetim Masası bileşeni, Internet özelliklerinin değiştirilebildiği [[Internet Özellikleri]] iletişim kutusunu açar. Bu özellikler altı sekme altında düzenlenmiştir: [[Genel]], [[Güvenlik]], [[İçerik]], [[Bağlantılar]], [[Programlar]] ve [[Gelişmiş]]. Daha fazla bilgi için bkz. [[Internet Explorer'ı Kullanma]].
+1841|Denetim Masası'nı Kullanma
+1842|Windows 2000'in görünümünü ve işlevselliğini değiştirmek için Denetim Masası'ndaki simgeleri kullanabilirsiniz. Bu simgeler bilgisayarınızı yapılandırma seçeneklerini temsil eder.
+1843|Her Denetim Masası öğesinin açıklamasını görüntülemek için Denetim Masası'nda [[Görünüm]] menüsünde [[Ayrıntılar]]'a tıklayın. Herhangi bir Denetim Masası öğesi hakkında ek yardım için Yardım'daki [[İçindekiler]] sekmesinde ilgili kitaba tıklayın.
+1844|Bilgisayarınızın tarihini değiştirme
+1845|[[Bilgisayarınızın tarihini değiştirmek için]]
+1846|Denetim Masası'nda [[Tarih/Saat]]'i açın.
+1847|[[Tarih ve Saat]] sekmesinde değiştirmek istediğiniz öğeyi seçin.
+1848|Ayı değiştirmek için ay listesine tıklayın ve ardından doğru aya tıklayın.
+1849|Yılı değiştirmek için yıl listesindeki oklara tıklayın.
+1850|Günü değiştirmek için takvimde doğru güne tıklayın.
+1851|Bir Denetim Masası öğesini açmak için [[Başlat]]'a tıklayın, [[Ayarlar]]'ı gösterin, [[Denetim Masası]]'na tıklayın ve ardından ilgili simgeye çift tıklayın.
+1852|Windows, dosyaların ne zaman oluşturulduğunu veya değiştirildiğini belirlemek için tarih ayarını kullanır.
+1853|Bilgisayarınızın saatini değiştirme
+1854|[[Bilgisayarınızın saatini ve saat dilimini değiştirmek için]]
+1855|Saati değiştirmek için saati seçin ve değeri artırmak veya azaltmak için oklara tıklayın.
+1856|Dakikayı değiştirmek için dakikayı seçin ve değeri artırmak veya azaltmak için oklara tıklayın.
+1857|Saniyeyi değiştirmek için saniyeyi seçin ve değeri artırmak veya azaltmak için oklara tıklayın.
+1858|Öğleden önce/sonra göstergesini değiştirmek için göstergeyi seçin ve oklara tıklayın.
+1859|[[Saat Dilimi]] sekmesinde, haritanın üstündeki kutuda geçerli saat diliminize tıklayın.
+1860|Windows, dosyaların ne zaman oluşturulduğunu veya değiştirildiğini belirlemek için saat ayarını kullanır.
+1861|Yaz saati uygulaması değiştiğinde bilgisayarınızın saatinin otomatik olarak ayarlanmasını istiyorsanız [[Saati otomatik olarak yaz saati uygulamasına göre ayarla]] onay kutusunun seçili olduğundan emin olun.
+2542|Oyun seçeneklerini değiştirme
+2543|[[Oyun seçeneklerini değiştirmek için]]
+2544|[[Oyun]] menüsünde [[Seçenekler]]'e tıklayın.
+2545|Bir hamleye izin verilmediğinde ileti görüntülenmesi için [[Geçersiz hamlelerde ileti görüntüle]]'ye tıklayın.
+2546|Animasyonu açmak veya kapatmak için [[Hızlı oyun]]'a tıklayın.
+2547|Kartlara çift tıklayarak boş hücrelere taşımak için [[Çift tıklamayla kart boş hücreye taşınsın]]'a tıklayın.
+2548|Stratejiler ve ipuçları
+2549|İlk hamlenizi yapmadan önce, sütunların üstünde gizli kalmış aslar veya üç papazın arkasında istiflenmiş iki kırmızı yedili gibi sorunlu noktalara bakın.
+2550|Boş hücrelerinizi mümkün olduğunca boş tutmaya çalışın. Boş sütunlar da değerlidir.
+2551|Kısmen gizlenmiş bir kartı sağ tıklayarak ortaya çıkarabilirsiniz.
+2552|Bir sütunun altında sırayla iki veya daha fazla kartınız olduğunda, yeterli sayıda [[boş hücre]] açıksa tüm diziyi başka bir sütuna taşıyın. Diziyi taşımak için taşımak istediğiniz dizinin en alttaki kartına tıklayın ve ardından taşımak istediğiniz sütuna tıklayın.
+2553|Bir kartı çift tıklayarak hızla boş hücreye taşıyabilirsiniz.
+2554|FreeCell, her hamlenin sonunda gereksiz kartları ana hücrelere aktarır. Oyun alanında karşı renkten daha düşük değerli kart kalmadığında bir kart gereksiz sayılır.
+2555|Yalnızca bir yasal hamle kaldığında başlık çubuğu uyarı olarak yanıp söner.
+2556|FreeCell'e genel bakış
+2557|FreeCell'in amacı, boş hücreleri yer tutucu olarak kullanarak tüm kartları ana hücrelere taşımaktır.
+2558|Kazanmak için ana hücrelerde, her takım için bir tane olmak üzere, en düşük (as) değerden en yükseğe (papaz) doğru sıralanmış dört kart destesi oluşturursunuz.
+2559|Her oyunun kazanılabilir olduğuna inanılır (kanıtlanmamış olsa da).
+2560|FreeCell oynama
+2561|[[FreeCell oynamak için]]
+2562|[[Oyun]] menüsünde [[Yeni Oyun]]'a tıklayın.
+2563|Oyun alanı dört [[ana hücre]], dört [[boş hücre]] ve oyunun başında sekiz sütun halinde açık olarak dağıtılan bir kart destesinden oluşur.
+2564|Bir kartı taşımak için taşımak istediğiniz karta ve ardından taşımak istediğiniz yere tıklayın.
+2565|Bir sütuna yapılan hamleler, takım renkleri değişmek üzere en yüksekten (papaz) en düşüğe (as) doğru yapılmalıdır.
+2566|Bir ana hücreye yapılan hamleler, aynı takımdan olmak üzere en düşükten (as) en yükseğe (papaz) doğru yapılmalıdır.
+2567|Bir sütunun altındaki kart, boş hücreye, başka bir sütunun altına veya ana hücreye taşınabilir.
+2568|Boş hücredeki bir kart, bir sütunun altına veya ana hücreye taşınabilir.
+4733|Solitaire'in amacı, desteki tüm kartları kullanarak dört takım destesini aslardan başlayarak artan sırada oluşturmaktır.
+5692|İmleç yanıp sönme hızını ayarlama
+5693|[[İmleç yanıp sönme hızını ayarlamak için]]
+5694|Denetim Masası'nda [[Klavye]]'yi açın.
+5695|[[İmleç yanıp sönme hızı]] kaydırıcısını sürükleyin.
+5696|Kaydırıcı alanının solundaki sınama imleci yeni hızda yanıp söner.
+5697|Klavyenizin yanıt verme biçimini değiştirme
+5698|[[Klavyenizin yanıt verme biçimini değiştirmek için]]
+5699|Değişiklikleri şu şekilde yapın:
+5700|Bir tuşa bastığınızda karakterlerin tekrarlanmasından önce geçen süreyi ayarlamak için [[Yineleme gecikmesi]] kaydırıcısını sürükleyin.
+5701|Bir tuşa bastığınızda karakterlerin ne kadar hızlı tekrarlanacağını ayarlamak için [[Yineleme hızı]] kaydırıcısını sürükleyin.
+5737|Fareniz için çift tıklama hızını ayarlama
+5738|[[Fareniz için çift tıklama hızını ayarlamak için]]
+5739|Denetim Masası'nda [[Fare]]'yi açın.
+5740|[[Düğmeler]] sekmesinde, [[Çift tıklama hızı]] altında kaydırıcıyı sürükleyin.
+5741|Hızı sınamak için sınama alanındaki resme çift tıklayın.
+5742|Fareyi tek tıklama veya çift tıklamaya ayarlama
+5743|[[Fareyi tek tıklama veya çift tıklamaya ayarlamak için]]
+5744|[[Düğmeler]] sekmesinde, [[Dosyalar ve Klasörler]] altında aşağıdakilerden birini seçin:
+5745|[[Öğeyi açmak için tek tıklayın]], bir öğeyi seçmek için üzerine gelmenizi ve açmak için bir kez tıklamanızı sağlar.
+5746|[[Öğeyi açmak için çift tıklayın]], bir öğeyi seçmek için bir kez tıklamanızı ve açmak için çift tıklamanızı sağlar.
+5747|[[Öğeyi açmak için tek tıklayın]], normalde çift tıklayacağınız birçok yerde bir kez tıklamanızı sağlar. Örneğin bir yazılım programını başlatmak için simgeye tıklayabilirsiniz.
+5748|Fare tekerleğini etkinleştirme
+5749|[[Fare tekerleğini etkinleştirmek için]]
+5750|[[Konsol ağacında]] [[Sistem Araçları]]'na çift tıklayın ve ardından [[Aygıt Yöneticisi]]'ne tıklayın.
+5751|[[Fareler ve diğer işaretleme aygıtları]]'na çift tıklayın, yapılandırmak istediğiniz farenin adına sağ tıklayın ve [[Özellikler]]'e tıklayın.
+5752|[[Gelişmiş Ayarlar]] sekmesinde, [[Tekerlek Algılama]] altında [[Tekerleği ara]]'ya tıklayın.
+5753|[[Tekerleği ara]] seçiliyse ve fare tekerleği çalışmıyorsa [[Tekerleğin var olduğunu varsay]]'a tıklayın.
+5754|Fare tekerleği programdan programa farklı çalışabilir. Örneğin bir kelime işlem programında, klavyenizdeki PAGE UP veya PAGE DOWN tuşlarını kullanmaya ya da kaydırma çubuğuna tıklamaya eşdeğer olarak sayfada yukarı veya aşağı gitmek için tekerleği döndürebilirsiniz.
+5755|Farenizde fare tekerleği yoksa [[Gelişmiş Ayarlar]] sekmesi görünmeyebilir.
+5756|Fare işaretçisinin hızını ayarlama
+5757|[[Fare işaretçinizin hızını ayarlamak için]]
+5758|[[Hareket]] sekmesine tıklayın ve ardından [[Hız]] altında kaydırıcıyı sürükleyin.
+5759|Fare işaretçinizin hızı, işaretçinin farenin hareketlerine daha hızlı veya daha yavaş yanıt vermesini sağlar.
+5760|[[İşaretçiyi iletişim kutularındaki varsayılan düğmeye taşı]]'yı seçerek farenin iletişim kutularında varsayılan düğmelere atlamasını sağlayabilirsiniz. Bu seçenek seçildiğinde, bir iletişim kutusu açtığınızda imleç otomatik olarak varsayılan düğmeye gider.
+5761|[[Hızlanma]] altında fare işaretçisinin en yüksek hızına ne kadar çabuk ulaşacağını belirtebilirsiniz.
+5762|Fare işaretçisinin görünümünü değiştirme
+5763|[[Fare işaretçinizin görünümünü değiştirmek için]]
+5764|[[İşaretçiler]] sekmesine tıklayın.
+5765|Aşağıdakilerden birini veya her ikisini seçebilirsiniz:
+5766|[[Düzen]] altında, tüm işaretçilerinizi bir kerede değiştirmek için bir düzene tıklayın.
+5767|Yalnızca bir işaretçiyi değiştirmek için, belirli görevler ve bunlarla ilişkili işaretçiler listesinde işaretçiyi seçin. [[Gözat]]'a tıklayın ve ardından o görev için kullanmak istediğiniz yeni işaretçinin adına çift tıklayın.
+5768|İşaretçi düzeni, masaüstünüzde kullanılan işaretçilerin herhangi bir birleşimidir. İstediğiniz sayıda işaretçiyi özelleştirebilir ve [[Farklı Kaydet]]'e tıklayarak yeni bir düzen olarak kaydedebilirsiniz. Yeni düzen [[Düzen]] altındaki listede görünür.
+5769|Bir işaretçi düzenini kaldırmak için [[Düzen]] altında üzerine tıklayın ve ardından [[Sil]]'e tıklayın.
+5770|Fare düğmelerini tersine çevirme
+5771|[[Fare düğmelerinizi tersine çevirmek için]]
+5772|[[Düğmeler]] sekmesinde, [[Düğme yapılandırması]] altında [[Sağ elini kullanan]] veya [[Sol elini kullanan]]'a tıklayın.
+7808|Bas ve tiz düzeyini ayarlama
+7809|[[Bas ve tiz düzeyini ayarlamak için]]
+7810|[[Seçenekler]] menüsünde [[Gelişmiş Denetimler]]'e tıklayın.
+7811|[[Ses Denetimi]] altında [[Gelişmiş]]'e tıklayın.
+7812|Bas miktarını azaltmak veya artırmak için [[Bas]] kaydırıcısını [[Düşük]] veya [[Yüksek]] yönüne [[sürükleyin]].
+7813|Tiz miktarını azaltmak veya artırmak için [[Tiz]] kaydırıcısını [[Düşük]] veya [[Yüksek]] yönüne sürükleyin.
+7814|[[Seçenekler]] menüsünde [[Gelişmiş Denetimler]] komutu kullanılamıyorsa, ses sürücünüz ayrı bas ve tiz ayarlarını desteklemiyor demektir.
+7815|Kayıt ses düzeyini ayarlama
+7816|[[Kayıt ses düzeyini ayarlamak için]]
+7817|[[Seçenekler]] menüsünde [[Özellikler]]'e ve ardından [[Kayıt]]'a tıklayın.
+7818|Giriş ses düzeyini ayarlamak istediğiniz aygıtı seçin ve [[Tamam]]'a tıklayın.
+7819|Giriş ses düzeyini artırmak veya azaltmak için [[Ses Düzeyi]] kaydırıcısını yukarı veya aşağı [[sürükleyin]].
+7820|Sesi stereo kaydediyorsanız, [[Denge]] kaydırıcısını sola veya sağa sürükleyerek sol ve sağ kanallar arasındaki dengeyi ayarlayabilirsiniz.
+7821|Belirli ses aygıtlarını görüntüleme
+7822|[[Belirli ses aygıtlarını görüntülemek için]]
+7823|[[Seçenekler]] menüsünde [[Özellikler]]'e tıklayın.
+7824|[[Oynatma]], [[Kayıt]] veya [[Diğer]]'e tıklayın ve görüntülemek istediğiniz aygıtın yanındaki onay kutusunu seçin.
+7825|Sonraki öğeye ([[Oynatma]], [[Kayıt]] veya [[Diğer]]) geçmeden önce [[Tamam]]'a tıklayın. Aksi halde Windows 2000 değişiklikleri uygulamaz.
+7826|Ses girişi düzeyini ayarlama
+7827|[[Ses girişi düzeyini ayarlamak için]]
+7828|[[Seçenekler]] menüsünde [[Özellikler]]'e ve ardından [[Diğer]]'e tıklayın.
+7829|[[Sesli Komutlar]]'a tıklayın.
+7830|Ses düzeyini ayarlamak istediğiniz aygıtı seçin ve [[Tamam]]'a tıklayın.
+7831|Ses düzeyini artırmak veya azaltmak için [[Ses Düzeyi]] kaydırıcısını yukarı veya aşağı [[sürükleyin]].
+7832|Sesi stereo kaydediyorsanız, [[Denge]] kaydırıcısını sola veya sağa sürükleyerek sol ve sağ kanallar arasındaki dengeyi ayarlayabilirsiniz.
+7833|[[Özellikler]] iletişim kutusunda [[Diğer]] kullanılamıyorsa, ses sürücünüz sesli komutlar için ayrı ayarları desteklemiyor demektir.
+7834|Sesi etkinleştirme veya devre dışı bırakma
+7835|[[Sesi etkinleştirmek veya devre dışı bırakmak için]]
+7836|[[Ses Denetimi]] altında sesi devre dışı bırakmak için [[Tümünü sessize al]]'ı seçin.
+7837|[[Ses Denetimi]] altında sesi etkinleştirmek için [[Tümünü sessize al]]'ın işaretini kaldırın.
+7838|Ses Denetimi'ndeki bazı öğelerde [[Sessiz]] onay kutusu yerine [[Seç]] onay kutusu bulunur. Bu öğelerin sesini kapatmak için [[Seç]]'in işaretini kaldırın.
+7839|Ses Denetimi'ne genel bakış
+7840|Ses Denetimi'ni kullanarak, bilgisayarınızla veya CD Çalar, DVD Oynatıcı ve Ses Kaydedicisi gibi çoklu ortam uygulamalarıyla çalınan sesler için aşağıdakileri ayarlayabilirsiniz:
+7841|Ses düzeyi
+7842|Sol ve sağ hoparlörler arasındaki denge
+7843|Bas ve tiz ayarları
+7844|Oynatma ses düzeyini ayarlama
+7845|[[Oynatma ses düzeyini ayarlamak için]]
+7846|Ses düzeyini artırmak için [[Ses Denetimi]] kaydırıcısını yukarı, azaltmak için aşağı [[sürükleyin]].
+7847|Bilgisayarınızda birden fazla aygıt varsa (örneğin MIDI veya Wave aygıtı), her aygıt için ses düzeyini ayarlayabilirsiniz.
+7848|Sol ve sağ hoparlörler arasındaki dengeyi değiştirmek için [[Denge]] kaydırıcısını sola veya sağa sürükleyin.
+7849|Daha zorlu bir oyun için, oyununuzun süreli olması amacıyla [[Süreli oyun]] onay kutusunu işaretleyin.
+7850|Puanı ve oynanan süreyi görüntülemek için [[Durum çubuğu]] onay kutusunu işaretleyin.
+7851|Bir kartı yeni bir konuma [[sürüklerken]] kartın kendisi yerine anahattının görünmesi için [[Anahat sürükleme]] onay kutusunu işaretleyin.
+7852|Oynamak istediğiniz destenin tasarımını belirtmek için [[Oyun]] menüsüne tıklayın, [[Deste]]'ye tıklayın ve seçiminizi yapın.
+7853|Solitaire'e genel bakış
+7854|Solitaire oynama
+7855|[[Solitaire oynamak için]]
+7856|[[Oyun]] menüsünde [[Dağıt]]'a tıklayın.
+7857|Yedi destedeki asları ekranın sağ üst köşesindeki boşluklara taşımak için üzerlerine çift tıklayın ve ardından tahtada yapılabilecek diğer hamleleri yapın.
+7858|Tahtadaki tüm olası hamleleri yaptığınızda, kartları çevirmeye başlamak için desteye tıklayın.
+7859|Destenin üzerinde açık duran kart her zaman oynanabilir.
+7860|[[Üç Çek]] kart seçeneğini kullanıyorsanız, herhangi bir deste kartını çevirmeden önce kartları çevirmek için desteye tıklayın. Bu, kazanma şansınızı artırabilecek diğer oyun seçeneklerini görme fırsatı verir.
+7861|[[Sıra destelerini]] ve [[takım destelerini]] oluşturacaksınız.
+7862|Takım destelerini oluşturmak için gereken kartları serbest bırakmak üzere sıra destelerini oluşturursunuz.
+7863|Bir kartı veya kart destesini bir sıra destesinden diğerine taşımak için kartı veya desteyi tıklayıp [[sürükleyin]].
+7864|Bir kartı desteden veya sıra destesinden takım destesine taşımak için çift tıklayın.
+7865|Oynanabilir tüm kartları kendi takım destelerine taşımak için oyun tahtasına sağ tıklayın veya CTRL+A tuşlarına basın.
+7866|Bir kartı sıra destesinden takım destesine veya farklı bir sıra destesine taşıdıktan sonra, bir sonraki kartı çevirmek için tıklayın.
+7867|Bir sıra destesi boşaldığında (sırada kart kalmadığında), bir papazı (destesindeki kartlarla birlikte) boş sıra destesine taşıyabilirsiniz.
+7868|Puanlama sistemi seçme
+7869|[[Puanlama sistemi seçmek için]]
+7870|[[Puanlama]] altında [[Standart]], [[Vegas]] veya [[Yok]]'a tıklayın.
+7871|Her seferinde bir veya üç kart çekileceğini belirtmek için [[Oyun]] menüsünde [[Seçenekler]]'e tıklayın. Bu seçeneklerde puanlama biraz farklıdır.
+8417|Oyun alanını özelleştirme
+8418|[[Oyun alanını özelleştirmek için]]
+8419|[[Oyun]] menüsünde [[Özel]]'e tıklayın.
+8420|Alanın boyutunu, dikey ve yatay olarak görüntülenecek kare sayısını belirterek özelleştirin ve alana yerleştirilecek mayın sayısını belirtin.
+8421|Mayın Tarlası'na genel bakış
+8422|Mayın Tarlası'nın amacı, hiçbirini açığa çıkarmadan tüm mayınları olabildiğince çabuk bulmaktır. Bir mayını açığa çıkarırsanız oyunu kaybedersiniz.
+8423|Mayın Tarlası oynama
+8424|[[Mayın Tarlası oynamak için]]
+8425|[[Oyun]] menüsünde [[Yeni]]'ye tıklayın.
+8426|Zamanlayıcıyı başlatmak için oyun alanındaki herhangi bir kareye tıklayın.
+8427|Bir kareyi tıklayarak açabilirsiniz. Bir mayını açarsanız oyunu kaybedersiniz.
+8428|Bir karede sayı görünüyorsa, bu sayı, numaralı kareyi çevreleyen sekiz karede kaç mayın olduğunu gösterir.
+8429|Mayın içerdiğinden şüphelendiğiniz bir kareyi işaretlemek için sağ tıklayın.
+8430|Oyun alanı, oyun sahası, bir mayın sayacı ve bir zamanlayıcıdan oluşur.
+8431|Bir kareden emin değilseniz, soru işaretiyle (?) işaretlemek için iki kez sağ tıklayın. Daha sonra kareyi mayın olarak işaretleyebilir veya kareye bir ya da iki kez daha sağ tıklayarak işaretleri kaldırabilirsiniz.
+8432|Numaralı bir karenin çevresindeki tüm mayınları işaretlediyseniz, numaralı kareye fare düğmelerinin ikisiyle aynı anda tıklayarak çevresindeki kalan kareleri açabilirsiniz. Numaralı kareyi çevreleyen mayınların tümü işaretlenmemişse, numaralı kareye iki düğmeyle aynı anda tıklandığında kalan kapalı veya işaretsiz kareler basılmış gibi görünür (veya yanıp söner).
+8433|Sayılardaki yaygın desenleri arayın; bunlar çoğu zaman karşılık gelen bir mayın desenini gösterir. Örneğin açılmış karelerden oluşan bir grubun kenarındaki 2-3-2 deseni, üç sayının yanında üç mayından oluşan bir sıra olduğunu gösterir.
+8434|Oyunu başlattıktan sonra zamanlayıcıyı kapatabilirsiniz. Zamanlayıcıdaki rakamların üzerine gelin ve iki fare düğmesini basılı tutun. Yüzdeki ağız gülümsemeden O'ya dönüştüğünde ESC tuşuna basın. Oyuna zamanlayıcı olmadan devam edebilirsiniz. Zamanlayıcıyı yeniden başlatmak için oyunu [[simge durumuna küçültün]] ve ardından geri yükleyin.

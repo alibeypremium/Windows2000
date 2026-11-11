@@ -1,5 +1,6 @@
 import { refWindow } from "../control-panel/refkit.js";
-import { t } from "../ui/i18n.js";
+import { t, getLang } from "../ui/i18n.js";
+import { applyTr, loadBook, loadNames, nk } from "./help-tr.js";
 import { dialogFromTemplate, px, py } from "../ui/dlg.js";
 import { ABOUT } from "./about-data.js";
 import { el, button, icon, statusBar, tabs, checkbox, popup } from "../ui/index.js";
@@ -163,7 +164,21 @@ const topics = {
 const HH = "/assets/ui/help/";
 const HELP = "/assets/help/";
 let HELP_DATA = null;
-const loadHelp = () => (HELP_DATA ? Promise.resolve(HELP_DATA) : fetch(HELP + "help.json").then((r) => r.json()).then((d) => (HELP_DATA = d)));
+const trNames = (d) => {
+  // Turkish layer: contents, page titles and book names come from assets/help-tr/names.json
+  const T = (s) => N[nk(s)] || s;
+  let N = {};
+  return loadNames().then((m) => {
+    N = m;
+    const w = (ns) => ns.forEach((n) => ((n.n = T(n.n)), n.c && w(n.c)));
+    Object.values(d.toc).forEach(w);
+    d.pages.forEach((p) => (p[1] = T(p[1])));
+    Object.keys(d.books).forEach((k) => (d.books[k] = T(d.books[k])));
+    d.index.forEach((x) => (x[0] = T(x[0])));
+    return d;
+  });
+};
+const loadHelp = () => (HELP_DATA ? Promise.resolve(HELP_DATA) : fetch(HELP + "help.json").then((r) => r.json()).then((d) => (getLang() === "tr" ? trNames(d) : d)).then((d) => (HELP_DATA = d)));
 const BOOK_ORDER = ["getstart", "howto", "concepts", "tshoot", "cpanel", "display", "access", "hardware", "printing", "folderop", "find", "fonts", "recycle", "keyb", "mouse", "datetime", "sounds", "notepad", "wordpad", "mspaint", "calc", "charmap", "clipbrd", "mplayer", "soundrec", "sndvol32", "freecell", "sol", "winmine", "regedit", "taskmgr", "iexplore", "msoe", "nthelp", "dialer", "hypertrm", "mobsync", "osk", "deluxcd", "wab", "MP_w", "glossary"];
 const TOPIC_BOOK = { notepad: "notepad", wordpad: "wordpad", paint: "mspaint", calculator: "calc", media: "MP_w", regedit: "regedit", taskmgr: "taskmgr", magnifier: "magnify", hyperterminal: "hypertrm", dialer: "dialer", sync: "mobsync", osk: "osk", cdplayer: "deluxcd", address: "wab", charmap: "charmap", clipbook: "clipbrd", sndrec: "soundrec", volume: "sndvol32", internet: "iexplore", system: "tshoot", games: "sol", solitaire: "sol", freecell: "freecell", minesweeper: "winmine", outlook: "msoe", shortcuts: "folderop" };
 const walk = (nodes, fn, path = []) => nodes.forEach((n, i) => (fn(n, [...path, i]), n.c && walk(n.c, fn, [...path, i])));
@@ -214,7 +229,7 @@ export function openHelp(ctx, { topic } = {}) {
     popup([{ label: "Print...", action: () => ctx.printText(body.innerText, "Windows 2000") }], r.left, r.bottom);
   });
   opt.lastChild.innerHTML = "<u>O</u>ptions";
-  const web = tb("web", "web", "Web Help", 219, 0, () => ctx.launch("ie"));
+  const web = tb("web", "web", "Web Help", getLang() === "tr" ? 232 : 219, 0, () => ctx.launch("ie"));
   const sync = () => {
     back.classList.toggle("off", !hist.length);
     fw.classList.toggle("off", !fwd.length);
@@ -277,6 +292,7 @@ export function openHelp(ctx, { topic } = {}) {
       const st = d.createElement("style");
       st.textContent = [...document.styleSheets].flatMap((sh) => { try { return [...sh.cssRules]; } catch { return []; } }).filter((r) => r.cssText.includes("scrollbar")).map((r) => r.cssText).join("\n") + "\nbody{margin:8px 14px 8px 20px;font-family:Verdana,Tahoma,Arial,sans-serif}";
       d.head.append(st);
+      if (getLang() === "tr") loadBook(path.split("/")[0]).then((dict) => { applyTr(d, dict); });
       d.addEventListener("click", (e) => {
         const a = e.target.closest?.("a");
         if (!a) return;
@@ -363,7 +379,7 @@ export function openHelp(ctx, { topic } = {}) {
   }
   const tabs = ["Contents", "Index", "Search", "Favorites"].map((t, i) => {
     const n = el("div", { class: "hh-tab t" + i, onclick: () => setTab(i) });
-    n.innerHTML = t === "Contents" ? "<u>C</u>ontents" : t === "Index" ? "In<u>d</u>ex" : t === "Search" ? "<u>S</u>earch" : "F<u>a</u>vorites";
+    n.innerHTML = getLang() === "tr" ? (t === "Contents" ? "<u>İ</u>çindekiler" : t === "Index" ? "<u>D</u>izin" : t === "Search" ? "<u>A</u>ra" : "<u>F</u>avoriler") : t === "Contents" ? "<u>C</u>ontents" : t === "Index" ? "In<u>d</u>ex" : t === "Search" ? "<u>S</u>earch" : "F<u>a</u>vorites";
     return n;
   });
   function setTab(i) {

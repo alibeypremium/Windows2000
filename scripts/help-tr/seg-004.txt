@@ -1,0 +1,256 @@
+352|[[Kaydet]]'e tıklayın.
+1365|[[Düzen]] menüsünde [[Sil]]'e tıklayın.
+1388|[[Dosya]] menüsünde [[Farklı Kaydet]]'e tıklayın.
+1625|[[Active Desktop özelliğini açma]]
+1627|[[Masaüstüne Web içeriği ekleme]]
+2330|Ağda bilgisayar arama
+2331|[[Ağda bilgisayar aramak için]]
+2332|[[Ağ Konumlarım]]'ı açın.
+2333|Araç çubuğunda [[Ara]]'ya tıklayın.
+2334|[[Bilgisayar Adı]] kutusuna bulmak istediğiniz bilgisayarın adını yazın.
+2335|[[Şimdi Ara]]'ya tıklayın.
+2336|Ağ Konumlarım'ı açmak için [[masaüstündeki]] [[Ağ Konumlarım]]'a çift tıklayın.
+2337|Arama ölçütü alanlarını temizleyip yeni bir arama başlatmak için [[Yeni]]'ye tıklayın.
+2338|Internet'te arama
+2339|[[Internet'te aramak için]]
+2340|[[Başlat]]'a tıklayın, [[Ara]]'yı gösterin ve ardından [[Internet'te]]'ye tıklayın.
+2341|[[Aramanız için bir kategori seçin]] altında aramak istediğiniz kategoriye tıklayın. Ek arama kategorilerini görmek için [[Diğer]]'e tıklayın.
+2342|Arama ölçütlerinizi girin ve ardından [[Ara]]'ya tıklayın.
+2343|Hiç sonuç alamazsanız, aramanızı daha genel hale getirmek için bazı arama ölçütlerini kaldırmayı deneyin.
+2344|Arama sonuçları listesinde, Web sayfasını görüntülemek için bir bağlantıya tıklayın.
+2345|Her Arama kategorisi için Arama penceresi birkaç Internet arama hizmetine erişim sağlar. Arama penceresinde [[Sonraki]]'ne tıklayın; listedeki sonraki arama hizmeti aramanızı gerçekleştirir. Seçili arama kategorisi için kullanılabilir arama hizmetlerinin listesini görüntülemek için [[Sonraki]]'nin sağındaki oka tıklayın.
+2346|Arama penceresinde [[Özelleştir]]'e tıklayarak kullanılabilir arama hizmetlerinin listesini ve bilgisayarınızın Internet aramalarını yapma biçiminin diğer yönlerini özelleştirebilirsiniz.
+2347|Bilgiyi hızla bulmak istiyorsanız, Internet Explorer'ın adres çubuğuna [[go]], [[find]] veya [[?]] ve ardından aramak istediğiniz metni yazabilirsiniz.
+2348|Internet Explorer'ı kullanmayla ilgili daha fazla ipucu için Internet Explorer'da [[Yardım]] menüsüne tıklayın.
+2349|Arama Yardımcısı'na genel bakış
+2350|Arama Yardımcısı, dosya ve klasörleri, yazıcıları, kişileri ve ağınızdaki diğer bilgisayarları aramayı kolaylaştırır. Hatta Internet'te aramayı da kolaylaştırır. Arama Yardımcısı ayrıca bilgisayarınızdaki tüm dosyaların dizinini tutan bir dizin oluşturma hizmetine sahiptir ve aramaları daha da hızlı yapar.
+2351|Arama Yardımcısı'nı kullandığınızda birkaç arama ölçütü belirtebilirsiniz. Örneğin dosya ve klasörleri ada, türe ve boyuta göre arayabilirsiniz. Hatta belirli metin içeren dosyaları da arayabilirsiniz. [[Active Directory]] kullanıyorsanız belirli bir ada veya konuma sahip bir yazıcıyı arayabilirsiniz. Özel özellikleri olan bir yazıcıya ihtiyacınız varsa belirli bir modeli arayabilirsiniz.
+2352|Kişi ve grup arama
+2353|[[Internet'te veya kuruluşunuzda kişi ve grup aramak için]]
+2354|[[Başlat]]'a tıklayın, [[Ara]]'yı gösterin ve ardından [[Kişiler]]'e tıklayın.
+2355|[[Şurada ara]] kutusunda kullanmak istediğiniz dizin hizmetini, kişi listesini veya Internet arama hizmetini seçin.
+2356|E-posta adreslerini, telefon numaralarını ve adları bulmada uzmanlaşmış çeşitli Internet arama hizmetleri arasından seçim yapabilirsiniz. Internet arama hizmetlerinden birini kullanmak için [[Şurada ara]] kutusunda kullanmak istediğiniz arama hizmetini seçin ve ardından [[Web Sitesi]]'ne tıklayın. Seçtiğiniz Internet arama hizmetinin Web sayfasında görünen yönergeleri izleyin.
+2357|Adres Defteri'nde aramak için [[Şurada ara]] kutusunda [[Adres Defteri]]'ni seçin ve 3. adıma geçin.
+2358|[[Kişiler]] veya [[Gelişmiş]] sekmesinde arama ölçütlerinizi girin ve ardından [[Şimdi Bul]]'a tıklayın.
+2359|Hiç sonuç alamazsanız, aramanızı daha genel hale getirmek için arama bilgilerinden bazılarını kaldırmayı deneyin.
+2360|Arama ölçütü alanlarını temizleyip yeni bir arama başlatmak için [[Tümünü Temizle]]'ye tıklayın.
+2361|Adres Defteri kişisel iletişim bilgilerinizi içerir. Adres Defteri'ni kullanma hakkında bilgi için bkz. İlgili Konular.
+2362|Dosya veya klasör arama
+2363|[[Dosya veya klasör aramak için]]
+2364|[[Başlat]]'a tıklayın, [[Ara]]'yı gösterin ve ardından [[Dosya veya Klasörler]]'e tıklayın.
+2365|[[Aranan dosya veya klasör adı]] kutusuna bulmak istediğiniz dosya veya klasörün adının tamamını ya da bir bölümünü yazın.
+2366|Belirli metin içeren dosyaları aramak için [[İçerdiği metin]] kutusuna bulmak istediğiniz metni yazın.
+2367|[[Şurada ara]] kutusunda aramak istediğiniz sürücüye, klasöre veya ağa tıklayın.
+2368|Ek arama ölçütleri belirtmek için [[Arama Seçenekleri]]'ne tıklayın ve ardından aramanızı daraltmak için aşağıdaki seçeneklerden birine veya daha fazlasına tıklayın:
+2369|Belirli tarihlerde veya tarihler arasında oluşturulan ya da değiştirilen dosyaları aramak için [[Tarih]]'i seçin.
+2370|Metin veya WordPad belgesi gibi belirli türdeki dosyaları aramak için [[Tür]]'ü seçin.
+2371|Belirli boyuttaki dosyaları aramak için [[Boyut]]'u seçin.
+2372|Ek arama ölçütleri belirtmek için [[Gelişmiş Seçenekler]]'i seçin.
+2373|Çok fazla sonuç alırsanız, aramanızı daha belirgin hale getirmek için ek arama ölçütleri girmeyi deneyin.
+2374|Gelişmiş Seçenekler altında [[Yavaş dosyaları ara]], optik veya teyp yedekleme gibi çıkarılabilir depolama ortamlarında bulunan dosyaları ifade eder. Bu dosyaların içeriği aranmadan önce daha hızlı bir depolama ortamına kopyalanması gerekebilir.
+2375|Arama sorgusunu kaydetme
+2376|[[Arama sorgusunu kaydetmek için]]
+2377|Arama Yardımcısı'nı kullanarak aramanızı tamamladığınızda, arama sonuçları bölmesine tıklayın, [[Dosya]] menüsüne tıklayın ve ardından [[Aramayı Kaydet]]'e tıklayın.
+2378|[[Kayıt yeri]] kutusunda arama sorgusunu kaydetmek istediğiniz konumu belirtin.
+2379|[[Dosya adı]] kutusuna dosya için bir ad yazın ve ardından [[Kaydet]]'e tıklayın.
+2380|Arama Yardımcısı'nı kullanarak bir arama çalıştırabilirsiniz. Arama Yardımcısı'nı başlatmak için [[Başlat]]'a tıklayın, [[Ara]]'yı gösterin ve ardından [[Dosya veya Klasörler]]'e tıklayın.
+2381|Bir arama sorgusunu açtığınızda, kaydedilen arama ölçütlerini kullanarak otomatik olarak yeni bir arama başlatır.
+2382|Yazıcı arıyorsanız ve arama sonuçlarınızı filtrelerseniz, filtre ölçütleri arama sorgusuyla birlikte kaydedilmez.
+2383|Dosya veya klasörleri nerede aramalı
+2384|Windows 2000, dosya veya klasör bulmak için çeşitli yollar sunar.
+2385|[[Başlat]] menüsündeki [[Ara]] komutu, bir dosyayı bulmanın en doğrudan yolunu sunar. Bulmak istediğiniz dosya veya klasörün adını biliyorsanız [[Ara]]'yı kullanın. Adın yalnızca bir bölümünü biliyorsanız, adında o bölümü içeren tüm dosya veya klasörleri bulmak için joker karakterleri kullanabilirsiniz. Örneğin *letter.* ifadesi Holiday letter.doc, Special letter.doc ve Special letter.txt dosyalarını bulur. Daha fazla bilgi için bkz. İlgili Konular.
+2386|Windows Gezgini, bilgisayarınızdaki tüm dosya ve klasörleri görmenin hızlı bir yolunu sunar ve aynı zamanda dosyaları bir klasörden diğerine kopyalamak veya taşımak için de iyi bir yoldur. Dosya veya klasörün nerede olduğunu biliyorsanız Windows Gezgini'ni kullanın.
+2387|Bilgisayarım, bilgisayarınızdaki klasörlerin daha basit bir görünümünü sunar. Bir klasördeki birçok dosyayla çalışmak istiyorsanız veya yeni alt klasörler oluşturarak ya da alt klasörleri yeniden adlandırarak bir klasörün içeriğini yeniden düzenlemek istiyorsanız Bilgisayarım'ı kullanın.
+2388|Ağ Konumlarım, bilgisayarınızın bağlı olduğu ağdaki tüm paylaşılan bilgisayarların, dosya ve klasörlerin, yazıcıların ve diğer kaynakların bir görünümünü sunar. Ağ Konumlarım, ağın, Windows Gezgini'nin bilgisayarınız için sunduğu görünüme benzer bir görünümünü sunar. Ağda kullanılabilen tüm kaynakları görmek, istediğiniz kaynağın nerede olduğunu biliyorsanız veya dosya ve klasörleri bir ağ konumundan diğerine ya da sabit diskinize kopyalamak istediğinizde Ağ Konumlarım'ı kullanın.
+2389|[[Ağ Sürücüsü Eşle]] komutu, bir ağ kaynağını Bilgisayarım'da veya Windows Gezgini'nde görüntülemenizi sağlar; bu da ağ kaynaklarınızı bulmayı kolaylaştırır. Sık kullandığınız ağ kaynakları için veya bağlanmak istediğiniz kaynağın tam ağ yolunu ve adını biliyorsanız [[Ağ Sürücüsü Eşle]]'yi kullanın.
+2390|Joker karakterleri kullanma
+2391|Joker karakter, dosya veya klasör ararken bir veya daha fazla gerçek karakteri temsil etmek için kullanabileceğiniz yıldız işareti (*) veya soru işareti (?) gibi bir klavye karakteridir. Joker karakterler genellikle gerçek karakterin ne olduğunu bilmediğinizde veya adın tamamını yazmak istemediğinizde bir veya daha fazla karakterin yerine kullanılır.
+2392|Yıldız işareti (*)
+2393|Yıldız işaretini sıfır veya daha fazla karakterin yerine kullanabilirsiniz. Adının gloss ile başladığını bildiğiniz ancak dosya adının geri kalanını hatırlamadığınız bir dosyayı arıyorsanız şunu yazın:
+2394|[[gloss*]]
+2395|[[Bul]] iletişim kutusu, Glossary.txt, Glossary.doc ve Glossy.doc dahil gloss ile başlayan her dosya türündeki tüm dosyaları bulur. Aramayı belirli bir dosya türüyle daraltmak için şunu yazın:
+2396|Bu durumda [[Bul]] iletişim kutusu, gloss ile başlayan ancak Glossary.doc ve Glossy.doc gibi .doc dosya uzantısına sahip tüm dosyaları bulur.
+2397|Soru işareti (?)
+2398|Soru işaretini bir addaki tek bir karakterin yerine kullanabilirsiniz. Örneğin [[gloss?.doc]] yazarsanız [[Bul]] iletişim kutusu Glossy.doc veya Gloss1.doc dosyasını bulur ancak Glossary.doc dosyasını bulmaz.
+2399|[[Masaüstüne Web içeriği eklemek için]]
+2400|[[Masaüstünde]] boş bir alana sağ tıklayın ve ardından [[Active Desktop]]'ı gösterin.
+2401|[[Yeni Masaüstü Öğesi]]'ne tıklayın.
+2402|Ekranınızdaki yönergeleri izleyin.
+2403|Masaüstünüze Web içeriği eklemeyi denemeden önce, [[Klasör Seçenekleri]] iletişim kutusunda [[Masaüstümde Web içeriğini etkinleştir]] seçeneğinin seçili olduğundan emin olun.
+2404|Eklenecek bir masaüstü bileşeni için Windows Media Showcase'e göz atmak istiyorsanız [[Galeriyi Ziyaret Et]]'e tıklayın.
+2405|Başka bir Web sitesi seçmek istiyorsanız, istediğiniz Web sitesinin adresini yazın veya bulmak için [[Gözat]]'a tıklayın.
+2406|Her klasörü kendi penceresinde açma
+2407|[[Her klasörü kendi penceresinde açmak için]]
+2408|Denetim Masası'nda [[Klasör Seçenekleri]]'ni açın.
+2409|[[Genel]] sekmesinde, [[Klasörlere Gözat]] altında [[Her klasörü kendi penceresinde aç]]'a tıklayın.
+2410|Veya Windows Gezgini'nde [[Araçlar]]'a ve ardından [[Klasör Seçenekleri]]'ne tıklayın.
+2411|Bu yordamı izlerseniz bir klasör açtığınız her seferde yeni bir pencere açılır. Birden çok pencerenin açık olması [[masaüstünüzü]] karmaşıklaştırabilir.
+2412|Varsayılan olarak açtığınız her klasör aynı pencerede görünür ve önceki pencere içeriğinin üzerine yazılır. Bu ayara dönmek için [[Her klasörü aynı pencerede aç]]'a tıklayın.
+2413|Öğeleri açmak için gereken fare tıklama sayısını değiştirme
+2414|[[Öğeleri açmak için gereken fare tıklama sayısını değiştirmek için]]
+2415|[[Genel]] sekmesinde, [[Öğelere şu şekilde tıklayın]] altında istediğiniz seçeneğe tıklayın.
+2416|[[Öğeyi açmak için tek tıklayın (seçmek için üzerine gelin)]]'ı tıklarsanız simge başlıklarının nasıl altı çizileceğini de belirtebilirsiniz.
+2417|Geçerli tarayıcı ayarlarınızı denetlemek için Denetim Masası'nda [[Internet Seçenekleri]]'ne çift tıklayın ve ardından [[Gelişmiş]] sekmesine tıklayın.
+2418|Yaygın görevler: Klasör Seçenekleri
+2419|Aşağıdaki görevler klasörleri ve [[masaüstünüzün]] bazı yönlerini özelleştirmek için sık kullanılır.
+2420|[[Masaüstünüzü Web sayfası gibi gösterme]]
+2421|Active Desktop özelliğini açın. Active Desktop, masaüstünüze Web içeriği eklemenizi sağlar. Sık kullandığınız Web sitelerinin parçalarını doğrudan masaüstünüzde görüntüleyebilir ve otomatik olarak güncel tutabilirsiniz. Örneğin Web'den bir borsa göstergesi veya haber özeti sayfası ekleyebilirsiniz.
+2422|[[Masaüstünüze etkin içerik ekleme]]
+2423|Active Desktop özelliğini açtıktan sonra masaüstünüze borsa göstergesi veya hava durumu haritası gibi Web içeriği ekleyebilirsiniz.
+2424|[[Klasörlerde Web içeriğini görüntüleme]]
+2425|[[Disk]] kapasitesi veya klasör ve içeriği hakkında açıklayıcı metin klasör penceresinde görüntülenir. Ayrıca Belgelerim, Ağ Konumlarım ve Bilgisayarım'a köprüler de gösterilir.
+2426|Klasörleri ve dosyaları açmak için bir veya iki tıklama kullanın ve öğelerin ne zaman altı çizili olacağını belirtin.
+2427|[[Gizli dosyaları ve dosya adı uzantılarını gösterme]]
+2428|Bazı dosya ve klasörler varsayılan olarak gizlidir veya Gizli özniteliğine sahiptir. Bu gizli dosya ve klasörleri görüntülemeyi seçebilirsiniz. Ayrıca .txt veya .htm gibi yaygın dosya türlerinin dosya uzantılarını da görüntüleyebilirsiniz.
+2429|Klasörleri Web sayfası gibi gösterme
+2430|[[Klasörleri Web sayfası gibi göstermek için]]
+2431|[[Genel]] sekmesinde, [[Web Görünümü]] altında [[Klasörlerde Web içeriğini etkinleştir]]'e tıklayın.
+2432|Web görünümünü kullandığınızda, açıklayıcı ve köprü metinleri klasör penceresinin sol tarafında görünür.
+2433|Klasörlerde Web görünümünü kapatmak için [[Windows klasik klasörlerini kullan]]'a tıklayın.
+2434|Klasörleri belleğin ayrı bir bölümünde açma
+2435|[[Her klasörü belleğin ayrı bir bölümünde açmak için]]
+2436|[[Görünüm]] sekmesine tıklayın.
+2437|[[Klasör pencerelerini ayrı bir işlemde başlat]] onay kutusunu seçin.
+2438|Her klasör penceresini belleğin ayrı bir bölümünde açtığınızda Windows'un kararlılığı artabilir. Ancak bilgisayarınızın performansı biraz düşebilir.
+2439|Klasör Seçenekleri'ne genel bakış
+2440|Klasör Seçenekleri, [[masaüstünüzün]] ve klasör içeriğinin görünümünü değiştirmenizi ve klasörlerin nasıl açılacağını belirtmenizi sağlar. Örneğin seçili klasörün içindeki klasörleri açtığınızda art arda pencereler yerine tek bir pencere açılmasını isteyip istemediğinizi seçebilirsiniz. Ayrıca klasörlerin tek tıklamayla mı yoksa çift tıklamayla mı açılacağını belirleyebilirsiniz.
+2441|Klasör Seçenekleri'ni ayrıca Active Desktop'ı açmak veya klasörlerde köprü metni görüntülemek ([[Genel]] sekmesi), belirli dosya türlerini açmak için kullanılan [[programı]] değiştirmek ([[Dosya Türleri]] sekmesi) veya ağa [[bağlı]] olmadığınızda dosyaları kullanılabilir hale getirmek ([[Çevrimdışı Dosyalar]] sekmesi) için de kullanabilirsiniz.
+2442|Klasör Seçenekleri'nde yaptığınız değişiklikler, Windows Gezgini (Bilgisayarım, Ağ Konumlarım, Belgelerim ve Denetim Masası dahil) pencerelerinin içeriğinin görünümü için geçerlidir. Ancak Klasör Seçenekleri ayarları klasör araç çubukları için geçerli değildir. Klasör araç çubuklarını değiştirme hakkında daha fazla bilgi için bkz. İlgili Konular.
+2443|Klasör seçenekleri ayarlarını yapılandırmak için Denetim Masası'nda [[Klasör Seçenekleri]]'ni açın veya [[Başlat]]'a tıklayın, [[Ayarlar]]'ı gösterin, [[Denetim Masası]]'na tıklayın ve ardından [[Klasör Seçenekleri]]'ne çift tıklayın. Veya Windows Gezgini'nde [[Araçlar]]'a ve ardından [[Klasör Seçenekleri]]'ne tıklayın.
+2444|Windows Gezgini'nde [[Görünüm]] menüsüne tıklayarak ek klasör görünümleri yapılandırabilirsiniz.
+2445|Renk, [[duvar kağıdı]] ve [[ekran koruyucuları]] gibi ek masaüstü öğeleri, Denetim Masası'ndaki [[Ekran]] kullanılarak yapılandırılır.
+2446|Belgelerim klasörünü masaüstünden kaldırma
+2447|[[Belgelerim klasörünü masaüstünden kaldırmak için]]
+2448|[[Belgelerim'i Masaüstünde Göster]] onay kutusunun işaretini [[kaldırın]].
+2449|Ayarları yalnızca açık klasöre uygulamak için [[Görünüm]] sekmesinde [[Her klasörün görünüm ayarlarını hatırla]] onay kutusunun işaretini kaldırın.
+2450|Klasör ve masaüstü öğeleri için açılır açıklamaları gösterme
+2451|[[Klasör ve masaüstü öğeleri için açılır açıklamaları göstermek için]]
+2452|[[Klasör ve masaüstü öğeleri için açılır açıklamayı göster]] onay kutusunu seçin.
+2453|Klasör ayarlarını yalnızca açık klasöre uygulamak için [[Görünüm]] sekmesinde [[Her klasörün görünüm ayarlarını hatırla]] onay kutusunun işaretini [[kaldırın]].
+2454|Active Desktop özelliğini kapatma
+2455|[[Active Desktop özelliğini kapatmak için]]
+2456|[[Genel]] sekmesinde, [[Active Desktop]] altında [[Windows klasik masaüstünü kullan]]'a tıklayın.
+2457|Active Desktop özelliğini kapatmanın birkaç başka yolu vardır:
+2458|[[Masaüstünde]] boş bir alana sağ tıklayın, [[Active Desktop]]'ı gösterin ve onay işaretini kaldırmak için [[Web İçeriğini Göster]]'e tıklayın. Metnin yanındaki onay işareti, Active Desktop'ın etkin olduğunu gösterir.
+2459|Denetim Masası'nda [[Ekran]]'a çift tıklayın, [[Web]] sekmesine tıklayın ve ardından [[Active Desktop'ımda Web içeriğini göster]] onay kutusunun işaretini [[kaldırın]].
+2460|[[Active Desktop özelliğini açmak için]]
+2461|[[Genel]] sekmesinde, [[Active Desktop]] altında [[Masaüstümde Web içeriğini etkinleştir]]'e tıklayın.
+2462|Active Desktop özelliğini açmanın birkaç başka yolu vardır:
+2463|[[Masaüstünde]] boş bir alana sağ tıklayın, [[Active Desktop]]'ı gösterin ve ardından [[Web İçeriğini Göster]]'e tıklayın.
+2464|Denetim Masası'nda [[Ekran]]'a çift tıklayın, [[Web]] sekmesine tıklayın ve ardından [[Active Desktop'ımda Web içeriğini göster]] onay kutusunu seçin.
+2465|Dosya ve klasörlerin tam yolunu görüntüleme
+2466|[[Dosya ve klasörlerin tam yolunu görüntülemek için]]
+2467|[[Adres çubuğunda tam yolu göster]]
+2468|[[Başlık çubuğunda tam yolu göster]]
+2469|Dosya uzantısını bir dosya türüyle ilişkilendirme
+2470|[[Dosya uzantısını bir dosya türüyle ilişkilendirmek için]]
+2471|[[Dosya Türleri]] sekmesine tıklayın.
+2472|[[Yeni]]'ye tıklayın.
+2473|Yeni veya mevcut bir dosya adı uzantısı yazın ve ardından [[Gelişmiş]]'e tıklayın.
+2474|[[Dosya türü]] kutusunda dosya adı uzantısıyla ilişkilendirilecek yeni bir [[dosya türü]] oluşturmak için [[Yeni]]'ye tıklayın. Veya mevcut dosya türlerinden birine tıklayın.
+2475|Dosya türünde değişiklik yapma hakkında bilgi için bkz. İlgili Konular.
+2476|Bir dosyayı açan [[programı]] değiştirmek için [[Dosya Türleri]] sekmesinde [[Değiştir]]'e tıklayın.
+2477|Mevcut bir dosya türünü değiştirme
+2478|[[Mevcut bir dosya türünü değiştirmek için]]
+2479|Değiştirmek istediğiniz dosya türüne tıklayın.
+2480|[[Gelişmiş]]'e tıklayın.
+2481|Gerekirse dosya türünün açıklamasını değiştirin ve dosya türünün simgesini değiştirmek için [[Simgeyi Değiştir]]'e tıklayın.
+2482|[[Eylemler]] kutusunda değiştirmek istediğiniz komuta tıklayın ve ardından [[Düzenle]], [[Kaldır]] veya [[Varsayılan Yap]]'a tıklayın. Veya [[Eylemler]] listesine yeni bir komut eklemek için [[Yeni]]'ye tıklayın.
+2483|Bu dosya türü için değiştirmek istediğiniz her eylem için 6. adımı yineleyin.
+2484|Yeni bir eylem belirttikten sonra, ilişkili uzantıya sahip bir dosyaya sağ tıkladığınızda kısayol menüsünde görünür.
+2485|[[Yeni Dosya Türü Ekle]] iletişim kutusunda eylem için belirtmek istediğiniz [[programı]] bulmak için [[Gözat]]'a tıklayabilirsiniz.
+2486|Dosya adı uzantısına sahip tüm dosyalar, tanımladığınız simgeyi ve komutları kullanır.
+2487|Gizli dosya ve klasörleri görüntüleme
+2488|[[Gizli dosya ve klasörleri görüntülemek için]]
+2489|[[Gizli dosya ve klasörleri göster]]'e tıklayın.
+2490|Gizli dosya ve klasörler, olağan öğeler olmadıklarını belirtmek için soluk görüntülenir.
+2491|Gizli dosya veya klasörün adını biliyorsanız, Ara'yı kullanarak onları önce görüntülemeden bulabilirsiniz. Ara'yı kullanma hakkında bilgi için bkz. İlgili Konular.
+2492|Tüm dosya adı uzantılarını görmek istiyorsanız [[Bilinen dosya türlerinin uzantılarını gizle]] onay kutusunun işaretini [[kaldırın]].
+2493|Sıkıştırılmış dosya ve klasörleri farklı renkte görüntüleme
+2494|[[Sıkıştırılmış dosya ve klasörleri farklı renkte görüntülemek için]]
+2495|[[Sıkıştırılmış dosya ve klasörleri alternatif renkle görüntüle]] onay kutusunu seçin.
+4702|[[Dosya]] menüsünde [[Özellikler]]'e tıklayın.
+4984|Minitel öykünmesi için işlev tuşları
+4985|İşlev tuşu
+4986|Minitel tuşu
+4988|[[DELETE]] veya [[F2]]
+4989|Annulation
+4990|[[PAGE UP]] veya [[F3]]
+4992|[[INSERT]] veya [[F4]]
+4993|Repetition
+4994|[[END]] veya [[F5]]
+4996|[[BACKSPACE]] veya [[F6]]
+4997|Correction
+4998|[[PAGE DOWN]] veya [[F7]]
+5000|[[ENTER]] veya [[F8]]
+5002|Connexion/fin
+5003|HyperTerminal ile modemi sınama
+5004|[[HyperTerminal ile modemi sınamak için]]
+5005|[[Dosya]] menüsünde [[Yeni Bağlantı]]'ya tıklayın.
+5006|[[Bağlantı Açıklaması]] iletişim kutusunda [[İptal]]'e tıklayın.
+5007|Modeminiz düzgün çalışıyorsa HyperTerminal penceresinde "OK" veya "0" görünmelidir.
+5008|HyperTerminal'in hangi modemi sınadığını belirlemek için [[Dosya]] menüsüne gidin ve [[Özellikler]]'e tıklayın. [[Bağlanılacak Yer]] sekmesinde, [[Bağlanma aygıtı]] kutusunda görüntülenen modem, sınanan modemdir. Farklı bir modemi sınamak için [[Bağlanma aygıtı]] kutusunda o modemin adını seçin.
+5009|Modemi sınadıktan sonra HyperTerminal penceresinde "OK" veya "0" görünmüyorsa modeminiz düzgün çalışmıyor demektir. [[Modem sorun gidericisine]] başvurun veya yardım için modem üreticisini arayın.
+5010|Uzak bilgisayarı arama
+5011|Uzak bilgisayarı aramak için kayıtlı bağlantıyı kullanmak için
+5012|[[Dosya adı]] kutusuna kullanmak istediğiniz bağlantının adını yazın veya seçin.
+5013|[[Aç]]'a ve ardından [[Çevir]]'e tıklayın.
+5014|HyperTerminal bağlantıları .ht uzantısıyla kaydedilir.
+5015|HyperTerminal oturumunu metin dosyasına kaydetme
+5016|HyperTerminal oturumunu metin dosyasına kaydetmek için
+5017|[[Aktar]] menüsünde [[Metni Yakala]]'ya tıklayın.
+5018|[[Dosya]] kutusuna dosya için açıklayıcı bir ad yazın ve ardından [[Başlat]]'a tıklayın.
+5019|HyperTerminal oturum metnini doğrudan yazıcıya göndermek için [[Aktar]] menüsünde [[Yazıcıya Yakala]]'ya tıklayın. Aramayı sonlandırdığınızda metin varsayılan yazıcınıza gönderilir.
+5020|Arama yapma ayarlarını değiştirme
+5021|Arama yapma ayarlarını değiştirmek için
+5022|Kullanılabilir seçenekleri görmek için [[Bağlanılacak Yer]] ve [[Ayarlar]] sekmelerine tıklayın ve değişikliklerinizi yapın.
+5023|Modemin bağlantı noktası ayarlarını değiştirme
+5024|Modemin bağlantı noktası ayarlarını değiştirmek için
+5025|[[Bağlanılacak Yer]] sekmesinde [[Yapılandır]]'a tıklayın.
+5026|Değişikliklerinizi [[Genel]] ve [[Gelişmiş]] sekmelerinde yapın.
+5027|Bağlantı noktası ayarlarında yaptığınız değişiklikler yalnızca bu bağlantıyı etkiler.
+5028|Modeminizin bağlantı noktası ayarları genellikle modem yüklendiğinde doğru ayarlanır ve bu değerleri değiştirmeniz normalde gerekmez. Ancak özel gereksinimleri olan bir bağlantı için bağlantı noktası ayarlarını değiştirebilirsiniz. Örneğin bağlandığınız bir sunucu veri sıkıştırmanın devre dışı bırakılmasını veya bağlantı noktası hızının azaltılmasını gerektirebilir. Modem Bağlantı Tercihi iletişim kutusundaki bir öğe için Yardım almak için öğeye sağ tıklayın ve ardından [[Bu nedir?]]'e tıklayın.
+5029|İletişim ayarlarını değiştirme
+5030|Modem yapılandırmanızı değiştirmek için Denetim Masası'ndaki Telefon ve Modem Seçenekleri yerine HyperTerminal'i kullanabilirsiniz. Ayrıca kayıtlı bir bağlantı için belirlediğiniz telefon numarasını veya ağ adresini değiştirmek için de HyperTerminal'i kullanabilirsiniz.
+5031|HyperTerminal ayrıca bilgisayarınızın bir Minitel terminalini taklit etmesine olanak tanıyarak Minitel hizmetlerine bağlanmanızı sağlar.
+5032|Yaygın görevler: HyperTerminal
+5033|HyperTerminal kullanırken aşağıdaki görevler sık gerçekleştirilir.
+5034|[[Yeni bağlantı kurma]]
+5035|Yeni bir bağlantı kurmak, bağlantıyı adlandırmayı, telefon numarası hakkında bilgi girmeyi ve arama özelliklerini ayarlamayı içerir.
+5036|Başka bir bilgisayara bağlantı kurduktan sonra, bağlantıyı kullanarak uzak bilgisayarı arayın.
+5037|[[Uzak bilgisayara dosya gönderme]]
+5038|Belirlediğiniz bir protokolü kullanarak bağlı bilgisayara dosya aktarın.
+5039|[[Uzak bilgisayardan dosya alma]]
+5040|Uzak bilgisayarın protokolünü kullanarak başka bir bilgisayardan dosya indirin.
+5041|Modem yapılandırmanızı değiştirmek, bir bağlantı için telefon numarasını veya ağ adresini değiştirmek ya da Minitel terminal öykünmesi belirtmek için HyperTerminal'i kullanın.
+5042|HyperTerminal'i Minitel ile kullanma
+5043|HyperTerminal'i Minitel ile kullanmak için
+5044|[[Dosya]] menüsünde [[Özellikler]]'e ve ardından [[Ayarlar]] sekmesine tıklayın.
+5045|[[Öykünme]] listesinde [[Minitel]]'e ve ardından [[Tamam]]'a tıklayın.
+5046|[[Görünüm]] menüsünde [[Yazı Tipi]]'ne tıklayın.
+5047|[[Yazı Tipi]] listesinde [[Arial Alternative Symbol]]'e tıklayın.
+5048|Arial Alternative, Minitel hizmeti için gereken grafik karakterleri içeren tek yazı tipidir. Bu yazı tipi kullanılabilir bir seçenek değilse, bilgisayarınıza Arial Alternative Symbol ve Arial Alternative Regular yazı tiplerini ekleyin. Daha fazla bilgi için bkz. İlgili Konular. Windows 2000 CD'sinde Arial Alternative Symbol yazı tipi [[valueadd\msft\fonts]] klasöründedir.
+5049|Yeni bağlantı kurmak için
+5050|[[Ad]] kutusuna bağlantıyı tanımlayan bir ad yazın.
+5051|[[Simge]] kutusunda uygun simgeye ve ardından [[Tamam]]'a tıklayın.
+5052|[[Bağlanılacak Yer]] iletişim kutusunda çevirmek istediğiniz telefon numarasının bilgilerini girin ve ardından [[Tamam]]'a tıklayın.
+5053|Modem kullanıyorsanız ve arama özelliklerinizi değiştirmek istiyorsanız [[Arama Özellikleri]]'ne tıklayın, değişikliklerinizi yapın ve ardından [[Tamam]]'a tıklayın.
+5054|Aramayı çevirmek için [[Çevir]]'e tıklayın.
+5055|HyperTerminal'de yeni bir telnet bağlantısı oluşturmak için Komut İstemi'ni kullanmak istiyorsanız, Windows 2000'in yüklü olduğu birimde Program Files\Windows NT'ye gidin ve [[hypertrm.exe/t <telnet adresi>[:<bağlantı noktası>]]] yazın. Telnet adresi oluşturmak istediğiniz bağlantının adresidir; bağlantı noktası ise bağlantının kullanmasını istediğiniz bağlantı noktasının numarasıdır (varsayılan 23).
+5056|Uzak bir bilgisayara bağlanmak için modem kullanmadan önce, modemi Denetim Masası'ndaki Telefon ve Modem Seçenekleri'ni kullanarak yapılandırmanız gerekir.
+5057|Uzak bilgisayardan dosya alma
+5058|Uzak bilgisayardan dosya almak için
+5059|Dosyayı bilgisayarınıza indirmek için uzak bilgisayardaki yazılımı kullanın.
+5060|[[Aktar]] menüsünde [[Dosya Al]]'a tıklayın.
+5061|[[Alınan dosyayı şu klasöre yerleştir]] kutusuna indirilen dosyayı kaydetmek istediğiniz klasörün yolunu yazın.
+5062|[[Alma protokolünü kullan]] listesinde uzak bilgisayarın dosyayı göndermek için kullandığı [[protokole]] tıklayın.
+5063|[[Al]]'a tıklayın.
+5064|Uzak bilgisayara dosya göndermek için
+5065|[[Aktar]] menüsünde [[Dosya Gönder]]'e tıklayın.
+5066|[[Dosya adı]] kutusuna göndermek istediğiniz dosyanın yolunu ve adını yazın.
+5067|[[Protokol]] listesinde bilgisayarınızın dosyayı göndermek için kullandığı [[protokole]] tıklayın.
+5068|[[Gönder]]'e tıklayın.
+5069|Uzak bilgisayara metin dosyası göndermek için [[Aktar]] menüsünde [[Metin Dosyası Gönder]]'e tıklayın.
+5070|Çoğu durumda, dosyanın doğru alınması için uzak bilgisayardaki dosya aktarım yazılımını yapılandırmanız gerekir. Daha fazla bilgi için uzak bilgisayarın yöneticisiyle iletişim kurun.
+5071|HyperTerminal penceresinin boyutunu ayarlama
+5072|HyperTerminal penceresinin boyutunu ayarlamak için

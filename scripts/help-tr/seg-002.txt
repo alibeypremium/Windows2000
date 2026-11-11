@@ -1,0 +1,319 @@
+50|[[Eylem]]
+313|[[Düğme]]
+343|[[Dosya]] menüsünde [[Yazdır]]'a tıklayın.
+828|Ne tür bir sorun yaşıyorsunuz?
+1005|[[Adım adım yordam]]
+1136|[[Yaygın görevler]]
+1154|Tuş dizilerini işlev olarak kullanma
+1155|Aşağıdaki tuş dizileri, Hesap Makinesi'ne veri yapıştırdığınızda işlev olarak yorumlanır. Örneğin [[Not Defteri]]'ni açın ve aşağıdakini yazın:
+1156|Not Defteri'nden [[123 :m]] ifadesini kopyalayıp Hesap Makinesi'ne yapıştırın. 123 sayısı görüntülenir ve aynı zamanda Hesap Makinesi'nin belleğinde saklanır.
+1157|Belleği temizler.
+1158|Bilimsel gösterimli sayıları ondalık biçimde yazmanızı sağlar.
+1159|Görüntülenen sayıyı belleğe kaydeder.
+1160|Görüntülenen sayıyı bellekteki sayıya ekler.
+1161|Geçerli hesaplamayı temizler.
+1162|Bellekte saklanan sayıyı görüntüler.
+1163|[[Dat]] ile aynı işlevi görür. Bu tuşu kullanmadan önce [[Sta]]'ya tıklayın.
+1164|Bir donatı açmak için [[Başlat]]'a tıklayın, [[Programlar]]'ı gösterin, [[Donatılar]]'ı gösterin ve ardından ilgili simgeye tıklayın.
+1165|Hesap Makinesi düğmelerinin klavye karşılıklarını kullanma
+1166|Aşağıda Hesap Makinesi düğmelerinin ve klavye karşılıklarının alfabetik bir listesi yer almaktadır. Bu listeyi [[Seçenekler]] menüsüne ve ardından [[Yazdır]]'a tıklayarak yazdırabilirsiniz. Hesap Makinesi'ni kullanırken herhangi bir düğmenin klavye karşılığını, düğmeye sağ tıklayıp [[Bu nedir?]]'e tıklayarak görebilirsiniz.
+1167|Tuş
+1213|Bellekte saklanan sayılarla çalışma
+1214|[[Bellekte saklanan sayılarla çalışmak için]]
+1215|Görüntülenen sayıyı saklamak için [[MS]]'ye tıklayın.
+1216|Saklanan sayıyı geri çağırmak için [[MR]]'ye tıklayın.
+1217|Belleği temizlemek için [[MC]]'ye tıklayın.
+1218|Görüntülenen sayıyı bellekteki sayıya eklemek için [[M+]]'ya tıklayın. Yeni sayıyı görmek için [[MR]]'ye tıklayın.
+1219|Bir sayıyı sakladığınızda bellek seçeneklerinin üstündeki kutuda bir [[M]] görünür. Başka bir sayı saklarsanız, bellekteki sayının yerini alır.
+1220|Bir değeri başka bir sayı sistemine dönüştürme
+1221|[[Bir değeri başka bir sayı sistemine dönüştürmek için]]
+1222|[[Görünüm]] menüsünde [[Bilimsel]]'e tıklayın.
+1223|Dönüştürmek istediğiniz sayıyı yazın.
+1224|Dönüştürmek istediğiniz [[sayı sistemine]] tıklayın.
+1225|Kullanmak istediğiniz [[görüntü boyutuna]] tıklayın.
+1226|Ondalık basamak içeren bir ondalık sayıyı başka bir sayı sistemine dönüştürdüğünüzde sayı bir tamsayıya kısaltılır.
+1227|[[Onaltılık]], sekizlik veya [[ikilik]] sistemden ondalığa dönüştürülen sayılar pozitif tamsayı olarak görünür.
+1228|Büyük sayılarla hesaplama yapma
+1229|[[Onaltılık]], [[ikilik]] ve sekizlik [[sayı sistemlerinde]], sonuç [[görüntü boyutunuzun]] izin verdiğinden daha fazla basamak içerdiğinde Hesap Makinesi yanıtın yalnızca düşük basamaklarını görüntüler. Bu davranış, bilgisayarlarda hesaplamaların çalışma biçimini taklit eder.
+1230|Onaltılık sayı sistemi için QWORD sonuçları en çok 16 basamak, DWORD sonuçları en çok sekiz basamak, Word sonuçları en çok dört basamak ve Byte sonuçları en çok iki basamak içerebilir.
+1231|Örneğin Word olarak görüntülenen onaltılık sayı sistemini kullanırken üretebileceğiniz en büyük sonuç FFFF'tir (ondalık olarak 65535'e eşit). Bu sayıyı ikiyle çarparsanız (FFFFx2) yanıt 1FFFE olur. Bu beş basamak içerdiğinden Hesap Makinesi yanıtın yalnızca düşük dört basamağını görüntüler: [[FFFE]].
+1232|Genişletilmiş duyarlılığı anlama
+1233|Hesap Makinesi'nin bir özelliği olan Genişletilmiş Duyarlılık, tüm işlemlerin en az 32 basamağa kadar doğru olduğu anlamına gelir. Hesap Makinesi ayrıca doğruluğu korumak için rasyonel sayıları kesir olarak saklar. Örneğin 1/3, .333 yerine 1/3 olarak saklanır. Ancak irrasyonel sayılar üzerinde yinelenen işlemlerde hatalar birikir. Örneğin Hesap Makinesi pi'yi 32 basamağa keser, bu nedenle pi üzerinde yinelenen işlemler, işlem sayısı arttıkça doğruluğu kaybeder.
+1234|Bilimsel bir hesaplama yapma
+1235|[[Bilimsel bir hesaplama yapmak için]]
+1236|Bir [[sayı sistemine]] tıklayın.
+1237|Kullanmak istediğiniz [[görüntü boyutuna]] tıklayın ve ardından hesaplamanıza devam edin.
+1238|NUM LOCK tuşuna basarak sayısal tuş takımınızı kullanarak sayıları ve işleçleri de yazabilirsiniz.
+1239|Basamak gruplamayı kullanma
+1240|[[Basamak gruplamayı kullanmak için]]
+1241|[[Görünüm]] menüsünde [[Basamak gruplama]]'ya tıklayın.
+1242|Sayıları mantıksal olarak gruplanmış şekilde görmek için basamak gruplamayı kullanabilirsiniz.
+1243|Hesap Makinesi ondalık sayıları gruplamak için virgül, [[onaltılık]] sayıları gruplamak için boşluk kullanır.
+1244|Basit bir hesaplama yapma
+1245|[[Basit bir hesaplama yapmak için]]
+1246|Hesaplamadaki ilk sayıyı yazın.
+1247|Toplamak için [[+]], çıkarmak için [[-]], çarpmak için [[*]] veya bölmek için [[/]]'ya tıklayın.
+1248|Hesaplamadaki sonraki sayıyı yazın.
+1249|Kalan [[işleçleri]] ve sayıları yazın.
+1250|[[=]]'ya tıklayın.
+1251|İstatistiksel bir hesaplama yapma
+1252|[[İstatistiksel bir hesaplama yapmak için]]
+1253|İlk verinizi yazın ve ardından [[İstatistik Kutusu]]'nu açmak için [[Sta]]'ya tıklayın.
+1254|Hesap Makinesi'ne dönmek için [[RET]]'e, ardından değeri kaydetmek için [[Dat]]'a tıklayın.
+1255|Verilerin geri kalanını yazın ve her girişten sonra [[Dat]]'a tıklayın.
+1256|[[Ave]], [[Sum]] veya [[s]]'ye tıklayın.
+1257|[[Ave]], [[İstatistik Kutusu]]'nda kayıtlı değerlerin ortalamasını, [[Sum]] değerlerin toplamını, [[s]] ise standart sapmayı hesaplar.
+1258|Tüm verilerinizi girdikten sonra [[Sta]]'ya tıklayarak listeyi görebilirsiniz.
+1259|[[İstatistik Kutusu]], kaydettiğiniz değerlerin sayısını iletişim kutusunun altında izler. [[CD]]'ye tıklayarak listeden belirli bir değeri veya [[CAD]]'a tıklayarak tüm değerleri silebilirsiniz. [[Load]]'a tıklamak, Hesap Makinesi görüntü alanındaki sayıyı [[İstatistik Kutusu]]'nda seçilen sayıyla değiştirir.
+1260|Standart ve Bilimsel görünüm arasında sayı aktarma
+1261|[[Standart ve Bilimsel görünüm arasında sayı aktarmak için]]
+1262|Görüntülenen sayıyı saklamak için [[MS]]'ye tıklayın.
+1263|[[Görünüm]] menüsünde istediğiniz görünüme tıklayın.
+1264|Saklanan sayıyı geri çağırmak için [[MR]]'ye tıklayın.
+1265|Hesap Makinesi, Standart ve Bilimsel görünümler arasında geçiş yaparken ekranı temizler. Yukarıdaki 1-3. adımlar, sayıların görünümler arasında aktarılmasına olanak tanır.
+1266|Onaltılık, sekizlik veya ikilik biçimde yazılan bir sayı, Bilimsel görünümden Standart görünüme aktarılırken ondalık biçime dönüştürülür.
+1267|Hesap Makinesi'ne genel bakış
+1268|Normalde elde taşınan bir hesap makinesiyle yaptığınız tüm standart işlemleri yapmak için Hesap Makinesi'ni kullanabilirsiniz. Hesap Makinesi, toplama ve çıkarma gibi temel aritmetik işlemlerin yanı sıra logaritma ve faktöriyel gibi bilimsel hesap makinelerinde bulunan işlevleri de gerçekleştirir.
+1269|Belgeye özel (private) karakter ekleme
+1270|Belgeye özel karakter eklemek için
+1271|[[Yazı Tipi]] listesinde, özel karakterlerinizi bağladığınız yazı tipine tıklayın. Örneğin özel karakterlerinizi tüm yazı tiplerine bağladıysanız [[Tüm Yazı Tipleri (Özel Karakterler)]]'e tıklayın. Özel karakterlerinizi Times New Roman gibi belirli bir yazı tipine bağladıysanız [[Times New Roman (Özel Karakterler)]]'a tıklayın.
+1272|Belgeye eklemek istediğiniz özel karaktere tıklayın.
+1273|[[Seç]]'e ve ardından [[Kopyala]]'ya tıklayın.
+1274|Belgeyi açın ve ekleme noktasını özel karakterin görünmesini istediğiniz yere getirin.
+1275|[[Düzen]] menüsünde [[Yapıştır]]'a tıklayın.
+1276|[[Kopyalanacak karakterler]] kutusunda daha önce kopyalanan karakterleri silmezseniz, seçtiğiniz yeni karakterlerle birlikte kopyalanır.
+1277|Özel bir karakter belgede düzgün görünmüyorsa, karakteri seçin ve yazı tipini bağlandığı yazı tipiyle eşleşecek şekilde değiştirin.
+1278|Belgeye özel karakter ekleme
+1279|[[Belgeye özel karakter eklemek için]]
+1280|[[Yazı Tipi]] listesinde kullanmak istediğiniz yazı tipine tıklayın.
+1281|Belgeye eklemek istediğiniz özel karaktere tıklayın.
+1282|Belgenizi açın ve ekleme noktasını özel karakterin görünmesini istediğiniz yere getirin.
+1283|Sürükle ve bırak işlevlerini destekleyen belgelere özel karakteri sürükleyip bırakarak da kopyalayabilirsiniz. Kopyalamak istediğiniz karaktere tıklayın (büyütülmüş olarak görünür) ve ardından karakteri açık belgeye sürükleyin.
+1284|Karakter Haritası'na genel bakış
+1285|Karakter Haritası'nı, seçilen yazı tipinde bulunan karakterleri görüntülemek için kullanabilirsiniz. Karakter Haritası şu karakter kümelerini görüntüler: Windows, DOS ve [[Unicode]].
+1286|Tek tek karakterleri veya bir karakter grubunu Pano'ya kopyalayıp bunları görüntüleyebilen herhangi bir programa yapıştırabilirsiniz. Ya da kullandığınız programa (WordPad gibi) bağlı olarak, karakterleri Karakter Haritası'ndan doğrudan açık bir belgeye sürükleyerek de kopyalayabilirsiniz.
+1287|Karakter Haritası'nı kullanarak karakterleri Unicode karakter adına veya Unicode alt grubuna (oklar veya matematiksel işleçler gibi) ya da diğer özel sınıflandırmalara göre arayabilirsiniz.
+1288|Karakter Haritası'nı, Özel Karakter Düzenleyicisi ile oluşturduğunuz özel karakterleri görüntülemek ve kopyalamak için de kullanabilirsiniz.
+1289|Karakter bulma
+1290|Karakter Haritası'nda belirli bir yazı tipindeki tüm karakterler [[Unicode]] değerlerine göre sıralı olarak görüntülenir. Aradığınız karakterin Unicode değerini biliyorsanız, onu bulmak için yazı tipindeki karakterler arasında kaydırabilirsiniz.
+1291|Aradığınız karakterin Unicode değerini bilmiyorsanız [[Gelişmiş görünüm]] onay kutusuna tıklayın. Bu, aramanızı daraltmaya yardımcı olacak karakter gruplarını görüntülemenizi sağlar. Bir karakteri adına göre aramak için [[Aranacak]] kutusunu da kullanabilirsiniz. Örneğin euro karakterini arıyorsanız Gelişmiş görünüme gidin ve [[Aranacak]] kutusuna [[euro]] yazın. Durum çubuğunda kullanılabilir karakter olmadığını belirten bir ileti görüntülenirse, farklı bir yazı tipi seçin ve aramanızı yeniden deneyin. Bazı yazı tipleri tüm karakterleri içermez.
+1292|Karakteri Unicode kategorisine göre arama
+1293|Karakteri Unicode kategorisine göre aramak için
+1294|[[Yazı Tipi]] listesinde aramak istediğiniz yazı tipine tıklayın.
+1295|[[Gelişmiş görünüm]] onay kutusunu seçin.
+1296|[[Gruplandırma ölçütü]] listesinde [[Unicode Alt Aralığı]]'na tıklayın.
+1297|[[Unicode Alt Aralığı]] listesinde görüntülemek istediğiniz karakter kategorisine tıklayın. Gerekirse karakterinizi bulmak için kaydırın ve karakteri [[Kopyalanacak karakterler]] kutusuna yerleştirmek için çift tıklayın.
+1298|Karakteri adına göre arama
+1299|Karakteri adına göre aramak için
+1300|[[Karakter kümesi]] listesinde aramak istediğiniz karakter kümesine tıklayın. Bir karakter kümesi kullanılabilir değilse farklı bir yazı tipi seçin.
+1301|[[Aranacak]] kutusuna aradığınız karakterin adının tamamını veya bir bölümünü yazın.
+1302|[[Ara]]'ya tıklayın.
+1303|Başka bir arama başlatmak için [[Sıfırla]]'ya tıklayın.
+1304|Belirli bir karakterin adını (ve ilişkili onaltılık kodunu) görmek için işaretçinizi karakterin üzerine getirin.
+1305|Belirli bir Unicode kategorisinde karakteri adına göre aramak için [[Gruplandırma ölçütü]] kutusunda [[Unicode Alt Aralığı]]'na tıklayın. Daha fazla bilgi için bkz. İlgili Konular.
+1306|Çince, Japonca veya Korece karakteri okunuşuna göre arama
+1307|[[Çince, Japonca veya Korece karakteri okunuşuna göre aramak için]]
+1308|[[Gruplandırma ölçütü]] listesinde arama için kullanmak istediğiniz gruba tıklayın.
+1309|Karakter Haritası, seçtiğiniz sesle başlayan karakterleri görüntüler.
+1310|Karakteri okunuşuna göre şu karakter kümelerinde arayabilirsiniz: Hiragana'ya göre Japonca Kanji, Hangul'a göre Korece Hanja, PinYin'e göre Basitleştirilmiş Çince, Bopomofo'ya göre Geleneksel Çince.
+1311|[[Gruplandırma Ölçütü]] listesindeki karakter kümeleri önceki notta adı geçen karakter kümelerini içermiyorsa, Yönetici olarak oturum açtıysanız bu karakter kümelerini Denetim Masası'nı kullanarak ekleyebilirsiniz. Önce Denetim Masası'nda [[Bölgesel Seçenekler]]'e çift tıklayın. Ardından [[Sistem için dil ayarları]] altında eklemek istediğiniz dilleri seçmek için tıklayın.
+1312|Karakteri Unicode değerine göre arama
+1313|Karakteri Unicode değerine göre aramak için
+1314|[[Karakter kümesi]] listesinde [[Unicode]]'a tıklayın.
+1315|[[Gruplandırma ölçütü]] listesinde [[Tümü]]'ne tıklayın.
+1316|[[Unicode'a git]] kutusuna aradığınız karakterin dört karakterlik Unicode değerini yazın.
+1317|Karakter Haritası için Kısayol Tuşları
+1318|Kılavuzda görüntülenen karakterler arasında aşağıdaki tabloda yer alan klavye kısayollarını kullanarak gezinebilirsiniz:
+1319|Tuş veya Tuşlar
+1320|SAĞ OK
+1321|Sağa veya sonraki satırın başına gider
+1322|SOL OK
+1323|Sola veya önceki satırın sonuna gider
+1324|YUKARI OK
+1325|Yukarı gider
+1326|AŞAĞI OK
+1327|Aşağı gider
+1328|PAGE UP
+1329|Her seferinde bir ekran yukarı gider
+1330|PAGE DOWN
+1331|Her seferinde bir ekran aşağı gider
+1332|HOME
+1333|Satırın başına gider
+1334|END
+1335|Satırın sonuna gider
+1336|CTRL+HOME
+1337|İlk karaktere gider
+1338|CTRL+END
+1339|Son karaktere gider
+1340|BOŞLUK ÇUBUĞU
+1341|Bir karakter seçiliyken büyütülmüş ve normal mod arasında geçiş yapar
+1424|Bu yordamı tamamlamak için yönetici olarak veya Yöneticiler grubunun bir üyesi olarak oturum açmış olmanız gerekir. Bilgisayarınız bir ağa bağlıysa, ağ ilkesi ayarları da bu yordamı tamamlamanızı engelleyebilir.
+2496|Bilgisayarınıza yeni yazı tipi ekleme
+2497|[[Bilgisayarınıza yeni yazı tipi eklemek için]]
+2498|Denetim Masası'nda [[Yazı Tipleri]]'ni açın.
+2499|[[Dosya]] menüsünde [[Yeni Yazı Tipi Yükle]]'ye tıklayın.
+2500|[[Sürücüler]] kutusunda istediğiniz sürücüye tıklayın.
+2501|[[Klasörler]] kutusunda eklemek istediğiniz yazı tiplerini içeren klasöre çift tıklayın.
+2502|[[Yazı tipleri listesi]]'nde eklemek istediğiniz yazı tipine ve ardından [[Tamam]]'a tıklayın.
+2503|Listelenen tüm yazı tiplerini eklemek için [[Tümünü Seç]]'e ve ardından [[Tamam]]'a tıklayın.
+2504|Eklemek üzere birden çok yazı tipi seçmek için CTRL tuşunu basılı tutun ve eklemek istediğiniz her yazı tipine tıklayın.
+2505|[[OpenType]], [[TrueType]], [[Type 1]] ve [[raster]] yazı tipleri için, ilgili dosyaları Yazı Tipleri klasörüne sürükleyerek de yazı tipini ekleyebilirsiniz. Bu yalnızca yazı tipi Yazı Tipleri klasöründe değilse çalışır.
+2506|Windows Gezgini'nde her yazı tipinin dosya uzantılarını görebilirsiniz. [[Araçlar]] menüsünde [[Klasör Seçenekleri]]'ne ve ardından [[Görünüm]] sekmesine tıklayın. [[Bilinen dosya türlerinin uzantılarını gizle]] onay kutusunun işaretini kaldırın.
+2507|Bilgisayarınızdaki disk alanını kullanmadan ağ sürücüsünden yazı tipi eklemek için, [[Yazı Tipi Ekle]] iletişim kutusunda [[Yazı tiplerini Yazı Tipleri klasörüne kopyala]] onay kutusunun işaretli olmadığından emin olun. Bu yalnızca [[Yeni Yazı Tipi Yükle]] komutunu kullanarak OpenType, TrueType veya raster yazı tiplerini yüklerken kullanılabilir.
+2508|Bilgisayarınızdan bir yazı tipini silmek için silmek istediğiniz yazı tipine tıklayın ve ardından [[Dosya]] menüsünde [[Sil]]'e tıklayın.
+2509|Yazı Tipleri'ne genel bakış
+2510|Yazı tipleri, metni ekranda görüntülemek ve yazdırmak için kullanılır. Windows 2000'de yazı tipi, bir [[yazı karakteri ailesinin]] adıdır. Yazı tiplerinin italik, kalın ve kalın italik gibi yazı tipi stilleri vardır.
+2511|Windows 2000 üç temel yazı tipi teknolojisi sağlar:
+2512|[[Anahat yazı tipleri]]
+2513|[[TrueType]] ve yeni [[OpenType]] yazı tipleri, çizgi ve eğri komutlarından oluşturulan anahat yazı tipleridir. OpenType, TrueType'ın bir uzantısıdır. Her ikisi de ölçeklenebilir ve döndürülebilir. Her ikisi de tüm boyutlarda ve Windows 2000'in desteklediği tüm çıkış aygıtlarında iyi görünür.
+2514|Windows 2000, [[bir OpenType yazı tipi seçkisi]] sağlar. Windows 2000 ayrıca Asya belgelerini ve Web sayfalarını görüntülemek veya yazdırmak için yükleyebileceğiniz bir Asya OpenType yazı tipleri CD-ROM koleksiyonu içerir.
+2515|Adobe Systems, Inc. tarafından geliştirilen [[Type 1]], PostScript aygıtlarıyla çalışmak üzere tasarlanmış bir anahat yazı tipidir. Anahatlar ölçeklenebilir ve döndürülebilir. OpenType teknolojisiyle Windows 2000, Type 1 yazı tiplerini tam olarak destekler.
+2516|[[Vektör yazı tipleri]]
+2517|Birçok program hâlâ vektör yazı tiplerine bağımlı olduğundan [[Vektör]] yazı tipleri desteklenir.
+2518|Vektör yazı tipleri matematiksel bir modelden oluşturulur. Öncelikle çiziciler ile kullanılırlar. Windows 2000 [[üç vektör yazı tipini]] destekler.
+2519|[[Raster yazı tipleri]]
+2520|Birçok program hâlâ raster yazı tiplerine bağımlı olduğundan [[Raster]] yazı tipleri desteklenir.
+2521|Raster yazı tipleri dosyalarda bit eşlem resimleri olarak saklanır ve ekranda ve kağıt üzerinde bir dizi nokta görüntülenerek oluşturulur. Windows 2000 [[beş raster yazı tipini]] destekler.
+2522|Yazı tipi örneği yazdırma
+2523|[[Yazı tipi örneği yazdırmak için]]
+2524|Yazdırmak istediğiniz yazı tipine çift tıklayın.
+2525|Örnek sayfada [[Yazdır]]'a tıklayın.
+2526|Benzer yazı tiplerini bulma
+2527|[[Benzer yazı tiplerini bulmak için]]
+2528|[[Görünüm]] menüsünde [[Yazı Tiplerini Benzerliğe Göre Listele]]'ye tıklayın.
+2529|[[Yazı tiplerini şuna benzerliğe göre listele]] kutusunda, bilgisayarınızdaki diğer yazı tipleriyle karşılaştırmak istediğiniz yazı tipine tıklayın.
+2530|Panose yazı tipi eşleme bilgileri, yazı tipinin özelliklerini (serif veya sans serif, normal, kalın veya italik gibi) tanımlamak üzere yazı tipiyle birlikte saklanır. Panose bilgisi yoksa yazı tipi listenin en altında görünür ve [[Yazı tiplerini şuna benzerliğe göre listele]] kutusunda görünmez.
+2531|Yalnızca TrueType yazı tiplerini görüntüleme
+2532|[[Yalnızca TrueType yazı tiplerini görüntülemek için]]
+2533|[[Araçlar]] menüsünde [[Klasör Seçenekleri]]'ne ve ardından [[TrueType Yazı Tipleri]] sekmesine tıklayın.
+2534|[[Bilgisayarımdaki programlarda yalnızca TrueType yazı tiplerini göster]] onay kutusunu seçin.
+2535|TrueType, yazdırılan çıktının ekranda görünenle aynı olduğu anlamına gelen bir WYSIWYG yazı tipi teknolojisidir. TrueType yazı tiplerinin bir diğer avantajı, karakterlerin herhangi bir boyuta ölçeklenebilmesidir.
+2536|Bilgisayarınızdaki bir yazı tipini görüntüleme
+2537|[[Bilgisayarınızdaki bir yazı tipini görüntülemek için]]
+2538|Görüntülemek istediğiniz yazı tipine çift tıklayın.
+2539|Her yazı tipi için varyasyonların görüntülenmesini istemiyorsanız [[Görünüm]] menüsünde [[Varyasyonları Gizle (Kalın, İtalik vb.)]]'e tıklayın.
+2540|Bir yazıcı yüklediğinizde, yükleme programı birkaç yazıcı yazı tipi yükleyebilir. Bunlar Yazı Tipleri klasöründe görünmez ancak WordPad gibi Windows tabanlı programların yazı tipi listesinde görünür.
+2541|Görüntüleyici [[Type 1]] yazı tiplerini görüntüleyemez.
+2630|[[Önemli]]
+3859|[[CPU Zamanı]]
+3860|[[CPU Kullanımı]]
+4040|[[Görüntü Adı]]
+4131|[[Bellek Kullanımı]]
+4132|[[Bellek Kullanımı Değişimi]]
+4215|[[Sayfa Hataları Değişimi]]
+4229|[[En Yüksek Bellek Kullanımı]]
+4454|[[İş Parçacığı Sayısı]]
+4501|[[Sanal Bellek Boyutu]]
+5476|[[Dosya]] menüsünde [[Sayfa Yapısı]]'na tıklayın.
+5702|Bilgisayarınız boştayken çevrimdışı öğeleri eşitleme
+5703|[[Bilgisayarınız boştayken çevrimdışı öğeleri eşitlemek için]]
+5704|[[Eşitleme Yöneticisi]]'ni açın.
+5705|[[Kurulum]]'a ve ardından [[Boştayken]] sekmesine tıklayın.
+5706|[[Bu ağ bağlantısını kullanırken]] listesinde kullanmak istediğiniz ağ bağlantısına tıklayın.
+5707|[[Aşağıdaki işaretli öğeleri eşitle]] listesinde, eşitlemek istediğiniz çevrimdışı öğelerin (eşlenmiş bir ağ sürücüsündeki klasör veya Internet Explorer çevrimdışı Web sayfası gibi) yanındaki onay kutularını seçin.
+5708|[[Bilgisayarım boştayken seçili öğeleri eşitle]] onay kutusunu seçin.
+5709|Ağ bağlantılarınızın her biri için farklı bir eşitleme kurulumu oluşturulabilir.
+5710|Bilgisayarınız pille çalışırken çevrimdışı öğelerin eşitlenip eşitlenmeyeceğini belirtmek için [[Gelişmiş]]'e tıklayın. Ayrıca ne sıklıkla eşitleneceğini ve bilgisayarınız boşta kaldıktan ne kadar sonra eşitlemeye başlanacağını da değiştirebilirsiniz.
+5711|Eşitleme Yöneticisi'ne genel bakış
+5712|Eşitleme Yöneticisi'ni kullanarak çevrimdışı dosyalarınızın ağdaki dosyalarla ne zaman eşitleneceğini denetleyebilirsiniz. Bu, ihtiyaç duyduğunuzda ağınızdan veya Internet'ten en son bilgilere sahip olmanızı sağlarken sisteminizdeki çalışmanın kesintiye uğramasını en aza indirir.
+5713|Eşitleme Yöneticisi'nin çevrimdışı kullanımınıza sunulan bilgileri otomatik olarak eşitlemesini çeşitli yollarla sağlayabilirsiniz:
+5714|Bilgisayarınızda her oturum açtığınızda veya kapattığınızda ya da her ikisinde.
+5715|Bilgisayarınız boştayken belirli aralıklarla.
+5716|Zamanlanmış saatlerde.
+5717|Bu seçeneklerin birleşimleri kullanılabilir ve farklı paylaşılan kaynaklardan gelen çevrimdışı dosyalar için farklı seçenekler kullanılabilir.
+5718|Eşitleme Yöneticisi, ağdaki öğeleri çevrimdışı çalışırken açtığınız veya güncelleştirdiğiniz öğelerle karşılaştırır ve ardından en güncel sürümü hem bilgisayarınızın hem de ağın kullanımına sunar. Eşitleyebileceğiniz öğeler arasında tek tek dosyalar, tüm klasörler ve çevrimdışı Web sayfaları bulunur. Eşitleme Yöneticisi, dosya türünden veya dosyanın çevrimdışı kullanıma hazırlandığı programdan bağımsız olarak, çevrimdışı kullanıma hazırlanmış tüm paylaşılan dosyaları eşitlemek için gidebileceğiniz tek bir konum sağlar.
+5719|Çevrimdışı öğelerin eşitlenmesini zamanlama
+5720|[[Çevrimdışı öğelerin eşitlenmesini zamanlamak için]]
+5721|[[Kurulum]]'a ve ardından [[Zamanlanmış]] sekmesine tıklayın.
+5722|Bir eşitleme zamanlaması oluşturmanıza yardımcı olan Zamanlanmış Eşitleme sihirbazını başlatmak için [[Ekle]]'ye tıklayın.
+5723|Mevcut bir eşitleme zamanlamasını değiştirmek veya kaldırmak için [[Zamanlanmış]] sekmesinde mevcut zamanlamaya ve ardından [[Düzenle]] veya [[Kaldır]]'a tıklayın.
+5724|Bilgisayarda oturum açarken veya kapatırken çevrimdışı öğeleri eşitleme
+5725|[[Bilgisayarda oturum açarken veya kapatırken çevrimdışı öğeleri eşitlemek için]]
+5726|[[Kurulum]]'a tıklayın.
+5727|[[Oturum Aç/Kapat]] sekmesinde, [[Bu ağ bağlantısını kullanırken]] listesinde kullanmak istediğiniz ağ bağlantısına tıklayın.
+5728|[[Seçili öğeleri otomatik olarak eşitle]] altında [[Bilgisayarımda oturum açtığımda]] veya [[Bilgisayarımı kapattığımda]]'yı ya da her ikisini seçin.
+5729|Eşitleme Yöneticisi'nin çevrimdışı öğelerinizi otomatik olarak eşitlemeden önce izin istemesini istiyorsanız [[Öğeleri eşitlemeden önce bana sor]] onay kutusunu seçin.
+5730|Çevrimdışı öğelerin ne zaman eşitleneceğini seçerek bilgisayarınızdaki ve ağdaki çalışmayı daha iyi yönetebilirsiniz. Örneğin ağa modemle bağlıyken, tüm otomatik eşitleme seçeneklerinin işaretini kaldırıp tek tek dosyaları el ile eşitleyerek eşitleme süresi en aza indirilebilir.
+5731|Çevrimdışı dosyaları kullanırken bilgisayarınızda her oturum açtığınızda eşitlemeniz önerilir. Bu, bilgisayarınızda yapılan değişikliklerin, bağlantınız kesikken ağda yapılan değişikliklerle eşitlenmesini sağlar.
+5732|Çevrimdışı öğeleri eşitleme
+5733|[[Çevrimdışı öğeleri eşitlemek için]]
+5734|Eşitlemek istediğiniz çevrimdışı öğelerin (eşlenmiş ağ sürücüsü veya Internet Explorer çevrimdışı Web sayfası gibi) yanındaki onay kutularını seçin.
+5735|[[Eşitle]]'ye tıklayın.
+5736|Windows Gezgini'nde, Bilgisayarım'da veya Internet Explorer'da tek tek dosyaları, klasörleri veya Web sayfalarını eşitlemek için eşitlemek istediğiniz öğeye tıklayın ve ardından [[Araçlar]] menüsünde [[Eşitle]]'ye tıklayın.
+5773|Media Player penceresindeki ölçeği değiştirme
+5774|[[Media Player penceresindeki ölçeği değiştirmek için]]
+5775|[[Dosya]] menüsünde [[Aç]]'a tıklayın ve ardından oynatmak istediğiniz dosyaya çift tıklayın.
+5776|[[Ölçek]] menüsünde görüntülemek istediğiniz ölçek türüne tıklayın.
+5777|Oynattığınız dosya türüne bağlı olarak saniye cinsinden zamanı, video veya animasyon dosyasındaki kareleri ya da CD'deki parçaları temsil eden bir ölçek seçebilirsiniz.
+5778|Yaygın görevler: Media Player
+5779|Çoklu ortam dosyalarını oynatırken aşağıdaki görevler sık kullanılır. Belirli bir sözcüğü veya tümceyi aramak için [[Dizin]] veya [[Ara]] sekmesine tıklayın.
+5780|[[Ses CD'si oynatma]]
+5781|Kompakt disk oynatma.
+5782|[[Çoklu ortam dosyası oynatma]]
+5783|Çoklu ortam dosyası oynatma.
+5784|[[Çoklu ortam dosyasını otomatik yeniden oynatma]]
+5785|Çoklu ortam dosyasını otomatik olarak geri sarma veya yeniden oynatma.
+5786|[[Çoklu ortam dosyasını kopyalayıp belgeye yapıştırma]]
+5787|Çoklu ortam dosyasını kopyalayıp başka bir belgeye yapıştırma.
+5788|[[Belge içinde çoklu ortam dosyası oynatma]]
+5789|Belge içinde çoklu ortam dosyası oynatma.
+5790|Belge içindeki çoklu ortam dosyaları için ayarları belirtme
+5791|[[Belge içindeki çoklu ortam dosyaları için ayarları belirtmek için]]
+5792|Programınızın [[Dosya]] menüsünde [[Aç]]'a tıklayın ve ardından çoklu ortam dosyasını içeren belgeye çift tıklayın.
+5793|Belgede, seçmek için çoklu ortam dosyasına tıklayın.
+5794|[[Düzen]] menüsünde [[Ortam Klibi Nesnesi]], [[Video Klibi Nesnesi]] veya [[MIDI Dizisi Nesnesi]]'ni gösterin ve ardından [[Düzenle]]'ye tıklayın.
+5795|[[Düzen]] menüsünde [[Seçenekler]]'e tıklayın ve ardından istediğiniz seçeneklere tıklayın.
+5796|Çoklu ortam dosyasını otomatik geri sarma veya yineleme
+5797|[[Çoklu ortam dosyasını otomatik olarak geri sarmak veya yinelemek için]]
+5798|[[Dosya]] menüsünde [[Aç]]'a tıklayın ve ardından oynatmak istediğiniz dosyaya çift tıklayın.
+5799|[[Düzen]] menüsünde [[Seçenekler]]'e tıklayın.
+5800|[[Otomatik Geri Sar]] veya [[Otomatik Yinele]]'ye tıklayın.
+5801|Belirttiğiniz ayarlar aynı aygıtta oynatılan tüm dosyalar için geçerlidir.
+5802|Media Player'a genel bakış
+5803|Media Player'ı kullanarak video, ses ve animasyon dosyaları dahil çeşitli çoklu ortam dosyalarını oynatabilir, düzenleyebilir ve gömebilirsiniz.
+5804|[[Ses CD'si oynatmak için]]
+5805|[[Aygıt]] menüsünde [[CD Ses]]'e tıklayın.
+5806|CD-ROM sürücünüze bir CD takın ve ardından düğmesine tıklayın.
+5807|düğmesine tıklamak CD'yi duraklatır.
+5808|düğmesine tıklamak CD'yi durdurur.
+5809|CD Çalar, Media Player'ın yerini alır. Bir CD taktığınızda ve Otomatik Yürütme etkinse Windows 2000 ses CD'lerini Media Player yerine CD Çalar ile otomatik olarak çalar.
+5810|[[Belge içinde çoklu ortam dosyası oynatmak için]]
+5811|Belgede dosyanın simgesine veya çerçevesine çift tıklayın.
+5812|Çalıştırdığınız programa ve Media Player ayarlarına bağlı olarak, dosyayı oynatmak için düğmesine tıklamanız gerekebilir.
+5813|Dosyayı oynattığınızda Media Player başlarsa, dosya ayarlarını değiştirmek için Media Player penceresindeki menüleri kullanabilirsiniz.
+5814|Çoklu ortam dosyasını çalıştırdığınızda Media Player denetimleri kullanılamıyorsa, belgede dosyanın simgesine veya çerçevesine tıklayın. [[Düzen]] menüsünde [[Ortam Klibi Nesnesi]], [[Video Klibi Nesnesi]] veya [[MIDI Dizisi Nesnesi]]'ni gösterin ve ardından [[Düzenle]]'ye tıklayın.
+5815|[[Çoklu ortam dosyası oynatmak için]]
+5816|[[Dosya]] menüsünde [[Aç]]'a tıklayın ve ardından oynatmak istediğiniz çoklu ortam dosyasına çift tıklayın.
+5817|düğmesine tıklayın.
+5818|Bazı örnek çoklu ortam dosyaları Media klasöründe bulunur.
+5819|düğmesine tıklamak çoklu ortam dosyasını duraklatır.
+5820|düğmesine tıklamak çoklu ortam dosyasını durdurur.
+5821|Kaydırıcıyı başlangıç noktasına sürükleyip düğmesine tıklayarak, ardından kaydırıcıyı seçimin sonuna sürükleyip düğmesine tıklayarak çoklu ortam dosyasının bir bölümünü oynatabilirsiniz. Kaydırıcıyı seçili alanın başına konumlandırmak için veya düğmesine tıkladıktan sonra düğmesine tıklayın.
+5822|Seçim işaretlerini kaldırmak için [[Düzen]]'e, [[Seçim]]'e ve ardından [[Yok]]'a tıklayın.
+5823|Çoklu ortam dosyasını ileri sarma
+5824|[[Çoklu ortam dosyasını ileri sarmak için]]
+5825|Kaydırıcıyı sağa sürükleyin veya belirli bir noktaya ileri sarmak için aşağıdaki düğmelerden birine tıklayın:
+5826|Sonraki seçim işaretine veya sona atlar.
+5827|Küçük adımlarla ileri sarar.
+5828|Belgeye çoklu ortam dosyası yapıştırma
+5829|[[Belgeye çoklu ortam dosyası yapıştırmak için]]
+5830|[[Dosya]] menüsünde [[Aç]]'a tıklayın ve ardından kopyalamak istediğiniz dosyaya çift tıklayın.
+5831|[[Düzen]] menüsünde [[Seçenekler]]'e tıklayın ve ardından istediğiniz seçenekleri belirtin.
+5832|[[Düzen]] menüsünde [[Kopyala]] [[Nesne]]'ye tıklayın.
+5833|Dosyayı kopyalamak istediğiniz belgeyi açın ve ardından görünmesini istediğiniz yere tıklayın.
+5834|Bir dosya belgeye kopyalandıktan sonra, simgesine veya çerçevesine çift tıklayarak belge içinden oynatabilirsiniz.
+5835|Çoklu ortam dosyasını geri sarma
+5836|[[Çoklu ortam dosyasını geri sarmak için]]
+5837|Kaydırıcıyı sola [[sürükleyin]] veya belirli bir noktaya geri sarmak için aşağıdaki düğmelerden birine tıklayın:
+5838|Önceki seçim işaretine veya başa kadar geri sarar.
+5839|Küçük adımlarla geri sarar.
+5840|Çoklu ortam dosyasının bir bölümünü kopyalama
+5841|[[Çoklu ortam dosyasının bir bölümünü kopyalamak için]]
+5842|Kaydırıcıyı istediğiniz seçimin başına [[sürükleyin]].
+5843|Media Player penceresinde düğmesine tıklayın.
+5844|Kaydırıcıyı istediğiniz seçimin sonuna sürükleyin.
+5845|[[Düzen]] menüsünde [[Seçim]]'e tıklayarak dosyanın tamamını veya bir bölümünü seçebilirsiniz.
+5846|Media Player'daki denetimleri basitleştirme
+5847|[[Media Player'daki denetimleri basitleştirmek için]]
+5848|Media Player başlık çubuğuna çift tıklayın.
+5849|Media Player denetimlerinin tamamını görüntülemek için Media Player başlık çubuğuna yeniden çift tıklayın.

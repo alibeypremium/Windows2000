@@ -1,0 +1,330 @@
+0|Başlarken
+1|Nasıl Yapılır...
+2|Kavramlar
+3|Sorun Giderme
+4|Sözlük
+5|Önsöz
+6|Başlarken Kitabını Kullanma
+7|Kurallar
+8|Windows Farklı Görünür veya Davranırsa
+9|Böl. 1 -- Hoş Geldiniz
+10|Bir Bakışta Windows 2000 Professional
+11|Bilgiyi Nerede Bulabilirsiniz
+12|Windows 2000 ile Birlikte Gelen Kaynaklar
+13|Windows 2000 Yardımı
+14|Benioku Dosyaları
+15|Sorun Gidericiler
+16|Ek Kaynaklar
+17|Microsoft Ürün Destek Hizmetleri Web Sitesi
+18|Windows Update Web Sitesi
+19|Yazılım Uyumluluğu Web Sitesi
+20|Donanım Uyumluluk Listesi
+21|Microsoft Press Kitapları ve Setleri
+22|Windows'a Yeniyseniz
+23|Daha Önce Windows Kullandıysanız
+24|Windows 2000 Professional'a Giriş
+25|Kullanımı Daha Kolay Masaüstü
+26|Web ile Bütünleşme
+27|Kolaylaştırılmış Ağ Bağlantıları
+28|Daha Güçlü Arama
+29|Yeni İletişim Yolları
+30|Geliştirilmiş Yazdırma Desteği
+31|En Yeni Donanım Yenilikleri
+32|Yeni Depolama, Güvenlik ve Uyumluluk Özellikleri
+33|İleri Düzey Kullanıcılar, Ağ Yöneticileri ve Geliştiriciler İçin
+34|Böl. 2 -- Kurulum
+35|Başlamadan Önce
+36|Donanım Gereksinimlerini Karşılama
+37|Donanım ve Yazılım Uyumluluğunu Denetleme
+38|Ağ Bilgilerini Edinme
+39|Dosyalarınızı Yedekleme
+40|Yükseltme ve Yeni Kopya Kurma
+41|Gelişmiş Kurulum Gereksinimlerini Belirleme
+42|Kurulumu Çalıştırma
+43|Yeni Kopya Kuruyorsanız (Temiz Kurulum)
+44|Yükseltme Yapıyorsanız
+45|Kullanıcı ve Bilgisayar Bilgilerini Toplama
+46|Ağ Bilgilerini Sağlama
+47|Windows 2000'i Başlatma
+48|Windows 2000'e Oturum Açma
+49|Kullanıcı Hesabı Oluşturma
+50|Windows 2000 Kopyanızı Kaydettirme
+51|Böl. 3 -- Gelişmiş Kurulum
+52|Gelişmiş Kurulum Seçeneklerini Anlama
+53|Dosya Sistemleri
+54|NTFS
+55|FAT ve FAT32
+56|Disk Bölümleri
+57|Disk Bölümlerini Yapılandırma
+58|Disk Bölümlerini Boyutlandırma
+59|Mevcut Disk Bölümlerini Dönüştürme ve Yeniden Biçimlendirme
+60|Çift Önyükleme Yapılandırması
+61|Çift Önyüklemeden Önce
+62|Windows NT ile Çift Önyükleme
+63|Kurulumu Özelleştirme
+64|Komut Satırı Parametrelerini ve Anahtarlarını Kullanma
+65|Winnt.exe Komut Sözdizimi
+66|Winnt32.exe Komut Sözdizimi
+67|Kurulumu Katılımsız Kurulum Modunda Çalıştırma
+68|Kurulum Başlangıç Disketleri Oluşturma
+69|Böl. 4 -- Windows Temelleri
+70|Masaüstü Nedir?
+71|Yardım Alma
+72|Bilgisayarınızı Keşfetme
+73|Görev Çubuğu ve Başlat Düğmesi
+74|Bilgisayarım
+75|Windows Gezgini
+76|Ağ Konumlarım
+77|İşlerinizi Yapma
+78|Programlarla Çalışma
+79|Program Ekleme ve Kaldırma
+80|Programları Başlatma ve Kapatma
+81|Dosya ve Klasörleri Yönetme
+82|Sık Kullanılan Dosyalarla Çalışma
+83|Dosya ve Klasör Arama
+84|Masaüstünüzü Özelleştirme
+85|Denetim Masası'nı Kullanma
+86|Başlat Menüsünü Özelleştirme
+87|Görev Çubuğunu Özelleştirme
+88|Internet'i ve Web'i Kullanma
+89|Internet'e Bağlanma
+90|Internet Bağlantı Sihirbazı'nda Seçenekleri Belirleme
+91|E-posta Hesabınızı Kurma
+92|Internet'i Keşfetme
+93|Bilgisayarlar Arasında Internet Bağlantısı Paylaşma
+94|Bilgisayarınızı Kapatma
+95|Böl. 5 -- İleri Konular
+96|Hesapları Anlama
+97|Yönetici Hesabını Kullanma
+98|Kullanıcı Hesapları Oluşturma ve Değiştirme
+99|Grupları Kullanma
+100|Ağ Bağlantısı Kurma
+101|Yerel Ağa Bağlanma
+102|Etki Alanlarını Anlama
+103|Diğer Ağ ve Çevirmeli Bağlantıları Kurma
+104|Klasörlerinizi Paylaşma
+105|Donanım Kurma
+106|Bilgileri Yedekleme ve Geri Yükleme
+107|Sorun Gidericileri Kullanma
+108|Kurulum Sorunlarını Giderme
+109|Sisteminizi Başlatma ve Kurtarma
+110|Gelişmiş Başlangıç Seçeneklerini Kullanma
+111|Kurtarma Konsolu'nu Kullanma
+112|Acil Onarım Diskini Kullanma
+113|Sık Sorulan Sorular
+114|Ek A -- Engelli Kişiler İçin Erişilebilirlik
+115|Erişilebilirlik Özellikleri
+116|Erişilebilirlik Seçeneklerini Ayarlama
+117|Fare İşaretçisini Hareket Ettirmek İçin Klavyeyi Kullanma
+118|Daha Fazla Erişilebilirlik Bilgisi Edinme
+119|Daha Erişilebilir Biçimlerdeki Belgeler
+120|Diğer Erişilebilirlik Ürünleri ve Hizmetleri
+121|Ek B -- Durdurma Hatalarını Giderme
+122|Windows 2000 Sistem İletileri
+123|Genel Durdurma Hatalarını Giderme
+124|Belirli Durdurma Hatalarını Giderme
+125|Durdurma Hatası 0x0000000A
+126|Durdurma Hatası 0x0000001E
+127|Durdurma Hataları 0x00000023 ve 0x00000024
+128|Durdurma Hatası 0x0000002E
+129|Durdurma Hatası 0x0000003F
+130|Durdurma Hatası 0x00000058
+131|Durdurma Hatası 0x0000007B
+132|Durdurma Hatası 0x0000007F
+133|Durdurma Hatası 0x00000050
+134|Durdurma Hatası 0x00000077
+135|Durdurma Hatası 0x00000079
+136|Durdurma Hatası 0x0000007A
+137|Durdurma Hatası 0xC000021A
+138|Durdurma Hatası 0xC0000221
+139|Donanım Arıza İletilerini Giderme
+140|Ek Sorun Giderme Kaynakları
+141|Yazdırma tercihlerini değiştirme
+142|Uzak bir bilgisayara veya ağa bağlanma
+143|Disk hatalarını algılama ve onarma
+144|Ağ İzleyicisi Sürücüsünü Yükleme
+145|Ağ hizmeti yükleme
+146|Windows oyunlarını oynama
+147|Donanım Ekle/Kaldır'ı Kullanma
+148|Yedekleme'yi Kullanma
+149|Hesap Makinesi'ni Kullanma
+150|CD Çalar'ı Kullanma
+151|Sertifikaları Kullanma
+152|Karakter Haritası'nı Kullanma
+153|Bilgisayar Yönetimi'ni Kullanma
+154|DDE Paylaşımını Kullanma
+155|Aygıt Yöneticisi'ni Kullanma
+156|Disk Temizleme'yi Kullanma
+157|Disk Birleştirici'yi Kullanma
+158|Disk Yönetimi'ni Kullanma
+159|Dağıtılmış COM Yapılandırma Özelliklerini Kullanma
+160|Dr. Watson'ı Kullanma
+161|DVD Oynatıcı'yı Kullanma
+162|Olay Görüntüleyicisi'ni Kullanma
+163|Faks Hizmeti Yönetimi'ni Kullanma
+164|Grup İlkesi'ni Kullanma
+165|HyperTerminal'i Kullanma
+166|Görüntü İşleme'yi Kullanma
+167|Dizin Oluşturma Hizmeti'ni Kullanma
+168|Internet Seçenekleri'ni Kullanma
+169|IP Güvenlik İlkesi Yönetimi'ni Kullanma
+170|Yerel Kullanıcılar ve Gruplar'ı Kullanma
+171|Mantıksal Sürücüleri Kullanma
+172|MMC ek bileşenlerini Kullanma
+173|Bilgisayarım'ı Kullanma
+174|Ağ Konumlarım'ı Kullanma
+175|Not Defteri'ni Kullanma
+176|Çevrimiçi Kaydı Kullanma
+177|Paint'i Kullanma
+178|Performans'ı Kullanma
+179|Telefon Çevirici'yi Kullanma
+180|Güç Seçenekleri'ni Kullanma
+181|Özel Karakter Düzenleyicisi'ni Kullanma
+182|Çıkarılabilir Depolama'yı Kullanma
+183|Zamanlanmış Görevler'i Kullanma
+184|Güvenlik Yapılandırması ve Çözümlemesi'ni Kullanma
+185|Güvenlik Şablonları'nı Kullanma
+186|Hizmetler'i Kullanma
+187|Paylaşılan Klasörler'i Kullanma
+188|Ses Kaydedicisi'ni Kullanma
+189|Sistem Bilgileri'ni Kullanma
+190|Sistem Özellikleri'ni Kullanma
+191|Telnet'i Kullanma
+192|Internet Bağlantı Sihirbazı'nı Kullanma
+193|Microsoft Yönetim Konsolu'nu Kullanma
+194|WMI Denetimi'ni Kullanma
+195|Ses Denetimi'ni Kullanma
+196|Windows Gezgini'ni Kullanma
+197|Windows Media Player'ı Kullanma
+198|Windows Rapor Aracı'nı Kullanma
+199|Windows Görev Yöneticisi'ni Kullanma
+200|Windows Update'i Kullanma
+201|WordPad'i Kullanma
+202|Dosya sistemleri
+203|Dosyalar ve klasörlere genel bakış
+204|Daha önce Windows kullandıysanız
+205|Internet, e-posta ve iletişime genel bakış
+206|Bağlama ve gömme
+207|Bilgisayarınızın performansını yönetme
+208|Mobil kullanıcılara genel bakış
+209|Ağ iletişimine genel bakış
+210|Çalışma alanınızı kişiselleştirmeye genel bakış
+211|Windows 2000 Professional ile gelen programlar
+212|Güvenliğe genel bakış
+213|İş istasyonu için bir IPSec ilkesi seçme
+214|Başlarken çevrimiçi kitabı
+215|Yeni kullanıcılar için ipuçları
+216|Sorun giderme ve bakıma genel bakış
+217|Yenilikler
+218|Windows 2000 Yönetim Araçları
+219|Programlarla çalışmaya genel bakış
+220|
+221|NetWare İstemci Hizmeti Sorun Gidericisi
+222|Ekran Sorun Gidericisi
+223|Sürücüler Sorun Gidericisi
+224|Donanım Sorun Gidericisi
+225|Internet Bağlantıları (ISS) Sorun Gidericisi
+226|Klavye Sorun Gidericisi
+227|Microsoft 16 Bit Programlar Sorun Gidericisi
+228|Microsoft NetWare İstemci Hizmeti Sorun Gidericisi
+229|Microsoft Ekran Sorun Gidericisi
+230|Microsoft Donanım Sorun Gidericisi
+231|Microsoft Internet Bağlantıları (ISS) Sorun Gidericisi
+232|Microsoft Modem Sorun Gidericisi
+233|Microsoft MS-DOS Programları Sorun Gidericisi
+234|Microsoft Çoklu Ortam ve Oyunlar Sorun Gidericisi
+235|Microsoft Ağ İletişimi (TCP/IP) Sorun Gidericisi
+236|Microsoft Yazdırma Sorun Gidericisi
+237|Microsoft Uzaktan Erişim (RAS) Sorun Gidericisi
+238|Microsoft Kurulum Sorun Gidericisi
+239|Microsoft Ses Sorun Gidericisi
+240|Modem Sorun Gidericisi
+241|Fare Sorun Gidericisi
+242|MS-DOS Programları Sorun Gidericisi
+243|Çoklu Ortam ve Oyunlar Sorun Gidericisi
+244|Ağ İletişimi (TCP/IP) Sorun Gidericisi
+245|Yazdırma Sorun Gidericisi
+246|Uzaktan Erişim Sorun Gidericisi
+247|Ses Sorun Gidericisi
+248|Windows 2000 Sistem Kurulumu Sorun Gidericisi
+249|Windows 3.x Programları Sorun Gidericisi
+250|Not Defteri
+251|Not Defteri'ne genel bakış
+252|Belirli karakter veya sözcükleri bulma
+253|Belirli karakter veya sözcükleri bulma ve değiştirme
+254|Metni pencere boyutuna göre kaydırma
+255|Belirli bir satıra gitme
+256|Metni kesme, kopyalama, yapıştırma veya silme
+257|Yazı tipi stilini ve boyutunu değiştirme
+258|Üstbilgi veya altbilgi oluşturma
+259|Yazdırılan Not Defteri belgesinin görünümünü değiştirme
+260|Not Defteri belgesini yazdırma
+261|Belgeye saat ve tarih ekleme
+262|Belgeye günlük ekleme
+263|Not Defteri'nde farklı dil biçimlerini kullanma
+264|Hesap Makinesi
+265|Hesap Makinesi'ne genel bakış
+266|Basit bir hesaplama yapma
+267|Bilimsel bir hesaplama yapma
+268|İstatistiksel bir hesaplama yapma
+269|Standart ve Bilimsel görünüm arasında sayı aktarma
+270|Bellekte saklanan sayılarla çalışma
+271|Basamak gruplamayı kullanma
+272|Bir değeri başka bir sayı sistemine dönüştürme
+273|Hesap Makinesi düğmelerinin klavye karşılıklarını kullanma
+274|Tuş dizilerini işlev olarak kullanma
+275|Genişletilmiş duyarlılığı anlama
+276|Büyük sayılarla hesaplama yapma
+277|Paint
+278|Paint'e genel bakış
+279|Yaygın görevler
+280|Resim Oluşturma
+281|Düz çizgi çizme
+282|Serbest biçimli çizgi çizme
+283|Eğri çizgi çizme
+284|Elips veya daire çizme
+285|Dikdörtgen veya kare çizme
+286|Çokgen çizme
+287|Metin yazma ve biçimlendirme
+288|Küçük bir alanı silme
+289|Büyük bir alanı silme
+290|Resmin tamamını silme
+291|Bir öğeyi uzatma veya eğme
+292|Resminizin boyutunu değiştirme
+293|Renkle Çalışma
+294|Varsayılan ön plan ve arka plan renklerini ayarlama
+295|Bir alanı veya nesneyi renkle doldurma
+296|Fırça ile boyama
+297|Sprey etkisi oluşturma
+298|Özel renkler oluşturma
+299|Renk yerine siyah beyaz kullanma
+300|Mevcut bir çizginin rengini değiştirme
+301|Bir alandan veya nesneden diğerine renk kopyalama
+302|Resimlerle Çalışma
+303|Resmi masaüstü arka planı olarak kullanma
+304|Geçerli resme bir bit eşlem dosyası ekleme
+305|Kılavuz çizgilerini görüntüleme
+306|Resmi veya nesneyi çevirme ya da döndürme
+307|Resmin bir bölümünü kopyalama ve yapıştırma
+308|Resmin bir bölümünü seçme
+309|WordPad
+310|WordPad'e genel bakış
+311|WordPad'i Kullanma
+312|WordPad belgesi oluşturma, açma veya kaydetme
+313|Son eyleminizi geri alma
+314|Belirli karakter veya sözcükleri bulma ya da değiştirme
+315|WordPad araç çubuklarını gösterme veya gizleme
+316|Metni Biçimlendirme
+317|Madde işaretli liste oluşturma
+318|Yazı tipini, stilini veya boyutunu değiştirme
+319|Paragrafa girinti verme
+320|Paragrafın hizalamasını değiştirme
+321|Paragraflardaki sekme duraklarını ayarlama veya kaldırma
+322|Yazdır
+323|WordPad belgesini yazdırma
+324|WordPad belgesinin görünümünü değiştirme
+325|Diğer Belgelerle Bağlantı Kurma
+326|WordPad'e nesne gömme veya bağlama
+327|Bağlı nesneleri düzenleme
+328|FreeCell
+329|FreeCell'e genel bakış

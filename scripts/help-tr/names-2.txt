@@ -1,0 +1,370 @@
+330|FreeCell oynama
+331|Oyun seçeneklerini değiştirme
+332|Stratejiler ve ipuçları
+333|Solitaire
+334|Solitaire'e genel bakış
+335|Solitaire oynama
+336|Puanlama sistemi seçme
+337|Mayın Tarlası
+338|Mayın Tarlası'na genel bakış
+339|Mayın Tarlası oynama
+340|Oyun alanını özelleştirme
+341|Kayıt Defteri Düzenleyicisi
+342|Kayıt Defteri Düzenleyicisi'ne genel bakış
+343|Kayıt defterini geri yükleme
+344|Anahtarları ve Değerleri Değiştirme
+345|Dize, değer veya anahtar bulma
+346|Sık Kullanılanlar'a kayıt defteri anahtarı ekleme
+347|Anahtar ekleme
+348|Değer ekleme
+349|Değer değiştirme
+350|Anahtar veya değer silme
+351|Anahtarı veya değeri yeniden adlandırma
+352|Ağ üzerinden bir kayıt defterine bağlanma
+353|Ağ kayıt defteri bağlantısını kesme
+354|Kayıt defteri anahtarı adını kopyalama
+355|Kayıt Defteri Anahtarlarını İçe veya Dışa Aktarma
+356|Kayıt defterini dışa aktarma
+357|Kayıt defterini içe aktarma
+358|Kayıt Defterini Yazdırma
+359|Kayıt defterinin tamamını veya bir bölümünü yazdırma
+360|Görev Yöneticisi
+361|Görev Yöneticisi'ne genel bakış
+362|Programı sonlandırma
+363|İşlemi sonlandırma
+364|Başka bir programa geçme
+365|Yeni program başlatma
+366|Bilgisayarınızın performansını izleme
+367|Diğer işlem sayaçlarını görüntüleme
+368|İşlem listesini sıralama
+369|Görüntü seçeneklerini değiştirme
+370|Görev Yöneticisi verilerini güncelleme
+371|Çalışan bir programın önceliğini değiştirme
+372|Bir işlemi bir işlemciye atama
+373|Karakter Haritası
+374|Karakter Haritası'na genel bakış
+375|Belgeye özel karakter ekleme
+376|Belgeye özel (private) karakter ekleme
+377|Karakter bulma
+378|Karakteri adına göre arama
+379|Karakteri Unicode değerine göre arama
+380|Karakteri Unicode kategorisine göre arama
+381|Karakteri okunuşuna göre arama
+382|Pano Görüntüleyicisi
+383|Pano Görüntüleyicisi'ne genel bakış
+384|Pano Sayfalarını Görüntüleme
+385|Panonun içeriğini yerel Pano Defteri'ne kaydetme
+386|Pano Defteri sayfalarını farklı görünümlerde gösterme
+387|Başka bir bilgisayardaki Pano Defteri'ne bağlanma
+388|Başka bir bilgisayardaki Pano Defteri'nin bağlantısını kesme
+389|Pano Defteri Sayfalarını Paylaşma ve İzinleri Ayarlama
+390|Yerel bir Pano Defteri sayfasını paylaşma
+391|Yerel bir Pano Defteri sayfasının paylaşımını durdurma
+392|Paylaşılan bir Pano Defteri sayfasının izinlerini değiştirme
+393|Pano Defteri izin listesinden grup veya kullanıcı kaldırma
+394|Pano Defteri izin listesine grup veya kullanıcı ekleme
+395|Pano Defteri sayfalarını güvenceye alma
+396|Pano Defteri sayfasını denetleme
+397|Denetim listesine grup veya kullanıcı ekleme
+398|Bir grup veya kullanıcı için Pano Defteri sayfası denetimini kaldırma
+399|Pano Defteri sayfasının sahipliğini alma
+400|Panoyla Çalışma
+401|Panonun içeriğini dosyaya kaydetme
+402|Pano dosyası açma
+403|Panonun içeriğini temizleme
+404|Pano Defteri sayfasını Pano'ya kopyalama
+405|Başka bir bilgisayardaki nesneyi yerel Pano'ya kopyalama
+406|Ekran
+407|Ekran Özellikleri'ne genel bakış
+408|Ekran Ayarlarını Değiştirme
+409|Monitörde görüntülenen renk sayısını değiştirme
+410|Ekran çözünürlüğünüzü değiştirme
+411|Monitörünüzün yenileme sıklığını değiştirme
+412|Daha büyük veya daha küçük ekran yazı tipleri kullanma
+413|Ekran koruyucu ayarlama
+414|Ekran koruyucu parolası atayarak dosyalarınızı koruma
+415|Masaüstünüzü Özelleştirme
+416|Active Desktop'a genel bakış
+417|Active Desktop'ı açma
+418|Masaüstünüzün arka planını değiştirme
+419|Web sayfasını veya grafiği masaüstü arka planı olarak ayarlama
+420|Masaüstüne Web içeriği ekleme
+421|Masaüstü öğelerinin görünümünü değiştirme
+422|Masaüstü desenlerini özelleştirme
+423|Görsel efektleri değiştirme
+424|Masaüstünüzde görüntülenen yazı tiplerini değiştirme
+425|Birden Çok Monitör Kullanma
+426|Birden çok monitöre genel bakış
+427|Ek monitör kurma
+428|Birden çok monitörü düzenleme
+429|Birincil monitörü değiştirme
+430|Öğeleri monitörler arasında taşıma
+431|Aynı masaüstünü birden çok monitörde görüntüleme
+432|Birden çok monitörde renk sayısını değiştirme
+433|Birden çok monitör kullanırken ekran çözünürlüğünü değiştirme
+434|Renk Yönetimini Kullanma
+435|Renk Yönetimi'ne genel bakış
+436|Renk profili yükleme
+437|Monitöre renk profili ekleme
+438|Yazıcıya renk profili ekleme
+439|Bir monitör için etkin renk profilini değiştirme
+440|Bir yazıcı için etkin renk profilini değiştirme
+441|Başka bir çıkış aygıtının renk üretimini deneme baskısıyla doğrulama
+442|Monitörden renk profili kaldırma
+443|Yazıcıdan renk profili kaldırma
+444|Monitör ile yazıcı arasında rengi eşitleme
+445|Resim veya sayfa görüntüleme ya da yazdırma için işleme amacını değiştirme
+446|İşleme amaçlarını kullanma
+447|Erişilebilirlik Seçenekleri
+448|İşitme engelli kullanıcı araçları
+449|Hareket engelli kullanıcı araçları
+450|Görme engelli kullanıcı araçları
+451|Ortak İletişim Kutuları
+452|Program içinde son eyleminizi iptal etme
+453|Bilgileri başka bir belgeye kopyalama
+454|Pencere veya ekran içeriğini kopyalama
+455|Bilgileri başka bir belgeye gömme
+456|Belgeler arasında bilgi bağlama
+457|Belgeler arasında bilgi taşıma
+458|Program içinden belge açma
+459|Programdan çıkma
+460|Dosya kaydetme
+461|Dosyayı farklı bir adla veya biçimde kaydetme
+462|Program içinde durum çubuğunu gösterme veya gizleme
+463|Klasör penceresinde araç çubuğunu gösterme veya gizleme
+464|Internet Explorer
+465|Internet Explorer 5 Turu
+466|Media Player
+467|Media Player'a genel bakış
+468|Çoklu Ortam Dosyalarını Oynatma
+469|Ses CD'si oynatma
+470|Çoklu ortam dosyası oynatma
+471|Çoklu ortam dosyasını ileri sarma
+472|Çoklu ortam dosyasını geri sarma
+473|Çoklu Ortam Dosyalarını Oynatma Seçeneklerini Ayarlama
+474|Otomatik geri sarma veya yineleme
+475|Ölçeği değiştirme
+476|Media Player'daki denetimleri basitleştirme
+477|Belgeye Çoklu Ortam Dosyası Ekleme
+478|Belgeye çoklu ortam dosyası yapıştırma
+479|Çoklu ortam dosyasının bir bölümünü kopyalama
+480|Çoklu ortam dosyaları için ayarları belirtme
+481|Belge içinde çoklu ortam dosyası oynatma
+482|Ses Kaydedicisi
+483|Ses Kaydedicisi'ne genel bakış
+484|Ses Kaydetme ve Oynatma
+485|Ses kaydetme
+486|Ses oynatma
+487|Ses Dosyalarını Değiştirme
+488|Ses dosyasının ses düzeyini değiştirme
+489|Ses dosyasının kalitesini ayarlama
+490|Ses dosyasının biçimini değiştirme
+491|Ses dosyasının hızını değiştirme
+492|Ses dosyasını tersten oynatma
+493|Ses dosyasına yankı ekleme
+494|Ses dosyasının bir bölümünü silme
+495|Ses dosyasına ses kaydetme
+496|Ses dosyasını başka bir ses dosyasına ekleme
+497|Ses dosyalarını üst üste bindirme (karıştırma)
+498|Ses dosyasında yapılan değişiklikleri geri alma
+499|Belgeye Ses Ekleme
+500|Belgeye ses dosyası ekleme
+501|Ses dosyasını belgeye bağlama
+502|Ses Denetimi
+503|Ses Denetimi'ne genel bakış
+504|Oynatma ses düzeyini ayarlama
+505|Bas ve tiz düzeyini ayarlama
+506|Belirli ses aygıtlarını görüntüleme
+507|Sesi etkinleştirme veya devre dışı bırakma
+508|Kayıt ses düzeyini ayarlama
+509|Ses girişi düzeyini ayarlama
+510|Arama Yardımcısı
+511|Arama Yardımcısı'na genel bakış
+512|Dosya veya klasör arama
+513|Internet'te arama
+514|Kişi ve grup arama
+515|Yazıcı arama
+516|Ağda bilgisayar arama
+517|Klasör Seçenekleri
+518|Klasör Seçenekleri'ne genel bakış
+519|Masaüstünün ve Klasörlerin Görünümünü Değiştirme
+520|Tam yolu görüntüleme
+521|Sıkıştırılmış dosya ve klasörleri farklı renkte görüntüleme
+522|Gizli dosya ve klasörleri görüntüleme
+523|Belgelerim klasörünü masaüstünden kaldırma
+524|Klasörler ve masaüstü öğeleri için açılır açıklamaları gösterme
+525|Masaüstünü ve Klasörleri Web Sayfası Gibi Gösterme
+526|Active Desktop'ı açma
+527|Klasörleri Web sayfası gibi gösterme
+528|Active Desktop'ı kapatma
+529|Klasör Açma
+530|Her klasörü kendi penceresinde açma
+531|Öğeleri açmak için gereken fare tıklama sayısını değiştirme
+532|Klasörleri belleğin ayrı bir bölümünde açma
+533|Dosya Türleriyle Çalışma
+534|Dosya uzantısını bir dosya türüyle ilişkilendirme
+535|Mevcut bir dosya türünü değiştirme
+536|Web İçeriğini Çevrimdışı Görüntülemek İçin Kaydetme
+537|Çevrimdışı Dosyalar'a genel bakış
+538|Bilgisayarınızı Çevrimdışı Dosyalar'ı kullanacak şekilde ayarlama
+539|Çevrimdışı Dosyalar'ın ağ bağlantısı kesilmesine yanıtını değiştirme
+540|Yazı Tipleri
+541|Yazı Tipleri'ne genel bakış
+542|Yeni yazı tipi ekleme
+543|Yazı tipini görüntüleme
+544|Benzer yazı tiplerini bulma
+545|Yazı tipi örneği yazdırma
+546|Yalnızca TrueType yazı tiplerini görüntüleme
+547|Geri Dönüşüm Kutusu
+548|Geri Dönüşüm Kutusu'nun depolama kapasitesini değiştirme
+549|Geri Dönüşüm Kutusu'ndaki dosyaları silme veya geri yükleme
+550|Geri Dönüşüm Kutusu'nu boşaltma
+551|Silme onayı iletilerinin görüntülenmesini engelleme
+552|Geri Dönüşüm Kutusu'na genel bakış
+553|Öğeleri sildiğinizde kalıcı olarak kaldırma
+554|Yazdırma
+555|Yazdırmaya genel bakış
+556|Yazıcı Kurma
+557|Bilgisayarınıza bağlı bir yazıcı ekleme
+558|Yazıcı adı seçme
+559|Ağdaki bir yazıcıya bağlanma
+560|Varsayılan yazıcınızı belirtme
+561|Çizicileri kullanma
+562|Yüklenecek Yazıcıyı Arama
+563|Yazıcı aramaya genel bakış
+564|Yazıcı bulmak için gelişmiş arama yöntemlerini kullanma
+565|Yazıcı Paylaşma
+566|Yazıcınızı paylaşma
+567|Yazıcınızın paylaşımını durdurma
+568|Yazıcı için izinleri ayarlama veya kaldırma
+569|Yazıcı Seçeneklerini Yapılandırma
+570|Yazıcı için yüklenebilir seçenekleri ayarlama
+571|Yazıcı belleğini ayarlama
+572|Bir formu yazıcı kasetiyle eşleştirme
+573|Paralel bağlantı noktası zaman aşımı ayarlarını değiştirme
+574|Kartuş yazı tiplerini kullanılabilir hale getirme
+575|Harici PCL yazılım yazı tiplerini yükleme veya kaldırma
+576|Karmaşık sayfaların doğru yazdırıldığından emin olma
+577|Yazdırma Özelliklerini Ayarlama
+578|Yazdırma özelliklerine genel bakış
+579|Yazıcı özelliklerini ayarlama
+580|Yazdırma varsayılanlarını ayarlama
+581|Kişisel yazdırma tercihlerini ayarlama
+582|Yazdırma sunucusu özelliklerini ayarlama
+583|Bağlantı Noktalarını ve Protokolleri Ayarlama
+584|Bağlantı noktası seçme ve yapılandırma
+585|Bağlantı noktası ekleme
+586|Bağlantı noktası silme
+587|Yerel bağlantı noktası ekleme
+588|Standart TCP/IP bağlantı noktası ekleme
+589|LPR bağlantı noktası ekleme
+590|Belge Yazdırma Tercihlerini Ayarlama
+591|Sayfa yönünü ayarlama
+592|Kağıt boyutunu belirtme
+593|Yazdırma çözünürlüğünü ayarlama
+594|Her sayfaya birden çok sayfa yazdırma
+595|Kağıdın bir veya iki yüzüne yazdırma
+596|Yazdırılacak kopya sayısını ayarlama
+597|Belge Yazdırma
+598|Belge yazdırma
+599|Genişletilmiş veya uluslararası karakterleri yazdırma
+600|Yazdırma bekleyen belgeleri görüntüleme
+601|Yazdırma önceliğini değiştirme
+602|Bir belgenin yazdırılmasını iptal etme
+603|Bir belgenin yazdırılmasını duraklatma veya sürdürme
+604|Bir belgenin yazdırılmasını yeniden başlatma
+605|Ayırıcı sayfa seçme
+606|Donanım Ekle/Kaldır
+607|Donanıma genel bakış
+608|Aygıt Yükleme veya Kaldırma
+609|Aygıt yükleme
+610|Aygıtları yükleme
+611|Aygıtı kaldırma
+612|Aygıtları kaldırma
+613|Aygıtları yapılandırma
+614|Aygıt sorunlarını tanılama
+615|Aygıtları çıkarma veya çıkarıp alma
+616|Taşınabilir bilgisayarı yuvasından çıkarma
+617|Tak ve Kullan
+618|Tak ve Kullan'a genel bakış
+619|Tak ve Kullan aygıt sürücüsü desteği
+620|ACPI donanımıyla Tak ve Kullan'ı kullanma
+621|Gücü yönetme
+622|Klavye
+623|İmleç yanıp sönme hızını ayarlama
+624|Klavyenizin yanıt verme biçimini değiştirme
+625|Fare
+626|Fareyi tek tıklama veya çift tıklamaya ayarlama
+627|Çift tıklama hızını ayarlama
+628|Fare düğmelerini tersine çevirme
+629|Fare tekerleğini etkinleştirme
+630|Fare işaretçisinin hızını ayarlama
+631|Fare işaretçisinin görünümünü değiştirme
+632|Tarih/Saat
+633|Bilgisayarınızın tarihini değiştirme
+634|Bilgisayarınızın saatini ve saat dilimini değiştirme
+635|Denetim Masası
+636|Yönetimsel Araçlar
+637|Internet Seçenekleri
+638|Ses ve Çoklu Ortam
+639|Ses ve Çoklu Ortam'a genel bakış
+640|Program olaylarına ses atama
+641|Ses şeması oluşturma
+642|Sistem ses düzeyini değiştirme
+643|Görev çubuğunda ses denetimi simgesini görüntüleme
+644|Çoklu ortam kayıt aygıtlarının ses düzeyini ayarlama
+645|Çoklu ortam oynatma aygıtlarının ses düzeyini ayarlama
+646|Kayıtların ses kalitesini değiştirme
+647|Yardım'ı Kullanma
+648|Yardım'a genel bakış
+649|Yardım konusu bulma
+650|Konulardaki arama sözcüklerini vurgulama
+651|Yardım konusuna yer işareti koyma
+652|Yardım konusunu kopyalama
+653|Yardım konusunu yazdırma
+654|Görüntülediğiniz konular arasında gezinme
+655|Bir iletişim kutusunda Yardım alma
+656|Yardım'dan daha fazla yararlanma
+657|Klavye kısayolları
+658|Yardım penceresini değiştirme
+659|Gezinti bölmesini gizleme veya gösterme
+660|Yardım penceresinin boyutunu değiştirme
+661|Yardım'daki yazı tiplerini değiştirme
+662|Yardım'daki metin ve arka plan renklerini değiştirme
+663|Outlook Express
+664|Outlook Express ile Başlarken
+665|E-posta İletilerini Okuma
+666|İletilerinizi okuma
+667|E-posta iletilerini düzenleme
+668|İstenmeyen iletileri engelleme
+669|Outlook Express'e öğe aktarma
+670|Outlook Express'ten öğe dışa aktarma
+671|Sunucu tabanlı posta hesaplarını kullanma
+672|E-posta İletileri Oluşturma ve Gönderme
+673|Temel bir e-posta iletisi gönderme
+674|İleti metnini biçimlendirme
+675|İletilerde kağıt kullanma
+676|E-posta iletisine öğe ekleme
+677|Güvenli ileti gönderme
+678|Haber Gruplarını Görüntüleme ve Haber Gruplarına İleti Gönderme
+679|Haber grupları nedir?
+680|Haber grubuna abone olma
+681|Haber gruplarına ileti gönderme
+682|Haber grubu iletilerini düzenleme
+683|Haber grubu iletilerinin otomatik indirilmesini engelleme
+684|Çok Sayıda İletiyi Yönetme
+685|Yalnızca belirli iletileri görüntüleme
+686|E-posta iletilerini kurallarla yönetme
+687|Haber iletilerini kurallarla yönetme
+688|Konuşmayı izleme
+689|İletileri ve yanıtlarını birlikte gruplama
+690|Disk alanınızı artırma
+691|Çevrimdışı Çalışma
+692|E-posta iletilerini çevrimdışı okuma
+693|Haber iletilerini çevrimdışı okuma
+694|İpuçları ve Püf Noktaları
+695|Outlook Express penceresini özelleştirme
+696|Outlook Express'ten adres defterinize kişi ekleme
+697|Outlook Express'ten Internet Explorer'ı açma
+698|Haber gruplarını verimli görüntüleme
+699|Outlook Express'i Web tarayıcınızdan kullanma

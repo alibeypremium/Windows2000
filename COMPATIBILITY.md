@@ -162,3 +162,7 @@ Clipboard, recording, serial ports, media codecs, GPU, printing and external han
 - Menüler, iletişim kutusu şablonları (Denetim Masası, Outlook Express, Internet Explorer, MSN, WinRAR, ekran koruyucular, disk/sistem araçları vb.), sihirbazlar, oyunlar ve ipucu metinleri sözlük ve kurallarla (`packages/ui/tr/`) çevrilir; altı çizili kısayol harfi olan etiketler bütün olarak çevrilir.
 - Windows Araçları sihirbazının yan paneli için Türkçe görsel (`assets/wintools/side.tr.png`, `scripts/make-wintools-art.py`) kullanılır.
 - Ürün adları (Winamp, VLC, WinRAR…), yazı tipi adları, dosya yolları ve kayıt defteri anahtarları özgün haliyle kalır.
+
+## Help (.hlp) Turkish layer
+
+`packages/shell/help-tr.js` replaces the leaf text blocks of the real Windows 2000 help pages (`assets/help/**/*.htm`) at view time with Turkish text from `assets/help-tr/<book>.json`; links and images stay intact (inline elements are kept through `[[...]]` markers). Contents tree, book names and page titles (1212 strings) come from `assets/help-tr/names.json`. Sources live in `scripts/help-tr/` (`names-*.txt`, `seg-*.txt` = `id|Türkçe`, compiled by `scripts/build-help-tr.py`). Untranslated blocks fall back to English. Index terms, the full-text search word list and the largest books are still English; see the translation progress in the commit history.

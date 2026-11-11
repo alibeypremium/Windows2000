@@ -1,0 +1,312 @@
+6879|Metni kesme, kopyalama, yapıştırma veya silme
+6880|[[Metni kesmek, kopyalamak, yapıştırmak veya silmek için]]
+6881|Metni başka bir konuma taşımak üzere kesmek için metni seçin ve ardından [[Düzen]] menüsünde [[Kes]]'e tıklayın.
+6882|Metni başka bir konuma yapıştırmak üzere kopyalamak için metni seçin ve ardından [[Düzen]] menüsünde [[Kopyala]]'ya tıklayın.
+6883|Kestiğiniz veya kopyaladığınız metni yapıştırmak için imleci metni yapıştırmak istediğiniz yere getirin ve ardından [[Düzen]] menüsünde [[Yapıştır]]'a tıklayın.
+6884|Metni silmek için seçin ve ardından [[Düzen]] menüsünde [[Sil]]'e tıklayın.
+6885|Belirli karakter veya sözcükleri bulma
+6886|[[Belirli karakter veya sözcükleri bulmak için]]
+6887|[[Düzen]] menüsünde [[Bul]]'a tıklayın.
+6888|[[Aranan]] kutusuna bulmak istediğiniz karakterleri veya sözcükleri yazın.
+6889|[[Sonrakini Bul]]'a tıklayın.
+6890|Yalnızca [[Aranan]] kutusunda belirtilen büyük ve küçük harflere uyan metni bulmak için [[Büyük/küçük harf eşleştir]]'i seçin.
+6891|Belgede ekleme noktasından başlayarak hangi yöne doğru arama yapılacağını belirtebilirsiniz. [[Yön]] altında, ekleme noktasından yukarı doğru aramak için [[Yukarı]]'ya tıklayın. Ekleme noktasından aşağı doğru aramak için [[Aşağı]]'ya tıklayın.
+6892|Yazı tipi stilini ve boyutunu değiştirme
+6893|[[Yazı tipi stilini ve boyutunu değiştirmek için]]
+6894|[[Biçim]] menüsünde [[Yazı Tipi]]'ne tıklayın.
+6895|[[Yazı tipi]], [[Yazı tipi stili]] ve [[Boyut]] kutularında seçimlerinizi yapın.
+6896|[[Yazı tipinizin]] nasıl görüneceğine ilişkin bir örnek [[Örnek]] kutusunda görünür.
+6897|Belirli bir satıra gitme
+6898|[[Belirli bir satıra gitmek için]]
+6899|[[Düzen]] menüsünde [[Git]]'e tıklayın.
+6900|[[Satıra git]] kutusuna imlecin atlamasını istediğiniz satır numarasını yazın.
+6901|Bu komutun çalışması için belgenizde satır numaralarının bulunması gerekmez.
+6902|Satırlar, belgenin üstünden başlayarak sol kenar boşluğu boyunca aşağı doğru sayılır.
+6903|Üstbilgi veya altbilgi oluşturma
+6904|[[Üstbilgi veya altbilgi oluşturmak için]]
+6905|[[Üstbilgi]] veya [[Altbilgi]] kutusuna aşağıdaki tablodan harf ve karakter birleşimini yazın.
+6907|Açık dosyanın adını veya dosyanın adı yoksa [[(adsız)]] ifadesini ekler.
+6908|Tarihi ekler.
+6909|Bilgisayarınızın saati tarafından belirtilen saati ekler.
+6910|Sayfa numaralarını ekler.
+6911|Ve işareti (&) ekler.
+6912|Üstbilgiyi veya altbilgiyi sola, ortaya veya sağa hizalar.
+6913|[[Üstbilgi]] veya [[Altbilgi]] kutusunda birden fazla birleşim kullanabilirsiniz. Her birleşim arasında bir veya iki boşluk bırakmak üstbilgiyi veya altbilgiyi okumayı kolaylaştırır.
+6914|Metni sola, ortaya veya sağa hizalamak için önce [[Üstbilgi]] veya [[Altbilgi]] kutusuna [[&l]], [[&c]] veya [[&r]] yazmalı, ardından kullanmak istediğiniz diğer birleşimleri girmelisiniz.
+6915|Birleşimlerle birlikte metin de ekleyebilirsiniz. Örneğin [[Sayfa &p]], [[Sayfa 1]], [[Sayfa 2]] ve benzeri şekilde yazdırılır.
+6916|Yazdırılan Not Defteri belgesinin görünümünü değiştirme
+6917|[[Yazdırılan Not Defteri belgesinin görünümünü değiştirmek için]]
+6918|Kağıt boyutunu değiştirmek için [[Boyut]] listesinde bir boyuta tıklayın.
+6919|[[Kağıt kaynağını]] değiştirmek için [[Kaynak]] listesinde bir kaset veya besleyici adına tıklayın.
+6920|Belgeyi dikey yazdırmak için [[Dikey]]'e, yatay yazdırmak için [[Yatay]]'a tıklayın.
+6921|Kenar boşluklarını değiştirmek için [[Kenar Boşlukları]] kutularından herhangi birine bir genişlik yazın.
+6922|Yazıcı ayarlarınızı değiştirmek için [[Yazıcı]]'ya tıklayın.
+6923|Not Defteri belgesini yazdırma
+6924|[[Not Defteri belgesini yazdırmak için]]
+6925|[[Genel]] sekmesinde istediğiniz yazıcıyı ve seçenekleri seçin, ardından [[Yazdır]]'a tıklayın.
+6926|Yazdırılan belgenizin görünümünü değiştirmek için [[Dosya]] menüsünde [[Sayfa Yapısı]]'na tıklayın.
+6927|Belirli karakter veya sözcükleri bulma ve değiştirme
+6928|[[Belirli karakter veya sözcükleri bulmak ve değiştirmek için]]
+6929|[[Düzen]] menüsünde [[Değiştir]]'e tıklayın.
+6930|[[Yeni metin]] kutusuna yerine geçecek metni yazın.
+6931|Metnin tüm örneklerini bir kerede değiştirmek için [[Tümünü Değiştir]]'e tıklayın. Veya her seferinde bir örneği değiştirmek için [[Sonrakini Bul]]'a ve ardından [[Değiştir]]'e tıklayın.
+6932|Belgeye saat ve tarih ekleme
+6933|[[Belgeye saat ve tarih eklemek için]]
+6934|İmleci saat ve tarihi eklemek istediğiniz yere getirin.
+6935|[[Düzen]] menüsünde [[Saat/Tarih]]'e tıklayın.
+6936|Belgeye günlük ekleme
+6937|[[Belgeye günlük eklemek için]]
+6939|[[Dosya]] menüsünde [[Kaydet]]'e tıklayın.
+6940|Bu belgeyi her açışınızda Not Defteri, bilgisayarınızın saatinin belirttiği geçerli saat ve tarihi belgenin sonuna ekler.
+6941|Not Defteri'nde farklı dil biçimlerini kullanma
+6942|Not Defteri, belgeleri ANSI, Unicode, big-endian Unicode veya UTF-8 gibi birkaç farklı biçimde oluşturmanıza ve açmanıza olanak tanır. Bu biçimler, farklı karakter kümeleri kullanan belgelerle çalışmanızı sağlar.
+6943|Varsayılan olarak belgeleriniz standart ANSI metni olarak kaydedilir.
+6944|Unicode, dünyanın başlıca yazı sistemlerinin tümünü kapsayan bir üst kümedir. İş ve bilgisayar kullanımında yaygın olan karakter kümelerini içerir. Bir belgeyi Unicode olarak kaydettiğinizde, Arapça ve İbranice gibi diller için metin akışına ve yönüne yardımcı olması amacıyla Unicode denetim karakterlerini kullanabilirsiniz.
+6945|Windows 2000'deki bazı [[yazı tipleri]] tüm Unicode karakterlerini görüntüleyemez. Metin dosyanızda eksik karakterler görürseniz, yazı tipini o karakteri içeren bir yazı tipiyle değiştirebilirsiniz. Genel olarak Microsoft Sans Serif, Unicode karakterleri için iyi bir seçimdir.
+6946|Macintosh gibi big-endian bir işlemcide oluşturulan Unicode belgesindeki bir sözcüğün baytları (bir depolama birimi), Intel işlemcide oluşturulan belgedeki bir sözcüğün baytlarına göre ters sırada düzenlenir. En anlamlı bayt en düşük adrese sahiptir ve sözcük büyük uçtan başlayarak saklanır. Belgelerinizi bu tür bilgisayarlardaki kullanıcılara erişilebilir kılmak için Not Defteri dosyanızı big-endian Unicode biçiminde kaydedin.
+6947|UTF, Evrensel Karakter Kümesi Dönüştürme Biçimi (Universal Character Set Transformation Format) anlamına gelir. UTF-8, Unicode'un 8 bitlik biçimidir. Tek tek baytlar içinde yalnızca 8 bitlik anlamlı veriyi destekleyen eski iletim [[ortamları]] kullanıyorsanız belgenizi UTF-8 olarak kaydedin.
+6948|Bu biçimler hakkında daha fazla bilgi için [[Unicode Consortium Web sitesine]] [[(http://www.unicode.org)]] bakın.
+6949|Not Defteri'ne genel bakış
+6950|Not Defteri, basit belgeler oluşturmak için kullanabileceğiniz temel bir metin düzenleyicisidir. Not Defteri'nin en yaygın kullanımı metin (.txt) dosyalarını görüntülemek veya düzenlemektir, ancak birçok kullanıcı Not Defteri'ni Web sayfaları oluşturmak için basit bir araç olarak da kullanır.
+6951|Not Defteri yalnızca çok temel biçimlendirmeyi desteklediğinden, saf metin olarak kalması gereken belgelere yanlışlıkla özel biçimlendirme kaydedemezsiniz. Bu özellikle bir Web sayfası için HTML belgeleri oluştururken yararlıdır; çünkü özel karakterler veya diğer biçimlendirmeler yayımlanan Web sayfanızda görünmeyebilir ya da hatalara bile neden olabilir.
+6952|Not Defteri dosyalarınızı Unicode, ANSI, UTF-8 veya big-endian Unicode olarak kaydedebilirsiniz. Bu biçimler, farklı karakter kümeleri kullanan belgelerle çalışırken size daha fazla esneklik sağlar.
+6953|Metni pencere boyutuna göre kaydırma
+6954|[[Metni pencere boyutuna göre kaydırmak için]]
+6955|[[Biçim]] menüsünde [[Sözcük Kaydır]]'a tıklayın.
+6956|Sözcük kaydırma açıkken bir onay işareti görünür.
+6957|Metni kaydırmak, satırdaki tüm metni görmenizi sağlar ancak metnin yazdırıldığında görünme biçimini etkilemez.
+7109|Sesli tıklama kullanma
+7110|Sesli tıklama kullanmak için
+7111|[[Ayarlar]] menüsünde [[Tıklama Sesi Kullan]]'ı seçin.
+7112|Seçilen karakter, kullanılan programda göründüğünde sesli tıklama sesi duyulur.
+7113|Tıklama modunu kullanma
+7114|Tıklama modunu kullanmak için
+7115|[[Ayarlar]] menüsünde [[Yazma Modu]]'nu seçin.
+7116|[[Yazma Modu]] iletişim kutusunda [[Seçmek için tıkla]]'yı seçin.
+7117|Varsayılan olarak Ekran Klavyesi, klavye karakterlerini gösterip tıklayarak verileri fareyle yazmanızı sağlar. Bir karakteri gösterdiğinizde vurgulanır. Seçmek için vurgulanan karaktere tıklayın.
+7118|Üzerinde durma modunu kullanma
+7119|Üzerinde durma modunu kullanmak için
+7120|[[Yazma Modu]] iletişim kutusunda [[Seçmek için üzerinde dur]]'u seçin.
+7121|En kısa üzerinde durma süresini ayarlamak için yukarı veya aşağı oku seçin. Fare işaretçisi belirtilen süre boyunca bir karakterin üzerinde kalırsa karakter seçilir ve yazılır.
+7122|Ekran Klavyesi tuşları için yazı tipini seçme
+7123|Ekran Klavyesi tuşları için yazı tipini seçmek için
+7124|[[Ayarlar]] menüsünde [[Yazı Tipi]]'ni seçin.
+7125|[[Yazı Tipi]] iletişim kutusunda bir yazı tipi, yazı tipi stili ve yazı tipi boyutu seçin.
+7126|Başka bir dil kullanıyorsanız, ek yabancı dil karakterlerini görmek için yazı tipi seçeneklerini değiştirmeniz gerekebilir.
+7127|Seçilen yazı tipi seçenekleri yalnızca Ekran Klavyesi tuşlarının görünümünü etkiler; seçili programda kullanılan yazı tipini etkilemez.
+7128|Klavye düzeni seçme
+7129|Klavye düzeni seçmek için
+7130|[[Klavye]] menüsünde aşağıdaki klavye seçeneklerini belirleyin:
+7131|Klavye düzenini seçmek için sayısal tuş takımını içeren [[Gelişmiş Klavye]]'yi veya sayısal tuş takımı olmayan bir klavye görüntüleyen [[Standart Klavye]]'yi seçin.
+7132|Tuşların klavyede görünme biçimini seçmek için, tuşları standart bir klavyede normalde göründükleri gibi görüntüleyen [[Normal Düzen]]'i seçin. En sık kullanılan karakter tuşlarını klavyede bir arada görüntülemek için [[Blok Düzen]]'i seçin. Blok düzen ayrıca yön oklarını sağ alt köşeye yerleştirir.
+7133|ABD standart klavyesini seçmek için [[101 tuş]], evrensel klavye için [[102 tuş]], ek Japonca karakterler içeren klavye için [[106 tuş]]'u seçin.
+7134|En çok kullanılan karakterlerin seçilmesi kolay olduğundan, Blok düzen özellikle [[Seçmek için üzerinde dur]] modunu kullanıyorsanız yararlıdır.
+7135|102 tuş ve 106 tuş ayarları Blok Düzen ile kullanılamaz.
+7136|Ekran Klavyesi'ne genel bakış
+7137|Ekran Klavyesi, ekranınızda sanal bir klavye görüntüleyen ve hareket engeli olan kullanıcıların bir işaretleme aygıtı veya oyun kolu kullanarak veri yazmasına olanak tanıyan bir yardımcı programdır. Ekran Klavyesi, hareket engeli olan kullanıcılara asgari düzeyde işlevsellik sağlamak üzere tasarlanmıştır. Ayrıca klavye kullanmayı bilmeyen kullanıcılar için de yararlıdır.
+7138|Ekran Klavyesi'nin veri yazmak için kullanabileceğiniz üç yazma modu vardır:
+7139|Tıklama modunda, metin yazmak için ekrandaki tuşlara tıklarsınız.
+7140|Tarama modunda Ekran Klavyesi klavyeyi sürekli tarar ve bir kısayol tuşuna basarak veya bir anahtar giriş aygıtı kullanarak klavye karakterlerini yazabileceğiniz alanları vurgular.
+7141|Üzerinde durma modunda, bir fare veya oyun kolu kullanarak önceden tanımlanmış bir süre boyunca bir tuşu gösterirsiniz ve seçilen karakter otomatik olarak yazılır.
+7142|Ekran Klavyesi'nde ayrıca şunları da yapabilirsiniz:
+7143|Sayısal tuş takımını içeren gelişmiş bir klavyeyi veya sayısal tuş takımı olmayan standart bir klavyeyi görüntüleme.
+7144|Klavyeyi tuşlar standart düzende veya tuşların dikdörtgen bloklar halinde düzenlendiği blok düzende görüntüleme. Blok düzen özellikle tarama modunda yararlıdır.
+7145|ABD standart klavyesini (101 tuş), evrensel klavyeyi (102 tuş) veya ek Japonca dil karakterleri içeren klavyeyi (106 tuş) görüntüleme.
+7146|Bir tuş seçtiğinizde sesli tıklama eklemek için [[Tıklama Sesi]]'ni kullanın.
+7147|Programlar veya pencereler arasında geçiş yaptığınızda klavyenizin ekranda görüntülenmesini sağlamak için [[Her Zaman Üstte]]'yi kullanın.
+7148|[[Ekran Klavyesi]]'ni açın.
+7149|Yardımcı Programlar Yöneticisi, kullanıcıların Ekran Klavyesi ve diğer Erişilebilirlik programlarının durumunu denetlemesini, bir programı başlatıp durdurmasını ve programın Windows 2000 başladığında başlamasını belirlemesini sağlar.
+7150|Windows 2000 ile gelen Erişilebilirlik araçları, özel gereksinimleri olan kullanıcılara asgari düzeyde işlevsellik sağlamak üzere tasarlanmıştır. Engelli kullanıcıların çoğunun günlük kullanım için daha yüksek işlevselliğe sahip yardımcı programlara ihtiyacı olacaktır. Windows tabanlı erişilebilirlik yardımcı programlarının listesi için [[Microsoft Erişilebilirlik Web sitesine]] [[(http://www.microsoft.com/)]] bakın.
+7151|Tarama modunu kullanma
+7152|Tarama modunu kullanmak için
+7153|[[Yazma Modu]] iletişim kutusunda [[Seçmek için anahtar veya tuş]]'u seçin.
+7154|Ekran Klavyesi'nin ne kadar hızlı tarayacağını ayarlamak için saniye kutusunun yanındaki yukarı ve aşağı okları kullanın.
+7155|[[Gelişmiş]]'i seçin ve ardından aşağıdakilerden birini yapmak için uygun seçeneğe tıklayın:
+7156|Yazmak istediğiniz vurgulanan klavye karakterlerini seçmek için seri, paralel veya oyun bağlantı noktasına takılabilen bir işaretleme aygıtının kullanılacağını belirtmek için [[Seri, paralel veya oyun bağlantı noktası]]'nı seçin.
+7157|Yazmak istediğiniz vurgulanan klavye karakterlerini seçmek için kullanılacak bir tuşu belirtmek üzere [[Klavye tuşu]]'nu seçin ve açılır menüden tuşu seçin.
+7158|İletişim kutusunu kapatmak için [[Tamam]]'ı seçin.
+7159|Ekran Klavyesi, her tuş satırını yukarıdan aşağıya vurgulayarak tarar. Yazmak istediğiniz tuşu içeren satır vurgulandığında, 5. adımda yaptığınız seçimi kullanın. Ekran Klavyesi daha sonra bu satırı tarar ve yazmak istediğiniz tuşu içeren karakter grubu vurgulandığında 5. adımda yaptığınız seçimi kullanın. Ekran Klavyesi daha sonra o gruptaki tek tek karakterleri tarar ve yazmak istediğiniz tuş vurgulandığında 5. adımda yaptığınız seçimi kullanın.
+7419|Aşağıdakilerden birini yapın:
+7676|Geri Dönüşüm Kutusu'na genel bakış
+7677|Geri Dönüşüm Kutusu, Windows 2000'de dosya veya klasör silerken bir güvenlik ağı sağlar. Bu öğelerden herhangi birini sabit diskinizden sildiğinizde Windows 2000 onu Geri Dönüşüm Kutusu'na yerleştirir ve Geri Dönüşüm Kutusu simgesi boştan doluya dönüşür. Disketten veya ağ sürücüsünden silinen öğeler kalıcı olarak silinir ve Geri Dönüşüm Kutusu'na gönderilmez.
+7678|Geri Dönüşüm Kutusu'ndaki öğeler, bilgisayarınızdan kalıcı olarak silmeye karar verene kadar orada kalır. Bu öğeler hâlâ sabit disk alanı kaplar ve silme işlemi geri alınarak özgün konumlarına geri yüklenebilir. Dolduğunda Windows 2000, en son silinen dosya ve klasörleri barındırmak için Geri Dönüşüm Kutusu'nda yeterli alanı otomatik olarak temizler.
+7679|Sabit disk alanınız azalıyorsa Geri Dönüşüm Kutusu'nu boşaltmayı unutmayın. Geri Dönüşüm Kutusu'nun kapladığı sabit disk alanını sınırlamak için boyutunu da kısıtlayabilirsiniz.
+7680|Windows 2000 her [[bölüm]] veya sabit disk için bir Geri Dönüşüm Kutusu ayırır. Sabit diskiniz bölümlenmişse veya bilgisayarınızda birden fazla sabit disk varsa, her Geri Dönüşüm Kutusu için farklı bir boyut belirtebilirsiniz.
+7681|Silme onayı iletilerinin görüntülenmesini engelleme
+7682|[[Silme onayı iletilerinin görüntülenmesini engellemek için]]
+7683|Masaüstünde [[Geri Dönüşüm Kutusu]] simgesine sağ tıklayın ve ardından [[Özellikler]]'e tıklayın.
+7684|[[Silme onayı iletişim kutusunu görüntüle]] onay kutusunun işaretini kaldırın.
+7685|Bu ayar yalnızca öğeleri [[Geri Dönüşüm Kutusu]]'na taşıdığınızda geçerlidir. Öğeleri kutudan taşıdığınızda geçerli değildir.
+7686|Geri Dönüşüm Kutusu'ndaki dosyaları silme veya geri yükleme
+7687|[[Geri Dönüşüm Kutusu'ndaki dosyaları silmek veya geri yüklemek için]]
+7688|Masaüstünde [[Geri Dönüşüm Kutusu]]'na çift tıklayın.
+7689|Bir öğeyi geri yüklemek için öğeye sağ tıklayın ve ardından [[Geri Yükle]]'ye tıklayın.
+7690|Tüm öğeleri geri yüklemek için [[Düzen]] menüsünde [[Tümünü Seç]]'e, ardından [[Dosya]] menüsünde [[Geri Yükle]]'ye tıklayın.
+7691|Bir öğeyi silmek için öğeye sağ tıklayın ve ardından [[Sil]]'e tıklayın.
+7692|Tüm öğeleri silmek için [[Dosya]] menüsünde [[Geri Dönüşüm Kutusunu Boşalt]]'a tıklayın.
+7693|Bir öğeyi Geri Dönüşüm Kutusu'ndan silmek onu bilgisayarınızdan kalıcı olarak kaldırır. Geri Dönüşüm Kutusu'ndan silinen öğeler geri yüklenemez.
+7694|Öğeleri Geri Dönüşüm Kutusu'na sürükleyerek de silebilirsiniz. Sürüklerken SHIFT tuşuna basarsanız öğe Geri Dönüşüm Kutusu'nda saklanmadan bilgisayarınızdan silinir.
+7695|Geri Dönüşüm Kutusu'ndaki bir öğeyi geri yüklemek, o öğeyi özgün konumuna döndürür.
+7696|Birkaç öğeyi aynı anda almak için CTRL tuşunu basılı tutun ve almak istediğiniz her öğeye tıklayın. Almak istediğiniz öğeleri seçmeyi bitirdiğinizde [[Dosya]] menüsünde [[Geri Yükle]]'ye tıklayın.
+7697|Başlangıçta silinmiş bir klasörde bulunan bir dosyayı geri yüklerseniz, klasör özgün konumunda yeniden oluşturulur ve ardından dosya o klasöre geri yüklenir.
+7698|Aşağıdaki öğeler [[Geri Dönüşüm Kutusu]]'nda saklanmaz ve geri yüklenemez:
+7699|Ağ konumlarından silinen öğeler.
+7700|Çıkarılabilir ortamdan (3,5 inç diskler gibi) silinen öğeler.
+7701|Geri Dönüşüm Kutusu'nun depolama kapasitesinden büyük öğeler.
+7702|Öğeleri sildiğinizde kalıcı olarak kaldırma
+7703|[[Öğeleri sildiğinizde kalıcı olarak kaldırmak için]]
+7704|Masaüstünde [[Geri Dönüşüm Kutusu]]'na sağ tıklayın ve ardından [[Özellikler]]'e tıklayın.
+7705|[[Dosyaları Geri Dönüşüm Kutusu'na taşıma]] onay kutusunu seçin.
+7706|[[Dosyaları Geri Dönüşüm Kutusu'na taşıma]] onay kutusu seçiliyse sildiğiniz hiçbir öğeyi kurtaramazsınız.
+7707|Bir öğeyi [[Geri Dönüşüm Kutusu]]'na sürüklerken SHIFT tuşunu basılı tutarak da kalıcı olarak kaldırabilirsiniz.
+7708|Farklı sürücüler için farklı Geri Dönüşüm Kutusu ayarları kullanmak istiyorsanız [[Sürücüleri bağımsız olarak yapılandır]]'a tıklayın ve ardından o sürücünün Geri Dönüşüm Kutusu ayarlarını değiştirmek için ilgili sürücü sekmesine tıklayın.
+7709|Tüm sürücüler için aynı Geri Dönüşüm Kutusu ayarlarını kullanmak istiyorsanız [[Tüm sürücüler için tek ayar kullan]]'a tıklayın.
+7710|Geri Dönüşüm Kutusu'nun depolama kapasitesini değiştirme
+7711|[[Geri Dönüşüm Kutusu'nun depolama kapasitesini değiştirmek için]]
+7712|Silinen öğeleri saklamak için ayrılan disk alanı miktarını artırmak veya azaltmak için kaydırıcıyı hareket ettirin.
+7713|[[Geri Dönüşüm Kutusu]]'nun depolama kapasitesinden büyük silinmiş bir öğe kaydedilmez. Kalıcı olarak silinir.
+7714|Geri Dönüşüm Kutusu'nu boşaltma
+7715|[[Geri Dönüşüm Kutusu'nu boşaltmak için]]
+7716|[[Dosya]] menüsünde [[Geri Dönüşüm Kutusunu Boşalt]]'a tıklayın.
+7717|Geri Dönüşüm Kutusu'nu boşaltmak tüm öğeleri kalıcı olarak siler.
+7718|[[Geri Dönüşüm Kutusu]]'ndaki öğelerin yalnızca bir kısmını kaldırmak istiyorsanız CTRL tuşunu basılı tutun ve kaldırmak istediğiniz her öğeye tıklayın. Kaldırmak istediğiniz öğeleri seçmeyi bitirdiğinizde [[Dosya]] menüsünde [[Sil]]'e tıklayın.
+7973|Program olaylarına ses atama
+7974|[[Program olaylarına ses atamak için]]
+7975|Denetim Masası'nda [[Ses ve Çoklu Ortam]]'ı açın.
+7976|[[Sesler]] sekmesinde, [[Ses Olayları]] altında bir ses atamak istediğiniz [[olaya]] tıklayın.
+7977|[[Ad]] kutusunda, seçilen olay gerçekleştiğinde çalınmasını istediğiniz sese tıklayın.
+7978|Kullanmak istediğiniz ses listede yoksa [[Gözat]]'a tıklayın.
+7979|Bir sesin adına ve ardından düğmesine tıklayarak sesi sınayabilirsiniz. düğmesine tıkladığınızda ses durur.
+7980|[[Farklı Kaydet]]'e tıklayıp oluşturduğunuz ses düzenini adlandırarak ses ayarlarınızı kaydedebilirsiniz. Girdiğiniz ad [[Düzen]] listesinde görünür, böylece bu ayarları daha sonra kolayca kullanabilirsiniz.
+7981|Sistem ses düzeyini değiştirme
+7982|[[Sistem ses düzeyini değiştirmek için]]
+7983|[[Sesler]] sekmesinde, [[Ses Düzeyi]] altında sistem ses düzeyini azaltmak veya artırmak için kaydırıcıyı sola veya sağa sürükleyin.
+7984|[[Görev çubuğunda ses denetimini göster]] onay kutusunu seçerseniz ve ses kartınızın ses düzeyi yazılımla değiştirilebiliyorsa, [[görev çubuğunda]] bir hoparlör simgesi görünür. Bu simgeye tıklayıp kaydırıcıyı ayarlayarak ses düzeyini değiştirebilirsiniz.
+7985|[[Sesler]] sekmesindeki ses düzeyi kaydırıcısı, [[Ses Denetimi]]'ndeki ses düzeyi kaydırıcısına bağlıdır. [[Sesler]] sekmesinde sistem ses düzeyini değiştirmek, [[Ses Denetimi]]'nde de değiştirir ve tersi de geçerlidir.
+7986|Yaygın görevler: Ses ve Çoklu Ortam
+7987|Aşağıdaki görevler, sistem seslerini özelleştirmek için sık gerçekleştirilir. Belirli bir sözcüğü veya tümceyi aramak için [[Dizin]] veya [[Ara]] sekmesine tıklayın.
+7988|[[Sistem olaylarına ses atama]]
+7989|Çeşitli sistem olaylarına ses atayabilirsiniz. Örneğin Windows 2000'i, her yeni e-posta iletisi aldığınızda özel bir ses çalacak şekilde yapılandırabilirsiniz.
+7990|[[Ses düzeni oluşturma]]
+7991|Çeşitli sistem olayları için hangi seslerin çalınacağını özelleştirebilir ve olay/ses ilişkilendirmelerini bir ses düzeni olarak kaydedebilirsiniz.
+7992|Bilgisayarın ses düzeyini değiştirebilir ve ses denetiminin görev çubuğunda görüntülenip görüntülenmeyeceğini seçebilirsiniz.
+7993|[[Çoklu ortam kayıt aygıtlarının ses düzeyini ayarlama]]
+7994|Mikrofonun giriş ses düzeyi gibi çoklu ortam kayıt aygıtlarının ses düzeyini ayarlayabilirsiniz.
+7995|[[Çoklu ortam oynatma aygıtlarının ses düzeyini ayarlama]]
+7996|Hoparlörler gibi çoklu ortam oynatma aygıtlarının ses düzeyini ayarlayabilirsiniz.
+7997|[[Ses düzeni oluşturmak için]]
+7998|[[Sesler]] sekmesinde, [[Ses Olayları]] altında, ses düzeninde istediğiniz her [[olay]] için bir ses atayın.
+7999|Yeni düzen [[Düzen]] listesinde görünür, böylece bu ayarları daha sonra kolayca kullanabilirsiniz.
+8000|Bir ses düzenini silmek için [[Düzen]] listesinde seçin ve ardından [[Sil]]'e tıklayın.
+8001|[[Çoklu ortam oynatma aygıtlarının ses düzeyini ayarlamak için]]
+8002|[[Ses]] sekmesinde, [[Ses Oynatma]] altında [[Ses Düzeyi]]'ne tıklayın.
+8003|[[Ses Denetimi]] iletişim kutusunda, [[Ses Denetimi]] altında çıkış ses düzeyini artırmak veya azaltmak için [[Ses Düzeyi]] kaydırıcısını yukarı veya aşağı sürükleyin.
+8004|[[Ses]] sekmesinde [[Tercih edilen aygıt]] kutusunda ses kartını seçerek ve ardından [[Yalnızca tercih edilen aygıtları kullan]]'ı seçerek programları belirli bir ses kartıyla sınırlayabilirsiniz.
+8005|[[Sesler]] sekmesinde [[Görev çubuğunda ses denetimini göster]] onay kutusu seçiliyse ve ses kartınızın ses düzeyi yazılımla değiştirilebiliyorsa, görev çubuğunda bir hoparlör simgesi görünür. Bu simgeye tıklayıp kaydırıcıyı ayarlayarak ses düzeyini değiştirebilirsiniz.
+8006|[[Çoklu ortam kayıt aygıtlarının ses düzeyini ayarlamak için]]
+8007|[[Ses]] sekmesinde, [[Ses Kaydı]] altında [[Ses Düzeyi]]'ne tıklayın.
+8008|[[Kayıt Denetimi]] iletişim kutusunda, giriş ses düzeyini artırmak veya azaltmak için ilgili aygıtın [[Ses Düzeyi]] kaydırıcısını yukarı veya aşağı sürükleyin.
+8009|[[Ses]] sekmesinde [[Tercih edilen aygıt]] kutusunda ses kartını seçerek ve ardından [[Yalnızca tercih edilen aygıtları kullan]]'ı seçerek programları belirli bir ses kartıyla sınırlayabilirsiniz.
+8010|Ses ve Çoklu Ortam'a genel bakış
+8011|Denetim Masası'ndaki Ses ve Çoklu Ortam'ı kullanarak bazı sistem [[olaylarına]] ses atayabilirsiniz. Bir sistem olayı çeşitli şekillerde gerçekleşebilir. Örneğin: bir bilgisayar programı bir görevi gerçekleştirdiğinde veya bir görevi gerçekleştirmekte sorun yaşadığında; bir program penceresini [[simge durumuna küçülttüğünüzde]] veya [[ekranı kaplayacak şekilde büyüttüğünüzde]]; veya bir dosyayı disketle kopyalamaya çalışırsınız ancak disket sürücünüze disket takılı değilse.
+8012|Sesler basit bir bip sesinden kısa bir müzik parçasına kadar değişir. Bu sesleri tercihlerinize göre sistem olaylarına atayabilirsiniz. Örneğin, Windows 2000'in her yeni e-posta iletisi aldığınızda çalacağı belirli bir ses atayabilirsiniz. Ayrıca tüm ses atamalarınızı bir ses düzeni olarak kaydedebilirsiniz. Daha sonra sistem olaylarına tamamen farklı bir ses kümesi atayabilir, bu düzeni yeni bir adla kaydedebilir ve ayarlarınızı kaybetmeden eski ve yeni düzenler arasında geçiş yapabilirsiniz.
+8013|Kayıtların ses kalitesini değiştirme
+8014|[[Kayıtların ses kalitesini değiştirmek için]]
+8015|[[Ses]] sekmesinde, [[Ses Kaydı]] altında, [[Tercih edilen aygıt]] listesinde kullanmak istediğiniz kayıt [[aygıtına]] tıklayın.
+8016|Ses donanımı hızlandırma ve ses hızı dönüştürmeleri için performans ayarlarını yapılandırmak üzere [[Gelişmiş]]'e tıklayın.
+8017|Yüksek kaliteli ses dosyaları, düşük kaliteli ses dosyalarından daha fazla disk alanı kaplar.
+8018|Görev çubuğunda ses denetimi simgesini görüntüleme
+8019|[[Görev çubuğunda ses denetimi simgesini görüntülemek için]]
+8020|[[Sesler]] sekmesinde, [[Ses Düzeyi]] altında [[Görev çubuğunda ses denetimini göster]]'i seçin.
+8021|Ses kartınızın ses düzeyi yazılımla değiştirilebiliyorsa [[görev çubuğunda]] bir hoparlör simgesi görünür. Bu simgeye tıklayıp kaydırıcıyı ayarlayarak ses düzeyini değiştirebilirsiniz.
+8022|Bir işlemi bir işlemciye atama
+8023|Bir işlemi bir işlemciye atamak için
+8024|[[İşlemler]] sekmesinde, atamak istediğiniz işleme sağ tıklayın.
+8025|[[Benzeşim Ayarla]]'ya ve ardından bir veya daha fazla işlemciye tıklayın.
+8026|[[Benzeşim Ayarla]] komutu yalnızca çok işlemcili bilgisayarlarda kullanılabilir.
+8027|[[Benzeşim Ayarla]] komutunu kullanmak, programın veya işlemin yürütülmesini seçilen işlemcilerle sınırlar ve genel performansı düşürebilir.
+8028|Çalışan bir programın önceliğini değiştirme
+8029|Çalışan bir programın önceliğini değiştirmek için
+8030|[[İşlemler]] sekmesinde, değiştirmek istediğiniz programa sağ tıklayın.
+8031|[[Öncelik Ayarla]]'yı gösterin ve ardından istediğiniz seçeneğe tıklayın.
+8032|Çalışan programların önceliğini görüntülemek için [[İşlemler]] sekmesine, [[Görünüm]]'e, [[Sütunları Seç]]'e, [[Temel Öncelik]]'e ve ardından [[Tamam]]'a tıklayın.
+8033|Bir işlemin önceliğini değiştirmek, onun daha hızlı veya daha yavaş çalışmasını sağlayabilir (önceliği yükseltmenize veya düşürmenize bağlı olarak), ancak diğer işlemlerin performansını da olumsuz etkileyebilir.
+8034|Görev Yöneticisi verilerini güncelleme
+8035|Görev Yöneticisi verilerini güncellemek için
+8036|[[Görünüm]] menüsünde [[Şimdi Yenile]]'ye tıklayın.
+8037|Verilerin otomatik olarak güncelleştirilme sıklığını değiştirmek için [[Görünüm]] menüsünde [[Güncelleştirme Hızı]]'na ve ardından istediğiniz seçeneğe tıklayın.
+8038|Görev Yöneticisi'nde görüntülenen verileri geçici olarak dondurmak için [[Görünüm]] menüsünde [[Güncelleştirme Hızı]]'na ve ardından [[Duraklatıldı]]'ya tıklayın.
+8039|Görev Yöneticisi'nde görüntü seçeneklerini değiştirme
+8040|Görev Yöneticisi'nde görüntü seçeneklerini değiştirmek için
+8041|[[Uygulamalar]] sekmesinde ayrıntıları veya büyük ya da küçük simgeleri görüntüleyebilirsiniz.
+8042|[[İşlemler]] sekmesinde görüntülemek istediğiniz sütunları seçebilirsiniz.
+8043|[[Performans]] sekmesinde CPU Geçmişi grafiğini değiştirebilir ve çekirdek sürelerini gösterebilirsiniz.
+8044|[[Görünüm]] menüsünde istediğiniz görünüm seçeneğine tıklayın.
+8045|Görev Yöneticisi'ni açmak için görev çubuğunda boş bir alana sağ tıklayın ve ardından [[Görev Yöneticisi]]'ne tıklayın.
+8046|[[Çekirdek Sürelerini Göster]] seçeneği, [[CPU Kullanımı]] ve [[CPU Kullanım Geçmişi]] grafiklerine kırmızı çizgiler ekler. Kırmızı çizgiler, çekirdek işlemleri tarafından tüketilen CPU kaynağı miktarını gösterir.
+8047|Görev Yöneticisi ile işlemi sonlandırma
+8048|Görev Yöneticisi ile işlemi sonlandırmak için
+8049|[[İşlemler]] sekmesine ve ardından sonlandırmak istediğiniz işleme tıklayın.
+8050|[[İşlemi Sonlandır]]'a tıklayın.
+8051|Bir işlemi sonlandırırken dikkatli olun. Bir uygulamayı sonlandırırsanız kaydedilmemiş verileri kaybedersiniz. Bir sistem hizmetini sonlandırırsanız sistemin bir kısmı düzgün çalışmayabilir.
+8052|[[İşlem]] sekmesinde, sonlandırmak istediğiniz işleme sağ tıklayın ve ardından [[İşlem Ağacını Sonlandır]]'a tıklayın.
+8053|Örneğin Outlook98 gibi bir e-posta programının işlem ağacını sonlandırırsanız, MAPI biriktiricisi mapisp32.exe gibi ilgili işlemleri de sonlandırırsınız.
+8054|Görev Yöneticisi ile programı sonlandırma
+8055|Görev Yöneticisi ile programı sonlandırmak için
+8056|[[Uygulamalar]] sekmesinde, sonlandırmak istediğiniz göreve tıklayın.
+8057|[[Görevi Sonlandır]]'a tıklayın.
+8058|Bir program yanıt vermeyi bırakırsa Görev Yöneticisi'ni başlatmak için CTRL+ALT+DELETE tuşlarına basın, [[Uygulamalar]] sekmesine tıklayın, yanıt vermeyen programa tıklayın ve ardından [[Görevi Sonlandır]]'a tıklayın.
+8059|O programda girilen ve kaydedilmeyen tüm veriler veya yapılan değişiklikler kaybolur.
+8060|Görev Yöneticisi ile bilgisayarınızın performansını izleme
+8061|Görev Yöneticisi ile bilgisayarınızın performansını izlemek için
+8062|[[Performans]] sekmesine tıklayın.
+8063|İşlem sayaçları
+8064|Görev Yöneticisi İşlemler sekmesinde, sütun başlıkları olarak görüntülenebilen aşağıdaki sayaçları kullanarak çalışan işlemleri izleyebilirsiniz.
+8065|[[Temel Öncelik]]
+8066|[[GDI Nesneleri]]
+8067|[[Tanıtıcı Sayısı]]
+8068|[[G/Ç Diğer]]
+8069|[[G/Ç Diğer Bayt]]
+8070|[[G/Ç Okuma]]
+8071|[[G/Ç Okuma Bayt]]
+8072|[[G/Ç Yazma]]
+8073|[[G/Ç Yazma Bayt]]
+8074|[[Sayfalanmamış Havuz]]
+8075|[[Sayfa Hataları]]
+8076|[[Sayfalanmış Havuz]]
+8077|[[PID (İşlem Tanımlayıcısı)]]
+8078|[[Oturum Kimliği]]
+8079|[[Kullanıcı Adı]]
+8080|[[USER Nesneleri]]
+8081|İşlem listesini sıralama
+8082|İşlem listesini sıralamak için
+8083|[[İşlemler]] sekmesinde, sıralamak istediğiniz sütun başlığına tıklayın.
+8084|Sıralama düzenini tersine çevirmek için sütun başlığına ikinci kez tıklayın.
+8085|Görev Yöneticisi'ni başlatma
+8086|Görev Yöneticisi'ni başlatmak için
+8087|Görev çubuğunun boş bir alanına sağ tıklayın ve ardından [[Görev Yöneticisi]]'ne tıklayın.
+8088|CTRL+ALT+DELETE tuşlarına basıp ardından [[Görev Yöneticisi]]'ne tıklayarak da Görev Yöneticisi'ni başlatabilirsiniz.
+8089|CTRL+SHIFT+ESC tuşlarına basarak da Görev Yöneticisi'ni başlatabilirsiniz.
+8090|Yeni program başlatma
+8091|Yeni program başlatmak için
+8092|[[Uygulamalar]] sekmesinde [[Yeni Görev]]'e tıklayın.
+8093|[[Aç]] kutusuna istediğiniz programın konumunu ve adını yazın ve ardından [[Tamam]]'a tıklayın.
+8094|[[Yeni Görev]], [[Başlat]] menüsündeki [[Çalıştır]] komutuyla aynıdır.
+8095|Başka bir programa geçme
+8096|Başka bir programa geçmek için
+8097|[[Uygulamalar]] sekmesinde geçmek istediğiniz programa tıklayın.
+8098|[[Geç]]'e tıklayın.
+8099|Diğer işlem sayaçlarını görüntüleme
+8100|Diğer işlem sayaçlarını görüntülemek için
+8101|[[İşlemler]] sekmesinde [[Görünüm]]'e ve ardından [[Sütunları Seç]]'e tıklayın.
+8102|Sütun başlığı olarak görünmesini istediğiniz öğelere tıklayın ve ardından [[Tamam]]'a tıklayın.
+8103|İşlem sayaçları hakkında daha fazla bilgi için bkz. İlgili Konular.
+8104|Görev Yöneticisi'ne genel bakış
+8105|Görev Yöneticisi, bilgisayarınızda çalışan programlar ve işlemler hakkında bilgi sağlar. Ayrıca işlemler için en sık kullanılan performans ölçütlerini görüntüler.
+8106|Bilgisayarınızın performansının temel göstergelerini izlemek için Görev Yöneticisi'ni kullanın. Çalışan programların durumunu hızla görebilir ve yanıt vermeyi bırakan programları sonlandırabilirsiniz. Ayrıca en çok 15 parametre kullanarak çalışan işlemlerin etkinliğini değerlendirebilir ve CPU ve bellek kullanımıyla ilgili grafikleri ve verileri görebilirsiniz.
+8107|Daha fazla bilgi için aşağıdakilerden birine tıklayın:
+8108|[[Çalışan programlar]]
+8109|[[Uygulamalar]] sekmesi, bilgisayarınızda çalışan programların durumunu gösterir.
+8110|Bu sekmede bir programı sonlandırabilir, ona geçebilir veya başlatabilirsiniz.
+8111|[[Çalışan işlemler]]
+8112|[[İşlemler]] sekmesi, bilgisayarınızda çalışan [[işlemler]] hakkında bilgi gösterir.
