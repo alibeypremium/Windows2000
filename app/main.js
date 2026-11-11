@@ -499,7 +499,7 @@ ctx.openFile = async (path) => {
       throw new Error("This shortcut is invalid.");
     }
   }
-  if (ext === "doc") return ctx.launch("word", { path });
+  if (["doc", "docx"].includes(ext)) return ctx.launch("word", { path });
   if (["wdoc", "rtf"].includes(ext)) return ctx.launch("wordpad", { path });
   if (
     ["png", "jpg", "jpeg", "bmp", "gif", "webp", "svg"].includes(ext) ||

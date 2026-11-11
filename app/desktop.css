@@ -6074,7 +6074,8 @@ body.icon-dragging, body.icon-dragging * { cursor: default; }
 .wd-hbar { flex: 1; min-width: 0; overflow-x: scroll; overflow-y: hidden; height: 17px; }
 .wd-hbar > div { height: 1px; }
 .wd-sheet { display: flex; justify-content: center; min-width: max-content; padding: 8px 20px 20px; }
-.wd-page { flex: none; width: 816px; min-height: 1056px; box-sizing: border-box; padding: 96px 120px; background: #fff; color: #000; font: 12pt "Times New Roman", Times, serif; outline: 0; box-shadow: 2px 2px 0 #000; cursor: text; overflow-wrap: break-word; user-select: text; }
+.wd-pagewrap { position: relative; flex: none; display: flex; }
+.wd-page { flex: none; width: var(--pw, 816px); min-height: var(--ph, 1056px); box-sizing: border-box; padding: var(--pt, 96px) var(--pr, 120px) var(--pb, 96px) var(--pl, 120px); background: #fff; color: #000; font: 12pt "Times New Roman", Times, serif; outline: 0; box-shadow: 2px 2px 0 #000; cursor: text; overflow-wrap: break-word; user-select: text; }
 .wd-page p { margin: 0; }
 .wd-page h1 { font: bold 16pt Arial, sans-serif; margin: 12pt 0 3pt; } .wd-page h2 { font: italic bold 14pt Arial, sans-serif; margin: 12pt 0 3pt; } .wd-page h3 { font: bold 13pt Arial, sans-serif; margin: 12pt 0 3pt; }
 .wd-page ul, .wd-page ol { margin: 0; padding-left: 0.25in; }
@@ -6083,6 +6084,8 @@ body.icon-dragging, body.icon-dragging * { cursor: default; }
 .wd-page img { max-width: 100%; }
 .wd-page a { color: #0000ff; text-decoration: underline; }
 .wd-normal .wd-page { width: auto; flex: 1; min-height: 100%; padding: 8px 10px; box-shadow: none; }
+.wd-normal .wd-pagewrap { flex: 1; min-width: 0; }
+.wd-normal .wd-hf-layer { display: none; }
 .wd-normal .wd-sheet { padding: 0; min-width: 0; }
 .wd-normal .wd-vr { visibility: hidden; }
 .wd-no-ruler .wd-rulerrow, .wd-no-ruler .wd-vr { display: none; }
@@ -6108,7 +6111,7 @@ body.icon-dragging, body.icon-dragging * { cursor: default; }
 .wd-sym { height: 20px; padding: 0; min-width: 0; background: #fff; border: 1px solid #fff; box-shadow: none !important; font: 13px Arial, sans-serif; }
 .wd-sym.sel { background: var(--active); color: #fff; }
 .wd-stat { min-width: 170px; }
-.wd-palette { position: fixed; display: grid; grid-template-columns: repeat(8, 17px); gap: 1px; padding: 3px; background: var(--face); box-shadow: inset -1px -1px #404040, inset 1px 1px #d4d0c8, inset -2px -2px #808080, inset 2px 2px #fff; z-index: 100000; }
+.wd-palette { position: fixed; pointer-events: auto; display: grid; grid-template-columns: repeat(8, 17px); gap: 1px; padding: 3px; background: var(--face); box-shadow: inset -1px -1px #404040, inset 1px 1px #d4d0c8, inset -2px -2px #808080, inset 2px 2px #fff; z-index: 100000; }
 .wd-palette button { width: 17px; height: 17px; min-width: 0; padding: 0; border: 1px solid #808080; box-shadow: none !important; }
 
 /* Netscape Navigator 4.0x */
@@ -6262,3 +6265,22 @@ body.icon-dragging, body.icon-dragging * { cursor: default; }
 .mail-attach{display:flex;flex-wrap:wrap;gap:6px;padding:3px 6px;background:var(--face);border-bottom:1px solid #808080;font:11px Tahoma,sans-serif}.mail-attach.hidden{display:none}.mail-attach .chip{display:inline-flex;align-items:center;gap:3px;border:1px solid #808080;background:#fff;padding:0 4px;height:18px}
 .oe-sr{padding:12px;font:11px Tahoma,sans-serif;display:flex;flex-direction:column;gap:6px}.oe-sr progress{width:100%;height:16px}.oe-sr .ln{white-space:nowrap}
 .oe-cbody{bottom:0}
+
+/* Word: header/footer layer, picture selection, table grid, spelling */
+.wd-hf-layer { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
+.wd-hf { position: absolute; font: 10pt "Times New Roman", Times, serif; color: #000; white-space: pre-wrap; overflow: hidden; }
+.wd-selbox { position: absolute; display: none; border: 1px solid #000; box-sizing: border-box; pointer-events: none; }
+.wd-selhandle { position: absolute; right: -4px; bottom: -4px; width: 7px; height: 7px; background: #000; border: 1px solid #fff; cursor: nwse-resize; pointer-events: auto; }
+.wd-page table.wd-noborder td, .wd-page table.wd-noborder th { border: 1px dotted #b0b0b0 !important; }
+.wd-page img { cursor: default; }
+.wd-tgpop { position: fixed; pointer-events: auto; z-index: 100000; padding: 3px; background: var(--face); font: 11px Tahoma, sans-serif; box-shadow: inset -1px -1px #404040, inset 1px 1px #d4d0c8, inset -2px -2px #808080, inset 2px 2px #fff; }
+.wd-tgrid { display: grid; gap: 1px; background: #808080; padding: 1px; }
+.wd-tgc { width: 16px; height: 16px; background: #fff; }
+.wd-tgc.on { background: #000080; }
+.wd-tg-label { text-align: center; padding: 3px 0 1px; }
+.wd-sp-dlg .wd-spctx { background: #fff; border: 2px inset #808080; padding: 4px; min-height: 36px; margin: 2px 0 6px; font: 12px Tahoma, sans-serif; white-space: pre-wrap; }
+.wd-spbad { color: #f00; font-weight: bold; }
+.wd-spmain { display: grid; grid-template-columns: 1fr 100px; gap: 8px; }
+.wd-spmain .wd-list { width: 100%; }
+.wd-spbtns { display: flex; flex-direction: column; gap: 4px; }
+.wd-spbtns button { min-width: 0; }

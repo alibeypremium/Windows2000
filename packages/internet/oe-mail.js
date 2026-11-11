@@ -62,13 +62,13 @@ function pickRecipients(ctx, apply) {
   draw();
 }
 
-export function openMail(ctx, { compose = false, to = "", reply = null, replyAll = false, forward = null, draft: existingDraft = null } = {}) {
-  if (compose) return openCompose(ctx, { to, reply, replyAll, forward, existingDraft });
+export function openMail(ctx, { compose = false, to = "", reply = null, replyAll = false, forward = null, draft: existingDraft = null, subject: subj = "", body: bodyText = "" } = {}) {
+  if (compose) return openCompose(ctx, { to, reply, replyAll, forward, existingDraft, subj, bodyText });
   return openInbox(ctx);
 }
 
 /* ======================================================================= compose */
-function openCompose(ctx, { to, reply, replyAll, forward, existingDraft }) {
+function openCompose(ctx, { to, reply, replyAll, forward, existingDraft, subj = "", bodyText = "" }) {
   const w = ctx.wm.create({ title: "New Message", icon: "mail", width: 650, height: 480, appId: "compose" });
   const sig = (ctx.settings.get("oeOptions") || {})[5] || {};
   const sigText = sig[1099] && sig.sigText ? "\n\n-- \n" + sig.sigText : "";
@@ -84,7 +84,7 @@ function openCompose(ctx, { to, reply, replyAll, forward, existingDraft }) {
         }
       : forward
         ? { to: "", cc: "", subject: /^fw:/i.test(forward.subject || "") ? forward.subject : "Fw: " + (forward.subject || ""), body: sigText + quote(forward), attachments: forward.attachments || [] }
-        : { to: to || "", cc: "", subject: "", body: sigText, attachments: [] };
+        : { to: to || "", cc: "", subject: subj, body: bodyText ? bodyText + sigText : sigText, attachments: [] };
   if (seed.subject) w.setTitle?.(seed.subject);
   const contacts = read(ctx, CONTACTS, []);
   const dl = el("datalist", { id: "oe-ac-" + Math.random().toString(36).slice(2) }, ...contacts.flatMap((c) => [c.email ? el("option", { value: c.email }) : null, c.name ? el("option", { value: c.name }) : null]));

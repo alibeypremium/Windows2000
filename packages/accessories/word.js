@@ -3,6 +3,7 @@
 // bitmaps are cut from those screenshots. Editing uses the browser's contenteditable engine; documents are saved as Word-style HTML in .doc files.
 import { el, button, menuBar, popup, icon } from "../ui/index.js";
 import { basename, normalizePath, extension, DOCS, pickFiles } from "../core/index.js";
+import { buildDocx, parseDocx, bytesToDataUrl, dataUrlToBytes, loadDict, isCorrect, suggest, WORD_RE } from "./word-io.js";
 
 const IM = "/assets/ui/word/";
 const svgUri = (inner) => "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">${inner}</svg>`);
@@ -14,7 +15,8 @@ const SVG = {
   redo: svgUri('<path d="M12 6.5H6a3.2 3.2 0 000 6.4h4" fill="none" stroke="#0000c0" stroke-width="2"/><path d="M14.5 6.5L10 2.5v8z" fill="#0000c0"/>'),
 };
 const BLANK = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
-const PAGE_W = 816, PAGE_H = 1056, MARGIN_X = 120, MARGIN_Y = 96;
+const PAPERS = { Letter: [816, 1056], A4: [794, 1123], Legal: [816, 1344], A5: [559, 794] };
+const TFMT = [["grid", "Table Grid"], ["none", "Table Simple (no borders)"], ["classic", "Table Classic (shaded heading)"], ["banded", "Table Columns (banded rows)"]];
 const FONTS = ["Arial", "Arial Black", "Comic Sans MS", "Courier New", "Georgia", "Impact", "Lucida Console", "Symbol", "Tahoma", "Times New Roman", "Trebuchet MS", "Verdana"];
 const SIZES = [8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72];
 const STYLES = [["Normal", "p"], ["Heading 1", "h1"], ["Heading 2", "h2"], ["Heading 3", "h3"], ["Default Paragraph Font", null]];
@@ -38,8 +40,8 @@ const printable = (raw) => {
   return runs.join("\n");
 };
 const escapeHtml = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
-const wordHtml = (title, body) =>
-  `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">\n<head>\n<meta http-equiv=Content-Type content="text/html; charset=utf-8">\n<meta name=ProgId content=Word.Document>\n<meta name=Generator content="Microsoft Word 9">\n<title>${escapeHtml(title)}</title>\n<style>p{margin:0}body{font:12pt "Times New Roman"}</style>\n</head>\n<body lang=EN-US>\n<div class=Section1>\n${body}\n</div>\n</body>\n</html>`;
+const wordHtml = (title, body, meta = "") =>
+  `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">\n<head>\n<meta http-equiv=Content-Type content="text/html; charset=utf-8">\n<meta name=ProgId content=Word.Document>\n<meta name=Generator content="Microsoft Word 9">\n${meta ? `<meta name=wd-layout content="${encodeURIComponent(meta)}">\n` : ""}<title>${escapeHtml(title)}</title>\n<style>p{margin:0}body{font:12pt "Times New Roman"}</style>\n</head>\n<body lang=EN-US>\n<div class=Section1>\n${body}\n</div>\n</body>\n</html>`;
 
 export function openWord(ctx, { path = null } = {}) {
   const docNo = ++docCounter;
@@ -47,16 +49,22 @@ export function openWord(ctx, { path = null } = {}) {
   const st = Object.assign({ view: "print", ruler: true }, ctx.settings.get("word") || {});
   let filename = null, saved = "", zoom = 1, view = "print", overwrite = false, lastSel = null, painter = null, lastHi = "#ffff00", lastFg = "#ff0000";
   let docTitle = `Document${docNo}`;
+  let PAGE_W = 816, PAGE_H = 1056, ML = 120, MR = 120, MT = 96, MB = 96, paper = "Letter", landscape = false;
+  let hf = { header: "", footer: "", headerAlign: "left", footerAlign: "center" };
+  let selImg = null, ready = false;
+  const layoutState = () => ({ paper, landscape, ML, MR, MT, MB, hf });
+  const snap = () => page.innerHTML + "\u0000" + JSON.stringify(layoutState());
 
   const page = el("div", { class: "wd-page", contenteditable: "true", role: "textbox", "aria-multiline": "true", "aria-label": "Document", spellcheck: "true" });
-  const sheet = el("div", { class: "wd-sheet" }, page);
+  const layer = el("div", { class: "wd-hf-layer" });
+  const wrap = el("div", { class: "wd-pagewrap" }, page, layer);
+  const sheet = el("div", { class: "wd-sheet" }, wrap);
   const scroller = el("div", { class: "wd-scroller" }, sheet);
   document.execCommand?.("defaultParagraphSeparator", false, "p");
   document.execCommand?.("styleWithCSS", false, true);
   page.innerHTML = "<p><br></p>";
 
   const note = (m, t = "Microsoft Word") => ctx.dialogs.message(m, { title: t, icon: "info" });
-  const na = (what) => note(`${what} is not available in this version of Microsoft Word.`);
 
   // ---------- generic dialog helper ----------
   const dlg = (title, width, height, build) =>
@@ -97,9 +105,12 @@ export function openWord(ctx, { path = null } = {}) {
 
   // ---------- document state ----------
   const changed = () => { /* dirty is derived from content */ };
-  const dirty = () => page.innerHTML !== saved;
+  const dirty = () => snap() !== saved;
   const setTitleFromState = () => { docTitle = filename ? basename(filename) : `Document${docNo}`; w.setTitle(`${docTitle} - Microsoft Word`); };
   const loadContent = (raw) => {
+    const lm = /<meta name=["']?wd-layout["']? content=["']([^"']*)["']/i.exec(raw.slice(0, 6000));
+    let lay = null; try { lay = lm ? JSON.parse(decodeURIComponent(lm[1])) : null; } catch { /* ignore */ }
+    setLayout(lay || {});
     if (/<html|<body|<p[ >]|<div/i.test(raw.slice(0, 4000))) {
       const body = /<body[^>]*>([\s\S]*)<\/body>/i.exec(raw);
       page.innerHTML = sanitize(body ? body[1] : raw) || "<p><br></p>";
@@ -112,33 +123,55 @@ export function openWord(ctx, { path = null } = {}) {
   };
   const newDocument = async () => {
     if (!(await discard())) return;
-    page.innerHTML = "<p><br></p>"; filename = null; saved = page.innerHTML; setTitleFromState(); status();
+    page.innerHTML = "<p><br></p>"; setLayout({}); filename = null; saved = snap(); setTitleFromState(); status();
   };
   const openDoc = async () => {
-    const p = await ctx.dialogs.file({ mode: "open", path: DOCS, title: "Open" });
+    const p = await ctx.dialogs.file({ mode: "open", path: DOCS, title: "Open", types: [["All Word Documents", ["doc", "docx", "htm", "html", "txt"]], ["Word Documents (*.doc)", ["doc"]], ["Word 2007 Documents (*.docx)", ["docx"]], ["Web Pages (*.htm;*.html)", ["htm", "html"]], ["Text Files (*.txt)", ["txt"]], ["All Files (*.*)", null]] });
     if (!p) return;
     if (!dirty() && !filename) { loadPath(p); } else ctx.launch("word", { path: p });
   };
-  const loadPath = (p) => {
-    try { loadContent(ctx.fs.readFile(p)); } catch (e) { ctx.dialogs.message(`Word cannot open '${basename(p)}'.\n\n${e.message || e}`, { title: "Microsoft Word", icon: "error" }); return; }
-    filename = normalizePath(p); saved = page.innerHTML; setTitleFromState(); status();
+  const loadPath = async (p) => {
+    try {
+      const raw = ctx.fs.readFile(p);
+      if (extension(p) === "docx") {
+        const r = await parseDocx(dataUrlToBytes(raw));
+        setLayout(r.layout || {}); page.innerHTML = sanitize(r.html) || "<p><br></p>";
+      } else loadContent(raw);
+    } catch (e) { ctx.dialogs.message(`Word cannot open '${basename(p)}'.\n\n${e.message || e}`, { title: "Microsoft Word", icon: "error" }); return; }
+    filename = normalizePath(p); saved = snap(); setTitleFromState(); status();
     const rec = ctx.settings.get("recentFiles") || []; ctx.settings.set("recentFiles", [filename, ...rec.filter((x) => x !== filename)].slice(0, 12));
   };
-  const save = async (as = false) => {
+  const SAVE_TYPES = [["Word Document (*.doc)", ["doc"]], ["Word Document (*.docx)", ["docx"]], ["Web Page (*.htm;*.html)", ["htm", "html"]], ["Text Only (*.txt)", ["txt"]]];
+  const DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+  const save = async (as = false, forceExt = null) => {
     let target = filename;
-    if (as || !target) target = await ctx.dialogs.file({ mode: "save", path: DOCS, name: target ? basename(target) : `${docTitle}.doc`, normalizeName: (n) => (extension(n) ? n : n + ".doc"), title: "Save As" });
+    if (as || !target) target = await ctx.dialogs.file({ mode: "save", path: DOCS, name: target ? basename(target) : `${docTitle}.${forceExt || "doc"}`, types: SAVE_TYPES, normalizeName: (n) => (extension(n) ? n : n + ".doc"), title: "Save As" });
     if (!target) return false;
-    const html = page.innerHTML;
     const ext = extension(target);
-    await ctx.fs.writeFile(target, ext === "txt" ? page.innerText : wordHtml(basename(target), html), { mime: ext === "txt" ? "text/plain" : "application/msword" });
-    filename = normalizePath(target); saved = html; setTitleFromState(); return true;
+    try {
+      if (ext === "docx") {
+        selectImg(null);
+        const bytes = buildDocx(page, { ...docLayout(), title: basename(target) });
+        await ctx.fs.writeFile(target, bytesToDataUrl(bytes, DOCX_MIME), { mime: DOCX_MIME, encoding: "data-url" });
+      } else if (ext === "txt") await ctx.fs.writeFile(target, page.innerText, { mime: "text/plain" });
+      else await ctx.fs.writeFile(target, wordHtml(basename(target), page.innerHTML, JSON.stringify(layoutState())), { mime: /^html?$/.test(ext) ? "text/html" : "application/msword" });
+    } catch (e) { ctx.dialogs.error(e); return false; }
+    filename = normalizePath(target); saved = snap(); setTitleFromState(); return true;
   };
   const discard = async () => {
     if (!dirty()) return true;
     const a = await ctx.dialogs.message(`Do you want to save the changes to ${docTitle}?`, { title: "Microsoft Word", icon: "warning", buttons: ["Yes", "No", "Cancel"] });
     return a === "Yes" ? await save() : a === "No";
   };
-  const printDoc = () => { try { ctx.printHTML?.(`<div style="font:12pt 'Times New Roman'">${page.innerHTML}</div>`); } catch (e) { ctx.dialogs.error(e); } };
+  const printDoc = () => {
+    try {
+      selImg = null;
+      const cssStr = (t) => '"' + String(t).replace(/["\\]/g, "").replace(/\{PAGE\}/g, '" counter(page) "') + '"';
+      const box = (pos, t, a) => (t ? `@${pos}-${a === "right" ? "right" : a === "center" ? "center" : "left"}{content:${cssStr(t)};font:10pt 'Times New Roman'}` : "");
+      const css = `@page{size:${PAGE_W}px ${PAGE_H}px;margin:${MT}px ${MR}px ${MB}px ${ML}px;${box("top", hf.header, hf.headerAlign)}${box("bottom", hf.footer, hf.footerAlign)}}body{margin:0!important}`;
+      ctx.printHTML?.(`<style>${css}</style><div style="font:12pt 'Times New Roman'">${page.innerHTML}</div>`);
+    } catch (e) { ctx.dialogs.error(e); }
+  };
 
   // ---------- find / replace ----------
   let findWin = null;
@@ -252,15 +285,72 @@ export function openWord(ctx, { path = null } = {}) {
         btns(done, ok));
     });
   };
-  const tableDlg = () => dlg("Insert Table", 330, 190, (done) => {
-    const c = num(2), r = num(2);
+  const fmtTable = (t, f) => {
+    const bd = f === "none" ? "" : "1px solid #000";
+    t.classList.toggle("wd-noborder", f === "none"); t.style.border = bd; t.style.borderCollapse = "collapse";
+    [...t.rows].forEach((r, ri) => [...r.cells].forEach((c) => {
+      c.style.border = bd; c.style.background = f === "classic" && ri === 0 ? "#c0c0c0" : f === "banded" && ri % 2 === 1 ? "#e0e0e0" : "";
+      c.style.fontWeight = f === "classic" && ri === 0 ? "bold" : "";
+    }));
+  };
+  const tableHtml = (cols, rows, f = "grid") => {
+    const t = document.createElement("table"), tb = t.createTBody(), cw = Math.floor((PAGE_W - ML - MR) / cols);
+    for (let r = 0; r < rows; r++) { const tr = tb.insertRow(); for (let c = 0; c < cols; c++) { const td = tr.insertCell(); td.style.cssText = `width:${cw}px;padding:0 7px;vertical-align:top`; td.innerHTML = "<br>"; } }
+    fmtTable(t, f); return t.outerHTML + "<p><br></p>";
+  };
+  const insertTable = (cols, rows, f = "grid") => {
+    run("insertHTML", tableHtml(Math.max(1, Math.min(20, cols)), Math.max(1, Math.min(200, rows)), f).replace("<table", '<table data-new="1"'));
+    const t = page.querySelector("table[data-new]");
+    if (t) { t.removeAttribute("data-new"); const c = t.rows[0]?.cells[0]; if (c) { const r = document.createRange(); r.selectNodeContents(c); r.collapse(true); const sl = window.getSelection(); sl.removeAllRanges(); sl.addRange(r); saveSel(); } }
+    fit();
+  };
+  const tableDlg = () => dlg("Insert Table", 340, 230, (done) => {
+    const c = num(2), r = num(2), f = sel(TFMT, "grid");
     return el("div", { class: "wd-dlg" }, el("fieldset", {}, el("legend", { text: "Table size" }), row(el("label", { text: "Number of columns:" }), c), row(el("label", { text: "Number of rows:" }), r)),
-      btns(done, () => {
-        const cols = Math.max(1, Math.min(63, parseInt(c.value) || 1)), rows = Math.max(1, Math.min(500, parseInt(r.value) || 1));
-        const cell = `<td style="border:1px solid #000;width:${Math.floor((576 / cols))}px;padding:0 7px;vertical-align:top">&nbsp;</td>`;
-        run("insertHTML", `<table style="border-collapse:collapse;border:1px solid #000"><tbody>${`<tr>${cell.repeat(cols)}</tr>`.repeat(rows)}</tbody></table><p><br></p>`); done(true);
-      }));
+      row(el("label", { text: "Table format:" }), f),
+      btns(done, () => insertTable(parseInt(c.value) || 1, parseInt(r.value) || 1, f.value)));
   });
+  const curCell = () => { restoreSel(); const sl = window.getSelection(), n = sl.anchorNode; const c = (n?.nodeType === 1 ? n : n?.parentElement)?.closest("td,th"); return c && inPage(c) ? c : null; };
+  const autoFormatDlg = () => {
+    const cell = curCell(); if (!cell) return note("The cursor is not in a table.");
+    const table = cell.closest("table");
+    return dlg("Table AutoFormat", 330, 170, (done) => {
+      const f = sel(TFMT, table.classList.contains("wd-noborder") ? "none" : "grid");
+      return el("div", { class: "wd-dlg" }, row(el("label", { text: "Formats:" }), f), btns(done, () => { fmtTable(table, f.value); status(); }));
+    });
+  };
+  const mergeCells = () => {
+    restoreSel(); const sl = window.getSelection(); if (!sl.rangeCount) return;
+    const r = sl.getRangeAt(0), up = (n) => (n?.nodeType === 1 ? n : n?.parentElement)?.closest("td,th"), a = up(r.startContainer), b = up(r.endContainer);
+    if (!a || !b || a === b || a.parentElement !== b.parentElement) return note("Select two or more cells in the same row to merge them.");
+    const cells = [...a.parentElement.children], i0 = cells.indexOf(a), i1 = cells.indexOf(b), group = cells.slice(Math.min(i0, i1), Math.max(i0, i1) + 1), first = group[0];
+    let span = 0, html = [];
+    for (const c of group) { span += c.colSpan || 1; const h = c.innerHTML.replace(/&nbsp;|<br>/g, "").trim(); if (h) html.push(c.innerHTML); if (c !== first) c.remove(); }
+    first.colSpan = span; first.style.width = ""; first.innerHTML = html.join("<br>") || "<br>"; saveSel(); status();
+  };
+  const splitCell = () => {
+    const c = curCell(); if (!c) return note("The cursor is not in a table.");
+    if ((c.colSpan || 1) < 2) return note("This cell is not merged. Use Table > Insert > Columns to add columns.");
+    const n = c.colSpan; c.colSpan = 1;
+    for (let k = 1; k < n; k++) { const x = c.cloneNode(false); x.innerHTML = "<br>"; c.after(x); }
+    status();
+  };
+  const autoFit = () => { const c = curCell(); if (!c) return note("The cursor is not in a table."); const t = c.closest("table"); t.style.width = "100%"; [...t.rows].forEach((r) => [...r.cells].forEach((x) => { x.style.width = ""; })); status(); };
+  const tableGrid = (anchor) => {
+    const r = anchor.getBoundingClientRect(); saveSel();
+    const R = 5, C = 5, label = el("div", { class: "wd-tg-label", text: "Cancel" }), grid = el("div", { class: "wd-tgrid" });
+    const box = el("div", { class: "wd-tgpop" }, grid, label);
+    const cells = [];
+    for (let y = 0; y < R; y++) for (let x = 0; x < C; x++) { const c = el("div", { class: "wd-tgc" }); c.dataset.x = x; c.dataset.y = y; cells.push(c); grid.append(c); }
+    grid.style.gridTemplateColumns = `repeat(${C}, 16px)`;
+    const hover = (x, y) => { cells.forEach((c) => c.classList.toggle("on", +c.dataset.x <= x && +c.dataset.y <= y)); label.textContent = x < 0 ? "Cancel" : `${y + 1} x ${x + 1} Table`; };
+    grid.addEventListener("mousemove", (e) => { const c = e.target.closest(".wd-tgc"); if (c) hover(+c.dataset.x, +c.dataset.y); });
+    grid.addEventListener("mouseleave", () => hover(-1, -1));
+    grid.addEventListener("click", (e) => { const c = e.target.closest(".wd-tgc"); box.remove(); if (c) insertTable(+c.dataset.x + 1, +c.dataset.y + 1); });
+    box.style.left = r.left + "px"; box.style.top = r.bottom + "px"; box.addEventListener("mousedown", (e) => e.preventDefault());
+    document.querySelector("#menu-layer").append(box);
+    const away = (e) => { if (!box.contains(e.target)) { box.remove(); document.removeEventListener("pointerdown", away, true); } }; setTimeout(() => document.addEventListener("pointerdown", away, true));
+  };
   const dateDlg = () => dlg("Date and Time", 360, 300, (done) => {
     const d = new Date(), z = (n) => String(n).padStart(2, "0"), months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const h12 = d.getHours() % 12 || 12, ap = d.getHours() < 12 ? "AM" : "PM";
@@ -292,11 +382,52 @@ export function openWord(ctx, { path = null } = {}) {
     const stats = [["Pages", pageCount()], ["Words", words], ["Characters (no spaces)", t.replace(/\s/g, "").length], ["Characters (with spaces)", t.replace(/[\r\n]/g, "").length], ["Paragraphs", page.querySelectorAll("p,h1,h2,h3,li").length], ["Lines", Math.max(1, Math.round(page.scrollHeight / (14 * 1.15 * 96 / 72)))]];
     return dlg("Word Count", 300, 270, (done) => el("div", { class: "wd-dlg" }, el("fieldset", {}, el("legend", { text: "Statistics" }), ...stats.map(([k, v]) => row(el("span", { class: "wd-stat", text: k + ":" }), el("b", { text: String(v) })))), el("div", { class: "dialog-buttons" }, button("Close", () => done(null), { class: "default-button" }))));
   };
+  const fitImage = (dataUrl) => new Promise((resolve) => {
+    const im = new Image();
+    im.onload = () => { const maxW = PAGE_W - ML - MR; let wpx = im.naturalWidth || 100, hpx = im.naturalHeight || 100; if (wpx > maxW) { hpx = Math.round(hpx * maxW / wpx); wpx = maxW; } resolve(`<img src="${dataUrl}" width="${wpx}" height="${hpx}" style="width:${wpx}px;height:${hpx}px">`); };
+    im.onerror = () => resolve(null); im.src = dataUrl;
+  });
+  const addImage = async (dataUrl) => { const h = await fitImage(dataUrl); if (!h) return note("The picture file could not be inserted. The file may be damaged or is not a supported picture format."); run("insertHTML", h); };
   const insertPicture = async () => {
-    const p = await ctx.dialogs.file({ mode: "open", path: DOCS, title: "Insert Picture" });
+    const p = await ctx.dialogs.file({ mode: "open", path: DOCS, title: "Insert Picture", filter: (n) => /\.(png|jpe?g|gif|bmp|webp|svg)$/i.test(n.name) || /^image\//.test(n.mime || "") });
     if (!p) return;
-    const c = ctx.fs.readFile(p);
-    if (/^data:image\//.test(c)) run("insertHTML", `<img src="${c}">`); else note("The picture file could not be inserted.");
+    let c = ctx.fs.readFile(p);
+    if (/^\s*<(\?xml|svg)/i.test(c)) c = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(c);
+    if (/^data:image\//.test(c)) await addImage(c); else note("The picture file could not be inserted.");
+  };
+  const insertPictureFromComputer = async () => {
+    saveSel();
+    const [f] = await pickFiles({ accept: "image/*" }); if (!f) return;
+    const url = await new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = rej; fr.readAsDataURL(f); });
+    await addImage(url);
+  };
+  // picture selection + resize handle
+  const selBox = el("div", { class: "wd-selbox" }), selHandle = el("div", { class: "wd-selhandle", title: "Resize" });
+  selBox.append(selHandle); layer.append(selBox);
+  const placeSel = () => {
+    if (!selImg || !selImg.isConnected) { selBox.style.display = "none"; return; }
+    const ir = selImg.getBoundingClientRect(), wr = wrap.getBoundingClientRect();
+    Object.assign(selBox.style, { display: "block", left: (ir.left - wr.left) / zoom + "px", top: (ir.top - wr.top) / zoom + "px", width: ir.width / zoom + "px", height: ir.height / zoom + "px" });
+  };
+  const selectImg = (img) => { selImg = img; placeSel(); };
+  selHandle.addEventListener("pointerdown", (e) => {
+    if (!selImg) return; e.preventDefault(); e.stopPropagation(); selHandle.setPointerCapture(e.pointerId);
+    const img = selImg, w0 = img.getBoundingClientRect().width / zoom, ratio = img.getBoundingClientRect().height / img.getBoundingClientRect().width, x0 = e.clientX;
+    const mv = (ev) => { const nw = Math.max(8, Math.round(w0 + (ev.clientX - x0) / zoom)); img.style.width = nw + "px"; img.style.height = Math.round(nw * ratio) + "px"; img.setAttribute("width", nw); img.setAttribute("height", Math.round(nw * ratio)); placeSel(); };
+    const up = () => { selHandle.removeEventListener("pointermove", mv); selHandle.removeEventListener("pointerup", up); fit(); };
+    selHandle.addEventListener("pointermove", mv); selHandle.addEventListener("pointerup", up);
+  });
+  const pictureDlg = () => {
+    if (!selImg) return note("Click a picture first, then choose Format > Picture.");
+    const img = selImg, r = img.getBoundingClientRect(), wi = r.width / zoom, hi = r.height / zoom;
+    return dlg("Format Picture", 340, 220, (done) => {
+      const w1 = num((wi / 96).toFixed(2) + '"'), h1 = num((hi / 96).toFixed(2) + '"'), lock = el("input", { type: "checkbox", checked: true }), alt = el("input", { type: "text", class: "wd-wide", value: img.alt || "" });
+      const ratio = hi / wi;
+      w1.addEventListener("change", () => { if (lock.checked) h1.value = ((parseFloat(w1.value) || 1) * ratio).toFixed(2) + '"'; });
+      h1.addEventListener("change", () => { if (lock.checked) w1.value = ((parseFloat(h1.value) || 1) / ratio).toFixed(2) + '"'; });
+      return el("div", { class: "wd-dlg" }, el("fieldset", {}, el("legend", { text: "Size" }), row(el("label", { text: "Width:" }), w1, el("label", { text: "Height:" }), h1), el("label", { class: "wd-check" }, lock, " Lock aspect ratio")), row(el("label", { text: "Alternative text:" }), alt),
+        btns(done, () => { const nw = Math.max(8, Math.round((parseFloat(w1.value) || 1) * 96)), nh = Math.max(8, Math.round((parseFloat(h1.value) || 1) * 96)); img.style.width = nw + "px"; img.style.height = nh + "px"; img.setAttribute("width", nw); img.setAttribute("height", nh); img.alt = alt.value; placeSel(); fit(); }));
+    });
   };
   const insertLink = async () => {
     const v = await ctx.dialogs.prompt("Link to file or URL:", "http://", { title: "Insert Hyperlink" });
@@ -311,7 +442,7 @@ export function openWord(ctx, { path = null } = {}) {
     restoreSel(); const s = window.getSelection(), cell = (s.anchorNode?.nodeType === 1 ? s.anchorNode : s.anchorNode?.parentElement)?.closest("td,th");
     if (!cell || !inPage(cell)) return note("The cursor is not in a table.");
     const tr = cell.parentElement, table = cell.closest("table"), ci = [...tr.children].indexOf(cell), rows = [...table.rows];
-    const mk = () => { const c = cell.cloneNode(false); c.innerHTML = "&nbsp;"; return c; };
+    const mk = () => { const c = cell.cloneNode(false); c.innerHTML = "<br>"; return c; };
     if (op === "rowAbove") tr.before(Object.assign(tr.cloneNode(false), { innerHTML: [...tr.children].map(() => mk().outerHTML).join("") }));
     else if (op === "rowBelow") tr.after(Object.assign(tr.cloneNode(false), { innerHTML: [...tr.children].map(() => mk().outerHTML).join("") }));
     else if (op === "colLeft") rows.forEach((r) => r.children[ci]?.before(mk()));
@@ -325,18 +456,124 @@ export function openWord(ctx, { path = null } = {}) {
     saveSel(); status();
   };
 
+  // ---------- page setup / header & footer ----------
+  const docLayout = () => ({ pw: PAGE_W, ph: PAGE_H, ml: ML, mr: MR, mt: MT, mb: MB, header: hf.header, footer: hf.footer, headerAlign: hf.headerAlign, footerAlign: hf.footerAlign, cols: 1 });
+  const setLayout = (o = {}) => {
+    paper = PAPERS[o.paper] ? o.paper : "Letter"; landscape = !!o.landscape;
+    const nz = (v, d) => (Number.isFinite(+v) && +v >= 0 && v !== null && v !== undefined ? +v : d);
+    ML = nz(o.ML ?? o.ml, 120); MR = nz(o.MR ?? o.mr, 120); MT = nz(o.MT ?? o.mt, 96); MB = nz(o.MB ?? o.mb, 96);
+    if (o.pw && o.ph && !o.paper) { const k = Object.entries(PAPERS).find(([, [a, b]]) => (Math.abs(a - o.pw) < 6 && Math.abs(b - o.ph) < 6) || (Math.abs(b - o.pw) < 6 && Math.abs(a - o.ph) < 6)); paper = k ? k[0] : "Letter"; landscape = o.pw > o.ph; }
+    const [pw, ph] = PAPERS[paper]; PAGE_W = landscape ? ph : pw; PAGE_H = landscape ? pw : ph;
+    hf = { header: o.hf?.header || "", footer: o.hf?.footer || "", headerAlign: o.hf?.headerAlign || "left", footerAlign: o.hf?.footerAlign || "center" };
+    applyPageSetup();
+  };
+  const hfText = (t, n) => String(t).replace(/\{PAGE\}/g, String(n));
+  const renderHF = () => {
+    layer.querySelectorAll(".wd-hf").forEach((n) => n.remove());
+    if (view !== "print") return;
+    const pc = pageCount();
+    const mk = (cls, text, align, top, up) => { const d = el("div", { class: "wd-hf " + cls, text }); Object.assign(d.style, { left: ML + "px", width: PAGE_W - ML - MR + "px", textAlign: align, top: top + "px", transform: up ? "translateY(-100%)" : "" }); layer.append(d); };
+    if (hf.header) mk("h", hfText(hf.header, 1), hf.headerAlign, Math.min(48, MT / 2));
+    if (hf.footer) mk("f", hfText(hf.footer, pc), hf.footerAlign, pc * PAGE_H - Math.min(48, MB / 2), true);
+  };
+  function fit() { // make the sheet a whole number of pages tall so the footer sits at the bottom of the last page
+    if (view === "print") { page.style.minHeight = PAGE_H + "px"; const pc = Math.max(1, Math.ceil(page.scrollHeight / PAGE_H)); page.style.minHeight = pc * PAGE_H + "px"; } else page.style.minHeight = "";
+    renderHF(); placeSel();
+  }
+  function applyPageSetup() {
+    const st0 = page.style; st0.setProperty("--pw", PAGE_W + "px"); st0.setProperty("--ph", PAGE_H + "px"); st0.setProperty("--pt", MT + "px"); st0.setProperty("--pr", MR + "px"); st0.setProperty("--pb", MB + "px"); st0.setProperty("--pl", ML + "px");
+    if (ready) { fit(); layout(); }
+  }
+  const pageSetupDlg = () => dlg("Page Setup", 380, 340, (done) => {
+    const inch = (v) => (v / 96).toFixed(2) + '"', top = num(inch(MT)), bot = num(inch(MB)), left = num(inch(ML)), right = num(inch(MR));
+    const pap = sel(Object.keys(PAPERS), paper), port = el("input", { type: "radio", name: "ori", checked: !landscape }), land = el("input", { type: "radio", name: "ori", checked: landscape });
+    const px = (t, d) => { const n = parseFloat(String(t).replace(/[^\d.]/g, "")); return Number.isFinite(n) ? Math.max(0, Math.min(4, n)) * 96 : d; };
+    return el("div", { class: "wd-dlg" },
+      el("fieldset", {}, el("legend", { text: "Margins" }), row(el("label", { text: "Top:" }), top, el("label", { text: "Bottom:" }), bot), row(el("label", { text: "Left:" }), left, el("label", { text: "Right:" }), right)),
+      el("fieldset", {}, el("legend", { text: "Paper size" }), row(el("label", { text: "Paper size:" }), pap)),
+      el("fieldset", {}, el("legend", { text: "Orientation" }), row(el("label", { class: "wd-check" }, port, " Portrait"), el("label", { class: "wd-check" }, land, " Landscape"))),
+      btns(done, () => { setLayout({ paper: pap.value, landscape: land.checked, ML: px(left.value, ML), MR: px(right.value, MR), MT: px(top.value, MT), MB: px(bot.value, MB), hf }); status(); }));
+  });
+  const headerFooterDlg = () => dlg("Header and Footer", 400, 300, (done) => {
+    const h = el("input", { type: "text", class: "wd-wide", value: hf.header }), f = el("input", { type: "text", class: "wd-wide", value: hf.footer });
+    const ha = sel([["left", "Left"], ["center", "Centered"], ["right", "Right"]], hf.headerAlign), fa = sel([["left", "Left"], ["center", "Centered"], ["right", "Right"]], hf.footerAlign);
+    const addNum = (inp) => button("Insert Page Number", () => { inp.value += "{PAGE}"; inp.focus(); });
+    return el("div", { class: "wd-dlg" },
+      el("fieldset", {}, el("legend", { text: "Header" }), row(h), row(el("label", { text: "Alignment:" }), ha, addNum(h))),
+      el("fieldset", {}, el("legend", { text: "Footer" }), row(f), row(el("label", { text: "Alignment:" }), fa, addNum(f))),
+      btns(done, () => { hf = { header: h.value, footer: f.value, headerAlign: ha.value, footerAlign: fa.value }; fit(); status(); }));
+  });
+  const pageNumbersDlg = () => dlg("Page Numbers", 320, 190, (done) => {
+    const pos = sel([["footer", "Bottom of page (Footer)"], ["header", "Top of page (Header)"]], "footer"), al = sel([["left", "Left"], ["center", "Center"], ["right", "Right"]], "center");
+    return el("div", { class: "wd-dlg" }, row(el("label", { text: "Position:" }), pos), row(el("label", { text: "Alignment:" }), al),
+      btns(done, () => { hf = { ...hf, [pos.value]: "{PAGE}", [pos.value + "Align"]: al.value }; fit(); }));
+  });
+
+  // ---------- spelling ----------
+  let spellWin = null;
+  const spellCheck = async () => {
+    if (spellWin && !spellWin.closed) { spellWin.focus(); return; }
+    let dict; try { dict = await loadDict(); } catch (e) { return note(e.message || String(e)); }
+    const customKey = "wordCustomDict", custom = new Set(ctx.settings.get(customKey) || []), ignored = new Set(), autoChange = new Map();
+    const done = () => { if (spellWin && !spellWin.closed) spellWin.close(); spellWin = null; note("The spelling and grammar check is complete."); };
+    const startRange = () => { const r = document.createRange(); if (lastSel && inPage(lastSel.startContainer)) { r.setStart(lastSel.startContainer, lastSel.startOffset); } else r.setStart(page, 0); r.collapse(true); return r; };
+    let cur = startRange(), hit = null;
+    const findNext = () => {
+      const walker = document.createTreeWalker(page, NodeFilter.SHOW_TEXT);
+      let node = walker.nextNode(), off = 0, guard = 0;
+      while (node && cur.comparePoint(node, node.nodeValue.length) < 0) node = walker.nextNode();
+      if (node && node === cur.endContainer) off = cur.endOffset;
+      while (node && guard++ < 100000) {
+        const text = node.nodeValue, re = new RegExp(WORD_RE.source, "g"); re.lastIndex = off; let m;
+        while ((m = re.exec(text))) {
+          const word = m[0], a = m.index, b = a + word.length;
+          if (/\d/.test(text[a - 1] || "") || /\d/.test(text[b] || "")) continue;
+          const lw = word.toLowerCase();
+          if (autoChange.has(lw)) { const r = document.createRange(); r.setStart(node, a); r.setEnd(node, b); const sl = window.getSelection(); page.focus(); sl.removeAllRanges(); sl.addRange(r); document.execCommand("insertText", false, autoChange.get(lw)); const sl2 = window.getSelection().getRangeAt(0); cur = sl2.cloneRange(); cur.collapse(false); return findNext(); }
+          if (ignored.has(lw) || isCorrect(word, dict, custom)) continue;
+          const r = document.createRange(); r.setStart(node, a); r.setEnd(node, b); return { range: r, word, text, a, b };
+        }
+        node = walker.nextNode(); off = 0;
+      }
+      return null;
+    };
+    const win = spellWin = ctx.wm.create({ title: "Spelling and Grammar: English (U.S.)", noIcon: true, width: 480, height: 330, x: 220, y: 140, resizable: false, minimizable: false, maximizable: false, appId: "dialog" });
+    const ctxBox = el("div", { class: "wd-spctx" }), change = el("input", { type: "text", class: "wd-wide" }), list = el("select", { size: 6, class: "wd-list" });
+    const show = () => {
+      hit = findNext();
+      if (!hit) return done();
+      const sl = window.getSelection(); page.focus(); sl.removeAllRanges(); sl.addRange(hit.range); lastSel = hit.range.cloneRange(); hit.range.startContainer.parentElement?.scrollIntoView({ block: "center" });
+      ctxBox.replaceChildren(document.createTextNode(hit.text.slice(Math.max(0, hit.a - 40), hit.a)), el("span", { class: "wd-spbad", text: hit.word }), document.createTextNode(hit.text.slice(hit.b, hit.b + 40)));
+      const sug = suggest(hit.word, dict); list.replaceChildren(...(sug.length ? sug : ["(no suggestions)"]).map((x) => el("option", { value: x, text: x }))); if (sug.length) list.selectedIndex = 0;
+      change.value = sug[0] || hit.word;
+    };
+    list.addEventListener("change", () => { if (list.value && list.value !== "(no suggestions)") change.value = list.value; });
+    list.addEventListener("dblclick", () => doChange());
+    const replaceHit = (txt) => { const sl = window.getSelection(); page.focus(); sl.removeAllRanges(); sl.addRange(hit.range); document.execCommand("insertText", false, txt); const r = window.getSelection().getRangeAt(0).cloneRange(); r.collapse(false); cur = r; lastSel = r.cloneRange(); };
+    const doChange = () => { if (!hit) return; replaceHit(change.value); show(); };
+    const advance = () => { cur = hit.range.cloneRange(); cur.collapse(false); show(); };
+    const btnCol = el("div", { class: "wd-spbtns" },
+      button("Ignore Once", advance), button("Ignore All", () => { ignored.add(hit.word.toLowerCase()); advance(); }),
+      button("Add", () => { custom.add(hit.word.toLowerCase()); ctx.settings.set(customKey, [...custom]); advance(); }),
+      button("Change", doChange), button("Change All", () => { autoChange.set(hit.word.toLowerCase(), change.value); doChange(); }),
+      button("Close", () => win.close()));
+    win.setContent(el("div", { class: "wd-dlg wd-sp-dlg" }, el("label", { text: "Not in Dictionary:" }), ctxBox, el("div", { class: "wd-spmain" }, el("div", {}, el("label", { text: "Change to:" }), change, el("label", { text: "Suggestions:" }), list), btnCol)));
+    win.onClose = () => { spellWin = null; return true; };
+    show();
+  };
+
   // ---------- zoom / view ----------
-  const pageCount = () => Math.max(1, Math.ceil((page.scrollHeight) / PAGE_H));
-  const setZoom = (z) => { zoom = Math.max(0.1, Math.min(5, z)); page.style.zoom = zoom; zoomInput.value = Math.round(zoom * 100) + "%"; layout(); };
-  const setView = (v) => { view = v; w.el.classList.toggle("wd-normal", v === "normal" || v === "web"); viewBtns.forEach(([k, b]) => b.classList.toggle("on", k === v)); layout(); };
+  const pageCount = () => Math.max(1, Math.ceil(page.scrollHeight / PAGE_H - 0.01));
+  const setZoom = (z) => { zoom = Math.max(0.1, Math.min(5, z)); wrap.style.zoom = zoom; placeSel(); zoomInput.value = Math.round(zoom * 100) + "%"; layout(); };
+  const setView = (v) => { view = v; w.el.classList.toggle("wd-normal", v === "normal" || v === "web"); viewBtns.forEach(([k, b]) => b.classList.toggle("on", k === v)); fit(); layout(); };
 
   // ---------- rulers ----------
   const hruler = el("div", { class: "wd-hruler" }), vruler = el("div", { class: "wd-vruler" });
   const hInner = el("div", { class: "wd-hinner" }), vInner = el("div", { class: "wd-vinner" });
   hruler.append(hInner); vruler.append(vInner);
   const drawH = () => {
-    const z = view === "print" ? zoom : zoom, pw = (view === "print" ? PAGE_W : page.offsetWidth) * z, lm = (view === "print" ? MARGIN_X : 0) * z, rm = pw - lm * 1, parts = [];
-    const textR = pw - lm;
+    const z = view === "print" ? zoom : zoom, pw = (view === "print" ? PAGE_W : page.offsetWidth) * z, lm = (view === "print" ? ML : 0) * z, parts = [];
+    const textR = pw - (view === "print" ? MR : 0) * z;
     parts.push(`<rect x="0" y="0" width="${lm}" height="14" fill="#808080"/><rect x="${lm}" y="0" width="${textR - lm}" height="14" fill="#fff"/><rect x="${textR}" y="0" width="${pw - textR}" height="14" fill="#808080"/>`);
     for (let i = -Math.floor(lm / (12 * z)); (lm + i * 12 * z) <= pw; i++) {
       const x = lm + i * 12 * z; if (x < 0 || x > pw) continue;
@@ -349,9 +586,9 @@ export function openWord(ctx, { path = null } = {}) {
   };
   const drawV = () => {
     if (view !== "print") { vInner.innerHTML = ""; return; }
-    const z = zoom, ph = PAGE_H * z * pageCount(), tm = MARGIN_Y * z, parts = [`<rect x="0" y="0" width="15" height="${ph}" fill="#808080"/><rect x="0" y="${tm}" width="15" height="${ph - tm * 2}" fill="#fff"/>`];
+    const z = zoom, ph = PAGE_H * z * pageCount(), tm = MT * z, bm = MB * z, parts = [`<rect x="0" y="0" width="15" height="${ph}" fill="#808080"/><rect x="0" y="${tm}" width="15" height="${ph - tm - bm}" fill="#fff"/>`];
     for (let i = -Math.floor(tm / (12 * z)); (tm + i * 12 * z) <= ph; i++) {
-      const y = tm + i * 12 * z; if (y < 0) continue; const inw = y >= tm && y <= ph - tm, c = inw ? "#000" : "#fff";
+      const y = tm + i * 12 * z; if (y < 0) continue; const inw = y >= tm && y <= ph - bm, c = inw ? "#000" : "#fff";
       if (i % 8 === 0) { if (i !== 0) parts.push(`<text transform="translate(11 ${y}) rotate(-90)" text-anchor="middle" font-size="${Math.max(7, 9 * Math.min(z, 1.2))}" font-family="Arial" fill="${c}">${Math.abs(i / 8)}</text>`); }
       else if (i % 4 === 0) parts.push(`<rect x="5" y="${y}" width="4" height="1" fill="${c}"/>`); else parts.push(`<rect x="7" y="${y}" width="1" height="1" fill="${c}"/>`);
     }
@@ -362,7 +599,7 @@ export function openWord(ctx, { path = null } = {}) {
     hInner.style.left = pr.left - hr.left + "px"; vInner.style.top = pr.top - vr.top + "px";
   };
   const layout = () => {
-    align(); drawH(); drawV(); syncBars();
+    align(); drawH(); drawV(); syncBars(); placeSel();
   };
 
   // ---------- custom scroll bars (so the browse buttons sit under the vertical one, like Word) ----------
@@ -414,15 +651,13 @@ export function openWord(ctx, { path = null } = {}) {
   };
 
   grip();
-  tb("new", "New", newDocument); tb("open", "Open", openDoc); tb("save", "Save", () => save()); tb("email", "E-mail", () => note("No e-mail program is configured.")); sep();
-  tb("print", "Print", printDoc); tb("preview", "Print Preview", () => note("Print Preview is not available; use Print to open the print dialog.")); tb("spell", "Spelling and Grammar", () => note("The spelling and grammar check is complete.")); sep();
+  tb("new", "New", newDocument); tb("open", "Open", openDoc); tb("save", "Save", () => save()); tb("email", "E-mail", () => mailDoc()); sep();
+  tb("print", "Print", printDoc); tb("preview", "Print Preview", () => printPreview()); tb("spell", "Spelling and Grammar", () => spellCheck()); sep();
   tb(SVG.cut, "Cut", () => run("cut")); tb(SVG.copy, "Copy", () => run("copy")); tb(SVG.paste, "Paste", async () => { try { run("insertText", await ctx.clipboard.getText?.() ?? await navigator.clipboard.readText()); } catch { run("paste"); } });
   tb("painter", "Format Painter", () => { restoreSel(); const s = window.getSelection(), e = s.anchorNode?.parentElement; if (!e) return; const cs = getComputedStyle(e); painter = { name: cs.fontFamily.split(",")[0].replace(/["']/g, ""), size: Math.round(parseFloat(cs.fontSize) * 0.75), color: cs.color, bold: +cs.fontWeight >= 600, italic: cs.fontStyle === "italic", underline: /underline/.test(cs.textDecorationLine) }; page.style.cursor = "copy"; });
   sep();
-  tb(SVG.undo, "Undo", () => run("undo")); dd("Undo list", () => note("Nothing to undo.")); tb(SVG.redo, "Redo", () => run("redo")); dd("Redo list", () => note("Nothing to redo.")); sep();
-  tb("web", "Web Toolbar", () => na("The Web toolbar")); sep();
-  tb("tables", "Tables and Borders", () => na("The Tables and Borders toolbar")); tb("instable", "Insert Table", tableDlg); tb("excel", "Insert Microsoft Excel Worksheet", () => na("Inserting a worksheet")); tb("columns", "Columns", () => na("Columns")); tb("drawing", "Drawing", () => na("The Drawing toolbar")); sep();
-  tb("docmap", "Document Map", () => na("Document Map")); sep();
+  tb(SVG.undo, "Undo", () => run("undo")); tb(SVG.redo, "Redo", () => run("redo")); sep();
+  const tblBtn = tb("instable", "Insert Table", () => tableGrid(tblBtn)); sep();
   const zoomInput = el("input", { class: "wd-cin", type: "text", value: "100%", spellcheck: "false" });
   const zoomBox = el("div", { class: "wd-combo wd-zoom", style: { width: "92px" } }, zoomInput, el("button", { class: "wd-carrow", type: "button", tabindex: "-1" }));
   zoomBox.querySelector("button").addEventListener("mousedown", (e) => e.preventDefault());
@@ -445,7 +680,7 @@ export function openWord(ctx, { path = null } = {}) {
   const aBtns = { l: tb("alignl", "Align Left", () => run("justifyLeft")), c: tb("alignc", "Center", () => run("justifyCenter")), r: tb("alignr", "Align Right", () => run("justifyRight")), j: tb("alignj", "Justify", () => run("justifyFull")) };
   sep();
   tb("numbering", "Numbering", () => run("insertOrderedList")); tb("bullets", "Bullets", () => run("insertUnorderedList")); tb("outdent", "Decrease Indent", () => run("outdent")); tb("indent", "Increase Indent", () => run("indent")); sep();
-  const borders = tb("borders", "Outside Border", () => { for (const b of topBlocks()) b.style.border = b.style.border ? "" : "1px solid #000"; status(); }); dd("Border options", () => na("Border options"));
+  const borders = tb("borders", "Outside Border", () => { for (const b of topBlocks()) b.style.border = b.style.border ? "" : "1px solid #000"; status(); });
   const hi = tb("highlight", "Highlight", () => run("hiliteColor", lastHi)); const hiDd = dd("Highlight color", () => colorMenu(hiDd, (c) => { lastHi = c; run("hiliteColor", c); }));
   const fc = tb("fontcolor", "Font Color", () => run("foreColor", lastFg)); const fcDd = dd("Font color", () => colorMenu(fcDd, (c) => { lastFg = c; run("foreColor", c); }));
   const chevEnd = el("button", { class: "wd-chev wd-chev-end", type: "button", title: "Toolbar Options", text: "»" });
@@ -461,71 +696,66 @@ export function openWord(ctx, { path = null } = {}) {
   // ---------- menus ----------
   const recentDocs = () => (ctx.settings.get("recentFiles") || []).filter((p) => /\.(doc|txt|wdoc)$/i.test(p) && ctx.fs.exists(p)).slice(0, 4);
   const nImg = (n) => ({ label: n });
+  const mailDoc = () => ctx.launch("outlook", { compose: true, subject: docTitle, body: page.innerText.trim() });
+  const printPreview = () => { setView("print"); applyZoomText("Whole Page"); };
   const menus = menuBar({
     File: () => [
       { label: "New...", shortcut: "Ctrl+N", action: newDocument }, { label: "Open...", shortcut: "Ctrl+O", action: openDoc }, { label: "Close", action: closeDoc }, { separator: true },
-      { label: "Save", shortcut: "Ctrl+S", action: () => save() }, { label: "Save As...", action: () => save(true) }, { label: "Save as Web Page...", action: () => na("Save as Web Page") }, { label: "Versions...", disabled: true }, { separator: true },
-      { label: "Web Page Preview", action: () => na("Web Page Preview") }, { separator: true },
-      { label: "Page Setup...", action: () => na("Page Setup") }, { label: "Print Preview", action: () => note("Print Preview is not available; use Print to open the print dialog.") }, { label: "Print...", shortcut: "Ctrl+P", action: printDoc }, { separator: true },
-      { label: "Send To", submenu: [{ label: "Mail Recipient", action: () => note("No e-mail program is configured.") }, { label: "My Documents", action: async () => { const t = DOCS + "/" + (filename ? basename(filename) : docTitle + ".doc"); await ctx.fs.writeFile(t, wordHtml(basename(t), page.innerHTML), { mime: "application/msword" }); } }] },
-      { label: "Properties", action: () => note(`${docTitle}\n\nType: Microsoft Word Document\nLocation: ${filename || "(not saved)"}\nSize: ${page.innerHTML.length} bytes`, "Properties") }, { separator: true },
+      { label: "Save", shortcut: "Ctrl+S", action: () => save() }, { label: "Save As...", action: () => save(true) }, { label: "Save as Web Page...", action: () => save(true, "htm") }, { separator: true },
+      { label: "Page Setup...", action: pageSetupDlg }, { label: "Print Preview", action: printPreview }, { label: "Print...", shortcut: "Ctrl+P", action: printDoc }, { separator: true },
+      { label: "Send To", submenu: [{ label: "Mail Recipient", action: mailDoc }, { label: "My Documents", action: async () => { const t = DOCS + "/" + (filename ? basename(filename) : docTitle + ".doc"); await ctx.fs.writeFile(t, wordHtml(basename(t), page.innerHTML, JSON.stringify(layoutState())), { mime: "application/msword" }); } }] },
+      { label: "Properties", action: () => note(`${docTitle}\n\nType: Microsoft Word Document\nLocation: ${filename || "(not saved)"}\nPages: ${pageCount()}\nSize: ${page.innerHTML.length} bytes`, "Properties") }, { separator: true },
       ...recentDocs().flatMap((p, i) => [{ label: `${i + 1} ${basename(p)}`, action: () => ctx.launch("word", { path: p }) }]), ...(recentDocs().length ? [{ separator: true }] : []),
       { label: "Exit", action: () => w.close() },
     ],
     Edit: () => [
       { label: "Undo", shortcut: "Ctrl+Z", action: () => run("undo") }, { label: "Repeat", shortcut: "Ctrl+Y", action: () => run("redo") }, { separator: true },
-      { label: "Cut", shortcut: "Ctrl+X", action: () => run("cut") }, { label: "Copy", shortcut: "Ctrl+C", action: () => run("copy") }, { label: "Office Clipboard...", action: () => na("The Office Clipboard") }, { label: "Paste", shortcut: "Ctrl+V", action: async () => { try { run("insertText", await navigator.clipboard.readText()); } catch { run("paste"); } } },
-      { label: "Paste Special...", action: () => na("Paste Special") }, { label: "Paste as Hyperlink", disabled: true }, { label: "Clear", submenu: [{ label: "Formats", shortcut: "Ctrl+Shift+Z", action: () => run("removeFormat") }, { label: "Contents", shortcut: "Del", action: () => run("delete") }] },
+      { label: "Cut", shortcut: "Ctrl+X", action: () => run("cut") }, { label: "Copy", shortcut: "Ctrl+C", action: () => run("copy") }, { label: "Paste", shortcut: "Ctrl+V", action: async () => { try { run("insertText", await navigator.clipboard.readText()); } catch { run("paste"); } } },
+      { label: "Clear", submenu: [{ label: "Formats", shortcut: "Ctrl+Shift+Z", action: () => run("removeFormat") }, { label: "Contents", shortcut: "Del", action: () => run("delete") }] },
       { label: "Select All", shortcut: "Ctrl+A", action: () => { page.focus(); document.execCommand("selectAll"); saveSel(); } }, { separator: true },
-      { label: "Find...", shortcut: "Ctrl+F", action: () => showFind("find") }, { label: "Replace...", shortcut: "Ctrl+H", action: () => showFind("replace") }, { label: "Go To...", shortcut: "Ctrl+G", action: gotoDlg }, { separator: true },
-      { label: "Links...", disabled: true }, { label: "Object", disabled: true },
+      { label: "Find...", shortcut: "Ctrl+F", action: () => showFind("find") }, { label: "Replace...", shortcut: "Ctrl+H", action: () => showFind("replace") }, { label: "Go To...", shortcut: "Ctrl+G", action: gotoDlg },
     ],
     View: () => [
-      { label: "Normal", checked: view === "normal", action: () => setView("normal") }, { label: "Web Layout", checked: view === "web", action: () => setView("web") }, { label: "Print Layout", checked: view === "print", action: () => setView("print") }, { label: "Outline", action: () => na("Outline view") }, { separator: true },
-      { label: "Master Document", disabled: true }, { separator: true },
-      { label: "Toolbars", submenu: [{ label: "Standard", checked: true }, { label: "Formatting", checked: true }, { label: "Tables and Borders" }, { label: "Web" }, { label: "Drawing" }] },
-      { label: "Ruler", checked: st.ruler, action: () => { st.ruler = !st.ruler; ctx.settings.set("word", st); w.el.classList.toggle("wd-no-ruler", !st.ruler); } }, { label: "Document Map", action: () => na("Document Map") }, { separator: true },
-      { label: "Header and Footer", action: () => na("Header and Footer") }, { label: "Footnotes", disabled: true }, { label: "Comments", disabled: true }, { separator: true },
-      { label: "Full Screen", action: () => na("Full Screen view") }, { label: "Zoom...", action: zoomDlg },
+      { label: "Normal", checked: view === "normal", action: () => setView("normal") }, { label: "Web Layout", checked: view === "web", action: () => setView("web") }, { label: "Print Layout", checked: view === "print", action: () => setView("print") }, { separator: true },
+      { label: "Ruler", checked: st.ruler, action: () => { st.ruler = !st.ruler; ctx.settings.set("word", st); w.el.classList.toggle("wd-no-ruler", !st.ruler); } }, { separator: true },
+      { label: "Header and Footer...", action: headerFooterDlg }, { label: "Zoom...", action: zoomDlg },
     ],
     Insert: () => [
-      { label: "Break...", action: breakDlg }, { label: "Page Numbers...", action: () => na("Page Numbers") }, { label: "Date and Time...", action: dateDlg }, { label: "AutoText", submenu: [{ label: "Normal", action: () => {} }] }, { label: "Field...", action: () => na("Fields") }, { label: "Symbol...", action: symbolDlg }, { separator: true },
-      { label: "Comment", action: () => na("Comments") }, { label: "Footnote...", action: () => na("Footnotes") }, { label: "Caption...", action: () => na("Captions") }, { label: "Cross-reference...", action: () => na("Cross-references") }, { label: "Index and Tables...", action: () => na("Index and Tables") }, { separator: true },
-      { label: "Picture", submenu: [{ label: "From File...", action: insertPicture }, { label: "Clip Art...", action: () => na("Clip Art") }] }, { label: "Text Box", action: () => na("Text Box") }, { label: "File...", action: async () => { const p = await ctx.dialogs.file({ mode: "open", path: DOCS, title: "Insert File" }); if (p) run("insertText", ctx.fs.readFile(p)); } }, { label: "Object...", action: () => na("Objects") }, { label: "Bookmark...", action: () => na("Bookmarks") }, { separator: true },
+      { label: "Break...", action: breakDlg }, { label: "Page Numbers...", action: pageNumbersDlg }, { label: "Date and Time...", action: dateDlg }, { label: "Symbol...", action: symbolDlg }, { separator: true },
+      { label: "Picture", submenu: [{ label: "From File...", action: insertPicture }, { label: "From Computer...", action: insertPictureFromComputer }] },
+      { label: "File...", action: async () => { const p = await ctx.dialogs.file({ mode: "open", path: DOCS, title: "Insert File" }); if (p) run("insertText", ctx.fs.readFile(p)); } }, { separator: true },
       { label: "Hyperlink", shortcut: "Ctrl+K", action: insertLink },
     ],
     Format: () => [
-      { label: "Font...", action: fontDlg }, { label: "Paragraph...", action: paraDlg }, { label: "Bullets and Numbering...", action: () => run("insertUnorderedList") }, { label: "Borders and Shading...", action: () => na("Borders and Shading") }, { label: "Columns...", action: () => na("Columns") }, { label: "Tabs...", action: () => na("Tabs") }, { label: "Drop Cap...", action: () => na("Drop Cap") }, { label: "Text Direction...", action: () => na("Text Direction") },
-      { label: "Change Case...", submenu: [{ label: "Sentence case.", action: () => changeCase("sentence") }, { label: "lowercase", action: () => changeCase("lower") }, { label: "UPPERCASE", action: () => changeCase("upper") }, { label: "Title Case", action: () => changeCase("title") }, { label: "tOGGLE cASE", action: () => changeCase("toggle") }] }, { separator: true },
-      { label: "Background", submenu: [{ label: "No Fill", action: () => { page.style.background = ""; } }, { label: "Fill Effects...", action: () => na("Fill Effects") }] }, { label: "Theme...", action: () => na("Themes") }, { label: "Frames", submenu: [{ label: "New Frame", disabled: true }] }, { label: "AutoFormat...", action: () => na("AutoFormat") }, { label: "Style Gallery...", action: () => na("Style Gallery") }, { label: "Style...", action: () => na("Styles") }, { label: "Object...", disabled: true },
+      { label: "Font...", action: fontDlg }, { label: "Paragraph...", action: paraDlg }, { label: "Bullets", action: () => run("insertUnorderedList") }, { label: "Numbering", action: () => run("insertOrderedList") }, { separator: true },
+      { label: "Change Case", submenu: [{ label: "Sentence case.", action: () => changeCase("sentence") }, { label: "lowercase", action: () => changeCase("lower") }, { label: "UPPERCASE", action: () => changeCase("upper") }, { label: "Title Case", action: () => changeCase("title") }, { label: "tOGGLE cASE", action: () => changeCase("toggle") }] }, { separator: true },
+      { label: "Picture...", disabled: !selImg, action: pictureDlg },
     ],
     Tools: () => [
-      { label: "Spelling and Grammar...", shortcut: "F7", action: () => note("The spelling and grammar check is complete.") }, { label: "Language", submenu: [{ label: "English (U.S.)", checked: true }] }, { label: "Word Count...", action: wordCount }, { label: "AutoSummarize...", action: () => na("AutoSummarize") }, { label: "Merge Documents...", action: () => na("Merge Documents") }, { label: "Protect Document...", action: () => na("Document protection") }, { separator: true },
-      { label: "Online Collaboration", submenu: [{ label: "Meet Now", disabled: true }] }, { separator: true },
-      { label: "Mail Merge...", action: () => na("Mail Merge") }, { label: "Envelopes and Labels...", action: () => na("Envelopes and Labels") }, { label: "Letter Wizard...", action: () => na("Letter Wizard") }, { separator: true },
-      { label: "Macro", submenu: [{ label: "Macros...", shortcut: "Alt+F8", action: () => na("Macros") }, { label: "Record New Macro...", action: () => na("Macro recording") }] }, { label: "Templates and Add-Ins...", action: () => na("Templates and Add-Ins") }, { label: "Customize...", action: () => na("Customize") }, { label: "Options...", action: () => na("Options") },
+      { label: "Spelling and Grammar...", shortcut: "F7", action: spellCheck }, { label: "Word Count...", action: wordCount },
     ],
     Table: () => [
-      { label: "Draw Table", action: () => na("Draw Table") }, { label: "Insert", submenu: [{ label: "Table...", action: tableDlg }, { label: "Columns to the Left", action: () => tableOp("colLeft") }, { label: "Columns to the Right", action: () => tableOp("colRight") }, { label: "Rows Above", action: () => tableOp("rowAbove") }, { label: "Rows Below", action: () => tableOp("rowBelow") }] },
+      { label: "Insert", submenu: [{ label: "Table...", action: tableDlg }, { label: "Columns to the Left", action: () => tableOp("colLeft") }, { label: "Columns to the Right", action: () => tableOp("colRight") }, { label: "Rows Above", action: () => tableOp("rowAbove") }, { label: "Rows Below", action: () => tableOp("rowBelow") }] },
       { label: "Delete", submenu: [{ label: "Table", action: () => tableOp("delTable") }, { label: "Columns", action: () => tableOp("delCol") }, { label: "Rows", action: () => tableOp("delRow") }] },
       { label: "Select", submenu: [{ label: "Table", action: () => tableOp("selTable") }, { label: "Row", action: () => tableOp("selRow") }, { label: "Cell", action: () => tableOp("selCell") }] }, { separator: true },
-      { label: "Merge Cells", disabled: true }, { label: "Split Cells...", disabled: true }, { separator: true }, { label: "Table AutoFormat...", action: () => na("Table AutoFormat") }, { label: "AutoFit", disabled: true }, { label: "Heading Rows Repeat", disabled: true }, { label: "Convert", disabled: true }, { label: "Sort...", action: () => na("Sort") }, { label: "Formula...", action: () => na("Formula") }, { label: "Hide Gridlines", action: () => page.classList.toggle("wd-nogrid") }, { separator: true }, { label: "Table Properties...", disabled: true },
+      { label: "Merge Cells", action: mergeCells }, { label: "Split Cells", action: splitCell }, { separator: true },
+      { label: "Table AutoFormat...", action: autoFormatDlg }, { label: "AutoFit to Window", action: autoFit }, { label: "Hide Gridlines", checked: page.classList.contains("wd-nogrid"), action: () => page.classList.toggle("wd-nogrid") },
     ],
-    Window: () => [{ label: "New Window", action: () => ctx.launch("word") }, { label: "Arrange All", disabled: true }, { label: "Split", disabled: true }, { separator: true }, { label: `1 ${docTitle}`, checked: true }],
+    Window: () => [{ label: "New Window", action: () => ctx.launch("word") }, { separator: true }, { label: `1 ${docTitle}`, checked: true }],
     Help: [
-      { label: "Microsoft Word Help", shortcut: "F1", action: () => note("Use the menus and toolbars to create and format your document.", "Microsoft Word Help") }, { label: "Show the Office Assistant", action: () => na("The Office Assistant") }, { label: "What's This?", shortcut: "Shift+F1", action: () => na("What's This?") }, { separator: true },
-      { label: "Office on the Web", action: () => note("An internet connection is required.") }, { separator: true }, { label: "Detect and Repair...", action: () => na("Detect and Repair") }, { label: "About Microsoft Word", action: () => ctx.dialogs.message("Microsoft® Word 2000\n\nVersion 9.0.2812\nCopyright © 1983-1999 Microsoft Corporation. All rights reserved.\n\nThis is a browser re-creation for the Windows2000 simulator.", { title: "About Microsoft Word", icon: "word" }) },
+      { label: "Microsoft Word Help", shortcut: "F1", action: () => note("Use the menus and toolbars to create and format your document.", "Microsoft Word Help") }, { separator: true },
+      { label: "About Microsoft Word", action: () => ctx.dialogs.message("Microsoft® Word 2000\n\nVersion 9.0.2812\nCopyright © 1983-1999 Microsoft Corporation. All rights reserved.\n\nThis is a browser re-creation for the Windows2000 project.", { title: "About Microsoft Word", icon: "info" }) },
     ],
   });
   menus.prepend(el("span", { class: "wd-mgrip" }));
   const mdiClose = el("button", { class: "wd-mdi-close", type: "button", title: "Close Window", "aria-label": "Close Window", text: "×" });
   mdiClose.addEventListener("click", () => closeDoc());
   menus.append(mdiClose);
-  async function closeDoc() { if (await discard()) { page.innerHTML = "<p><br></p>"; filename = null; saved = page.innerHTML; setTitleFromState(); status(); } }
+  async function closeDoc() { if (await discard()) { page.innerHTML = "<p><br></p>"; filename = null; saved = snap(); setTitleFromState(); status(); } }
 
   // ---------- views, status ----------
-  const viewBtns = [["normal", "Normal View"], ["web", "Web Layout View"], ["print", "Print Layout View"], ["outline", "Outline View"]].map(([k, t]) => {
-    const b = el("button", { class: "wd-vb " + k, type: "button", title: t, "aria-label": t }); b.addEventListener("click", () => (k === "outline" ? na("Outline view") : setView(k))); return [k, b];
+  const viewBtns = [["normal", "Normal View"], ["web", "Web Layout View"], ["print", "Print Layout View"]].map(([k, t]) => {
+    const b = el("button", { class: "wd-vb " + k, type: "button", title: t, "aria-label": t }); b.addEventListener("click", () => setView(k)); return [k, b];
   });
   const fields = { page: el("div", { class: "wd-sp", style: { width: "66px" }, text: "Page 1" }), sec: el("div", { class: "wd-sp", style: { width: "58px" }, text: "Sec 1" }), pg: el("div", { class: "wd-sp", style: { width: "62px" }, text: "1/1" }), at: el("div", { class: "wd-sp", style: { width: "78px" }, text: 'At 1"' }), ln: el("div", { class: "wd-sp", style: { width: "54px" }, text: "Ln 1" }), col: el("div", { class: "wd-sp", style: { width: "54px" }, text: "Col 1" }) };
   const mode = (t) => { const d = el("div", { class: "wd-sp wd-mode", text: t, title: t }); d.addEventListener("dblclick", () => { if (t === "OVR") { overwrite = !overwrite; d.classList.toggle("on", overwrite); } else d.classList.toggle("on"); }); return d; };
@@ -539,7 +769,7 @@ export function openWord(ctx, { path = null } = {}) {
       if (!rect) { const e = s.anchorNode.nodeType === 1 ? s.anchorNode : s.anchorNode.parentElement; rect = e.getBoundingClientRect(); }
       const y = (rect.top - pr.top) / zoom; pg = Math.max(1, Math.min(pc, Math.floor(y / PAGE_H) + 1));
       atIn = Math.max(0, (y - (pg - 1) * PAGE_H) / 96); const lh = (parseFloat(getComputedStyle(page).fontSize) || 16) * 1.15;
-      ln = Math.max(1, Math.round((y - (pg - 1) * PAGE_H - MARGIN_Y) / lh) + 1);
+      ln = Math.max(1, Math.round((y - (pg - 1) * PAGE_H - MT) / lh) + 1);
       col = (s.anchorNode.nodeType === 3 ? s.anchorOffset : 0) + 1;
       const e = s.anchorNode.nodeType === 1 ? s.anchorNode : s.anchorNode.parentElement; const cs = getComputedStyle(e);
       const pt = Math.round(parseFloat(cs.fontSize) * 0.75), name = cs.fontFamily.split(",")[0].replace(/["']/g, "");
@@ -563,7 +793,9 @@ export function openWord(ctx, { path = null } = {}) {
 
   // ---------- events ----------
   document.addEventListener("selectionchange", () => { if (!w.closed && inPage(window.getSelection().anchorNode)) { saveSel(); status(); } });
-  page.addEventListener("input", () => { fixSizes(); status(); syncBars(); drawV(); });
+  page.addEventListener("input", () => { fixSizes(); if (selImg && !selImg.isConnected) selectImg(null); fit(); status(); syncBars(); drawV(); });
+  page.addEventListener("click", (e) => { selectImg(e.target.tagName === "IMG" && page.contains(e.target) ? e.target : null); });
+  page.addEventListener("dblclick", (e) => { if (e.target.tagName === "IMG") { selectImg(e.target); pictureDlg(); } });
   page.addEventListener("keyup", status);
   page.addEventListener("mouseup", () => {
     saveSel(); status();
@@ -575,20 +807,35 @@ export function openWord(ctx, { path = null } = {}) {
   });
   page.addEventListener("keydown", (e) => {
     if (overwrite && e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) { const s = window.getSelection(); if (s.isCollapsed && s.anchorNode?.nodeType === 3 && s.anchorOffset < s.anchorNode.nodeValue.length) s.modify("extend", "forward", "character"); }
-    if (e.key === "Tab") { e.preventDefault(); document.execCommand("insertText", false, "\t"); }
+    if (e.key === "Tab") {
+      e.preventDefault();
+      const c = curCell();
+      if (c) {
+        const cells = [...c.closest("table").querySelectorAll("td,th")], i = cells.indexOf(c) + (e.shiftKey ? -1 : 1);
+        if (i >= cells.length) { tableOp("rowBelow"); const t = c.closest("table"), nc = t.rows[t.rows.length - 1].cells[0]; const r = document.createRange(); r.selectNodeContents(nc); r.collapse(true); const sl = window.getSelection(); sl.removeAllRanges(); sl.addRange(r); saveSel(); fit(); }
+        else if (i >= 0) { const r = document.createRange(); r.selectNodeContents(cells[i]); const sl = window.getSelection(); sl.removeAllRanges(); sl.addRange(r); saveSel(); }
+      } else document.execCommand("insertText", false, "\t");
+    }
   });
   w.el.addEventListener("keydown", (e) => {
-    if (!e.ctrlKey || e.altKey) { if (e.key === "F7") { e.preventDefault(); note("The spelling and grammar check is complete."); } return; }
+    if (!e.ctrlKey || e.altKey) { if (e.key === "F7") { e.preventDefault(); spellCheck(); } return; }
     const k = e.key.toLowerCase(), map = { n: newDocument, o: openDoc, s: () => save(), p: printDoc, f: () => showFind("find"), h: () => showFind("replace"), g: gotoDlg, k: insertLink, l: () => run("justifyLeft"), e: () => run("justifyCenter"), r: () => run("justifyRight"), j: () => run("justifyFull") };
     if (map[k]) { e.preventDefault(); map[k](); }
   });
-  page.addEventListener("paste", () => setTimeout(() => { fixSizes(); status(); }));
+  page.addEventListener("paste", (e) => {
+    const f = [...(e.clipboardData?.files || [])].find((x) => /^image\//.test(x.type));
+    if (f) { e.preventDefault(); const fr = new FileReader(); fr.onload = () => addImage(fr.result); fr.readAsDataURL(f); return; }
+    setTimeout(() => { fixSizes(); fit(); status(); });
+  });
+  page.addEventListener("drop", (e) => { const f = [...(e.dataTransfer?.files || [])].find((x) => /^image\//.test(x.type)); if (f) { e.preventDefault(); const fr = new FileReader(); fr.onload = () => addImage(fr.result); fr.readAsDataURL(f); } });
+  scroller.addEventListener("pointerdown", (e) => { if (!layer.contains(e.target) && e.target.tagName !== "IMG" && selImg) selectImg(null); });
   new ResizeObserver(() => { layout(); }).observe(scroller);
-  new ResizeObserver(() => { syncBars(); drawV(); }).observe(page);
+  new ResizeObserver(() => { syncBars(); drawV(); placeSel(); }).observe(page);
   w.onClose = async () => { if (await discard()) { findWin && !findWin.closed && findWin.close(); return true; } return false; };
 
+  ready = true; applyPageSetup();
   if (path && ctx.fs.exists(path)) loadPath(path);
-  saved = page.innerHTML; setTitleFromState();
+  saved = snap(); setTitleFromState();
   setView(st.view === "normal" || st.view === "web" ? st.view : "print"); w.el.classList.toggle("wd-no-ruler", !st.ruler); setZoom(1);
   queueMicrotask(() => { page.focus(); const r = document.createRange(); r.selectNodeContents(page.firstChild || page); r.collapse(true); const s = window.getSelection(); s.removeAllRanges(); s.addRange(r); saveSel(); status(); });
   return w;

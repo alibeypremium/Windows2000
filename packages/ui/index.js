@@ -231,7 +231,7 @@ export function fileIcon(file) {
   if (["sys", "ini", "dll", "cfg", "inf"].includes(ext)) return "sysFile";
   if (["htm", "html", "url"].includes(ext)) return "ie";
   if (["zip", "rar", "7z"].includes(ext)) return "winrar";
-  if (ext === "doc") return "worddoc";
+  if (ext === "doc" || ext === "docx") return "worddoc";
   if (["rtf", "wdoc"].includes(ext)) return "wordpad";
   if (["txt", "log", "md", "js", "json", "css", "csv"].includes(ext))
     return "textFile";
@@ -1078,6 +1078,7 @@ export class DialogService {
     path = DOCS,
     name = "",
     filter = null,
+    types = null,
     title,
     normalizeName = null,
   } = {}) {
@@ -1111,11 +1112,29 @@ export class DialogService {
           w.close();
           resolve(value);
         };
+      const typeSel = types
+        ? el("select", { "aria-label": "Files of type" }, ...types.map(([label]) => el("option", { text: label })))
+        : null;
+      if (typeSel) {
+        if (mode === "save" && name) {
+          const i = types.findIndex(([, e]) => e && e.includes(extension(name)));
+          if (i >= 0) typeSel.selectedIndex = i;
+        }
+        typeSel.addEventListener("change", () => {
+          const exts = types[typeSel.selectedIndex]?.[1];
+          if (mode === "save" && exts && input.value) input.value = input.value.replace(/\.[^.\\/]*$/, "") + "." + exts[0];
+          render();
+        });
+      }
       const render = () => {
         address.value = folder;
         listing.replaceChildren();
         for (const n of this.fs.list(folder)) {
           if (n.type === "file" && filter && !filter(n)) continue;
+          if (n.type === "file" && typeSel && mode === "open") {
+            const exts = types[typeSel.selectedIndex]?.[1];
+            if (exts && !exts.includes(extension(n.name))) continue;
+          }
           const b = button(
             [icon(fileIcon(n)), n.name],
             () => {
@@ -1232,13 +1251,14 @@ export class DialogService {
           field("File name:", input),
           field(
             "Files of type:",
-            el(
-              "select",
-              {},
-              el("option", {
-                text: filter ? "Supported files" : "All Files (*.*)",
-              }),
-            ),
+            typeSel ||
+              el(
+                "select",
+                {},
+                el("option", {
+                  text: filter ? "Supported files" : "All Files (*.*)",
+                }),
+              ),
           ),
           el(
             "div",

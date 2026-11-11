@@ -562,3 +562,6 @@ Layouts of the Bookmarks, History, Page Info and Preferences windows follow Nets
 
 ## Outlook Express mail simulation
 Menus and dialogs still come from msoeres.dll; the mail server, inbox messages, attachments, rules window and send/receive dialog are my own local simulation (all senders and texts are fictional, written for this project). The paperclip icon `assets/ui/oe/clip16.png` is drawn by me, not the original.
+
+## Word additions (tables, pictures, header/footer, spell check, .docx)
+Menus and dialogs are my own reconstruction in the Word 2000 style. The spelling dictionary assets/word/dict-en.txt is generated from the open-source `wordfreq` English frequency list (Apache-2.0 code, CC-BY-SA data), filtered against the hunspell en_US stem list so typos are excluded. The .docx writer/reader (packages/accessories/word-io.js) is written from the public OOXML specification.
