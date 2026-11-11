@@ -70,6 +70,7 @@ const icons = {
   winrar: "winrar",
   wintools: "wintools",
   nvidia: "nvidia",
+  pdffile: "pdffile",
   rarfile: "rarfile",
   word: "word",
   worddoc: "worddoc",
@@ -233,6 +234,7 @@ export function fileIcon(file) {
   if (["sys", "ini", "dll", "cfg", "inf"].includes(ext)) return "sysFile";
   if (["htm", "html", "url"].includes(ext)) return "ie";
   if (["zip", "rar", "7z"].includes(ext)) return "winrar";
+  if (ext === "pdf" || file.mime === "application/pdf") return "pdffile";
   if (ext === "doc" || ext === "docx") return "worddoc";
   if (["rtf", "wdoc"].includes(ext)) return "wordpad";
   if (["txt", "log", "md", "js", "json", "css", "csv"].includes(ext))
