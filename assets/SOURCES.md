@@ -604,3 +604,6 @@ Contacts, organisations, replies and display pictures (packages/internet/msn-dat
 
 ## Türkçe dil katmanı
 Arayüz metinlerinin Türkçe karşılıkları bu projeye özgü olarak yazılmıştır (packages/ui/tr/*.js); Windows 2000 Türkçe sürümündeki terimler esas alınmıştır.
+
+## assets/help-tr (Turkish help layer)
+Original work (Turkish translations of the Windows 2000 help text in assets/help); compiled from scripts/help-tr/*.txt by scripts/build-help-tr.py.

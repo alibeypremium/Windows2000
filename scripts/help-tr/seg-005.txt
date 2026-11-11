@@ -1,0 +1,282 @@
+5073|[[Boyut]] kutusuna HyperTerminal penceresi için bir punto boyutu yazın veya seçin (pencereyi büyütmek için büyük, küçültmek için küçük sayılar kullanın) ve ardından [[Tamam]]'a tıklayın.
+5074|[[Görünüm]] menüsünde [[Hizala]]'ya tıklayın.
+5075|HyperTerminal'in aramayı beklemesini sağlama
+5076|HyperTerminal'in aramayı beklemesini sağlamak için
+5077|[[Ara]] menüsünde [[Arama Bekle]]'ye tıklayın.
+5078|Arama beklemeyi durdurmak için [[Ara]] menüsünde [[Beklemeyi Durdur]]'a tıklayın.
+5079|HyperTerminal, gözetimsizken aramaları otomatik olarak karşılamaz; bu nedenle sizi arayan kullanıcıyla el ile etkileşim kurmanız gerekir.
+5080|HyperTerminal'e genel bakış
+5081|HyperTerminal, modeminizi veya bir [[null modem kablosunu]] kullanarak diğer bilgisayarlara, Internet telnet sitelerine, ilan tahtası sistemlerine (BBS), çevrimiçi hizmetlere ve ana bilgisayarlara bağlanmak için kullanabileceğiniz bir programdır.
+5082|Uzak bilgisayarlardaki bilgilere erişmek için HyperTerminal'i bir BBS ile kullanmak, World Wide Web'in yaygınlaşmasıyla daha az yaygın hale gelmiş olsa da HyperTerminal, donanımınızla iletişim kurmak veya diğer sitelerle bağlantınızı incelemek için hâlâ yararlı bir araçtır.
+5083|HyperTerminal, bağlantınızın diğer ucundaki bilgisayara veya hizmete giden ve oradan gelen iletileri kaydeder. Bu nedenle modeminizi kurarken ve kullanırken değerli bir sorun giderme aracı olarak hizmet edebilir. Modeminizin doğru bağlandığından emin olmak veya modem ayarlarınızı görüntülemek için HyperTerminal üzerinden komut gönderebilir ve sonuçları denetleyebilirsiniz. HyperTerminal'in geriye kaydırma işlevi, ekrandan kayıp giden alınan metne bakmanızı sağlar.
+5084|Uluslararası bir arama veya başka bir bağlantı kurmakta zorlanıyorsanız modeminizi el ile çevirmek için HyperTerminal'i kullanabilirsiniz. Böylece aramanın tamamlanması için bir operatörle konuşmanız gerekirse telefonunuzu kullanarak arama yapabilirsiniz.
+5085|Taşınabilir bilgisayarınızı bir ağa kurma işlemine girmeden yalnızca bir seri bağlantı noktası kullanarak büyük dosyaları bir bilgisayardan taşınabilir bilgisayarınıza aktarmak için HyperTerminal'i kullanabilirsiniz.
+5086|Programcıysanız, kaynak kodda uzak bir terminalden hata ayıklamaya yardımcı olması için HyperTerminal'i kullanabilirsiniz. Ve elbette eski karakter tabanlı bilgisayarlarla iletişim kurmak için HyperTerminal'e ihtiyacınız vardır.
+5123|[[Sık Kullanılanlar]] menüsünde [[Sık Kullanılanlar'a Ekle]]'ye tıklayın.
+6707|Paint'e genel bakış
+6708|Paint, basit veya ayrıntılı çizimler oluşturmak için kullanabileceğiniz bir çizim aracıdır. Bu çizimler siyah beyaz veya renkli olabilir ve bit eşlem dosyası olarak kaydedilebilir. Çiziminizi yazdırabilir, masaüstü arka planınız olarak kullanabilir veya başka bir belgeye yapıştırabilirsiniz. Paint'i taranmış fotoğrafları görüntülemek ve düzenlemek için de kullanabilirsiniz.
+6709|Sprey etkisi oluşturma
+6710|Sprey etkisi oluşturmak için
+6711|Araç kutusunda düğmesine tıklayın.
+6712|Araç kutusunun altında bir sprey boyutuna tıklayın.
+6713|Sprey yapmak için sol fare düğmesini basılı tutun ve işaretçiyi sürükleyin.
+6714|Sol fare düğmesini basılı tutup işaretçiyi sürüklediğinizde [[ön plan rengi]] kullanılır. Sağ fare düğmesini basılı tutup işaretçiyi sürükleyerek [[arka plan rengini]] kullanabilirsiniz.
+6715|Renk yerine siyah beyaz kullanma
+6716|Renk yerine siyah beyaz kullanmak için
+6717|[[Resim]] menüsünde [[Öznitelikler]]'e tıklayın.
+6718|[[Renkler]] altında [[Siyah beyaz]]'a tıklayın.
+6719|Yeniden renkliye dönerseniz yalnızca yeni çalışma renkli olur.
+6720|Fırça ile boyama
+6721|Fırça ile boyamak için
+6722|Araç kutusunun altında bir fırça şekline tıklayın.
+6723|Boyamak için sol fare düğmesini basılı tutun ve işaretçiyi sürükleyin.
+6724|Mevcut bir çizginin rengini değiştirme
+6725|Mevcut bir çizginin rengini değiştirmek için
+6726|Renk kutusunda farklı bir renge tıklayın.
+6727|İşaretçiyi değiştirmek istediğiniz çizgiye değecek şekilde konumlandırın ve ardından sol fare düğmesine tıklayın.
+6728|Çizgi bir şeklin parçasıysa, bağlantılı dikey ve yatay çizgiler de yeni renge dönüşür.
+6729|Yalnızca çizgi rengini değiştirdiğinizden ve çevreleyen alanı değiştirmediğinizden emin olmak için [[Görünüm]] menüsüne tıklayıp [[Yakınlaştır]]'ı gösterip ardından [[Büyük Boyut]] veya [[Özel]]'e tıklayarak resmi daha büyük boyuta yakınlaştırabilirsiniz.
+6730|Resminizin boyutunu değiştirme
+6731|Resminizin boyutunu değiştirmek için
+6732|[[Birimler]] altında genişlik ve yükseklik için kullanmak istediğiniz ölçü birimine tıklayın.
+6733|Ölçüleri [[Genişlik]] ve [[Yükseklik]] kutularına yazın.
+6734|Resminizin sağ alt köşesinde ve alt ile sağ kenarları boyunca bulunan resim yeniden boyutlandırma tutamaçlarını sürükleyerek de resminizi yeniden boyutlandırabilirsiniz.
+6735|Geçerli resminiz yeni boyuttan büyükse, resim daha küçük alana sığması için sağ taraftan ve alttan kesilir. Geçerli resminiz yeni boyuttan küçükse, ek alan seçili arka plan rengiyle doldurulur.
+6736|Resmin tamamını silme
+6737|Resmin tamamını silmek için
+6738|Resmin herhangi bir bölümü seçiliyse, seçili alanın dışına tıklayın.
+6739|[[Resim]] menüsünde [[Resmi Temizle]]'ye tıklayın.
+6740|Temizlenen alanı doldurmak için geçerli [[arka plan rengi]] kullanılır.
+6741|Yaygın görevler: Paint
+6742|Paint kullanırken aşağıdaki görevler sık gerçekleştirilir.
+6743|[[Düz çizgi çizme]]
+6744|Mükemmel yatay, dikey veya çapraz çizgiler çizin.
+6745|[[Bir alanı renkle doldurma]]
+6746|Grafiğinizin alanlarını doldurmak için ön plan ve arka plan renklerini kullanın.
+6747|[[Paint resmini masaüstü arka planı olarak ayarlama]]
+6748|Paint'te oluşturduğunuz bir resmi masaüstünüzün arka planı olarak kullanın.
+6749|[[Renkte ince ayarlar yapmak için kılavuz çizgilerini görüntüleme]]
+6750|Kılavuz çizgilerini görüntüleyerek bir resmin tasarımında ve renginde ayrıntılı değişiklikleri kolayca yapabilirsiniz.
+6751|Eğri çizgi çizme
+6752|Eğri çizgi çizmek için
+6753|Araç kutusunun altında bir çizgi genişliğine tıklayın.
+6754|İşaretçiyi sürükleyerek düz bir çizgi çizin.
+6755|Sayfada eğrinin bir yayının olmasını istediğiniz yere tıklayın ve ardından eğriyi ayarlamak için sol fare düğmesini basılı tutup işaretçiyi sürükleyin. Fare düğmesini bırakın ve ikinci bir yay için bu adımı yineleyin. Her çizgi için yalnızca iki eğri oluşturabilirsiniz.
+6756|Tıklayarak [[ön plan rengiyle]] veya sağ tıklayarak [[arka plan rengiyle]] çizebilirsiniz.
+6757|Özel renkler oluşturma
+6758|Özel renkler oluşturmak için
+6759|Renk kutusunda değiştirmek istediğiniz renge tıklayın.
+6760|[[Renkler]] menüsünde [[Renkleri Düzenle]]'ye tıklayın.
+6761|[[Özel Renkleri Tanımla]]'ya tıklayın.
+6762|[[Ton]] ve doygunluğu ([[Doy]]) değiştirmek için renk örneğine tıklayın ve ardından parlaklığı ([[Par]]) değiştirmek için renk geçişindeki kaydırıcıyı hareket ettirin.
+6763|[[Özel Renklere Ekle]]'ye ve ardından [[Tamam]]'a tıklayın.
+6764|Resmin bir bölümünü kopyalama ve yapıştırma
+6765|Resmin bir bölümünü kopyalamak ve yapıştırmak için
+6766|Araç kutusunda dikdörtgen bir alanı kopyalamak ve yapıştırmak için düğmesine tıklayın veya serbest biçimli bir alanla çalışmak için düğmesine tıklayın.
+6767|Kopyalamak istediğiniz alanı tanımlamak için sol fare düğmesini basılı tutun ve işaretçiyi sürükleyin.
+6768|Bir yapıştırma yöntemi seçin:
+6769|[[Opak]] bir arka plan uygulamak için düğmesine tıklayın.
+6770|[[Saydam]] bir arka plan uygulamak için düğmesine tıklayın.
+6771|Seçimi yeni bir konuma sürükleyin.
+6772|Metin aracı seçiliyken grafik yapıştıramazsınız.
+6773|Nesneyi yeni bir konuma sürüklerken CTRL tuşunu basılı tutarak bir nesnenin birden çok kopyasını yapıştırabilirsiniz. Gerektiği kadar yineleyin.
+6774|Seçim kutusunun dışına tıklayarak seçim kutusunu kaldırabilirsiniz.
+6775|Resmin bir bölümünü seçme
+6776|Resmin bir bölümünü seçmek için
+6777|Araç kutusunda dikdörtgen bir alan seçmek için düğmesine tıklayın veya serbest biçimli bir alanla çalışmak için düğmesine tıklayın.
+6778|Dikdörtgen araç, resminizde taşımak veya değiştirmek istediğiniz düz kenarlı alanları tanımlamanızı sağlar.
+6779|Serbest biçimli araç, resmin değiştirmek istediğiniz tam alanlarını tanımlamanızı sağlar. Bir şekli izleyebilir, resmin başka bir alanına sürükleyebilir, ayrı olarak döndürebilir veya kaldırabilirsiniz.
+6780|Büyük bir alanı silme
+6781|Büyük bir alanı silmek için
+6782|Araç kutusunda dikdörtgen bir alanı silmek için düğmesine tıklayın veya serbest biçimli bir alanla çalışmak için düğmesine tıklayın.
+6783|Silmek istediğiniz alanı seçmek için sol fare düğmesini basılı tutun ve işaretçiyi sürükleyin.
+6784|Silgi rengi, araç çubuğunun altındaki renk kutusunda gösterilen [[arka plan rengiyle]] aynıdır. Silmek istediğiniz renk geçerli arka plan renginden farklıysa renk kutusunda bir renge sağ tıklayın.
+6785|[[Düzen]] menüsünde [[Seçimi Temizle]]'ye tıklayın.
+6786|Küçük bir alanı silme
+6787|Küçük bir alanı silmek için
+6788|Araç kutusunun altında bir silgi boyutuna tıklayın.
+6789|Silmek istediğiniz renk geçerli arka plan renginden farklıysa renk kutusunda bir renge sağ tıklayın.
+6790|Sol fare düğmesini basılı tutun ve işaretçiyi silmek istediğiniz alanın üzerinde sürükleyin.
+6791|Geçerli [[arka plan rengi]] silgi rengidir. Renk kutusunda başka bir renge sağ tıklayarak arka plan rengini değiştirebilirsiniz.
+6792|Bir alanı veya nesneyi renkle doldurma
+6793|Bir alanı veya nesneyi renkle doldurmak için
+6794|İstediğiniz renk geçerli [[ön plan renginden]] veya [[arka plan renginden]] farklıysa, renk kutusunda bir renge tıklayın veya sağ tıklayın.
+6795|Doldurmak istediğiniz alana veya nesneye tıklayın veya sağ tıklayın.
+6796|Doldurmak istediğiniz şeklin kenarlığında kopukluklar varsa, dolgu rengi çizim alanının geri kalanına yayılır. [[Görünüm]] menüsüne tıklayıp [[Yakınlaştır]]'ı gösterip ardından [[Büyük Boyut]] veya [[Özel]]'e tıklayarak açıklıkları bulabilir ve kapatabilirsiniz.
+6797|Tıklayarak ön plan rengiyle veya sağ tıklayarak arka plan rengiyle doldurabilirsiniz.
+6798|Resmi veya nesneyi çevirme ya da döndürme
+6799|Resmi veya nesneyi çevirmek ya da döndürmek için
+6800|Araç kutusunda dikdörtgen bir alan seçmek için düğmesine veya serbest biçimli bir alan seçmek için düğmesine tıklayın.
+6801|Sol fare düğmesini basılı tutun ve çevirmek veya döndürmek istediğiniz öğenin çevresine bir kutu sürükleyin.
+6802|Araç kutusunun altında aşağıdakilerden birini seçin:
+6803|[[Resim]] menüsünde [[Çevir/Döndür]]'e tıklayın.
+6804|[[Çevir veya döndür]] altındaki seçeneklerden birine tıklayın.
+6805|Serbest biçimli çizgi çizme
+6806|Serbest biçimli çizgi çizmek için
+6807|Çizgiyi çizmek için sol fare düğmesini basılı tutun ve işaretçiyi sürükleyin.
+6808|Kılavuz çizgilerini görüntüleme
+6809|Kılavuz çizgilerini görüntülemek için
+6810|[[Görünüm]] menüsünde [[Yakınlaştır]]'ı gösterin ve ardından [[Özel]]'e tıklayın.
+6811|[[Yakınlaştırma]] altında [[%400]], [[%600]] veya [[%800]]'e ve ardından [[Tamam]]'a tıklayın.
+6812|[[Görünüm]] menüsünde [[Yakınlaştır]]'ı gösterin ve ardından [[Kılavuzu Göster]]'e tıklayın.
+6813|3. adımı yineleyip [[Kılavuzu Göster]] onay işaretini kaldırarak veya [[Görünüm]]'e tıklayıp [[Yakınlaştır]]'ı gösterip ardından [[Normal Boyut]]'a tıklayarak kılavuz çizgilerini kaldırabilirsiniz.
+6814|Geçerli resme bit eşlem ekleme
+6815|Geçerli resme bit eşlem eklemek için
+6816|Araç kutusunda düğmesine tıklayın ve ardından bit eşlem için bir alan tanımlamak üzere işaretçiyi sürükleyin.
+6817|[[Düzen]] menüsünde [[Şuradan Yapıştır]]'a tıklayın.
+6818|Eklemek istediğiniz bit eşlem dosyasını bulun ve çift tıklayın.
+6819|Sol fare düğmesini basılı tutun ve bit eşlemi istediğiniz yere sürükleyin, ardından seçimin dışına tıklayın.
+6820|Düz çizgi çizmek için
+6821|Sürüklerken SHIFT tuşunu basılı tutarak mükemmel yatay, dikey veya 45 derecelik çapraz çizgi çizebilirsiniz.
+6822|Bir alandan veya nesneden diğerine renk kopyalama
+6823|Bir alandan veya nesneden diğerine renk kopyalamak için
+6824|Kopyalamak istediğiniz rengi içeren alana tıklayın.
+6825|Yeni rengi istediğiniz nesneye veya alana tıklayın.
+6826|Damlalık aracıyla renk kopyalamak ön plan renginizi değiştirir.
+6827|Damlalık aracıyla sağ tıklayarak renk kopyalarsanız [[arka plan renginizi]] değiştirirsiniz.
+6828|Elips veya daire çizme
+6829|Elips veya daire çizmek için
+6830|Araç kutusunun altında bir dolgu stiline tıklayın.
+6831|Sol fare düğmesini basılı tutun ve işaretçiyi çapraz olarak sürükleyin.
+6832|İşaretçiyi sürüklerken SHIFT tuşunu basılı tutarak mükemmel bir daire çizebilirsiniz.
+6833|Kutunun kenarlık genişliği, çizgi araçları için seçilen kalınlıkla aynıdır. Kenarlık kalınlığını değiştirmek için araç kutusunda çizgi veya eğri aracına tıklayın ve ardından araç kutusunun altındaki kutuda istediğiniz kalınlığa tıklayın.
+6834|Çokgen çizme
+6835|Çokgen çizmek için
+6836|Çokgeni çizmek için sol fare düğmesini basılı tutun ve düz bir çizgi çizmek için işaretçiyi sürükleyin.
+6837|Sayfada her yeni çizgi kesiminin görünmesini istediğiniz yere tıklayın.
+6838|Bu adımları yineleyin ve işiniz bittiğinde çift tıklayın.
+6839|Yalnızca 45 ve 90 derecelik açıları kullanmak için sürüklerken SHIFT tuşunu basılı tutun.
+6840|Varsayılan ön plan ve arka plan renklerini ayarlama
+6841|Varsayılan ön plan ve arka plan renklerini ayarlamak için
+6842|[[Ön plan rengini]] ayarlamak için renk kutusunda bir renge tıklayın.
+6843|[[Arka plan rengini]] ayarlamak için renk kutusunda bir renge sağ tıklayın.
+6844|Varsayılan ön plan ve arka plan renkleri renk kutusunun sol tarafında görünür. Üstteki renk karesi ön plan rengini, alttaki renk karesi arka plan rengini temsil eder.
+6845|Bir öğeyi uzatma veya eğme
+6846|Bir öğeyi uzatmak veya eğmek için
+6847|Değiştirmek istediğiniz öğenin çevresine bir kutu sürükleyin.
+6848|Araç kutusunun altında aşağıdakilerden birini yapın:
+6849|[[Resim]] menüsünde [[Uzat/Eğ]]'e tıklayın.
+6850|[[Uzat]] altında resminizi yatay veya dikey olarak uzatmak için bir yüzde miktarı yazın.
+6851|[[Eğ]] altında resminizi yatay veya dikey olarak eğmek için derece sayısını yazın.
+6852|Dikdörtgen veya kare çizme
+6853|Dikdörtgen veya kare çizmek için
+6854|Araç kutusunda köşeli bir şekil oluşturmak için düğmesine veya yuvarlak köşeli bir şekil oluşturmak için düğmesine tıklayın.
+6855|Dikdörtgen çizmek için sol fare düğmesini basılı tutun ve işaretçiyi istediğiniz yönde çapraz olarak sürükleyin.
+6856|Kare çizmek için işaretçiyi sürüklerken SHIFT tuşunu basılı tutun.
+6857|Metin yazma ve biçimlendirme
+6858|Metin yazmak ve biçimlendirmek için
+6859|Metin çerçevesi oluşturmak için sol fare düğmesini basılı tutun ve işaretçiyi istediğiniz boyuta çapraz olarak sürükleyin.
+6860|Metin araç çubuğunda metin için istediğiniz yazı tipine, boyuta ve stile tıklayın.
+6861|Metin yazmak için metin çerçevesinin içine tıklayın.
+6862|Bir metin kutusuna yalnızca bir kez metin girebilirsiniz. Kutunun dışına tıkladıktan sonra onu yeniden etkin hale getiremezsiniz.
+6863|Bir metin kutusu oluşturduktan sonra [[Görünüm]] menüsüne ve ardından [[Metin Araç Çubuğu]]'na tıklayarak metin araç çubuğunu görüntüleyebilirsiniz. Araç çubuğunu penceredeki herhangi bir konuma sürükleyebilirsiniz.
+6864|Metnin renginin [[ön plan rengi]] veya çizgi rengi, arka planın ise [[arka plan rengi]] ile tanımlandığı [[opak]] arka planı kullanmak için düğmesine tıklayın.
+6865|Metni [[saydam]] bir arka plana eklemek için araç kutusunda düğmesine tıklayın.
+6866|Bir resme yalnızca Normal görünümde metin girebilirsiniz.
+6867|Metnin rengini değiştirmek için bir renge tıklayın.
+6868|Metni renkli bir arka plana eklemek için araç kutusunda düğmesine tıklayın. Ardından arka plan rengini değiştirmek için renk kutusunda sağ tıklayın.
+6869|Metin aracı seçiliyken yalnızca metin yapıştırabilirsiniz. Grafik yapıştıramazsınız.
+6870|Opak veya saydam çizimi belirtme
+6871|Opak veya saydam çizimi belirtmek için
+6872|[[Opak]] çizmek için [[Resim]] altında [[Opak Çiz]]'e tıklayın ve yanında bir onay işareti göründüğünden emin olun. [[Saydam]] çizimi belirtmek için [[Opak Çiz]]'in yanındaki onay işaretini kaldırın.
+6873|Resmi masaüstü arka planı olarak kullanma
+6874|Resmi masaüstü arka planı olarak kullanmak için
+6875|Resmi kaydedin.
+6876|[[Dosya]] menüsünde aşağıdaki komutlardan birine tıklayın:
+6877|[[Duvar Kağıdı Olarak Ayarla (Döşenmiş)]], ekranı resminizin tekrarlarıyla kaplar.
+6878|[[Duvar Kağıdı Olarak Ayarla]] [[(Ortalanmış)]], resminizi ekranın ortasına yerleştirir.
+7719|Sık Kullanılanlar'a kayıt defteri anahtarı ekleme
+7720|[[Sık Kullanılanlar'a kayıt defteri anahtarı eklemek için]]
+7721|[[Sık Kullanılanlar]]'a eklemek istediğiniz kayıt defteri anahtarını seçin.
+7722|[[Sık Kullanılanlar'a Ekle]] iletişim kutusunda varsayılan kayıt defteri anahtarı adını kabul edin veya yeni bir ad yazın.
+7723|Kayıt defteri anahtarı [[Sık Kullanılanlar]] listesine eklenir. Daha sonra [[Sık Kullanılanlar]] menüsünden seçerek bu listeye kolayca dönebilirsiniz.
+7724|Sık kullanılan/sık ziyaret edilen kayıt defteri anahtarlarının bir listesini oluşturabilirsiniz.
+7725|Bir kayıt defteri anahtarını [[Sık Kullanılanlar]] listesinden kaldırmak için [[Sık Kullanılanlar]] menüsünde [[Sık Kullanılanlardan Kaldır]]'a tıklayın ve [[Sık Kullanılanlar]] listesinden kaldırmak üzere bir veya daha fazla kayıt defteri anahtarı seçebilirsiniz.
+7726|Anahtar ekleme
+7727|[[Anahtar eklemek için]]
+7728|Yeni bir [[anahtar]] eklemek istediğiniz kayıt defteri listesine çift tıklayın ve ardından yeni anahtar için istediğiniz konumun üstündeki anahtara tıklayın.
+7729|[[Düzen]] menüsünde [[Yeni]]'yi gösterin ve ardından [[Anahtar]]'a tıklayın.
+7730|Yeni anahtar için bir ad yazın ve ardından ENTER tuşuna basın.
+7731|Bilgisayarınızın düzgün başlamamasına yol açan bir hata yaparsanız kayıt defterini geri yükleyebilirsiniz. Yönergeler için bkz. İlgili Konular.
+7732|Değer ekleme
+7733|[[Değer eklemek için]]
+7734|Yeni değeri eklemek istediğiniz [[kayıt defteri anahtarına]] veya [[değer girdisine]] tıklayın.
+7735|[[Düzen]] menüsünde [[Yeni]]'yi gösterin ve ardından eklemek istediğiniz değer türüne tıklayın: [[Dize Değeri]], [[İkili Değer]] veya [[DWORD Değeri]].
+7736|Yeni değer için bir ad yazın ve ardından ENTER tuşuna basın.
+7737|Bilgisayarınızın düzgün başlamamasına yol açan bir hata yaparsanız kayıt defterini geri yükleyebilirsiniz. Kayıt defterini geri yükleme yönergeleri için bkz. İlgili Konular.
+7738|Bir değer eklediğinizde, değer adı ve veri türü bir varsayılan değerle kaydedilir. Varsayılan değeri değiştirme yönergeleri için bkz. İlgili Konular.
+7739|Değer değiştirme
+7740|[[Değer değiştirmek için]]
+7741|Değiştirmek istediğiniz [[değeri]] seçin.
+7742|[[Düzen]] menüsünde [[Değiştir]]'e tıklayın.
+7743|[[Değer verisi]] kutusuna değer için yeni veriyi yazın ve ardından [[Tamam]]'a tıklayın.
+7744|Ağ üzerinden bir kayıt defterine bağlanma
+7745|[[Ağ üzerinden bir kayıt defterine bağlanmak için]]
+7746|[[Kayıt Defteri]] menüsünde [[Ağ Kayıt Defterine Bağlan]]'a tıklayın.
+7747|[[Ağ Kayıt Defterine Bağlan]] iletişim kutusuna kayıt defterine bağlanmak istediğiniz bilgisayarın adını yazın.
+7748|Uzak bilgisayarın kayıt defterinde herhangi bir değişiklik yapabilmek için hem kendi bilgisayarınızda hem de uzak bilgisayarda yönetici olarak veya Yöneticiler grubunun bir üyesi olarak oturum açmış olmanız gerekir. Ağ ilkesi ayarları da bu yordamı tamamlamanızı engelleyebilir.
+7749|Kayıt defteri anahtarı adını kopyalama
+7750|[[Kayıt defteri anahtarı adını kopyalamak için]]
+7751|Kayıt defteri ağacında (sol bölme) bir kayıt defteri anahtarına tıklayın.
+7752|[[Düzen]] menüsünde [[Anahtar Adını Kopyala]]'ya tıklayın.
+7753|Kayıt defteri anahtarının adını başka bir programa veya belgeye yapıştırın.
+7754|Kayıt defteri anahtarı bulma hakkında bilgi için bkz. İlgili Konular.
+7755|Kayıt defterini geri yükleme
+7756|[[Kayıt defterini geri yüklemek için]]
+7757|Bu yönergeleri yazdırmak için [[Seçenekler]]'e ve ardından [[Yazdır]]'a tıklayın. 2. adımda bilgisayarınızı kapattıktan sonra kullanılamayacaklardır.
+7758|[[Başlat]]'a ve ardından [[Bilgisayarı Kapat]]'a tıklayın.
+7759|[[Yeniden Başlat]]'a ve ardından [[Tamam]]'a tıklayın.
+7760|[[Başlatılacak işletim sistemini seçin]] iletisini gördüğünüzde F8 tuşuna basın.
+7761|[[Bilinen Son İyi Yapılandırma]]'yı vurgulamak için ok tuşlarını kullanın ve ardından ENTER tuşuna basın.
+7762|Sayısal tuş takımındaki ok tuşlarının çalışması için NUM LOCK kapalı olmalıdır.
+7763|Bir işletim sistemini vurgulamak için ok tuşlarını kullanın ve ardından ENTER tuşuna basın.
+7764|[[Bilinen Son İyi Yapılandırma]]'yı seçmek, donanımınız için yanlış olabilecek yeni eklenmiş bir sürücü gibi sorunlardan kurtulmanın bir yolunu sağlar. Bozuk veya eksik sürücülerin ya da dosyaların neden olduğu sorunları çözmez.
+7765|[[Bilinen Son İyi Yapılandırma]]'yı seçtiğinizde Windows 2000 yalnızca HKLM\System\CurrentControlSet kayıt defteri anahtarındaki bilgileri geri yükler. Diğer kayıt defteri anahtarlarında yaptığınız değişiklikler kalır.
+7766|Anahtar veya değer silme
+7767|[[Anahtar veya değer silmek için]]
+7768|Silmek istediğiniz [[kayıt defteri anahtarına]] veya [[değer girdisine]] tıklayın.
+7769|Kayıt defterinizden anahtarları ve değerleri silebilirsiniz. Ancak (HKEY_CURRENT_USER gibi) bir [[önceden tanımlı anahtarı]] silemez veya önceden tanımlı bir anahtarın adını değiştiremezsiniz.
+7770|Ağ kayıt defteri bağlantısını kesme
+7771|[[Ağ kayıt defteri bağlantısını kesmek için]]
+7772|[[Kayıt Defteri]] menüsünde [[Ağ Kayıt Defteri Bağlantısını Kes]]'e tıklayın.
+7773|[[Ağ Kayıt Defteri Bağlantısını Kes]] iletişim kutusunda kayıt defteriyle bağlantısını kesmek istediğiniz bilgisayarın adına tıklayın.
+7774|Kayıt defterinin tamamını veya bir bölümünü metin dosyasına aktarma
+7775|[[Kayıt defterinin tamamını veya bir bölümünü metin dosyasına aktarmak için]]
+7776|[[Kayıt Defteri]] menüsünde [[Kayıt Defteri Dosyasını Dışa Aktar]]'a tıklayın.
+7777|[[Dosya adı]] kutusuna kayıt defteri dosyası için bir ad girin.
+7778|Kayıt defterinin tamamını yedeklemek için [[Tümü]]'ne tıklayın.
+7779|Kayıt defteri ağacının yalnızca belirli bir dalını yedeklemek için [[Seçili dal]]'a tıklayın ve dışa aktarmak istediğiniz dalın adını girin.
+7780|Dışa aktararak oluşturduğunuz kayıt defteri dosyalarıyla çalışmak için herhangi bir metin düzenleyicisini kullanabilirsiniz. Kayıt defteri dosyaları .reg uzantısıyla kaydedilir.
+7781|Dize, değer veya anahtar bulma
+7782|[[Dize, değer veya anahtar bulmak için]]
+7783|[[Aranan]] kutusuna bulmak istediğiniz [[dizeyi]], [[değeri]] veya [[anahtarı]] yazın.
+7784|İstediğiniz arama türüne uyması için [[Anahtarlar]], [[Değerler]], [[Veri]] ve [[Yalnızca tüm dizeyi eşleştir]] onay kutularını seçin ve ardından [[Sonrakini Bul]]'a tıklayın.
+7785|Aramayı yalnızca bir tür bilgiyi tarayarak hızlandırabilirsiniz; örneğin bir değer girdisi aradığınızı biliyorsanız, bu nesnelerin taranmaması için [[Anahtarlar]] ve [[Veri]] onay kutularının işaretini kaldırabilirsiniz.
+7786|Aramayı yinelemek için F3 tuşuna basın.
+7787|Kayıt defterinin tamamını veya bir bölümünü içe aktarma
+7788|[[Kayıt defterinin tamamını veya bir bölümünü içe aktarmak için]]
+7789|[[Kayıt Defteri]] menüsünde [[Kayıt Defteri Dosyasını İçe Aktar]]'a tıklayın.
+7790|İçe aktarmak istediğiniz dosyayı bulun, seçmek için dosyaya tıklayın ve ardından [[Aç]]'a tıklayın.
+7791|Kayıt Defteri Düzenleyicisi'ne genel bakış
+7792|Kayıt Defteri Düzenleyicisi, bilgisayarınızın nasıl çalıştığı hakkında bilgi içeren sistem [[kayıt defterinizdeki]] ayarları değiştirmek için kullanılan gelişmiş bir araçtır. Genel olarak Windows 2000 programlarının sistem kayıt defterini değiştirmesine izin vermek ve Kayıt Defteri Düzenleyicisi'ni kullanarak değişiklik yapmaktan kaçınmak en iyisidir.
+7793|Kesinlikle gerekli olmadıkça kayıt defterinizi düzenlememelisiniz. Kayıt defterinizde bir hata varsa bilgisayarınız düzgün çalışmayabilir. Bu durumda kayıt defterini, bilgisayarınızı en son başarıyla başlattığınızda kullandığınız sürüme geri yükleyebilirsiniz. Yönergeler için bkz. İlgili Konular.
+7794|Kayıt Defteri Düzenleyicisi'ni başlatmak için [[Başlat]]'a, [[Çalıştır]]'a tıklayın ve ardından [[regedit]] yazın.
+7795|Kayıt Defteri Düzenleyicisi'ni yinelenen girdileri ortadan kaldırmak veya [[kaldırılmış]] ya da silinmiş [[programlara]] ait girdileri silmek gibi görevler için güvenle kullanmak üzere, hem kayıt defterini düzenlemeye hem de geri yüklemeye hazır olmalısınız.
+7796|Kayıt defterinin tamamını veya bir bölümünü yazdırma
+7797|[[Kayıt defterinin tamamını veya bir bölümünü yazdırmak için]]
+7798|Yazdırmak istediğiniz kayıt defteri alanının bilgisayarına veya üst düzey anahtarına tıklayın.
+7799|[[Kayıt Defteri]] menüsünde [[Yazdır]]'a tıklayın.
+7800|[[Tümü]]'ne tıklayarak kayıt defterinin tamamını veya [[Seçili Dal]]'a tıklayıp metin kutusuna istediğiniz dalı yazarak yalnızca bir bölümünü yazdırabilir ve ardından [[Tamam]]'a tıklayabilirsiniz.
+7801|Anahtarı veya değeri yeniden adlandırma
+7802|[[Anahtarı veya değeri yeniden adlandırmak için]]
+7803|Yeniden adlandırmak istediğiniz [[kayıt defteri anahtarına]] veya [[değer girdisine]] tıklayın.
+7804|[[Düzen]] menüsünde [[Yeniden Adlandır]]'a tıklayın.
+7805|Yeni adı yazın ve ardından ENTER tuşuna basın.
+7806|Bilgisayarınızın düzgün başlamamasına yol açan bir hata yaparsanız kayıt defterini geri yükleyebilirsiniz. Bilgi için bkz. İlgili Konular.
+7807|Kök anahtarları veya bir anahtarın varsayılan değerini yeniden adlandıramazsınız.
+7872|Ses dosyasına yankı ekleme
+7873|[[Ses dosyasına yankı eklemek için]]
+7874|[[Dosya]] menüsünde [[Aç]]'a tıklayın, değiştirmek istediğiniz [[ses dosyasını]] bulun ve çift tıklayın.
+7875|[[Efektler]] menüsünde [[Yankı Ekle]]'ye tıklayın.
+7876|Yankıyı yalnızca sıkıştırılmamış bir ses dosyasına ekleyebilirsiniz. Ses Kaydedicisi'nde yeşil çizgiyi görmüyorsanız ses dosyası sıkıştırılmıştır ve önce ses kalitesini ayarlamadan değiştiremezsiniz.
+7877|Kaydedilen sesler dalga biçimi (.wav) dosyaları olarak kaydedilir.

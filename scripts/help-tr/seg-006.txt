@@ -1,0 +1,137 @@
+1342|Denetim listesine grup veya kullanıcı ekleme
+1343|Denetim listesine grup veya kullanıcı eklemek için
+1344|Yerel Pano Defteri penceresinde denetlemek istediğiniz Pano Defteri sayfasına tıklayın.
+1345|[[Güvenlik]] menüsünde [[Denetim]]'e tıklayın.
+1346|[[Pano Defteri Sayfası Denetimi]] iletişim kutusunda [[Ekle]]'ye tıklayın.
+1347|Seçili bilgisayar veya etki alanındaki kullanıcıların adlarını görmek için [[Kullanıcıları Göster]]'e tıklayın.
+1348|Seçili yerel veya genel grubun içeriğini görmek için [[Üyeler]]'e tıklayın. Üyeleri denetim listesine eklemek için [[Yerel Grup Üyeliği]] veya [[Genel Grup Üyeliği]] iletişim kutusunda adlara tıklayın ve ardından [[Ekle]]'ye tıklayın.
+1349|[[Adlar]] listesinde denetim listesine eklemek istediğiniz gruplara veya kullanıcılara tıklayın ve ardından [[Ekle]]'ye tıklayın.
+1350|Bir Pano Defteri sayfasının denetim listesine kullanıcı veya grup eklemek için Yöneticiler grubunun bir üyesi olarak oturum açmış olmanız gerekir.
+1351|[[Kullanıcı ve Grup Ekle]] iletişim kutusu, [[Adların listelendiği yer]] listesinde görünen bilgisayardaki veya etki alanındaki grupları görüntüler. Yerel gruplardan sonra yıldız işareti (*) gelir. Başka bir etki alanındaki grupları görüntülemek için [[Adların listelendiği yer]] listesinde etki alanı adına tıklayın.
+1352|Kullanıcının veya grubun etki alanını bilmiyorsanız [[Kullanıcı ve Grup Ekle]] iletişim kutusunda [[Ara]]'ya tıklayın.
+1353|Windows 2000'in grupları [[Adlar]] listesinde listelemesini beklemek istemiyorsanız, adı [[Ad Ekle]] kutusuna yazabilirsiniz.
+1354|Etki alanları yalnızca bilgisayarınız bir Windows 2000 Server ağındaki bir etki alanının üyesiyse görünür. Gösterilen etki alanlarının, sayfayı içeren etki alanıyla bir [[güven ilişkisi]] vardır.
+1355|Pano Defteri sayfasını denetleme
+1356|Pano Defteri sayfasını denetlemek için
+1357|[[Ad]] listesinde grubun veya kullanıcının adına tıklayın.
+1358|[[Denetlenecek Olaylar]] altında denetlenecek olayları seçin.
+1359|Bu yordamı tamamlamak için yönetici olarak veya Yöneticiler grubunun bir üyesi olarak oturum açmış olmanız gerekir. Bilgisayarınız bir ağa bağlıysa, ağ ilkesi ayarları da bu yordamı tamamlamanızı engelleyebilir.
+1360|Grup İlkesi'nde denetimi ayarlamış olmanız gerekir. Daha fazla bilgi için bkz. İlgili Konular.
+1361|[[Ad]] listesinde girdi yoksa denetim listesine bir grup veya kullanıcı eklemeniz gerekir. Daha fazla bilgi için bkz. İlgili Konular.
+1362|Panonun içeriğini temizleme
+1363|Panonun içeriğini temizlemek için
+1364|Pano Görüntüleyicisi'nde Pano penceresine tıklayın.
+1365|[[Düzen]] menüsünde [[Sil]]'e tıklayın.
+1366|[[Evet]]'e tıklayın.
+1367|Pano bilgileri birden çok biçimde sakladığından, temizlemek bir miktar belleği boşaltabilir.
+1368|Yaygın görevler: Pano Görüntüleyicisi
+1369|Pano Görüntüleyicisi'nde çalışırken aşağıdaki görevler sık gerçekleştirilir. Belirli bir sözcüğü veya tümceyi aramak için [[Dizin]] veya [[Ara]] sekmesine tıklayın.
+1370|[[Panonun içeriğini Yerel Pano Defteri'ne kaydetme]]
+1371|Pano'ya kopyaladığınız metni veya grafikleri kalıcı olarak kaydedilmiş bir Pano Defteri sayfasına yapıştırabilirsiniz.
+1372|[[Yerel Pano Defteri sayfasını paylaşma]]
+1373|Yerel Pano Defteri sayfalarınızdaki metni veya grafikleri başkalarının kullanımına sunabilirsiniz.
+1374|[[Pano Defteri sayfasını Pano'ya kopyalama]]
+1375|Bilgileri yerel bir Pano Defteri sayfasından Pano'ya kopyalayın ve ardından bilgileri başka bir konuma yapıştırın.
+1376|Pano Defteri sayfalarını güvenceye alma
+1377|Paylaşılan tek tek Pano Defteri sayfaları üzerinde aşağıdaki izinleri ayarlayabilirsiniz.
+1378|[[Erişim Yok]]
+1380|[[Okuma ve Bağlama]]
+1381|[[Değiştirme]]
+1382|[[Tam Denetim]]
+1383|[[Özel]]
+1384|Paylaşılan Pano Defteri sayfaları için izinler birikimlidir. Örneğin bir kullanıcı birden çok grubun üyesiyse ve her grubun aynı paylaşılan Pano Defteri sayfası için farklı bir izin kümesi varsa, kullanıcıya o Pano Defteri sayfası için verilen tüm izinler kullanılabilir. Bunun istisnası, diğer tüm izinleri geçersiz kılan Erişim Yok iznidir.
+1385|Varsayılan olarak paylaşılan bir Pano Defteri sayfasını oluşturan kişi Tam Denetim iznine, grubun üyeleri ise Okuma ve Bağlama iznine sahiptir.
+1386|Panonun içeriğini dosyaya kaydetme
+1387|Panonun içeriğini dosyaya kaydetmek için
+1388|[[Dosya]] menüsünde [[Farklı Kaydet]]'e tıklayın.
+1389|[[Kayıt yeri]] kutusunda dosyayı kaydetmek istediğiniz klasöre gidin.
+1390|[[Dosya adı]] kutusuna kaydetmek istediğiniz dosya için bir ad yazın.
+1391|Pano dosyası için varsayılan uzantı .clp'dir.
+1392|Pano dosyası açma
+1393|Pano dosyası açmak için
+1394|[[Dosya]] menüsünde [[Aç]]'a tıklayın.
+1395|[[Dosya adı]] kutusuna açmak istediğiniz Pano dosyasının adını yazın. Panoda zaten bilgi varsa, bu bilgileri Pano'dan temizlemek isteyip istemediğinizi soran bir onay iletisi görüntülenir. Pano içeriğini temizleyip belirttiğiniz dosyayı açmak için [[Evet]]'e tıklayın.
+1396|Başka bir bilgisayardaki nesneyi yerel Pano'ya kopyalama
+1397|Başka bir bilgisayardaki nesneyi yerel Pano'ya kopyalamak için
+1398|[[Dosya]] menüsünde [[Bağlan]]'a tıklayın.
+1399|[[Bilgisayar]] kutusuna bağlanmak istediğiniz bilgisayarın adını yazın veya [[Bilgisayar Seç]] listesinde adına tıklayın ve ardından [[Tamam]]'a tıklayın.
+1400|Kopyalamak istediğiniz Pano Defteri sayfasına tıklayın.
+1401|Bilgilerin bir kopyası geçici olarak Pano'ya yerleştirilir.
+1402|Paylaşılan Pano Defteri sayfalarına erişmek için başka bir bilgisayardaki Pano Defteri'ne bağlanma
+1403|Paylaşılan Pano Defteri sayfalarına erişmek için başka bir bilgisayardaki Pano Defteri'ne bağlanmak için
+1404|Uzak bilgisayardaki Pano Defteri, bilgisayarınızdaki Pano Görüntüleyicisi'nde açılır ve paylaşılan Pano Defteri sayfaları üzerinde çalışmak üzere kullanılabilir hale gelir.
+1405|Pano Defteri'nde hiçbir şey görmüyorsanız Pano Defteri'nin sahibi Pano Defteri sayfalarını paylaşmamıştır.
+1406|Diğer Pano Defteri'ni kullanmayı bitirdiğinizde bağlantıyı kesebilirsiniz.
+1407|Başka bir bilgisayardaki Pano Defteri'nin paylaşılan sayfalarındaki bilgileri kullanabilmeniz için önce o Pano Defteri'ne bağlanmanız gerekir.
+1408|Pano Defteri sayfasını Pano'ya kopyalamak için
+1409|Yerel Pano Defteri penceresinde kopyalamak istediğiniz sayfaya tıklayın.
+1410|[[Düzen]] menüsünde [[Kopyala]]'ya tıklayın.
+1411|Başka bir bilgisayardaki Pano Defteri'nin bağlantısını kesme
+1412|Başka bir bilgisayardaki Pano Defteri'nin bağlantısını kesmek için
+1413|Bağlı olduğunuz Pano Defteri penceresine tıklayın.
+1414|[[Dosya]] menüsünde [[Bağlantıyı Kes]]'e tıklayın.
+1415|Pano Defteri sayfalarını farklı görünümlerde gösterme
+1416|Pano Defteri sayfalarını farklı görünümlerde göstermek için
+1417|Başlıkları alfabetik sırayla görüntülemek için [[İçindekiler Tablosu]]'na tıklayın.
+1418|Her sayfanın küçük bir anlık görüntüsünü görüntülemek için [[Küçük Resimler]]'e tıklayın.
+1419|Sayfa içeriğini görüntülemek için sayfaya ve ardından [[Tam Sayfa]]'ya tıklayın.
+1420|Bir grup veya kullanıcı için Pano Defteri sayfası denetimini kaldırma
+1421|Bir grup veya kullanıcı için Pano Defteri sayfası denetimini kaldırmak için
+1422|Yerel Pano Defteri penceresinde denetimini durdurmak istediğiniz Pano Defteri sayfasına tıklayın.
+1423|[[Ad]] listesinde grubun veya kullanıcının adına ve ardından [[Kaldır]]'a tıklayın.
+1424|Bu yordamı tamamlamak için yönetici olarak veya Yöneticiler grubunun bir üyesi olarak oturum açmış olmanız gerekir. Bilgisayarınız bir ağa bağlıysa, ağ ilkesi ayarları da bu yordamı tamamlamanızı engelleyebilir.
+1425|Panonun içeriğini yerel Pano Defteri'ne kaydetme
+1426|Panonun içeriğini yerel Pano Defteri'ne kaydetmek için
+1427|Pano Görüntüleyicisi'nde Yerel Pano Defteri penceresine tıklayın.
+1428|[[Sayfa Adı]] kutusuna Pano Defteri sayfası için bir ad yazın.
+1429|Bu sayfayı başkalarının kullanımına sunmak için [[Öğeyi Şimdi Paylaş]] onay kutusunu seçin ve ardından [[Tamam]]'a tıklayın.
+1430|[[Pano Defteri Sayfasını Paylaş]] iletişim kutusunda ihtiyacınız olan paylaşım seçeneklerini seçin.
+1431|[[Yapıştır]] komutu kullanılamıyorsa, önce bir dosyadaki bilgileri seçin ve kopyalayın. Ardından bilgileri Pano Görüntüleyicisi'ne yapıştırabilirsiniz. Bilgileri seçip kestiğinizde veya kopyaladığınızda, Pano adı verilen geçici bir depolama konumuna yerleştirilir.
+1432|Pano Defteri izin listesine grup veya kullanıcı ekleme
+1433|Pano Defteri izin listesine grup veya kullanıcı eklemek için
+1434|Yerel Pano Defteri penceresinde izin eklemek istediğiniz Pano Defteri sayfasına tıklayın.
+1435|[[Güvenlik]] menüsünde [[İzinler]]'e tıklayın.
+1436|[[Pano Defteri Sayfası İzinleri]] iletişim kutusunda [[Ekle]]'ye tıklayın.
+1437|Seçili yerel veya genel grubun içeriğini görmek için [[Üyeler]]'e tıklayın. Üyeleri izin listesine eklemek için [[Yerel Grup Üyeliği]] veya [[Genel Grup Üyeliği]] iletişim kutusunda adlara tıklayın ve ardından [[Ekle]]'ye tıklayın.
+1438|[[Adlar]] listesinde izin listesine eklemek istediğiniz gruplara veya kullanıcılara tıklayın ve ardından [[Ekle]]'ye tıklayın.
+1439|[[Erişim Türü]] listesinde bir izin türüne tıklayın.
+1440|[[Kullanıcı ve Grup Ekle]] iletişim kutusu, [[Adların listelendiği yer]] listesinde gösterilen bilgisayardaki veya etki alanındaki grupları görüntüler. Yerel gruplardan sonra yıldız işareti (*) gelir. Başka bir etki alanındaki grupları görüntülemek için [[Adların listelendiği yer]] listesinde etki alanı adına tıklayın.
+1441|Paylaşılan bir Pano Defteri sayfasının izinlerini değiştirme
+1442|Paylaşılan bir Pano Defteri sayfasının izinlerini değiştirmek için
+1443|Yerel Pano Defteri penceresinde izinlerini değiştirmek istediğiniz Pano Defteri sayfasına tıklayın.
+1444|[[Ad]] listesinde izinlerini değiştirmek istediğiniz grubun veya kullanıcının adına tıklayın.
+1445|[[Erişim Türü]] listesinde farklı bir izin türüne tıklayın.
+1446|Paylaşılan bir Pano Defteri sayfasının izinlerini değiştirmek için sayfanın sahibi olmanız veya sahip tarafından bunu yapma izninin size verilmiş olması gerekir.
+1447|Pano Defteri izin listesinden grup veya kullanıcı kaldırma
+1448|Pano Defteri izin listesinden grup veya kullanıcı kaldırmak için
+1449|Yerel Pano Defteri penceresinde izinlerini kaldırmak istediğiniz Pano Defteri sayfasına tıklayın.
+1450|[[Ad]] listesinde izinlerini kaldırmak istediğiniz grubun veya kullanıcının adına ve ardından [[Kaldır]]'a tıklayın.
+1451|Paylaşılan bir Pano Defteri sayfasının Pano Defteri izin listesinden grup veya kullanıcı kaldırmak için sayfanın sahibi olmanız veya sahip tarafından bunu yapma izninin size verilmiş olması gerekir.
+1452|Yerel bir Pano Defteri sayfasını paylaşma
+1453|Yerel bir Pano Defteri sayfasını paylaşmak için
+1454|Yerel Pano Defteri penceresinde paylaşmak istediğiniz Pano Defteri sayfasına tıklayın.
+1455|[[Dosya]] menüsünde [[Paylaş]]'a tıklayın.
+1456|Bir kullanıcı sayfayı bir belgeye bağlamaya çalıştığında sayfa içeriğini oluşturmak için kullanılan programın başlatılması için [[Bağlanınca Uygulamayı Başlat]] onay kutusunu seçin.
+1457|Programı simge durumuna küçültülmüş olarak çalıştırmak için hem [[Bağlanınca Uygulamayı Başlat]] hem de [[Simge Durumunda Çalıştır]] onay kutularını seçin.
+1458|Grupların ve tek tek kullanıcıların sayfaya erişimini denetlemek için [[İzinler]]'e tıklayın.
+1459|Paylaşılan bir Pano Defteri sayfasının ayarlarını değiştirmek için sayfaya tıklayın ve ardından [[Dosya]] menüsünde [[Paylaş]]'a tıklayın. İhtiyaçlarınıza uygun olarak ayarları değiştirebileceğiniz [[Pano Defteri Sayfası Özellikleri]] iletişim kutusu görüntülenir.
+1460|Pano dosyaları paylaşılamaz. Panonuzun içeriğini başkasıyla paylaşmak için Yerel Pano Defteri'nizde bir Pano Defteri sayfası olarak kaydetmeniz gerekir.
+1461|Yerel bir Pano Defteri sayfasının paylaşımını durdurma
+1462|Yerel bir Pano Defteri sayfasının paylaşımını durdurmak için
+1463|Yerel Pano Defteri penceresinde paylaşımını durdurmak istediğiniz Pano Defteri sayfasına tıklayın.
+1464|[[Dosya]] menüsünde [[Paylaşımı Durdur]]'a tıklayın.
+1465|Pano Defteri sayfasının sahipliğini alma
+1466|Pano Defteri sayfasının sahipliğini almak için
+1467|Yerel Pano Defteri penceresinde sahipliğini almak istediğiniz Pano Defteri sayfasına tıklayın.
+1468|[[Güvenlik]] menüsünde [[Sahip]]'e tıklayın.
+1469|[[Sahipliği Al]]'a tıklayın.
+1470|Bir Pano Defteri sayfasının sahipliğini almak için Yöneticiler grubunun bir üyesi olarak oturum açmış olmanız gerekir.
+1471|Bir Pano Defteri sayfası oluşturduğunuzda onun sahibi olursunuz. Bir Pano Defteri sayfasının sahibi, bir yönetici (veya başka biri) o sayfaya başka izinler atamış olsa bile sayfanın izinlerini her zaman değiştirebilir. Sahiplik önceliklidir.
+1472|Pano Defteri sayfasının sahibi size sahipliği alma izni verirse sayfanın sahipliğini alabilirsiniz. Yöneticiler grubunun bir üyesiyseniz de Pano Defteri sayfasının sahipliğini alabilirsiniz.
+1473|Bir yönetici sahipliği alabilse de sahipliği başkalarına devredemez.
+1474|Pano Görüntüleyicisi'ne genel bakış
+1475|Bir programdan bilgi kestiğinizde veya kopyaladığınızda, bilgi Pano'ya taşınır ve Pano'yu temizleyene veya başka bir bilgi parçası kesene veya kopyalayana kadar orada kalır. Pano Görüntüleyicisi'ndeki Pano penceresi, Pano'nun içeriğini gösterir. Pano'daki bilgileri istediğiniz sıklıkta herhangi bir belgeye yapıştırabilirsiniz. Ancak bilgi yalnızca geçici olarak Pano'da saklanır.
+1476|Pano Görüntüleyicisi'ni kullanarak başka bir programdan bilgi kesebilir veya kopyalayabilir ve adlandırabileceğiniz, kaydedebileceğiniz, yeniden kullanabileceğiniz ve başkalarıyla [[paylaşabileceğiniz]] bir sayfada saklayabilirsiniz.
+1477|Pano Defteri sayfalarını bilgisayarlarında Pano Görüntüleyicisi yüklü olan başkalarıyla paylaşabilirsiniz; onlar da Pano Defteri sayfalarını sizinle paylaşabilir.
+1478|Pano'nun içeriğini Pano Defteri sayfası yerine tek bir Pano dosyasına da kaydedebilirsiniz. Bu dosyalar genellikle .clp uzantısına sahiptir ve başkalarıyla paylaşılamaz.
+1479|Pano, metni farklı biçimlerde saklayabilir: Metin karakter kümesi (çoğu Windows 2000 ve Windows NT tabanlı program tarafından kullanılır), OEM Metin biçimi (MS-DOS tabanlı programlar tarafından kullanılır) ve Unicode karakter kümesi (dünyada kullanılan tüm başlıca yazı sistemlerinin bir üst kümesi). [[Görünüm]] menüsü verilerinizi çeşitli biçimlerde görmenizi sağlar.
