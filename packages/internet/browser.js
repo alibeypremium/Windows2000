@@ -82,8 +82,15 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
   const norm = (u) => String(u).replace(/^https?:\/\//i, "").replace(/^www\./i, "").replace(/:80(?=\/|$)/, "").replace(/\/$/, "");
   let throbber = null;
   const prog = status.querySelector(".ie-pane-prog"), progBar = prog.firstChild, datePane = status.querySelector(".ie-pane-date"), wbPane = status.querySelector(".ie-pane-wb");
-  const stampDate = (st) => (st && st.length >= 8 ? +st.slice(4, 6) + "/" + +st.slice(6, 8) + "/" + st.slice(0, 4) : wbYear);
-  const setDate = () => { datePane.textContent = wbOn(current) ? stampDate(wbStamp) : ""; datePane.style.visibility = wbOn(current) ? "" : "hidden"; wbPane.style.visibility = datePane.style.visibility; };
+  const trDate = () => getLang() === "tr";
+  const stampDate = (st) => (st && st.length >= 8 ? (trDate() ? st.slice(6, 8) + "/" + st.slice(4, 6) + "/" + st.slice(0, 4) : +st.slice(4, 6) + "/" + +st.slice(6, 8) + "/" + st.slice(0, 4)) : wbYear);
+  const setDate = () => {
+    const web = /^https?:/i.test(current), on = wbOn(current);
+    datePane.textContent = on ? stampDate(wbStamp) : "";
+    datePane.style.visibility = on ? "" : "hidden";
+    wbPane.textContent = web ? (ctx.settings.get("ieArchive") === false ? (trDate() ? "Canlı" : "Live") : "Wayback Machine") : "";
+    wbPane.style.visibility = web ? "" : "hidden";
+  };
   const loadEnd = (text = "Done") => {
     clearInterval(progTimer); clearTimeout(loadTimer); loading = false;
     prog.hidden = true; status.children[0].textContent = text; throbber?.classList.remove("spin");
@@ -125,12 +132,12 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
   }
   const setYear = (y) => { wbYear = String(y); wbStamp = ""; render(); };
   const chooseDate = async () => {
-    const v = await ctx.dialogs.prompt("Enter a year (1996-2009) or a date (MM/DD/YYYY):", stampDate(wbStamp), { title: "Choose Date" });
+    const v = await ctx.dialogs.prompt((trDate() ? "Bir yıl (1996-2009) veya tarih (GG/AA/YYYY) girin:" : "Enter a year (1996-2009) or a date (MM/DD/YYYY):"), stampDate(wbStamp), { title: "Choose Date" });
     if (!v) return;
     const d = v.trim().match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/), y = v.trim().match(/^\d{4}$/);
-    if (d) { wbYear = d[3]; wbStamp = d[3] + d[1].padStart(2, "0") + d[2].padStart(2, "0"); render(); }
+    if (d) { const [dd, mm] = trDate() ? [d[1], d[2]] : [d[2], d[1]]; wbYear = d[3]; wbStamp = d[3] + mm.padStart(2, "0") + dd.padStart(2, "0"); render(); }
     else if (y) setYear(v.trim());
-    else ctx.dialogs.message("Please enter a year such as 2000 or a date such as 1/24/2001.", { title: "Microsoft Internet Explorer", icon: "warning" });
+    else ctx.dialogs.message((trDate() ? "Lütfen 2000 gibi bir yıl veya 24/01/2001 gibi bir tarih girin." : "Please enter a year such as 2000 or a date such as 1/24/2001."), { title: "Microsoft Internet Explorer", icon: "warning" });
   };
   const archiveOptions = async () => {
     const v = await ctx.dialogs.prompt("Default archive year (1996-2009).\nType LIVE to browse the current web instead of the Wayback Machine, or ARCHIVE to switch back.", ctx.settings.get("ieArchive") === false ? "LIVE" : wbYear, { title: "Archive Options" });
@@ -140,23 +147,36 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     else if (/^\d{4}$/.test(v.trim())) { ctx.settings.set("ieYear", v.trim()); ctx.settings.set("ieArchive", true); setYear(v.trim()); }
   };
   const DEF_YEARS = Array.from({ length: 14 }, (_, i) => String(1996 + i));
-  const yearMenu = () => {
+  const popAt = (anchor, items, up) => {
+    const r = anchor.getBoundingClientRect();
+    popup(items, r.left, up ? r.top : r.bottom, { anchor });
+    const m = [...document.querySelectorAll(".popup-menu")].pop();
+    if (m && up) { m.style.top = "auto"; m.style.bottom = Math.max(0, innerHeight - r.top) + "px"; }
+    if (m) m.style.left = Math.max(0, Math.min(r.left, innerWidth - m.offsetWidth - 2)) + "px";
+  };
+  const yearMenu = (anchor = datePane, up = true) => {
     const ys = wbYears || DEF_YEARS;
-    const r = datePane.getBoundingClientRect();
-    popup([
-      ...ys.map((y) => ({ label: y, radio: true, checked: y === (wbStamp ? wbStamp.slice(0, 4) : wbYear), action: () => setYear(y) })),
+    popAt(anchor, [
+      ...ys.map((y) => ({ label: y, radio: true, checked: y === (wbStamp ? wbStamp.slice(0, 4) : wbYear), action: () => { ctx.settings.set("ieArchive", true); setYear(y); } })),
       { separator: true },
       { label: "Choose Date...", action: chooseDate },
       { label: "Wayback Calendar...", action: () => window.open("https://web.archive.org/web/*/" + current, "_blank", "noopener,noreferrer") },
       { separator: true },
       { label: "Archive Options...", action: archiveOptions },
-    ], r.left, r.top, { anchor: datePane });
-    const m = [...document.querySelectorAll(".popup-menu")].pop();
-    if (m) { m.style.top = "auto"; m.style.bottom = Math.max(0, innerHeight - r.top) + "px"; m.style.left = Math.min(r.left, innerWidth - m.offsetWidth - 2) + "px"; }
+    ], up);
+  };
+  const modeMenu = () => {
+    const live = ctx.settings.get("ieArchive") === false;
+    popAt(wbPane, [
+      { label: "Wayback Machine", radio: true, checked: !live, action: () => { ctx.settings.set("ieArchive", true); render(); } },
+      { label: trDate() ? "Canlı" : "Live", radio: true, checked: live, action: () => { ctx.settings.set("ieArchive", false); render(); } },
+    ], true);
   };
   let popWasOpen = false;
-  datePane.addEventListener("pointerdown", () => { popWasOpen = !!document.querySelector(".popup-menu"); });
+  const onPopDown = (e) => { popWasOpen = !!document.querySelector(".popup-menu") && !!e.target.closest?.(".ie-pane-date,.ie-pane-wb,.ie-links,.ie-chevron,.ie-tb[data-tb=archive]"); };
+  document.addEventListener("pointerdown", onPopDown, true);
   datePane.addEventListener("click", () => { if (popWasOpen) { popWasOpen = false; return; } yearMenu(); });
+  wbPane.addEventListener("click", () => { if (popWasOpen) { popWasOpen = false; return; } if (/^https?:/i.test(current)) modeMenu(); });
   const shareLink = () => location.href.split("#")[0] + "#web=" + encodeURIComponent(current) + "&date=" + (wbStamp ? wbStamp.slice(0, 8) : wbYear);
   const external = () => {
     if (/^https?:\/\//i.test(current))
@@ -185,7 +205,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
   };
   window.addEventListener("message", onSiteMessage);
   const _close = w.close.bind(w);
-  w.close = (...a) => (window.removeEventListener("message", onSiteMessage), window.removeEventListener("message", onWayback), clearInterval(progTimer), clearTimeout(loadTimer), _close(...a));
+  w.close = (...a) => (window.removeEventListener("message", onSiteMessage), window.removeEventListener("message", onWayback), document.removeEventListener("pointerdown", onPopDown, true), clearInterval(progTimer), clearTimeout(loadTimer), _close(...a));
   const siteFrame = (html, title) => {
     const f = el("iframe", { class: "ie-frame", sandbox: "allow-scripts allow-forms", title });
     f.srcdoc = html;
@@ -195,19 +215,10 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
   // ---- Links bar ----
   const defaultLinks = () => (PORTALS[getLang()] || PORTALS.en).slice(0, 6).map(([title, u]) => ({ title, url: "http://www." + u + "/" }));
   const links = () => ctx.settings.get("ieLinks") || defaultLinks();
-  const linksRow = el("div", { class: "ie-links-row" });
-  let addressBar = null;
-  const drawLinks = () => linksRow.replaceChildren(...links().map((l) => button([el("img", { src: "/assets/ui/ie/addr-ie.png", alt: "", draggable: "false" }), el("span", { text: l.title })], () => navigate(l.url), { class: "ie-link-btn", title: l.url })));
-  const toggleLinks = (on) => {
-    addressBar ||= w.el.querySelector(".ie-address");
-    const open = on ?? !addressBar.classList.contains("links-open");
-    addressBar.classList.toggle("links-open", open);
-    if (open) drawLinks();
-  };
-  const addLink = () => { const l = links().filter((x) => x.url !== current); ctx.settings.set("ieLinks", [...l, { title: w.title.replace(/ - Microsoft Internet Explorer( \[Working Offline\])?/, "") || current, url: current }]); drawLinks(); };
+  const addLink = () => { const l = links().filter((x) => x.url !== current); ctx.settings.set("ieLinks", [...l, { title: w.title.replace(/ - Microsoft Internet Explorer( \[Working Offline\])?/, "") || current, url: current }]); };
   const linksMenu = (anchor) => {
-    const r = anchor.getBoundingClientRect();
-    popup([...links().map((l) => ({ label: l.title, icon: "ie", action: () => navigate(l.url) })), { separator: true }, { label: "Add Current Page to Links", disabled: !/^https?:/i.test(current), action: addLink }], r.left - 120, r.bottom);
+    if (popWasOpen) { popWasOpen = false; return; }
+    popAt(anchor, [...links().map((l) => ({ label: l.title, icon: "ie", action: () => navigate(l.url) })), { separator: true }, { label: "Add Current Page to Links", disabled: !/^https?:/i.test(current), action: addLink }], false);
   };
   // ---- Explorer bar (Search / Favorites / History) ----
   let barKind = null;
@@ -222,7 +233,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     if (!kind) return explorer.replaceChildren();
     const link = (title, url, ic = "ie") => button([icon(ic), el("span", { text: title })], () => navigate(url), { class: "ie-exp-item", title: url });
     const tbtn = (img, label, fn, extra = {}) => button([el("img", { src: "/assets/ui/ie/iso/" + img + ".png", alt: "", draggable: "false" }), el("span", { text: label })], fn, { class: "ie-exp-tb", ...extra });
-    const organize = () => ieOrganize(ctx, { get: favorites, set: (v) => ctx.settings.set("favorites", v), folders: favFolders, setFolders: (v) => ctx.settings.set("favFolders", v), open: navigate });
+    const organize = () => ieOrganize(ctx, { get: favorites, set: (v) => ctx.settings.set("favorites", v), folders: favFolders, setFolders: (v) => ctx.settings.set("favFolders", v), open: navigate }).then?.(() => barKind === "favorites" && showBar("favorites", true));
     const draw = () => showBar(kind, true);
     let tools, body;
     if (kind === "search") {
@@ -506,7 +517,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
       if (index < history.length - 1) navigate(history[++index], false);
     };
   const viewSource = () => ctx.launch("notepad", { text: current.startsWith("C:") ? ctx.fs.readFile(current) : viewport.innerHTML });
-  const addFav = () => ieAddFavorite(ctx, { name: w.title.replace(/ - Microsoft Internet Explorer( \[Working Offline\])?/, ""), folders: favFolders(), onOk: (title, folder) => ctx.settings.set("favorites", [...favorites(), { title, url: current, folder }]) });
+  const addFav = () => ieAddFavorite(ctx, { name: w.title.replace(/ - Microsoft Internet Explorer( \[Working Offline\])?/, ""), folders: favFolders(), onOk: (title, folder) => { ctx.settings.set("favorites", [...favorites(), { title, url: current, folder }]); if (barKind === "favorites") showBar("favorites", true); } });
   const off = (label, extra = {}) => ({ label, disabled: true, ...extra });
   const pageMenu = () => [
     { label: "Back", disabled: index <= 0, action: back },
@@ -565,7 +576,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
   const isoTb = new Set(["back", "fwd", "stop", "refresh", "home", "search", "favorites", "history", "mail", "print"]);
   const tbButton = (name, label, action, { drop = false, disabled = false, title } = {}) => {
     const iso = isoTb.has(name);
-    const pic = el("img", { src: iso ? ISO + name + "-cold.png" : TB + name + ".png", alt: "", draggable: "false" });
+    const pic = el("img", { src: iso ? ISO + name + "-cold.png" : name === "archive" ? "/assets/ui/ie/st-cal.svg" : TB + name + ".png", alt: "", draggable: "false" });
     const b = button(
       [
         pic,
@@ -601,6 +612,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     tbButton("search", "Search", () => showBar("search")),
     tbButton("favorites", "Favorites", () => showBar("favorites")),
     tbButton("history", "", () => showBar("history"), { title: "History" }),
+    tbButton("archive", "Archive", (e) => { if (popWasOpen) { popWasOpen = false; return; } yearMenu(tools.querySelector('.ie-tb[data-tb="archive"]'), false); }),
     sep(),
     tbButton("mail", "", () => ctx.launch("outlook"), { title: "Mail" }),
     tbButton("print", "", () => ctx.printText(viewport.innerText, current), { title: "Print" }),
@@ -811,8 +823,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
         { class: "ie-go" },
       ),
       el("span", { class: "ie-grip" }),
-      el("span", { class: "ie-links", text: "Links", onclick: () => toggleLinks() }),
-      linksRow,
+      el("span", { class: "ie-links", text: "Links", onclick: (e) => linksMenu(e.currentTarget) }),
       el("span", { class: "ie-chevron", text: "»", onclick: (e) => linksMenu(e.currentTarget) }),
     ),
     ieBody,
