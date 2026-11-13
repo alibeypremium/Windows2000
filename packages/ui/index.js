@@ -1289,11 +1289,11 @@ export class DialogService {
   }
 }
 
-/** Browser window size/position used by Internet Explorer and Netscape: 885x744 at ~21% from the left on large screens, shrunk to fit small ones. */
+/** Browser window size/position used by Internet Explorer and Netscape: about 57% x 94% of the desktop, 21% from the left, near the top. */
 export function browserFrame() {
   const vw = innerWidth, vh = innerHeight - 30;
-  const width = Math.min(885, vw - 10), height = Math.min(744, vh - 10);
+  const width = Math.min(Math.max(Math.round(vw * 0.572), 640), vw - 10), height = Math.min(Math.round(vh * 0.944), vh - 10);
   const x = Math.max(0, Math.min(Math.round(vw * 0.209), vw - width));
-  const y = Math.max(0, Math.min(63, vh - height));
+  const y = Math.max(0, Math.min(Math.round(vh * 0.026), vh - height));
   return { width, height, x, y };
 }

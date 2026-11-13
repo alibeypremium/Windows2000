@@ -10,7 +10,8 @@ import {
 import { basename, downloadFile } from "../core/index.js";
 import { buildSite, isSite, prefetchNews, homeBoxes } from "./netscape-sites.js";
 import { getLang } from "../ui/i18n.js";
-import { YEAR_FACTS, YEAR_SITES, YEAR_TR_SITES } from "./ie-years.js";
+import { YEAR_FACTS } from "./ie-years.js";
+import { buildHome } from "./ie-home.js";
 import { openDlgWindow } from "../accessories/winrar-dlg.js";
 import { ieOpen, ieOptions, ieAddFavorite, ieProps, ieOrganize, iePageSetup, iePrint, IE_HELP } from "./ie-dialogs.js";
 const normalizeAddress = (input) => {
@@ -433,93 +434,12 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
       return;
     }
     if (current === "about:home" || current === "about:welcome") {
-      const tr2 = trDate();
-      w.setTitle("Welcome to the Internet - Microsoft Internet Explorer");
-      const search = el("input", {
-        "aria-label": "Search the Web",
-        placeholder: "Type a word or phrase",
-      });
-      const page = el(
-        "article",
-        { class: "ie-home" },
-        el(
-          "header",
-          { class: "ie-home-header" },
-          icon("ie", 32),
-          el(
-            "div",
-            {},
-            el("h1", { text: "Microsoft Internet Explorer" }),
-            el("p", { text: "Your window to the world. " }),
-          ),
-        ),
-        el(
-          "nav",
-          { class: "ie-home-nav" },
-          button("Home", home, { class: "text-link" }),
-          button("Favorites", () => navigate("about:favorites"), {
-            class: "text-link",
-          }),
-          button("History", () => navigate("about:history"), {
-            class: "text-link",
-          }),
-          button("Help", () => ctx.launch("help", { topic: "internet" }), {
-            class: "text-link",
-          }),
-        ),
-        el(
-          "div",
-          { class: "ie-home-body" },
-          el("h2", { text: "Welcome to the Internet" }),
-          el("p", {
-            text: "Explore the Web, visit your favorite sites, or find something new. Type a website address in the Address bar and click Go.",
-          }),
-          el(
-            "fieldset",
-            { class: "ie-search-box" },
-            el("legend", { text: "Search the Web" }),
-            el(
-              "div",
-              { class: "search-line" },
-              search,
-              button("Search", () => navigate(search.value)),
-            ),
-          ),
-          (() => { siteFrames.clear(); const f = siteFrame(homeBoxes(), "Günün Ayeti, Hadisi ve Esması / Tarihte Bugün"); f.style.cssText = "width:100%;height:230px;border:0;margin:6px 0"; return f; })(),
-          el("h3", { text: "A few places to start" }),
-          el(
-            "div",
-            { class: "ie-start-links" },
-            ...favorites().map((f) =>
-              button([icon("ie"), favLabel(f)], () => openFav(f), {
-                class: "text-link",
-              }),
-            ),
-          ),
-          el("hr"),
-          el("h3", { text: tr2 ? `${wbYear}'de İnternet` : `The web in ${wbYear}` }),
-          el("p", {}, ...YEAR_RANGE.flatMap((y, i) => [i ? " · " : "", button(y, () => { wbYear = y; wbStamp = ""; render(); }, { class: "text-link", style: y === wbYear ? { fontWeight: "bold" } : null })])),
-          el("ul", {}, ...(YEAR_FACTS[wbYear] || []).map((f) => el("li", { text: tr2 ? f[0] : f[1] }))),
-          el("p", { text: tr2 ? "Bu yılın popüler siteleri (sayfalar Wayback Machine'den, o yıldaki hâliyle açılır):" : "Popular sites of the year (opened from the Wayback Machine as they looked then):" }),
-          el("p", {}, ...[...YEAR_SITES(+wbYear), ...(tr2 ? YEAR_TR_SITES : [])].flatMap(([n, u], i) => [i ? " · " : "", button(n, () => navigate("http://www." + u + "/"), { class: "text-link" })])),
-          el("hr"),
-          el("h3", { text: "Make yourself at home" }),
-          el("p", {
-            text: "Add a page to Favorites to keep it close at hand. Use Back and Forward to revisit pages you have opened.",
-          }),
-          button("Internet Options...", () =>
-            ctx.launch("control", { page: "internet" }),
-          ),
-          el("p", {
-            class: "ie-browser-note",
-            text: "Some websites do not allow embedded browsing. Choose Open in Browser from the toolbar to open them in a full browser tab.",
-          }),
-        ),
-      );
-      search.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") navigate(search.value);
-      });
-      viewport.append(page);
+      w.setTitle((trDate() ? "Başlangıç Sayfası" : "Start Page") + " - Microsoft Internet Explorer");
+      viewport.append(buildHome({
+        ctx, navigate, tr: trDate(), year: wbYear, years: YEAR_RANGE,
+        setYear,
+        favorites, openFav, favLabel,
+      }));
       return;
     }
     if (isSite(current)) {
