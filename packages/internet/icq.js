@@ -31,7 +31,7 @@ export function openICQ(ctx) {
   const save = () => ctx.settings.set(SKEY, S);
   const timers = new Set(), busy = new Set();
   const later = (fn, ms) => { const t = setTimeout(() => { timers.delete(t); fn(); }, ms); timers.add(t); return t; };
-  const play = (n) => { try { const a = new Audio(SND + n + ".wav"); a.volume = 0.6; a.play().catch(() => {}); } catch {} };
+  const play = (n) => { if (ctx.settings.get("muted") || ctx.settings.get("soundScheme") === "No Sounds") return; try { const a = new Audio(SND + n + ".wav"); a.volume = 1; a.play().catch(() => {}); } catch {} };
   const w = ctx.wm.create({ title: S.uin ? String(S.uin) : "ICQ", icon: "icq", width: 190, height: 380, x: 640, y: 60, appId: "icq", maximizable: false });
   inst = { win: w, closed: false };
   const msgWins = new Map();
@@ -252,7 +252,7 @@ export function openICQ(ctx) {
     const r = btn.getBoundingClientRect();
     popup(items, r.left, r.top, { anchor: btn });
     const m = [...document.querySelectorAll(".popup-menu")].pop();
-    if (m && up) { const h = m.getBoundingClientRect().height; m.style.top = Math.max(0, r.top - h) + "px"; m.style.left = Math.min(r.left, innerWidth - m.offsetWidth - 2) + "px"; }
+    if (m && up) { m.style.top = "auto"; m.style.bottom = Math.max(0, innerHeight - r.top) + "px"; m.style.left = Math.min(r.left, innerWidth - m.offsetWidth - 2) + "px"; }
   };
   const about = () => dlg("About ICQ", el("div", { class: "icq-about" },
     el("div", { class: "icq-about-row" }, icon("icq", 32), el("div", {}, el("p", { class: "icq-b", text: "ICQ 99b" }), el("p", { text: "Copyright (C) 1996-1999 Mirabilis Ltd." }), el("p", { text: `Your UIN: ${S.uin}` })))), { cancel: null, ok: "OK", onOk: () => true });
