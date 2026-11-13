@@ -6580,3 +6580,33 @@ input.vlc-eqs[type="range"]{flex:none;writing-mode:vertical-lr;direction:rtl;hei
   border-color: #808080 #fff #fff #808080;
   background: repeating-conic-gradient(#d4d0c8 0 25%, #fff 0 50%) 0 0 / 2px 2px;
 }
+.ie-exp-tools {
+  display: flex;
+  gap: 1px;
+  padding: 2px;
+  background: #d4d0c8;
+  border-bottom: 1px solid #808080;
+}
+.ie-exp-tb {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 22px;
+  padding: 0 4px;
+  border: 1px solid transparent;
+  background: none;
+  box-shadow: none;
+  min-width: 0;
+}
+.ie-exp-tb:hover:not(:disabled) {
+  border-color: #fff #808080 #808080 #fff;
+}
+.ie-exp-tb:active:not(:disabled) {
+  border-color: #808080 #fff #fff #808080;
+}
+.ie-exp-tb:disabled {
+  opacity: 0.5;
+}
+.ie-exp-indent {
+  padding-left: 16px;
+}

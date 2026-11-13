@@ -192,30 +192,54 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
   let barKind = null;
   const explorer = el("div", { class: "ie-explorer", hidden: true });
   const hostOf = (u) => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return u; } };
-  function showBar(kind) {
-    if (kind === barKind) kind = null;
+  let barMode = null;
+  function showBar(kind, redraw = false) {
+    if (kind === barKind && !redraw) kind = null;
     barKind = kind;
     explorer.hidden = !kind;
     for (const n of ["search", "favorites", "history"]) w.el?.querySelector?.(`.ie-tb[data-tb="${n}"]`)?.classList.toggle("pressed", n === kind);
     if (!kind) return explorer.replaceChildren();
     const link = (title, url, ic = "ie") => button([icon(ic), el("span", { text: title })], () => navigate(url), { class: "ie-exp-item", title: url });
-    let body;
+    const tbtn = (img, label, fn, extra = {}) => button([el("img", { src: "/assets/ui/ie/iso/" + img + ".png", alt: "", draggable: "false" }), el("span", { text: label })], fn, { class: "ie-exp-tb", ...extra });
+    const organize = () => ieOrganize(ctx, { get: favorites, set: (v) => ctx.settings.set("favorites", v), folders: favFolders, setFolders: (v) => ctx.settings.set("favFolders", v), open: navigate });
+    const draw = () => showBar(kind, true);
+    let tools, body;
     if (kind === "search") {
       const q = el("input", { "aria-label": "Search", placeholder: "Type a word or phrase" });
       const go = () => q.value.trim() && navigate("about:search?q=" + encodeURIComponent(q.value.trim()));
       q.addEventListener("keydown", (e) => e.key === "Enter" && go());
+      tools = [tbtn("bar-new", "New", () => { q.value = ""; q.focus(); }), tbtn("bar-next", "Next", go), tbtn("bar-cust", "Customize", () => {}, { disabled: true })];
       body = el("div", { class: "ie-exp-body" }, el("p", { text: "Search the Web:" }), q, button("Search", go));
     } else if (kind === "favorites") {
+      tools = [tbtn("bar-add", "Add...", addFav), tbtn("bar-org", "Organize...", organize)];
       const fav = favorites();
       body = el("div", { class: "ie-exp-body" },
-        ...favFolders().flatMap((fo) => [el("div", { class: "ie-exp-folder" }, icon("folder"), el("span", { text: fo })), ...fav.filter((f) => f.folder === fo).map((f) => link(f.title, f.url))]),
+        ...favFolders().flatMap((fo) => [el("div", { class: "ie-exp-folder" }, icon("folder"), el("span", { text: fo })), ...fav.filter((f) => f.folder === fo).map((f) => el("div", { class: "ie-exp-indent" }, link(f.title, f.url)))]),
         ...fav.filter((f) => !f.folder).map((f) => link(f.title, f.url)));
     } else {
-      const seen = [...new Set(history.filter((x) => /^https?:/i.test(x)))].reverse();
-      body = el("div", { class: "ie-exp-body" }, el("div", { class: "ie-exp-folder" }, icon("folder"), el("span", { text: "Today" })), ...seen.map((u) => link(hostOf(u), u)), !seen.length ? el("p", { text: "No pages to display." }) : null);
+      const modes = [["date", "By &Date"], ["site", "By S&ite"], ["most", "By &Most Visited"], ["order", "By &Order Visited Today"]];
+      const mode = (barMode = barMode || "date");
+      const view = tbtn("bar-org", "View", () => {
+        const r = view.getBoundingClientRect();
+        popup(modes.map(([k, l]) => ({ label: l.replace("&", ""), radio: true, checked: k === barMode, action: () => { barMode = k; draw(); } })), r.left, r.bottom);
+      });
+      view.querySelector("img").src = "/assets/ui/ie/iso/bar-cust0.png";
+      tools = [view];
+      const visits = history.filter((x) => /^https?:/i.test(x));
+      const uniq = [...new Set(visits)];
+      const count = (u) => visits.filter((x) => x === u).length;
+      let rows;
+      if (barMode === "site") {
+        const hosts = [...new Set(uniq.map(hostOf))].sort();
+        rows = hosts.flatMap((h) => [el("div", { class: "ie-exp-folder" }, icon("folder"), el("span", { text: h })), ...uniq.filter((u) => hostOf(u) === h).map((u) => el("div", { class: "ie-exp-indent" }, link(u.replace(/^https?:\/\//, ""), u)))]);
+      } else if (barMode === "most") rows = [...uniq].sort((a, b) => count(b) - count(a)).map((u) => link(hostOf(u), u));
+      else if (barMode === "order") rows = uniq.map((u) => link(hostOf(u), u));
+      else rows = [el("div", { class: "ie-exp-folder" }, icon("folder"), el("span", { text: "Today" })), ...[...uniq].reverse().map((u) => el("div", { class: "ie-exp-indent" }, link(hostOf(u), u)))];
+      body = el("div", { class: "ie-exp-body" }, ...(uniq.length ? rows : [el("p", { text: "No pages to display." })]));
     }
     explorer.replaceChildren(
       el("div", { class: "ie-exp-head" }, el("span", { text: { search: "Search", favorites: "Favorites", history: "History" }[kind] }), button("×", () => showBar(null), { class: "ie-exp-close", title: "Close" })),
+      el("div", { class: "ie-exp-tools" }, ...tools),
       body);
   }
   const ieBody = el("div", { class: "ie-body" }, explorer, viewport);

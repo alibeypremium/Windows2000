@@ -1,5 +1,7 @@
 // Turkish strings: ICQ 99b (win98.si port). Accelerator "&" marks are stripped from keys by the loader.
 export const MORE12 = {
+  "By Date": "Tarihe Göre", "By Site": "Siteye Göre", "By Most Visited": "En Çok Ziyaret Edilene Göre", "By Order Visited Today": "Bugünkü Ziyaret Sırasına Göre", "Today": "Bugün",
+  "Type a word or phrase": "Bir sözcük veya tümce yazın", "New": "Yeni", "Next": "İleri", "Customize": "Özelleştir", "Archive Year": "Arşiv Yılı", "Archive Options...": "Arşiv Seçenekleri...", "Choose Date...": "Tarih Seç...", "Wayback Calendar...": "Wayback Takvimi...", "Share Link (copy to Clipboard)": "Bağlantıyı Paylaş (Panoya Kopyala)", "Sites from the web of 2000": "2000'lerin Web Siteleri", "Wayback Machine": "Wayback Machine",
   "Online": "Çevrimiçi", "Offline": "Çevrimdışı", "GO": "ARA", "Open ICQ": "ICQ'yu Aç", "Enter Search Keyword": "Arama anahtar sözcüğünü girin", "Add Users": "Kullanıcı Ekle", "Services": "Hizmetler", "System Menu": "Sistem Menüsü",
   "Message": "İleti", "Chat": "Sohbet", "File": "Dosya", "URL": "URL", "Contacts": "Kişiler", "Info": "Bilgi", "History": "Geçmiş", "Rename": "Yeniden Adlandır", "Delete": "Sil",
   "Find/Add Users": "Kullanıcı Bul/Ekle", "ICQ White Pages": "ICQ Beyaz Sayfalar", "ICQ Chat Rooms": "ICQ Sohbet Odaları", "ICQ Search": "ICQ Arama", "ICQ Now!": "ICQ Şimdi!",

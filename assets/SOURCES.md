@@ -616,3 +616,4 @@ Original work (Turkish translations of the Windows 2000 help text in assets/help
 ## Internet Explorer / Wayback
 - Wayback playback (`web.archive.org/web/<tarih>if_/<adres>`, CDX yıl listesi, postMessage olayları `playbackReady`/`domContentLoaded`/`pagehide`/`navigate`) win98.si IE davranışından uyarlandı.
 - Ruffle (Flash): npm `@ruffle-rs/ruffle` 0.7.1 self-hosted paketi, `assets/vendor/ruffle/` (Apache-2.0/MIT).
+- IE Explorer Bar (Search/Favorites/History): toolbar icons from shdocvw.dll bitmap 534 (Add, Organize) and browseui.dll bitmap 563 (New, Next, Customize) -> `assets/ui/ie/iso/bar-*.png`; labels from shdoclc.dll (`|Add...|Organize...|`, "By Date", "By Site", "By Most Visited", "By Order Visited Today", "Today") and browseLC.dll ("Search Assistant"). The Search pane body was HTML from MSN at the time, so it is our own search box.
