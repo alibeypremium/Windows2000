@@ -4843,18 +4843,52 @@ button.selected:focus {
   padding-left: 22px;
   background: url(/assets/ui/ie/st-done.png) 3px 0 no-repeat;
 }
-.ie-pane-blank {
+.ie-pane-prog {
   order: 1;
+  width: 104px;
+  padding: 1px 2px;
+  background: #c0c0c0;
+}
+.ie-pane-prog[hidden] {
+  visibility: hidden;
+  display: block;
+}
+.ie-prog-bar {
+  height: 11px;
+  background: repeating-linear-gradient(90deg, #000080 0 6px, transparent 6px 9px);
+}
+.ie-pane-blank {
+  order: 2;
   width: 22px;
 }
+.ie-pane-date {
+  order: 3;
+  min-width: 72px;
+  padding-left: 22px;
+  background: url(/assets/ui/ie/st-cal.svg) 3px 0 no-repeat;
+  cursor: default;
+}
+.ie-pane-date:active {
+  border-color: #fff #808080 #808080 #fff;
+}
+.ie-pane-wb {
+  order: 4;
+  width: 104px;
+}
 .ie-pane-zone {
-  order: 2;
+  order: 5;
   width: 150px;
   padding-left: 22px;
   background: url(/assets/ui/ie/st-globe.png) 4px 0 no-repeat;
 }
+.ie-wb-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
 .ie-status .status-grip {
-  order: 3;
+  order: 6;
 }
 .ie-legacy-page {
   padding: 17px 9px;
@@ -6439,3 +6473,110 @@ input.vlc-eqs[type="range"]{flex:none;writing-mode:vertical-lr;direction:rtl;hei
 /* notification-area icons are flat: no 3-D press */
 .tray-button:active,.tray-button:hover:active{box-shadow:none !important;padding:0 !important;border-color:transparent !important;transform:none !important}
 .tray-button.language:active{padding:0 3px !important}.tray-button.clock:active{padding:0 5px !important}
+
+.menu-radio::before {
+  content: "";
+  display: block;
+  width: 4px;
+  height: 4px;
+  margin: 5px auto 0;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.ie-flash {
+  flex: 1;
+  min-height: 0;
+  background: #000;
+  display: flex;
+}
+
+.ie-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+.ie-body > .ie-viewport {
+  flex: 1;
+  min-width: 0;
+}
+.ie-explorer {
+  width: 200px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  margin-right: 3px;
+  background: #fff;
+  border: 1px solid;
+  border-color: #808080 #fff #fff #808080;
+  box-shadow: inset 1px 1px #404040;
+  font: 13px/15px W2KSans, Tahoma, sans-serif;
+}
+.ie-explorer[hidden] {
+  display: none;
+}
+.ie-exp-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 3px 2px 6px;
+  background: #d4d0c8;
+  border-bottom: 1px solid #808080;
+}
+.ie-exp-close {
+  min-width: 14px;
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  line-height: 10px;
+  font-size: 13px;
+}
+.ie-exp-body {
+  flex: 1;
+  overflow: auto;
+  padding: 4px;
+}
+.ie-exp-body input {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 6px;
+}
+.ie-exp-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  min-width: 0;
+  padding: 1px 2px;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  text-align: left;
+  white-space: nowrap;
+  cursor: default;
+}
+.ie-exp-item span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ie-exp-item:hover {
+  color: #00f;
+  text-decoration: underline;
+}
+.ie-exp-folder {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 2px;
+  font-weight: bold;
+}
+.ie-fullscreen > .title-bar,
+.ie-fullscreen > .menu-bar,
+.ie-fullscreen .ie-address,
+.ie-fullscreen .ie-status {
+  display: none !important;
+}
+.ie-tb.pressed {
+  border-color: #808080 #fff #fff #808080;
+  background: repeating-conic-gradient(#d4d0c8 0 25%, #fff 0 50%) 0 0 / 2px 2px;
+}

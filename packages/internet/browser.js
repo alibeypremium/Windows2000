@@ -9,6 +9,7 @@ import {
   popup, browserFrame } from "../ui/index.js";
 import { basename, downloadFile } from "../core/index.js";
 import { buildSite, isSite, prefetchNews, homeBoxes } from "./netscape-sites.js";
+import { getLang } from "../ui/i18n.js";
 import { ieOpen, ieOptions, ieAddFavorite, ieProps, ieOrganize, iePageSetup, iePrint, IE_HELP } from "./ie-dialogs.js";
 const normalizeAddress = (input) => {
   let target = String(input || "about:home").trim();
@@ -34,7 +35,19 @@ const normalizeAddress = (input) => {
     throw new Error("This built-in page does not exist.");
   return target;
 };
-export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
+const PORTALS = {
+  tr: [["Hürriyet", "hurriyet.com.tr"], ["Milliyet", "milliyet.com.tr"], ["Mynet", "mynet.com"], ["Superonline", "superonline.com"], ["Sabah", "sabah.com.tr"], ["Turk.net", "turk.net"], ["Netscape", "netscape.com"], ["Yahoo!", "yahoo.com"]],
+  en: [["Yahoo!", "yahoo.com"], ["MSN", "msn.com"], ["AltaVista", "altavista.com"], ["Lycos", "lycos.com"], ["Excite", "excite.com"], ["GeoCities", "geocities.com"], ["Netscape", "netscape.com"], ["CNN", "cnn.com"], ["Microsoft", "microsoft.com"], ["Apple", "apple.com"]],
+};
+let rufflePromise = null;
+const loadRuffle = () => rufflePromise || (rufflePromise = new Promise((ok, no) => {
+  const base = new URL("../../assets/vendor/ruffle/", import.meta.url).href;
+  window.RufflePlayer = { config: { publicPath: base, polyfills: false, warnOnUnsupportedContent: false } };
+  const sc = document.createElement("script");
+  sc.src = base + "ruffle.js"; sc.onload = () => ok(); sc.onerror = () => { rufflePromise = null; no(); };
+  document.head.append(sc);
+}));
+export function openInternetExplorer(ctx, { url = null, path = null, year = null, stamp = "" } = {}) {
   const initial = normalizeAddress(path || url || ctx.settings.get("homePage"));
   prefetchNews();
   const w = ctx.wm.create({
@@ -54,11 +67,93 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
       { class: "ie-status" },
       el("div", { class: "ie-pane ie-pane-done", text: "Done" }),
       el("div", { class: "ie-pane ie-pane-zone", text: "Internet" }),
+      el("div", { class: "ie-pane ie-pane-prog", hidden: true }, el("div", { class: "ie-prog-bar" })),
       el("div", { class: "ie-pane ie-pane-blank" }),
-      el("div", { class: "ie-pane ie-pane-blank" }),
-      el("div", { class: "ie-pane ie-pane-blank" }),
+      el("div", { class: "ie-pane ie-pane-date", title: "Archive date" }),
+      el("div", { class: "ie-pane ie-pane-wb", text: "Wayback Machine" }),
       el("span", { class: "status-grip" }),
     );
+
+  // ---- Wayback Machine (the web of 2000) ----
+  const WB = "https://web.archive.org/web/";
+  const WB_RE = /web\.archive\.org\/web\/(\d+)[a-z_]*\/(https?:\/\/.+)$/i;
+  let wbYear = String(year || ctx.settings.get("ieYear") || "2000"), wbStamp = String(stamp || ""), wbFrame = null, progTimer = 0, loadTimer = 0, wbYears = null;
+  const wbOn = (u) => ctx.settings.get("ieArchive") !== false && /^https?:/i.test(u);
+  const norm = (u) => String(u).replace(/^https?:\/\//i, "").replace(/^www\./i, "").replace(/:80(?=\/|$)/, "").replace(/\/$/, "");
+  const prog = status.querySelector(".ie-pane-prog"), progBar = prog.firstChild, datePane = status.querySelector(".ie-pane-date"), wbPane = status.querySelector(".ie-pane-wb");
+  const stampDate = (st) => (st && st.length >= 8 ? +st.slice(4, 6) + "/" + +st.slice(6, 8) + "/" + st.slice(0, 4) : wbYear);
+  const setDate = () => { datePane.textContent = wbOn(current) ? stampDate(wbStamp) : ""; datePane.style.visibility = wbOn(current) ? "" : "hidden"; wbPane.style.visibility = datePane.style.visibility; };
+  const loadEnd = (text = "Done") => {
+    clearInterval(progTimer); clearTimeout(loadTimer); loading = false;
+    prog.hidden = true; status.children[0].textContent = text;
+  };
+  const loadStart = (what) => {
+    clearInterval(progTimer); clearTimeout(loadTimer);
+    loading = true; prog.hidden = false;
+    let n = 1; progBar.style.width = "9px";
+    progTimer = setInterval(() => { n = Math.min(n + 1, 10); progBar.style.width = n * 9 + "px"; }, 350);
+    status.children[0].textContent = what;
+    loadTimer = setTimeout(() => loadEnd(), 45000);
+  };
+  const onWayback = (e) => {
+    if (typeof e.data !== "string" || !wbFrame || e.source !== wbFrame.contentWindow) return;
+    let d; try { d = JSON.parse(e.data); } catch { return; }
+    if (!d?.event) return;
+    const m = String(d.pageUrl || "").match(WB_RE);
+    if (!m) return;
+    if (d.event === "pagehide") return loadStart("Opening page " + m[2] + "...");
+    if (m[1].length === 14) wbStamp = m[1];
+    if (norm(m[2]) !== norm(current)) {
+      current = m[2]; address.value = current;
+      history = history.slice(0, index + 1); history.push(current); index++;
+      ctx.bus.emit("network:activity");
+    }
+    if (d.pageTitle) w.setTitle(d.pageTitle + " - Microsoft Internet Explorer");
+    setDate(); syncNav();
+    if (d.event === "domContentLoaded") loadEnd();
+  };
+  window.addEventListener("message", onWayback);
+  async function loadYears() {
+    if (wbYears) return wbYears;
+    try {
+      const r = await fetch("https://web.archive.org/cdx/search/cdx?output=json&fl=timestamp&collapse=timestamp:4&filter=statuscode:200&url=" + encodeURIComponent(current), { signal: AbortSignal.timeout(8000) });
+      const rows = (await r.json()).slice(1).map((x) => x[0].slice(0, 4));
+      if (rows.length) return (wbYears = [...new Set(rows)].filter((y) => y >= "1996" && y <= "2009"));
+    } catch {}
+    return (wbYears = Array.from({ length: 14 }, (_, i) => String(1996 + i)));
+  }
+  const setYear = (y) => { wbYear = String(y); wbStamp = ""; render(); };
+  const chooseDate = async () => {
+    const v = await ctx.dialogs.prompt("Enter a year (1996-2009) or a date (MM/DD/YYYY):", stampDate(wbStamp), { title: "Choose Date" });
+    if (!v) return;
+    const d = v.trim().match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/), y = v.trim().match(/^\d{4}$/);
+    if (d) { wbYear = d[3]; wbStamp = d[3] + d[1].padStart(2, "0") + d[2].padStart(2, "0"); render(); }
+    else if (y) setYear(v.trim());
+    else ctx.dialogs.message("Please enter a year such as 2000 or a date such as 1/24/2001.", { title: "Microsoft Internet Explorer", icon: "warning" });
+  };
+  const archiveOptions = async () => {
+    const v = await ctx.dialogs.prompt("Default archive year (1996-2009).\nType LIVE to browse the current web instead of the Wayback Machine, or ARCHIVE to switch back.", ctx.settings.get("ieArchive") === false ? "LIVE" : wbYear, { title: "Archive Options" });
+    if (!v) return;
+    if (/^live$/i.test(v.trim())) { ctx.settings.set("ieArchive", false); setDate(); render(); }
+    else if (/^archive$/i.test(v.trim())) { ctx.settings.set("ieArchive", true); render(); }
+    else if (/^\d{4}$/.test(v.trim())) { ctx.settings.set("ieYear", v.trim()); ctx.settings.set("ieArchive", true); setYear(v.trim()); }
+  };
+  const yearMenu = async () => {
+    const ys = await loadYears();
+    const r = datePane.getBoundingClientRect();
+    popup([
+      ...ys.map((y) => ({ label: y, radio: true, checked: y === (wbStamp ? wbStamp.slice(0, 4) : wbYear), action: () => setYear(y) })),
+      { separator: true },
+      { label: "Choose Date...", action: chooseDate },
+      { label: "Wayback Calendar...", action: () => window.open("https://web.archive.org/web/*/" + current, "_blank", "noopener,noreferrer") },
+      { separator: true },
+      { label: "Archive Options...", action: archiveOptions },
+    ], r.left, r.top, { anchor: datePane });
+    const m = [...document.querySelectorAll(".popup-menu")].pop();
+    if (m) { m.style.top = "auto"; m.style.bottom = Math.max(0, innerHeight - r.top) + "px"; m.style.left = Math.min(r.left, innerWidth - m.offsetWidth - 2) + "px"; }
+  };
+  datePane.addEventListener("click", yearMenu);
+  const shareLink = () => location.href.split("#")[0] + "#web=" + encodeURIComponent(current) + "&date=" + (wbStamp ? wbStamp.slice(0, 8) : wbYear);
   const external = () => {
     if (/^https?:\/\//i.test(current))
       window.open(current, "_blank", "noopener,noreferrer");
@@ -86,12 +181,48 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
   };
   window.addEventListener("message", onSiteMessage);
   const _close = w.close.bind(w);
-  w.close = (...a) => (window.removeEventListener("message", onSiteMessage), _close(...a));
+  w.close = (...a) => (window.removeEventListener("message", onSiteMessage), window.removeEventListener("message", onWayback), clearInterval(progTimer), clearTimeout(loadTimer), _close(...a));
   const siteFrame = (html, title) => {
     const f = el("iframe", { class: "ie-frame", sandbox: "allow-scripts allow-forms", title });
     f.srcdoc = html;
     siteFrames.add(f);
     return f;
+  };
+  // ---- Explorer bar (Search / Favorites / History) ----
+  let barKind = null;
+  const explorer = el("div", { class: "ie-explorer", hidden: true });
+  const hostOf = (u) => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return u; } };
+  function showBar(kind) {
+    if (kind === barKind) kind = null;
+    barKind = kind;
+    explorer.hidden = !kind;
+    for (const n of ["search", "favorites", "history"]) w.el?.querySelector?.(`.ie-tb[data-tb="${n}"]`)?.classList.toggle("pressed", n === kind);
+    if (!kind) return explorer.replaceChildren();
+    const link = (title, url, ic = "ie") => button([icon(ic), el("span", { text: title })], () => navigate(url), { class: "ie-exp-item", title: url });
+    let body;
+    if (kind === "search") {
+      const q = el("input", { "aria-label": "Search", placeholder: "Type a word or phrase" });
+      const go = () => q.value.trim() && navigate("about:search?q=" + encodeURIComponent(q.value.trim()));
+      q.addEventListener("keydown", (e) => e.key === "Enter" && go());
+      body = el("div", { class: "ie-exp-body" }, el("p", { text: "Search the Web:" }), q, button("Search", go));
+    } else if (kind === "favorites") {
+      const fav = favorites();
+      body = el("div", { class: "ie-exp-body" },
+        ...favFolders().flatMap((fo) => [el("div", { class: "ie-exp-folder" }, icon("folder"), el("span", { text: fo })), ...fav.filter((f) => f.folder === fo).map((f) => link(f.title, f.url))]),
+        ...fav.filter((f) => !f.folder).map((f) => link(f.title, f.url)));
+    } else {
+      const seen = [...new Set(history.filter((x) => /^https?:/i.test(x)))].reverse();
+      body = el("div", { class: "ie-exp-body" }, el("div", { class: "ie-exp-folder" }, icon("folder"), el("span", { text: "Today" })), ...seen.map((u) => link(hostOf(u), u)), !seen.length ? el("p", { text: "No pages to display." }) : null);
+    }
+    explorer.replaceChildren(
+      el("div", { class: "ie-exp-head" }, el("span", { text: { search: "Search", favorites: "Favorites", history: "History" }[kind] }), button("×", () => showBar(null), { class: "ie-exp-close", title: "Close" })),
+      body);
+  }
+  const ieBody = el("div", { class: "ie-body" }, explorer, viewport);
+  let full = false;
+  const setFull = (on) => {
+    full = on; w.el.classList.toggle("ie-fullscreen", on);
+    if (on) { w.maximize?.(); }
   };
   const _setTitle = w.setTitle.bind(w);
   w.setTitle = (t) => _setTitle(ctx.settings.get("ieOffline") && !t.includes("[Working Offline]") ? t + " [Working Offline]" : t.replace(" [Working Offline]", ""));
@@ -101,9 +232,9 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
       { title: "News Reader", url: "about:news" },
       { title: "Günün Ayeti, Hadisi ve Esması", url: "about:daily" },
       { title: "Tarihte Bugün", url: "about:today" },
-      { title: "Microsoft", url: "https://www.microsoft.com/" },
-      { title: "Wikipedia", url: "https://www.wikipedia.org/" },
-      { title: "The Internet Archive", url: "https://archive.org/" },
+      { title: "Microsoft", url: "http://www.microsoft.com/" },
+      { title: "Yahoo!", url: "http://www.yahoo.com/" },
+      { title: "The Internet Archive", url: "http://www.archive.org/" },
     ];
   const favFolders = () => [...new Set([...(ctx.settings.get("favFolders") || []), ...favorites().map((f) => f.folder).filter(Boolean)])];
   const home = () => navigate(ctx.settings.get("homePage") || "about:home");
@@ -115,7 +246,8 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
   function render() {
     syncNav();
     viewport.replaceChildren();
-    status.children[0].textContent = "Done";
+    wbFrame = null; loadEnd();
+    setDate();
     status.children[1].textContent = current.startsWith("about:")
       ? "My Computer"
       : "Internet";
@@ -186,6 +318,10 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
               }),
             ),
           ),
+          el("hr"),
+          el("h3", { text: "Sites from the web of 2000" }),
+          el("p", { text: "These pages are loaded from the Wayback Machine, as they looked around the year shown at the bottom of the window." }),
+          el("p", {}, ...(PORTALS[getLang()] || PORTALS.en).flatMap(([n, u], i) => [i ? " · " : "", button(n, () => navigate("http://www." + u + "/"), { class: "text-link" })])),
           el("hr"),
           el("h3", { text: "Make yourself at home" }),
           el("p", {
@@ -285,32 +421,37 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
     }
     if (!["http:", "https:"].includes(url.protocol))
       throw new Error("Only HTTP and HTTPS addresses can be opened.");
-    loading = true;
-    status.children[0].textContent = "Opening " + url.hostname + "...";
+    if (/\.swf(\?|#|$)/i.test(current) && /^https?:/i.test(current)) {
+      const src = wbOn(current) ? WB + (wbStamp || wbYear) + "id_/" + current : current;
+      w.setTitle(new URL(current).pathname.split("/").pop() + " - Microsoft Internet Explorer");
+      loadStart("Opening page " + current + "...");
+      const holder = el("div", { class: "ie-flash" });
+      viewport.append(holder);
+      loadRuffle().then(() => {
+        const rf = window.RufflePlayer.newest(), pl = rf.createPlayer();
+        pl.style.cssText = "width:100%;height:100%";
+        holder.append(pl);
+        pl.load({ url: src, allowScriptAccess: false, autoplay: "on", unmuteOverlay: "hidden", splashScreen: false });
+        pl.addEventListener("loadedmetadata", () => loadEnd());
+        setTimeout(() => loadEnd(), 4000);
+      }).catch(() => { loadEnd(); holder.textContent = "Flash content could not be loaded."; });
+      return;
+    }
+    const live = !wbOn(current);
+    loadStart("Opening page " + current + "...");
     w.setTitle(url.hostname + " - Microsoft Internet Explorer");
     const frame = el("iframe", {
       class: "ie-frame",
-      src: current,
+      src: live ? current : WB + (wbStamp || wbYear) + "if_/" + current,
       title: "Web page: " + url.hostname,
-      sandbox:
-        "allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox",
+      sandbox: live
+        ? "allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
+        : "allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox",
       referrerpolicy: "no-referrer",
     });
-    frame.addEventListener("load", () => {
-      loading = false;
-      status.children[0].textContent = "Done";
-    });
-    viewport.append(
-      el(
-        "div",
-        { class: "ie-frame-notice" },
-        el("span", {
-          text: "If this page cannot be displayed, open it in your browser.",
-        }),
-        button("Open in Browser", external),
-      ),
-      frame,
-    );
+    wbFrame = live ? null : frame;
+    frame.addEventListener("load", () => loadEnd());
+    viewport.append(frame);
   }
   const back = () => {
       if (index > 0) navigate(history[--index], false);
@@ -406,17 +547,14 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
     tbButton("fwd", "", forward, { drop: true, title: "Forward" }),
     tbButton("stop", "", () => {
       viewport.querySelector("iframe")?.remove();
-      status.children[0].textContent = "Stopped";
+      loadEnd("Stopped");
     }, { title: "Stop" }),
     tbButton("refresh", "", render, { title: "Refresh" }),
     tbButton("home", "", home, { title: "Home" }),
     sep(),
-    tbButton("search", "Search", async () => {
-      const q = await ctx.dialogs.prompt("Search the Web:", "", { title: "Search" });
-      if (q) navigate(q);
-    }),
-    tbButton("favorites", "Favorites", () => navigate("about:favorites")),
-    tbButton("history", "", () => navigate("about:history"), { title: "History" }),
+    tbButton("search", "Search", () => showBar("search")),
+    tbButton("favorites", "Favorites", () => showBar("favorites")),
+    tbButton("history", "", () => showBar("history"), { title: "History" }),
     sep(),
     tbButton("mail", "", () => ctx.launch("outlook"), { title: "Mail" }),
     tbButton("print", "", () => ctx.printText(viewport.innerText, current), { title: "Print" }),
@@ -454,6 +592,7 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
           { label: "Page by E-mail", disabled: true },
           { label: "Link by E-mail", action: () => (location.href = "mailto:?subject=" + encodeURIComponent(w.title) + "&body=" + encodeURIComponent(current)) },
           { label: "Shortcut to Desktop", disabled: true },
+          { label: "Share Link (copy to Clipboard)", disabled: !/^https?:/i.test(current), action: () => navigator.clipboard?.writeText(shareLink()) },
         ],
       },
       { label: "Import and Export...", disabled: true },
@@ -504,9 +643,9 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
       {
         label: "Explorer Bar",
         submenu: [
-          { label: "Search", shortcut: "Ctrl+E", action: () => navigate("about:home") },
-          { label: "Favorites", shortcut: "Ctrl+I", action: () => navigate("about:favorites") },
-          { label: "History", shortcut: "Ctrl+H", action: () => navigate("about:history") },
+          { label: "Search", shortcut: "Ctrl+E", checked: barKind === "search", action: () => showBar("search") },
+          { label: "Favorites", shortcut: "Ctrl+I", checked: barKind === "favorites", action: () => showBar("favorites") },
+          { label: "History", shortcut: "Ctrl+H", checked: barKind === "history", action: () => showBar("history") },
         ],
       },
       { separator: true },
@@ -523,10 +662,16 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
         shortcut: "Esc",
         action: () => {
           viewport.querySelector("iframe")?.remove();
-          status.children[0].textContent = "Stopped";
+          loadEnd("Stopped");
         },
       },
       { label: "Refresh", shortcut: "F5", action: render },
+      { separator: true },
+      {
+        label: "Archive Year",
+        submenu: Array.from({ length: 14 }, (_, i) => String(1996 + i)).map((y) => ({ label: y, radio: true, checked: y === (wbStamp ? wbStamp.slice(0, 4) : wbYear), action: () => setYear(y) })),
+      },
+      { label: "Archive Options...", action: archiveOptions },
       { separator: true },
       {
         label: "Text Size",
@@ -557,7 +702,7 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
               : viewport.innerHTML,
           }),
       },
-      { label: "Full Screen", shortcut: "F11", action: () => w.maximize() },
+      { label: "Full Screen", shortcut: "F11", checked: full, action: () => setFull(!full) },
     ],
     Favorites: () => [
       {
@@ -622,7 +767,7 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
       el("span", { class: "ie-links", text: "Links" }),
       el("span", { class: "ie-chevron", text: "»" }),
     ),
-    viewport,
+    ieBody,
     status,
   );
   const HELP = {
@@ -656,6 +801,9 @@ export function openInternetExplorer(ctx, { url = null, path = null } = {}) {
       e.preventDefault();
       render();
     }
+    if (e.key === "F11") { e.preventDefault(); setFull(!full); }
+    if (e.key === "Escape" && full) setFull(false);
+    if ((e.ctrlKey || e.metaKey) && ["e", "i", "h"].includes(e.key.toLowerCase())) { e.preventDefault(); showBar({ e: "search", i: "favorites", h: "history" }[e.key.toLowerCase()]); }
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "l") {
       e.preventDefault();
       address.focus();

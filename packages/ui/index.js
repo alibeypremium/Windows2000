@@ -283,7 +283,7 @@ export function popup(items, x, y, { parent = null, anchor = null } = {}) {
         tabindex: -1,
       },
       hasCheck
-        ? el("span", { class: "menu-check", text: item.checked ? "✓" : "" })
+        ? el("span", { class: "menu-check" + (item.radio && item.checked ? " menu-radio" : ""), text: item.checked && !item.radio ? "✓" : "" })
         : null,
       item.icon ? icon(item.icon) : el("span", { class: "menu-icon-space" }),
       el("span", { class: "menu-label", text: item.label, style: item.bold ? { fontWeight: "bold" } : null }),

@@ -832,6 +832,12 @@ async function start() {
     });
   }
   window.win2k = { version: "1.0.0", ...ctx };
+  // Share link: #web=<address>&date=<year or YYYYMMDD> opens Internet Explorer on the Wayback Machine.
+  try {
+    const hp = new URLSearchParams(location.hash.replace(/^#/, ""));
+    const web = hp.get("web"), date = (hp.get("date") || "").replace(/\D/g, "");
+    if (web) setTimeout(() => ctx.launch("ie", { url: /^https?:\/\//i.test(web) ? web : "http://" + web, year: date.slice(0, 4) || null, stamp: date.length >= 8 ? date.slice(0, 8) : "" }), 600);
+  } catch {}
   if ("serviceWorker" in navigator && !location.hostname.endsWith(".local") && !["localhost", "127.0.0.1"].includes(location.hostname))
     navigator.serviceWorker
       .register("/sw.js")
