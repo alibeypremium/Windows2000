@@ -153,13 +153,28 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     const cur = (wbStamp || wbYear + "0101").slice(0, 8), d = new Date(Date.UTC(+cur.slice(0, 4), +cur.slice(4, 6) - 1, +cur.slice(6, 8) + dir));
     const lim = d.toISOString().slice(0, 10).replace(/-/g, "");
     status.children[0].textContent = trDate() ? "Kayıt aranıyor..." : "Looking for a copy...";
-    try {
+    const none = () => flash(trDate() ? (dir < 0 ? "Bu sayfanın daha eski kaydı yok." : "Bu sayfanın daha yeni kaydı yok.") : (dir < 0 ? "There is no earlier copy of this page." : "There is no later copy of this page."));
+    const go = (t) => { wbYear = t.slice(0, 4); wbStamp = t; snapBusy = false; render(); };
+    let found;
+    try { // 1) one small CDX query
       const q = "https://web.archive.org/cdx/search/cdx?output=json&fl=timestamp&collapse=timestamp:8&filter=statuscode:200&limit=" + (dir < 0 ? "-1&to=" : "1&from=") + lim + "&url=" + encodeURIComponent(current);
-      const rows = (await (await fetch(q, { signal: AbortSignal.timeout(12000) })).json()).slice(1);
-      const t = rows[0]?.[0];
-      if (!t) flash(trDate() ? (dir < 0 ? "Bu sayfanın daha eski kaydı yok." : "Bu sayfanın daha yeni kaydı yok.") : (dir < 0 ? "There is no earlier copy of this page." : "There is no later copy of this page."));
-      else { wbYear = t.slice(0, 4); wbStamp = t; snapBusy = false; render(); }
-    } catch { flash(trDate() ? "Arşive ulaşılamadı." : "Could not reach the archive."); }
+      const r = await fetch(q, { signal: AbortSignal.timeout(8000) });
+      if (!r.ok) throw new Error("cdx " + r.status);
+      found = (await r.json()).slice(1)[0]?.[0] || null;
+    } catch {
+      try { // 2) "closest copy" API, probing further and further from the current date until a different copy answers
+        found = null;
+        for (let days = 1, n = 0; n < 14 && !found; days *= 2, n++) {
+          const p = new Date(Date.UTC(+cur.slice(0, 4), +cur.slice(4, 6) - 1, +cur.slice(6, 8) + dir * days)).toISOString().slice(0, 10).replace(/-/g, "");
+          if (p < "19960101" || p > new Date().toISOString().slice(0, 10).replace(/-/g, "")) break;
+          const ts = await closestSnap(current, p);
+          if (ts === undefined) throw new Error("offline");
+          if (ts && (dir < 0 ? ts.slice(0, 8) < cur : ts.slice(0, 8) > cur)) found = ts;
+        }
+      } catch { snapBusy = false; return flash(trDate() ? "Arşive ulaşılamadı." : "Could not reach the archive."); }
+    }
+    if (found) return go(found);
+    none();
     snapBusy = false;
   };
   const SANDBOX_WB = "allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox";
