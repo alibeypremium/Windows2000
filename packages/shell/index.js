@@ -21,7 +21,7 @@ import { startSaver } from "../rendering/savers.js";
 import { openLanStatus } from "./lan-status.js";
 export { openHelp, openWelcome, openAbout } from "./help.js";
 // tray icons: a name from the icon set, or a root-absolute file path (e.g. an .svg)
-const trayImg = (name) => (name.startsWith("/") ? el("img", { class: "icon", src: name, width: 16, height: 16, alt: "", draggable: "false" }) : icon(name, 16));
+const trayImg = (name) => (/^\.{0,2}\//.test(name) ? el("img", { class: "icon", src: name, width: 16, height: 16, alt: "", draggable: "false" }) : icon(name, 16));
 export class DesktopShell {
   constructor(ctx) {
     this.ctx = ctx;
