@@ -3,6 +3,7 @@
 // closest-copy fallback, "no copy" page, slow-archive notice).
 import { el, button, popup } from "../ui/index.js";
 import { getLang } from "../ui/i18n.js";
+import { closestAny } from "./wb-util.js";
 import { openDlgWindow } from "../accessories/winrar-dlg.js";
 
 const WB = "https://web.archive.org/web/";
@@ -67,11 +68,13 @@ export function createNsWayback(env) {
     document.head.append(sc);
   });
   async function closestSnap(url, st) {
-    try {
-      const d = await jsonp("https://archive.org/wayback/available?url=" + encodeURIComponent(url) + "&timestamp=" + (st + "0101000000").slice(0, 14));
-      const c = d?.archived_snapshots?.closest;
-      return c?.available ? c.timestamp : null;
-    } catch { return undefined; }
+    return closestAny(async (u) => {
+      try {
+        const d = await jsonp("https://archive.org/wayback/available?url=" + encodeURIComponent(u) + "&timestamp=" + (st + "0101000000").slice(0, 14));
+        const c = d?.archived_snapshots?.closest;
+        return c?.available ? c.timestamp : null;
+      } catch { return undefined; }
+    }, url);
   }
   const snapCache = new Map(), probeFail = new Set();
   async function loadYears() {
@@ -201,24 +204,18 @@ export function createNsWayback(env) {
     if (!live) loadYears().catch(() => {});
     loadStart("Connecting to " + url.hostname + "...");
     setTitle(url.hostname);
-    const open = (src, note) => {
+    const open = (src, note, offerLive) => {
       const f = mkFrame({ src, title: url.hostname, sandbox: live ? "allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox" : SANDBOX_WB, referrerpolicy: "no-referrer" });
       frame = live ? null : f;
       f.addEventListener("load", () => loadEnd());
-      viewport.replaceChildren(...(note ? [el("div", { class: "ie-infobar" }, el("span", { text: note }), button("×", (e) => e.currentTarget.parentElement.remove(), { class: "ie-infobar-x", title: "Close" }))] : []), f);
+      viewport.replaceChildren(...(note ? [el("div", { class: "ie-infobar" }, el("span", { text: note }), offerLive ? button(t ? "Canlı siteyi aç" : "Open the live site", () => { ctx.settings.set("ieArchive", false); rerender(); }) : null, button("×", (e) => e.currentTarget.parentElement.remove(), { class: "ie-infobar-x", title: "Close" }))] : []), f);
     };
     if (live) return open(current);
     const want = stamp || year;
     closestSnap(current, want).then((ts) => {
       if (my !== token) return;
       if (ts === undefined) return open(WB + want + "if_/" + current);
-      if (ts === null) {
-        loadEnd(t ? "Bu sayfanın arşiv kaydı yok" : "No archived copy of this page");
-        viewport.replaceChildren(el("div", { class: "ie-legacy-page" },
-          t ? "Wayback Machine'de bu sayfanın hiçbir kaydı bulunamadı." : "The Wayback Machine has no copy of this page.", el("br"), el("br"),
-          button(t ? "Canlı siteyi aç" : "Open the live site", () => { ctx.settings.set("ieArchive", false); rerender(); })));
-        return;
-      }
+      if (ts === null) return open(WB + want + "if_/" + current, t ? "Arşiv bu adres için kayıt bildirmedi; yine de deneniyor. Sayfa açılmazsa canlı siteyi açabilirsiniz." : "The archive did not list a copy of this address; trying anyway. If the page does not load, open the live site.", true);
       const gotY = ts.slice(0, 4), wantY = want.slice(0, 4);
       if (gotY === wantY) return open(WB + want + "if_/" + current);
       const when = stampDate(ts.slice(0, 8));

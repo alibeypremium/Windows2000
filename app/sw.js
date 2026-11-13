@@ -1,4 +1,4 @@
-const CACHE = "win2k-desktop-v19";
+const CACHE = "win2k-desktop-v20";
 const isAsset = (u) => /\/assets\/.+\.(png|gif|ico|woff2?|ttf)$/i.test(u.pathname);
 self.addEventListener("install", (event) => {
   event.waitUntil(

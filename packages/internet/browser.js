@@ -12,6 +12,7 @@ import { buildSite, isSite, prefetchNews, homeBoxes } from "./netscape-sites.js"
 import { getLang } from "../ui/i18n.js";
 import { YEAR_FACTS } from "./ie-years.js";
 import { buildHome } from "./ie-home.js";
+import { closestAny } from "./wb-util.js";
 import { openDlgWindow } from "../accessories/winrar-dlg.js";
 import { ieOpen, ieOptions, ieAddFavorite, ieProps, ieOrganize, iePageSetup, iePrint, IE_HELP } from "./ie-dialogs.js";
 const normalizeAddress = (input) => {
@@ -150,11 +151,13 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
   });
   // Closest archived copy to a wanted date (undefined = could not ask, null = nothing archived).
   async function closestSnap(url, st) {
-    try {
-      const d = await jsonp("https://archive.org/wayback/available?url=" + encodeURIComponent(url) + "&timestamp=" + (st + "0101000000").slice(0, 14));
-      const c = d?.archived_snapshots?.closest;
-      return c?.available ? c.timestamp : null;
-    } catch { return undefined; }
+    return closestAny(async (u) => {
+      try {
+        const d = await jsonp("https://archive.org/wayback/available?url=" + encodeURIComponent(u) + "&timestamp=" + (st + "0101000000").slice(0, 14));
+        const c = d?.archived_snapshots?.closest;
+        return c?.available ? c.timestamp : null;
+      } catch { return undefined; }
+    }, url);
   }
   // Which of 1996-2009 have a copy, plus the first and last copy: a handful of tiny JSONP questions, asked once per address.
   const snapCache = new Map(), probeFail = new Set();
@@ -542,7 +545,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     if (!live) { loadYears().catch(() => {}); }
     loadStart("Opening page " + current + "...");
     w.setTitle(url.hostname + " - Microsoft Internet Explorer");
-    const show = (src, note) => {
+    const show = (src, note, live2) => {
       const frame = el("iframe", {
         class: "ie-frame",
         src,
@@ -552,20 +555,15 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
       });
       wbFrame = live ? null : frame;
       frame.addEventListener("load", () => loadEnd());
-      viewport.replaceChildren(...(note ? [el("div", { class: "ie-infobar" }, el("span", { text: note }), button("×", (e) => e.currentTarget.parentElement.remove(), { class: "ie-infobar-x", title: "Close" }))] : []), frame);
+      viewport.replaceChildren(...(note ? [el("div", { class: "ie-infobar" }, el("span", { text: note }), live2 ? button(tr2 ? "Canlı siteyi aç" : "Open the live site", () => { ctx.settings.set("ieArchive", false); render(); }) : null, button("×", (e) => e.currentTarget.parentElement.remove(), { class: "ie-infobar-x", title: "Close" }))] : []), frame);
     };
     if (live) return show(current);
     const want = wbStamp || wbYear;
     closestSnap(current, want).then((ts) => {
       if (token !== render.wb) return;
       if (ts === undefined) return show(WB + want + "if_/" + current);
-      if (ts === null) {
-        loadEnd(tr2 ? "Bu sayfanın arşiv kaydı yok" : "No archived copy of this page");
-        viewport.replaceChildren(el("div", { class: "ie-legacy-page" },
-          tr2 ? "Wayback Machine'de bu sayfanın hiçbir kaydı bulunamadı." : "The Wayback Machine has no copy of this page.", el("br"), el("br"),
-          button(tr2 ? "Canlı siteyi aç" : "Open the live site", () => { ctx.settings.set("ieArchive", false); render(); })));
-        return;
-      }
+      if (ts === null) // the archive did not report a copy; Wayback may still have one, so ask it directly
+        return show(WB + want + "if_/" + current, tr2 ? "Arşiv bu adres için kayıt bildirmedi; yine de deneniyor. Sayfa açılmazsa canlı siteyi açabilirsiniz." : "The archive did not list a copy of this address; trying anyway. If the page does not load, open the live site.", true);
       const gotY = ts.slice(0, 4), wantY = want.slice(0, 4);
       if (gotY === wantY) return show(WB + want + "if_/" + current);
       const when = tr2 ? ts.slice(6, 8) + "/" + ts.slice(4, 6) + "/" + gotY : +ts.slice(4, 6) + "/" + +ts.slice(6, 8) + "/" + gotY;
