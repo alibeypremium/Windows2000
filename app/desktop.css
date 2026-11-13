@@ -6406,7 +6406,7 @@ input.vlc-eqs[type="range"]{flex:none;writing-mode:vertical-lr;direction:rtl;hei
 .icq-uin{width:80px}
 .icq-fs{margin:0 0 8px;padding:4px 8px 6px}
 .icq-p{margin:0 0 6px}
-.icq-details{display:flex;flex-direction:column;gap:4px;height:160px;padding:8px}
+.icq-details{display:flex;flex-direction:column;gap:4px;height:176px;box-sizing:border-box;padding:8px}
 .icq-details-text{resize:none;flex:1;font:inherit}
 .icq-panel{border:2px solid;border-color:var(--light) var(--dark) var(--dark) var(--light);background:var(--face)}
 .icq-tabs{display:flex;margin:0;padding:0;list-style:none}

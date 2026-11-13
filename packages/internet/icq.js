@@ -122,7 +122,7 @@ export function openICQ(ctx) {
     let uinVal = String(isC ? uin : S.uin), notes = isC ? c.notes || "" : "";
     const pages = ["Main", "Home", "Work", "More", "About", "Interests", ...(isC ? ["Notes"] : [])];
     let page = "Main";
-    const body = el("div", { class: "window-body icq-details" });
+    const body = el("div", { class: "icq-details" });
     const strip = el("menu", { role: "tablist", class: "icq-tabs" });
     const inp = (k, label) => frow(label, el("input", { type: "text", class: "icq-fill", value: f[k] || "", oninput: (e) => (f[k] = e.target.value) }));
     const area = (label, get, set) => [el("label", {}, ...mn(label)), el("textarea", { class: "icq-details-text", oninput: (e) => set(e.target.value) }, get())];
@@ -147,7 +147,7 @@ export function openICQ(ctx) {
     };
     paint();
     const title = isC ? `User Details - ${c.nick}` : `View/Change My Details - ${S.uin}`;
-    const content = el("div", { style: { width: "300px" } }, strip, el("div", { class: "window icq-panel", role: "tabpanel" }, body));
+    const content = el("div", { style: { width: "300px" } }, strip, el("div", { class: "icq-panel", role: "tabpanel" }, body));
     dlg(title, content, {
       onOk: () => {
         if (!f.nick.trim()) return false;
