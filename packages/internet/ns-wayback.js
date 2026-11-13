@@ -3,7 +3,7 @@
 // closest-copy fallback, "no copy" page, slow-archive notice).
 import { el, button, popup } from "../ui/index.js";
 import { getLang } from "../ui/i18n.js";
-import { closestAny, spellingWithCopies, WB_YEARS, WB_YEAR_TEXT, WB_LAST } from "./wb-util.js";
+import { wbApi, WB_YEARS, WB_YEAR_TEXT, WB_LAST } from "./wb-util.js";
 export { WB_YEARS };
 import { openDlgWindow } from "../accessories/winrar-dlg.js";
 
@@ -55,39 +55,11 @@ export function createNsWayback(env) {
   };
   window.addEventListener("message", onMessage);
 
-  // archive.org/wayback/available answers JSONP (a <script> tag), which works from any site; CDX does not.
-  let jpN = 0;
-  const jsonp = (url, ms = 15000) => new Promise((ok, no) => {
-    const cb = "__nswb" + ++jpN + "_" + Date.now().toString(36), sc = document.createElement("script");
-    let t = 0;
-    const done = (v, err) => { clearTimeout(t); delete window[cb]; sc.remove(); err ? no(err) : ok(v); };
-    window[cb] = (d) => done(d);
-    sc.onerror = () => done(null, new Error("jsonp"));
-    t = setTimeout(() => done(null, new Error("timeout")), ms);
-    sc.src = url + "&callback=" + cb;
-    document.head.append(sc);
-  });
-  async function askOne(u, st) {
-    try {
-      const d = await jsonp("https://archive.org/wayback/available?url=" + encodeURIComponent(u) + "&timestamp=" + (st + "0101000000").slice(0, 14));
-      const c = d?.archived_snapshots?.closest;
-      return c?.available ? c.timestamp : null;
-    } catch { return undefined; }
-  }
-  const closestSnap = (url, st) => closestAny((u) => askOne(u, st), url);
-  const snapCache = new Map(), probeFail = new Set();
+  // Archive lookups go through one shared, throttled client (wb-util.js).
+  const closestSnap = wbApi.closest, snapCache = wbApi.infos, probeFail = wbApi.failed;
   async function loadYears() {
-    const key = norm(getCurrent()), hit = snapCache.get(key);
-    if (hit) return (years = hit.years);
-    const url = getCurrent();
-    const base = await spellingWithCopies((u) => askOne(u, "2000"), url);
-    if (base === undefined) { probeFail.add(key); return (years = null); }
-    if (base === null) { snapCache.set(key, { years: [], first: null, last: null }); return (years = []); }
-    const res = await Promise.all([...WB_YEARS.map((y) => askOne(base, y + "0701")), askOne(base, "1996"), askOne(base, String(new Date().getFullYear()))]);
-    if (res.slice(0, WB_YEARS.length).every((r) => r === undefined)) { probeFail.add(key); return (years = null); }
-    const has = WB_YEARS.filter((y, i) => res[i] && res[i].slice(0, 4) === y);
-    snapCache.set(key, { years: has, first: res[WB_YEARS.length] || null, last: res[WB_YEARS.length + 1] || null });
-    return (years = has);
+    const info = await wbApi.info(getCurrent());
+    return (years = info.unknown ? null : info.years);
   }
   const snapStep = async (dir) => {
     const cur0 = getCurrent();
@@ -165,14 +137,14 @@ export function createNsWayback(env) {
     if (m) m.style.left = Math.max(0, Math.min(r.left, innerWidth - m.offsetWidth - 2)) + "px";
   };
   const yearMenu = (anchor = datePane, up = true) => {
-    const t = tr(), key = norm(getCurrent()), info = snapCache.get(key) || null, pending = !info && !probeFail.has(key);
-    if (pending) loadYears().then(() => { if (document.querySelector(".popup-menu") && yearMenu.anchor === anchor) yearMenu(anchor, up); }).catch(() => {});
+    const t = tr(), key = norm(getCurrent()), info = snapCache.get(key) || null, tried = yearMenu.tried || (yearMenu.tried = new Map()), recent = Date.now() - (tried.get(key) || 0) < 20000, pending = !info && !recent;
+    if (pending) { tried.set(key, Date.now()); loadYears().then(() => { if (document.querySelector(".popup-menu") && yearMenu.anchor === anchor) yearMenu(anchor, up); }).catch(() => {}); }
     yearMenu.anchor = anchor;
     const fmt = (s) => (s ? stampDate(s.slice(0, 8)) : "?");
     const infoItems = pending ? [{ label: t ? "Kayıtlar denetleniyor..." : "Checking copies...", disabled: true }, { separator: true }] : info ? [
       { label: info.years.length ? (t ? `Kayıt: ${info.years[0]}–${info.years[info.years.length - 1]} arası, ${info.years.length} yılda` : `Copies: ${info.years[0]}–${info.years[info.years.length - 1]}, in ${info.years.length} years`) : (t ? "1996–2009 arası kayıt yok" : "No copies from 1996 to 2009"), disabled: true },
       { label: (t ? "İlk: " : "First: ") + fmt(info.first) + (t ? "  Son: " : "  Last: ") + fmt(info.last), disabled: true },
-      { separator: true }] : [];
+      { separator: true }] : probeFail.has(key) ? [{ label: t ? "Kayıt bilgisi alınamadı; tüm yıllar açık" : "Copy info unavailable; all years enabled", disabled: true }, { separator: true }] : [];
     popAt(anchor, [
       ...infoItems,
       ...WB_YEARS.map((y) => ({ label: y, radio: true, checked: y === (stamp ? stamp.slice(0, 4) : year), disabled: pending || (!!info && !info.years.includes(y)), action: () => { ctx.settings.set("ieArchive", true); setYear(y); } })),
@@ -220,7 +192,7 @@ export function createNsWayback(env) {
       if (ts === undefined) return open(WB + want + "if_/" + current);
       if (ts === null) return open(WB + want + "if_/" + current, t ? "Arşiv bu adres için kayıt bildirmedi; yine de deneniyor. Sayfa açılmazsa canlı siteyi açabilirsiniz." : "The archive did not list a copy of this address; trying anyway. If the page does not load, open the live site.", true);
       const gotY = ts.slice(0, 4), wantY = want.slice(0, 4);
-      if (gotY === wantY) return open(WB + want + "if_/" + current);
+      if (gotY === wantY) { stamp = ts; setDate(); return open(WB + ts + "if_/" + current); }
       const when = stampDate(ts.slice(0, 8));
       year = gotY; stamp = ts; setDate();
       open(WB + ts + "if_/" + current, t ? `Bu sayfa ${wantY} yılında arşivlenmemiş. En yakın kayıt (${when}) gösteriliyor.` : `This page was not archived in ${wantY}. Showing the closest copy (${when}).`);

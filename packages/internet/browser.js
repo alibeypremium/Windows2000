@@ -12,7 +12,7 @@ import { buildSite, isSite, prefetchNews, homeBoxes } from "./netscape-sites.js"
 import { getLang } from "../ui/i18n.js";
 import { YEAR_FACTS } from "./ie-years.js";
 import { buildHome } from "./ie-home.js";
-import { closestAny, spellingWithCopies, WB_YEARS, WB_YEAR_TEXT, WB_LAST } from "./wb-util.js";
+import { wbApi, wbNorm, WB_YEARS, WB_YEAR_TEXT, WB_LAST } from "./wb-util.js";
 import { openDlgWindow } from "../accessories/winrar-dlg.js";
 import { ieOpen, ieOptions, ieAddFavorite, ieProps, ieOrganize, iePageSetup, iePrint, IE_HELP } from "./ie-dialogs.js";
 const normalizeAddress = (input) => {
@@ -136,42 +136,11 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     if (d.event === "domContentLoaded") loadEnd();
   };
   window.addEventListener("message", onWayback);
-  // web.archive.org's CDX/timemap answers have no CORS headers, so a page cannot read them.
-  // archive.org/wayback/available can be asked with JSONP (a <script> tag), which works from any site.
-  let jpN = 0;
-  const jsonp = (url, ms = 15000) => new Promise((ok, no) => {
-    const cb = "__wbq" + ++jpN + "_" + Date.now().toString(36), sc = document.createElement("script");
-    let t = 0;
-    const done = (v, err) => { clearTimeout(t); delete window[cb]; sc.remove(); err ? no(err) : ok(v); };
-    window[cb] = (d) => done(d);
-    sc.onerror = () => done(null, new Error("jsonp"));
-    t = setTimeout(() => done(null, new Error("timeout")), ms);
-    sc.src = url + "&callback=" + cb;
-    document.head.append(sc);
-  });
-  // Closest archived copy to a wanted date (undefined = could not ask, null = nothing archived).
-  async function askOne(u, st) {
-    try {
-      const d = await jsonp("https://archive.org/wayback/available?url=" + encodeURIComponent(u) + "&timestamp=" + (st + "0101000000").slice(0, 14));
-      const c = d?.archived_snapshots?.closest;
-      return c?.available ? c.timestamp : null;
-    } catch { return undefined; }
-  }
-  const closestSnap = (url, st) => closestAny((u) => askOne(u, st), url);
-  // Which of 1996-2009 have a copy, plus the first and last copy: a handful of tiny JSONP questions, asked once per address.
-  const snapCache = new Map(), probeFail = new Set();
+  // Archive lookups go through one shared, throttled client (wb-util.js); see there for why.
+  const closestSnap = wbApi.closest, snapCache = wbApi.infos, probeFail = wbApi.failed;
   async function loadYears() {
-    const key = norm(current), hit = snapCache.get(key);
-    if (hit) return (wbYears = hit.years, wbInfo = hit, wbYears);
-    const ys = DEF_YEARS, url = current;
-    const base = await spellingWithCopies((u) => askOne(u, "2000"), url);
-    if (base === undefined) { probeFail.add(key); return (wbYears = null); }
-    if (base === null) { const info = { years: [], first: null, last: null }; snapCache.set(key, info); wbInfo = info; return (wbYears = []); }
-    const res = await Promise.all([...ys.map((y) => askOne(base, y + "0701")), askOne(base, "1996"), askOne(base, String(new Date().getFullYear()))]);
-    if (res.slice(0, ys.length).every((r) => r === undefined)) { probeFail.add(key); return (wbYears = null); }
-    const has = ys.filter((y, i) => res[i] && res[i].slice(0, 4) === y);
-    const info = { years: has, first: res[ys.length] || null, last: res[ys.length + 1] || null };
-    snapCache.set(key, info); wbInfo = info; return (wbYears = has);
+    const info = await wbApi.info(current);
+    wbInfo = info; return (wbYears = info.unknown ? null : info.years);
   }
   let snapBusy = false;
   const flash = (t) => { status.children[0].textContent = t; setTimeout(() => { if (!loading) status.children[0].textContent = "Done"; }, 2500); };
@@ -255,14 +224,15 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
   };
   const yearMenu = (anchor = datePane, up = true) => {
     const tr = trDate(), key = norm(current), info = snapCache.get(key) || null;
-    const pending = !info && !probeFail.has(key);
-    if (pending) loadYears().then(() => { if (document.querySelector(".popup-menu") && yearMenu.anchor === anchor) yearMenu(anchor, up); }).catch(() => {});
+    const tried = yearMenu.tried || (yearMenu.tried = new Map()), recent = Date.now() - (tried.get(key) || 0) < 20000;
+    const pending = !info && !recent;
+    if (pending) { tried.set(key, Date.now()); loadYears().then(() => { if (document.querySelector(".popup-menu") && yearMenu.anchor === anchor) yearMenu(anchor, up); }).catch(() => {}); }
     yearMenu.anchor = anchor;
     const fmt = (t) => (t ? stampDate(t.slice(0, 8)) : "?");
     const infoItems = pending ? [{ label: tr ? "Kayıtlar denetleniyor..." : "Checking copies...", disabled: true }, { separator: true }] : info ? [
       { label: info.years.length ? (tr ? `Kayıt: ${info.years[0]}–${info.years[info.years.length - 1]} arası, ${info.years.length} yılda` : `Copies: ${info.years[0]}–${info.years[info.years.length - 1]}, in ${info.years.length} years`) : (tr ? WB_YEAR_TEXT + " arası kayıt yok" : "No copies from " + WB_YEAR_TEXT), disabled: true },
       { label: (tr ? "İlk: " : "First: ") + fmt(info.first) + (tr ? "  Son: " : "  Last: ") + fmt(info.last), disabled: true },
-      { separator: true }] : [];
+      { separator: true }] : probeFail.has(key) ? [{ label: tr ? "Kayıt bilgisi alınamadı; tüm yıllar açık" : "Copy info unavailable; all years enabled", disabled: true }, { separator: true }] : [];
     popAt(anchor, [
       ...infoItems,
       ...DEF_YEARS.map((y) => ({ label: y, radio: true, checked: y === (wbStamp ? wbStamp.slice(0, 4) : wbYear), disabled: pending || (!!info && !info.years.includes(y)), action: () => { ctx.settings.set("ieArchive", true); setYear(y); } })),
@@ -568,7 +538,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
       if (ts === null) // the archive did not report a copy; Wayback may still have one, so ask it directly
         return show(WB + want + "if_/" + current, tr2 ? "Arşiv bu adres için kayıt bildirmedi; yine de deneniyor. Sayfa açılmazsa canlı siteyi açabilirsiniz." : "The archive did not list a copy of this address; trying anyway. If the page does not load, open the live site.", true);
       const gotY = ts.slice(0, 4), wantY = want.slice(0, 4);
-      if (gotY === wantY) return show(WB + want + "if_/" + current);
+      if (gotY === wantY) { wbStamp = ts; setDate(); return show(WB + ts + "if_/" + current); }
       const when = tr2 ? ts.slice(6, 8) + "/" + ts.slice(4, 6) + "/" + gotY : +ts.slice(4, 6) + "/" + +ts.slice(6, 8) + "/" + gotY;
       wbYear = gotY; wbStamp = ts; setDate();
       show(WB + ts + "if_/" + current, tr2 ? `Bu sayfa ${wantY} yılında arşivlenmemiş. En yakın kayıt (${when}) gösteriliyor.` : `This page was not archived in ${wantY}. Showing the closest copy (${when}).`);
