@@ -347,13 +347,14 @@ const PROGRAMS = [
   ["Java 2 Runtime Environment Standard Edition v1.3.1_01", "java", "17.1MB"],
   ["Microsoft Internet Explorer 6 SP1", "ie"],
   ["Microsoft Word 2000", "word", "68.0MB"],
+  ["ICQ 99b", "icq", "3.10MB"],
   ["MSN Messenger 5.0", "msn", "9.55MB"],
   ["Netscape Navigator 4.8", "netscape", "24.3MB"],
   ["VLC media player 0.9.2", "vlc", "28.1MB"],
   ["Winamp 2.91", "winamp", "4.37MB"],
   ["WinRAR archiver", "winrar", "3.05MB"],
 ];
-const PROGRAM_ICON = { acrobat: "acrobat", divx: "divx", word: "word", msn: "msn", netscape: "netscape", vlc: "vlc", winamp: "winamp", winrar: "winrar" };
+const PROGRAM_ICON = { acrobat: "acrobat", divx: "divx", word: "word", msn: "msn", icq: "icq", netscape: "netscape", vlc: "vlc", winamp: "winamp", winrar: "winrar" };
 const parseSize = (s) =>
   s ? parseFloat(s) * (/KB/.test(s) ? 1 : 1024) : -1;
 

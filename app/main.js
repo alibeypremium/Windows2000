@@ -57,6 +57,7 @@ const openInternetConnectionWizard = lazy(() => import("/packages/system/wizards
 const openDiskCleanup = lazy(() => import("/packages/system/cleanmgr.js"), "openDiskCleanup");
 const openWindowsTools = lazy(() => import("/packages/system/wintools.js"), "openWindowsTools");
 const openWinRAR = lazy(() => import("/packages/accessories/winrar.js"), "openWinRAR");
+const openICQ = lazy(() => import("/packages/internet/icq.js"), "openICQ");
 const openNetscape = lazy(() => import("/packages/internet/netscape.js"), "openNetscape");
 const openMessenger = lazy(() => import("/packages/internet/msn.js"), "openMessenger");
 const openWord = lazy(() => import("/packages/accessories/word.js"), "openWord");
@@ -82,7 +83,7 @@ const openKeyboard = lazy(() => import("/packages/system/index.js"), "openKeyboa
 const openMagnifier = lazy(() => import("/packages/system/index.js"), "openMagnifier");
 const openDiskManager = lazy(() => import("/packages/system/index.js"), "openDiskManager");
 const openDefrag = lazy(() => import("/packages/system/index.js"), "openDefrag");
-const idleLoad = ["/packages/system/consoles.js", "/packages/system/services.js", "/packages/explorer/fontview.js", "/packages/accessories/index.js", "/packages/games/index.js", "/packages/accessories/winamp.js", "/packages/system/wizards.js", "/packages/system/wintools.js", "/packages/system/cleanmgr.js", "/packages/accessories/winrar.js", "/packages/internet/netscape.js", "/packages/internet/msn.js", "/packages/accessories/word.js", "/packages/accessories/acrobat.js", "/packages/accessories/vlc.js", "/packages/accessories/divx.js", "/packages/control-panel/index.js", "/packages/internet/index.js", "/packages/system/index.js"];
+const idleLoad = ["/packages/system/consoles.js", "/packages/system/services.js", "/packages/explorer/fontview.js", "/packages/accessories/index.js", "/packages/games/index.js", "/packages/accessories/winamp.js", "/packages/system/wizards.js", "/packages/system/wintools.js", "/packages/system/cleanmgr.js", "/packages/accessories/winrar.js", "/packages/internet/netscape.js", "/packages/internet/msn.js", "/packages/internet/icq.js", "/packages/accessories/word.js", "/packages/accessories/acrobat.js", "/packages/accessories/vlc.js", "/packages/accessories/divx.js", "/packages/control-panel/index.js", "/packages/internet/index.js", "/packages/system/index.js"];
 
 const bus = new EventBus(),
   settings = new Settings(bus),
@@ -250,6 +251,13 @@ ctx.apps = [
     icon: "word",
     aliases: ["winword", "winword.exe", "word", "word.exe"],
     open: (ctx, args) => openWord(ctx, args || {}),
+  },
+  {
+    id: "icq",
+    name: "ICQ",
+    icon: "icq",
+    aliases: ["icq.exe", "icq", "icq99b", "icq99b.exe"],
+    open: (ctx, args) => openICQ(ctx, args || {}),
   },
   {
     id: "msn",
@@ -672,6 +680,7 @@ const PROGRAM_FILES = {
   "WinRAR": { "WinRAR.exe": 1, "Rar.txt": "WinRAR\r\nArchiver for RAR and ZIP.\r\n", "License.txt": "WinRAR license\r\n", "Default.SFX": 1, "Zip.SFX": 1 },
   "Adobe/Acrobat 5.0/Reader": { "AcroRd32.exe": 1, "AcroRd32.dll": 1, "plug_ins/Search.api": 1 },
   "Microsoft Office/Office": { "WINWORD.EXE": 1, "WINWORD.OLB": 1, "1033/wwintl.dll": 1, "Templates/Normal.dot": 1 },
+  "ICQ": { "icq.exe": 1, "icq.ini": "[ICQ]\r\n", "Sounds/message.wav": 1 },
   "MSN Messenger": { "msnmsgr.exe": 1, "msgsc.dll": 1, "Sounds/newalert.wav": 1, "Emoticons/smile.gif": 1 },
   "Windows Media Player": { "wmplayer.exe": 1, "mplayer2.exe": 1, "wmp.dll": 1 },
   "Outlook Express": { "msimn.exe": 1, "msoe.dll": 1, "wab.exe": 1 },

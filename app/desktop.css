@@ -6379,3 +6379,55 @@ input.vlc-eqs[type="range"]{flex:none;writing-mode:vertical-lr;direction:rtl;hei
 .wiz-stage > * { pointer-events: auto; }
 
 .tray-button.language { font-weight: 700; font-size: 11px; letter-spacing: 0; min-width: 24px; }
+
+/* ---- ICQ 99b (ported from win98.si; colours mapped to the Windows 2000 theme) ---- */
+.icq,.icq-msg{display:flex;flex-direction:column;gap:2px;height:100%;padding:2px;box-sizing:border-box;background:var(--face);font:11px Tahoma,"MS Sans Serif",sans-serif}
+.icq-list,.icq-found,.icq-history,.icq-msg-text{background:#fff;border:2px solid;border-color:var(--shadow) var(--light) var(--light) var(--shadow);box-shadow:inset 1px 1px 0 var(--dark)}
+.icq-list{background:var(--face);flex:1;min-height:0;overflow-y:auto;outline:none}
+.icq-group{display:flex;align-items:center;gap:4px;height:16px;padding:0 2px}
+.icq-group:before,.icq-group:after{content:"";flex:1;border-top:1px solid var(--shadow);border-bottom:1px solid var(--light)}
+.icq-row{display:flex;align-items:center;gap:3px;height:18px;padding:0 2px;color:#00f;white-space:nowrap}
+.icq-row.icq-off{color:red}
+.icq-row span{padding:0 2px}
+.icq-row.highlighted span{background:#0a246a;color:#fff}
+.icq-list:focus .icq-row.highlighted span{outline:1px dotted #fff;outline-offset:-1px}
+.icq-row input{flex:1;width:0;height:16px;font:inherit}
+.icq-search,.icq-buttons{display:flex;gap:2px}
+.icq-search input{flex:1;min-width:0;font:inherit}
+.icq-search button.icq-go{min-width:26px;padding:0}
+.icq-buttons button{flex:1;display:flex;justify-content:center;align-items:center;gap:3px;min-width:0;padding:0 2px;font:11px Tahoma,sans-serif;height:23px}
+.icq-buttons .icq-services{flex:0 0 64px;background:#ff0;font-weight:700}
+.icq-buttons .icq-logo{flex:0 0 64px;font-weight:700}
+.icq-buttons .icq-status{justify-content:flex-start}
+.icq-dlg{padding:8px 10px 0}
+.icq-dlg .field-row{display:flex;align-items:center;gap:6px;margin:3px 0}
+.icq-lbl{width:70px;flex:none}
+.icq-fill{flex:1;min-width:0;font:inherit}
+.icq-uin{width:80px}
+.icq-fs{margin:0 0 8px;padding:4px 8px 6px}
+.icq-p{margin:0 0 6px}
+.icq-details{display:flex;flex-direction:column;gap:4px;height:160px;padding:8px}
+.icq-details-text{resize:none;flex:1;font:inherit}
+.icq-panel{border:2px solid;border-color:var(--light) var(--dark) var(--dark) var(--light);background:var(--face)}
+.icq-tabs{display:flex;margin:0;padding:0;list-style:none}
+.icq-tabs li{padding:2px 6px 3px;border:1px solid;border-color:var(--light) var(--dark) transparent var(--light);background:var(--face);margin-right:1px}
+.icq-tabs li[aria-selected="true"]{font-weight:700;margin-bottom:-2px;padding-bottom:5px;position:relative}
+.icq-tabs a{cursor:default;text-decoration:none;color:#000}
+.icq-found{height:140px;overflow:auto}
+.icq-tbl{width:100%;border-collapse:collapse}
+.icq-tbl th{text-align:left;font-weight:400;background:var(--face);border:1px solid;border-color:var(--light) var(--shadow) var(--shadow) var(--light);padding:1px 4px}
+.icq-tbl td{padding:1px 4px;white-space:nowrap}
+.icq-tbl tr.highlighted td{background:#0a246a;color:#fff}
+.icq-none{margin:4px}
+.icq-history,.icq-msg-text{height:200px;padding:2px 4px;overflow-y:auto;user-select:text}
+.icq-history p,.icq-msg-text p{white-space:pre-wrap;margin:0 0 4px}
+.icq-notice{color:#808080}
+.icq-msg{gap:6px;padding:6px}
+.icq-msg-text{flex:1;min-height:0;height:auto}
+.icq-msg-input{resize:none;font:inherit}
+.icq-msgbtns{display:flex;justify-content:flex-end;gap:6px}
+.icq-msgbtns button{min-width:75px;height:23px}
+.icq-about{padding:10px 12px}
+.icq-about-row{display:flex;gap:12px}
+.icq-about p{margin:0}
+.icq-b{font-weight:700}

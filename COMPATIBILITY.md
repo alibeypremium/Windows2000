@@ -166,3 +166,6 @@ Clipboard, recording, serial ports, media codecs, GPU, printing and external han
 ## Help (.hlp) Turkish layer
 
 `packages/shell/help-tr.js` replaces the leaf text blocks of the real Windows 2000 help pages (`assets/help/**/*.htm`) at view time with Turkish text from `assets/help-tr/<book>.json`; links and images stay intact (inline elements are kept through `[[...]]` markers). Contents tree, book names and page titles (1212 strings) come from `assets/help-tr/names.json`. Sources live in `scripts/help-tr/` (`names-*.txt`, `seg-*.txt` = `id|Türkçe`, compiled by `scripts/build-help-tr.py`). Untranslated blocks fall back to English. Index terms, the full-text search word list and the largest books are still English; see the translation progress in the commit history.
+
+## ICQ 99b
+Ported from the win98.si ICQ app (main window, registration, Find/Add Users, user details, history, status/system menus, 12 built-in contacts, UIN lookup, knock). The remote AI backend is replaced by local rule-based persona replies (English/Turkish). The message-session window is built after the same CSS because win98.si's `icqmsg` chunk was not available. Flower status icons are drawn from win98.si's pixel maps; "Uh-oh!" (message), online and sent sounds come from the ICQ 2001b installer (StandardClient.emo).
