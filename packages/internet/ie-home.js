@@ -4,32 +4,38 @@ import { el, button, icon } from "../ui/index.js";
 import { dailyPick } from "./netscape-sites.js";
 import { YEAR_FACTS } from "./ie-years.js";
 
-// [name, host, colour, letters]
+// [name, host, background, text colour(s), wordmark, style]. Style flags: i italic, s serif, l lowercase-looking wide font.
+// These are redrawn wordmarks in each site's well-known colours (no network, no original bitmaps).
 export const SITES_TR = [
-  ["Hürriyet", "hurriyet.com.tr", "#c8102e", "H"], ["Milliyet", "milliyet.com.tr", "#0b3c8c", "M"], ["Sabah", "sabah.com.tr", "#e07b00", "S"], ["Radikal", "radikal.com.tr", "#7a1f1f", "R"],
-  ["Cumhuriyet", "cumhuriyet.com.tr", "#a4161a", "C"], ["NTV", "ntvmsnbc.com", "#003b73", "N"], ["TRT", "trt.net.tr", "#d2232a", "T"], ["Mynet", "mynet.com", "#ff6a00", "my"],
-  ["Superonline", "superonline.com", "#1b5fc1", "S!"], ["TTNET", "turk.net", "#0a4da2", "TT"], ["Fenerbahçe", "fenerbahce.org", "#13286b", "F"], ["Galatasaray", "galatasaray.org", "#d4112f", "G"],
-  ["Beşiktaş", "bjk.com.tr", "#222222", "B"], ["Boğaziçi Ü.", "boun.edu.tr", "#00467f", "Bü"], ["ODTÜ", "metu.edu.tr", "#8c1c13", "O"], ["İTÜ", "itu.edu.tr", "#1d4e9e", "İ"],
+  ["Hürriyet", "hurriyet.com.tr", "#fff", "#c8102e", "hürriyet", "bi"], ["Milliyet", "milliyet.com.tr", "#fff", "#0b3c8c", "Milliyet", "bs"], ["Sabah", "sabah.com.tr", "#e07b00", "#fff", "SABAH", "b"], ["Radikal", "radikal.com.tr", "#fff", "#b01c1c", "radikal", "b"],
+  ["Cumhuriyet", "cumhuriyet.com.tr", "#fff", "#a4161a", "Cumhuriyet", "bs"], ["NTV", "ntvmsnbc.com", "#003b73", "#fff", "NTV", "b"], ["TRT", "trt.net.tr", "#d2232a", "#fff", "TRT", "b"], ["Mynet", "mynet.com", "#ff6a00", "#fff", "mynet", "b"],
+  ["Superonline", "superonline.com", "#fff", "#1b5fc1", "superonline", "bi"], ["TTNET", "turk.net", "#0a4da2", "#fff", "TTNET", "b"], ["Fenerbahçe", "fenerbahce.org", "#13286b", "#ffd700", "FENERBAHÇE", "b"], ["Galatasaray", "galatasaray.org", "#d4112f", "#ffcc00", "GALATASARAY", "b"],
+  ["Beşiktaş", "bjk.com.tr", "#111", "#fff", "BEŞİKTAŞ", "b"], ["Boğaziçi Ü.", "boun.edu.tr", "#00467f", "#fff", "BOĞAZİÇİ", "b"], ["ODTÜ", "metu.edu.tr", "#8c1c13", "#fff", "ODTÜ", "b"], ["İTÜ", "itu.edu.tr", "#1d4e9e", "#fff", "İTÜ", "b"],
 ];
 export const SITES_GLOBAL = [
-  ["Yahoo!", "yahoo.com", "#720e9e", "Y!"], ["MSN", "msn.com", "#1a6fd1", "M"], ["Google", "google.com", "#3b78e7", "G"], ["AltaVista", "altavista.com", "#1d6fa5", "A"],
-  ["Netscape", "netscape.com", "#0f7d4b", "N"], ["Microsoft", "microsoft.com", "#2b7bd6", "MS"], ["AOL", "aol.com", "#222d6b", "A"], ["Lycos", "lycos.com", "#0b7a4f", "L"],
-  ["Excite", "excite.com", "#e4572e", "E"], ["GeoCities", "geocities.com", "#d42a2a", "Ge"], ["Amazon", "amazon.com", "#ff9900", "a"], ["eBay", "ebay.com", "#e43137", "e"],
-  ["CNN", "cnn.com", "#cc0000", "CNN"], ["BBC", "bbc.co.uk", "#bb1919", "BBC"], ["Apple", "apple.com", "#666666", "A"], ["Winamp", "winamp.com", "#e6a100", "W"],
+  ["Yahoo!", "yahoo.com", "#fff", "#e60000", "Yahoo!", "bs"], ["MSN", "msn.com", "#fff", ["#1a6fd1", "#1a6fd1", "#1a6fd1"], "msn", "b"], ["Google", "google.com", "#fff", ["#3b78e7", "#dc2f1c", "#f9b300", "#3b78e7", "#2fa12f", "#dc2f1c"], "Google", "bs"], ["AltaVista", "altavista.com", "#fff", "#0e5fa8", "AltaVista", "bi"],
+  ["Netscape", "netscape.com", "#fff", "#1c7c54", "Netscape", "b"], ["Microsoft", "microsoft.com", "#fff", "#333", "Microsoft", "bi"], ["AOL", "aol.com", "#222d6b", "#fff", "AOL", "b"], ["Lycos", "lycos.com", "#fff", "#0b7a4f", "LYCOS", "b"],
+  ["Excite", "excite.com", "#fff", "#e4572e", "excite", "b"], ["GeoCities", "geocities.com", "#fff", "#d42a2a", "GeoCities", "b"], ["Amazon", "amazon.com", "#fff", "#111", "amazon.com", "b"], ["eBay", "ebay.com", "#fff", ["#e53238", "#0064d2", "#f5af02", "#86b817"], "ebay", "b"],
+  ["CNN", "cnn.com", "#cc0000", "#fff", "CNN", "b"], ["BBC", "bbc.co.uk", "#111", "#fff", "BBC", "b"], ["Apple", "apple.com", "#fff", "#666", "Apple", "b"], ["Winamp", "winamp.com", "#111", "#e6a100", "WINAMP", "b"],
 ];
 
-const tileCache = new Map();
-/** A little 32x32 "site icon": bevelled coloured tile with the site's initials (no network, no logos). */
-export function siteIcon(color, text) {
-  const k = color + text;
-  if (tileCache.has(k)) return tileCache.get(k);
-  const fs = text.length > 2 ? 10 : text.length > 1 ? 15 : 20;
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".5" stop-color="#fff" stop-opacity=".05"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></linearGradient></defs><rect x="1.5" y="1.5" width="29" height="29" rx="5" fill="${color}" stroke="#000" stroke-opacity=".45"/><rect x="1.5" y="1.5" width="29" height="29" rx="5" fill="url(#g)"/><text x="16" y="${text.length > 2 ? 20 : 22.5}" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="bold" font-size="${fs}" fill="#fff" stroke="#000" stroke-opacity=".35" stroke-width=".4">${text.replace(/&/g, "&amp;")}</text></svg>`;
+const logoCache = new Map();
+/** 84x34 site logo: the site's wordmark redrawn in its colours. */
+export function siteLogo(bg, fg, text, st = "b") {
+  const k = [bg, fg, text, st].join("|");
+  if (logoCache.has(k)) return logoCache.get(k);
+  const fam = st.includes("s") ? "Georgia,'Times New Roman',serif" : "Arial,Helvetica,sans-serif";
+  const size = Math.max(9, Math.min(20, Math.floor(76 / (text.length * (st.includes("s") ? 0.62 : 0.66)))));
+  const esc = (c) => c.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  const body = Array.isArray(fg) ? `<text x="42" y="22" text-anchor="middle" font-family="${fam}" font-weight="bold" font-size="${size}" ${st.includes("i") ? 'font-style="italic"' : ""}>${[...text].map((c, i) => `<tspan fill="${fg[i % fg.length]}">${esc(c)}</tspan>`).join("")}</text>`
+    : `<text x="42" y="22" text-anchor="middle" font-family="${fam}" font-weight="bold" font-size="${size}" fill="${fg}" ${st.includes("i") ? 'font-style="italic"' : ""}>${esc(text)}</text>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="84" height="34" viewBox="0 0 84 34"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".12"/></linearGradient></defs><rect x=".5" y=".5" width="83" height="33" rx="3" fill="${bg}" stroke="#7f9db9"/><rect x=".5" y=".5" width="83" height="33" rx="3" fill="url(#g)"/>${body}</svg>`;
   const u = "data:image/svg+xml;utf8," + encodeURIComponent(svg);
-  tileCache.set(k, u);
+  logoCache.set(k, u);
   return u;
 }
 
+const histCache = new Map(), histPending = new Map();
 const MONTHS = { tr: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"], en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"] };
 const DAYS = { tr: ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"], en: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] };
 
@@ -43,7 +49,7 @@ export function buildHome(env) {
   const yearSel = el("select", { "aria-label": tr ? "Arşiv yılı" : "Archive year" }, ...years.map((y) => el("option", { value: y, text: y, selected: y === year })));
   yearSel.addEventListener("change", () => setYear(yearSel.value));
 
-  const tile = ([n, host, color, txt]) => button([el("img", { src: siteIcon(color, txt), alt: "", draggable: "false", width: 32, height: 32 }), el("span", { text: n })], () => go(host), { class: "ih-tile", title: "www." + host });
+  const tile = ([n, host, bg, fg, txt, st]) => button(el("img", { src: siteLogo(bg, fg, txt, st), alt: n, draggable: "false", width: 84, height: 34 }), () => go(host), { class: "ih-tile", title: n + " — www." + host });
   const box = (title, sub, items, cls = "") => el("section", { class: "ih-box " + cls }, el("h2", {}, el("span", { text: title }), sub ? el("small", { text: sub }) : null), el("div", { class: "ih-grid" }, ...items.map(tile)));
 
   // verse / hadith / name of the day (static text, clamped so the panel never scrolls)
@@ -59,15 +65,20 @@ export function buildHome(env) {
     el("div", { class: "ih-panel-foot" }, button(tr ? "Devamı »" : "More »", () => navigate("about:daily"), { class: "text-link" })));
 
   // this day in history (Wikipedia "On this day"; fixed height, five items at most)
-  const list = el("ul", { class: "ih-hist" }, el("li", { text: tr ? "Vikipedi'den yükleniyor..." : "Loading from Wikipedia..." }));
+  const list = el("ul", { class: "ih-hist" });
   const mm = String(now.getMonth() + 1).padStart(2, "0"), dd = String(now.getDate()).padStart(2, "0");
-  fetch(`https://${L}.wikipedia.org/api/rest_v1/feed/onthisday/events/${mm}/${dd}`).then((r) => r.json()).then((j) => {
-    const ev = (j.events || []).slice(0, 5);
-    list.replaceChildren(...(ev.length ? ev.map((e) => {
-      const page = e.pages?.[0]?.content_urls?.desktop?.page;
-      return el("li", {}, el("b", { text: e.year + " — " }), page ? el("a", { href: page, target: "_blank", rel: "noopener noreferrer", text: e.text }) : el("span", { text: e.text }));
-    }) : [el("li", { text: tr ? "Bugün için kayıt bulunamadı." : "Nothing found for today." })]));
-  }).catch(() => list.replaceChildren(el("li", { text: tr ? "Vikipedi'ye ulaşılamadı." : "Wikipedia could not be reached." })));
+  const key = L + mm + dd;
+  const fill = (ev) => list.replaceChildren(...(ev.length ? ev.map((e) => {
+    const page = e.pages?.[0]?.content_urls?.desktop?.page;
+    return el("li", {}, el("b", { text: e.year + " — " }), page ? el("a", { href: page, target: "_blank", rel: "noopener noreferrer", text: e.text }) : el("span", { text: e.text }));
+  }) : [el("li", { text: tr ? "Bugün için kayıt bulunamadı." : "Nothing found for today." })]));
+  // The list is cached for the session, so changing the archive year redraws the page without reloading it.
+  if (histCache.has(key)) fill(histCache.get(key));
+  else {
+    list.append(el("li", { text: tr ? "Vikipedi'den yükleniyor..." : "Loading from Wikipedia..." }));
+    (histPending.get(key) || histPending.set(key, fetch(`https://${L}.wikipedia.org/api/rest_v1/feed/onthisday/events/${mm}/${dd}`).then((r) => r.json()).then((j) => (j.events || []).slice(0, 5)).catch(() => null)).get(key))
+      .then((ev) => { histPending.delete(key); if (ev) histCache.set(key, ev); if (list.isConnected || !ev) fill(ev || []); if (!ev) list.replaceChildren(el("li", { text: tr ? "Vikipedi'ye ulaşılamadı." : "Wikipedia could not be reached." })); });
+  }
   const histPanel = el("section", { class: "ih-panel" },
     el("h2", { text: tr ? "Tarihte Bugün" : "This Day in History" }),
     el("div", { class: "ih-panel-body" }, list),
@@ -83,7 +94,7 @@ export function buildHome(env) {
   const favs = favorites();
   return el("article", { class: "ih" },
     el("header", { class: "ih-top" },
-      el("div", { class: "ih-brand" }, icon("ie", 32), el("div", {}, el("h1", { text: tr ? "Internet Explorer Başlangıç Sayfası" : "Internet Explorer Start Page" }), el("p", { text: tr ? "Dünyaya açılan pencereniz" : "Your window to the world" }))),
+      el("div", { class: "ih-brand" }, icon(env.brand?.icon || "ie", 32), el("div", {}, el("h1", { text: env.brand?.title || (tr ? "Internet Explorer Başlangıç Sayfası" : "Internet Explorer Start Page") }), el("p", { text: tr ? "Dünyaya açılan pencereniz" : "Your window to the world" }))),
       el("div", { class: "ih-date" }, el("b", { text: `${now.getDate()} ${MONTHS[L][now.getMonth()]} ${now.getFullYear()}` }), el("span", { text: DAYS[L][now.getDay()] }))),
     el("div", { class: "ih-search" },
       el("label", { text: tr ? "Web'de Ara:" : "Search the Web:" }), search, button(tr ? "Ara" : "Search", doSearch, { class: "default-button" }),
@@ -100,5 +111,5 @@ export function buildHome(env) {
     favs.length ? el("section", { class: "ih-box ih-favs" }, el("h2", { text: tr ? "Sık Kullanılanlarınız" : "Your Favorites" }), el("div", { class: "ih-favlist" }, ...favs.slice(0, 12).map((f) => button([icon("ie"), favLabel(f)], () => openFav(f), { class: "text-link" })))) : null,
     el("footer", { class: "ih-foot" },
       el("span", { text: tr ? "Siteler Wayback Machine'den, seçili yılın görünümüyle açılır." : "Sites open from the Wayback Machine as they looked in the chosen year." }),
-      button(tr ? "Internet Seçenekleri..." : "Internet Options...", () => ctx.launch("control", { page: "internet" }))));
+      env.noOptions ? null : button(tr ? "Internet Seçenekleri..." : "Internet Options...", () => ctx.launch("control", { page: "internet" }))));
 }

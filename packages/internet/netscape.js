@@ -1,5 +1,7 @@
 import { el, button, icon, popup, menuBar, separator, browserFrame } from "../ui/index.js";
+import { getLang } from "../ui/i18n.js";
 import { basename } from "../core/index.js";
+import { buildHome } from "./ie-home.js";
 import { NAV_SCRIPT, buildSite, isSite, prefetchNews, homeParts } from "./netscape-sites.js";
 import { loadBM, saveBM, bookmarkItems, addBookmark, folderChoices, openBookmarkWindow } from "./netscape-bm.js";
 import { recordVisit, setVisitTitle, expireHistory, openHistoryWindow, openPageInfo, openPreferences } from "./netscape-tools.js";
@@ -125,6 +127,21 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
       syncNav();
       return;
     }
+    if (current === "about:home") {
+      const year = String(ctx.settings.get("ieYear") || "2000");
+      viewport.append(buildHome({
+        ctx, tr: getLang() === "tr", year, years: Array.from({ length: 14 }, (_, i) => String(1996 + i)),
+        navigate: (t) => go(/^https?:\/\//i.test(t) ? `https://web.archive.org/web/${year}if_/${t}` : t),
+        setYear: (y) => { ctx.settings.set("ieYear", String(y)); const top = viewport.scrollTop; render(); viewport.scrollTop = top; },
+        favorites: () => [], openFav: () => {}, favLabel: (f) => f.title,
+        brand: { icon: "netscape", title: "Netscape Netcenter" }, noOptions: true,
+      }));
+      setTitle("Netscape Netcenter");
+      msg.textContent = "Document: Done";
+      visited("Netscape Netcenter");
+      syncNav();
+      return;
+    }
     if (pages[current] || current === "about:blank") {
       const f = mk({ sandbox: "allow-scripts allow-forms", title: "Document" });
       f.srcdoc = current === "about:blank" ? "" : pages[current];
@@ -164,7 +181,7 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
     const f = mk({
       src: current,
       title: u.hostname,
-      sandbox: "allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox",
+      sandbox: "allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox" + (u.hostname === "web.archive.org" ? " allow-same-origin" : ""),
       referrerpolicy: "no-referrer",
     });
     f.addEventListener("load", () => {

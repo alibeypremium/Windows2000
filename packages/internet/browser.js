@@ -437,7 +437,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
       w.setTitle((trDate() ? "Başlangıç Sayfası" : "Start Page") + " - Microsoft Internet Explorer");
       viewport.append(buildHome({
         ctx, navigate, tr: trDate(), year: wbYear, years: YEAR_RANGE,
-        setYear,
+        setYear: (y) => { const top = viewport.scrollTop; setYear(y); viewport.scrollTop = top; },
         favorites, openFav, favLabel,
       }));
       return;
