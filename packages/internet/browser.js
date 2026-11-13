@@ -80,18 +80,19 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
   let wbYear = String(year || ctx.settings.get("ieYear") || "2000"), wbStamp = String(stamp || ""), wbFrame = null, progTimer = 0, loadTimer = 0, wbYears = null;
   const wbOn = (u) => ctx.settings.get("ieArchive") !== false && /^https?:/i.test(u);
   const norm = (u) => String(u).replace(/^https?:\/\//i, "").replace(/^www\./i, "").replace(/:80(?=\/|$)/, "").replace(/\/$/, "");
+  let throbber = null;
   const prog = status.querySelector(".ie-pane-prog"), progBar = prog.firstChild, datePane = status.querySelector(".ie-pane-date"), wbPane = status.querySelector(".ie-pane-wb");
   const stampDate = (st) => (st && st.length >= 8 ? +st.slice(4, 6) + "/" + +st.slice(6, 8) + "/" + st.slice(0, 4) : wbYear);
   const setDate = () => { datePane.textContent = wbOn(current) ? stampDate(wbStamp) : ""; datePane.style.visibility = wbOn(current) ? "" : "hidden"; wbPane.style.visibility = datePane.style.visibility; };
   const loadEnd = (text = "Done") => {
     clearInterval(progTimer); clearTimeout(loadTimer); loading = false;
-    prog.hidden = true; status.children[0].textContent = text;
+    prog.hidden = true; status.children[0].textContent = text; throbber?.classList.remove("spin");
   };
   const loadStart = (what) => {
     clearInterval(progTimer); clearTimeout(loadTimer);
-    loading = true; prog.hidden = false;
-    let n = 1; progBar.style.width = "9px";
-    progTimer = setInterval(() => { n = Math.min(n + 1, 10); progBar.style.width = n * 9 + "px"; }, 350);
+    loading = true; prog.hidden = false; throbber?.classList.add("spin");
+    let n = 1; progBar.style.width = "6px";
+    progTimer = setInterval(() => { n = Math.min(n + 1, 10); progBar.style.width = n * 8 - 2 + "px"; }, 350);
     status.children[0].textContent = what;
     loadTimer = setTimeout(() => loadEnd(), 45000);
   };
@@ -138,8 +139,9 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     else if (/^archive$/i.test(v.trim())) { ctx.settings.set("ieArchive", true); render(); }
     else if (/^\d{4}$/.test(v.trim())) { ctx.settings.set("ieYear", v.trim()); ctx.settings.set("ieArchive", true); setYear(v.trim()); }
   };
-  const yearMenu = async () => {
-    const ys = await loadYears();
+  const DEF_YEARS = Array.from({ length: 14 }, (_, i) => String(1996 + i));
+  const yearMenu = () => {
+    const ys = wbYears || DEF_YEARS;
     const r = datePane.getBoundingClientRect();
     popup([
       ...ys.map((y) => ({ label: y, radio: true, checked: y === (wbStamp ? wbStamp.slice(0, 4) : wbYear), action: () => setYear(y) })),
@@ -152,7 +154,9 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     const m = [...document.querySelectorAll(".popup-menu")].pop();
     if (m) { m.style.top = "auto"; m.style.bottom = Math.max(0, innerHeight - r.top) + "px"; m.style.left = Math.min(r.left, innerWidth - m.offsetWidth - 2) + "px"; }
   };
-  datePane.addEventListener("click", yearMenu);
+  let popWasOpen = false;
+  datePane.addEventListener("pointerdown", () => { popWasOpen = !!document.querySelector(".popup-menu"); });
+  datePane.addEventListener("click", () => { if (popWasOpen) { popWasOpen = false; return; } yearMenu(); });
   const shareLink = () => location.href.split("#")[0] + "#web=" + encodeURIComponent(current) + "&date=" + (wbStamp ? wbStamp.slice(0, 8) : wbYear);
   const external = () => {
     if (/^https?:\/\//i.test(current))
@@ -462,6 +466,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
       return;
     }
     const live = !wbOn(current);
+    if (!live) { wbYears = null; loadYears().catch(() => {}); }
     loadStart("Opening page " + current + "...");
     w.setTitle(url.hostname + " - Microsoft Internet Explorer");
     const frame = el("iframe", {
@@ -815,7 +820,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     });
   });
   w.el.querySelector(":scope > .menu-bar")?.append(
-    el("img", { class: "ie-throbber", src: "/assets/ui/ie/throbber.png", alt: "", draggable: "false" }),
+    (throbber = el("div", { class: "ie-throbber", "aria-hidden": "true" })),
   );
   address.addEventListener("keydown", (e) => {
     if (e.key === "Enter") navigate(address.value);
