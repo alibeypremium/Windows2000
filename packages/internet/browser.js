@@ -82,7 +82,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
   // ---- Wayback Machine (the web of 2000) ----
   const WB = "https://web.archive.org/web/";
   const WB_RE = /web\.archive\.org\/web\/(\d+)[a-z_]*\/(https?:\/\/.+)$/i;
-  let wbYear = String(year || ctx.settings.get("ieYear") || "2000"), wbStamp = String(stamp || ""), wbFrame = null, progTimer = 0, loadTimer = 0, wbYears = null, wbSnaps = null;
+  let wbYear = String(year || ctx.settings.get("ieYear") || "2000"), wbStamp = String(stamp || ""), wbFrame = null, progTimer = 0, loadTimer = 0, wbYears = null;
   const wbOn = (u) => ctx.settings.get("ieArchive") !== false && /^https?:/i.test(u);
   const norm = (u) => String(u).replace(/^https?:\/\//i, "").replace(/^www\./i, "").replace(/:80(?=\/|$)/, "").replace(/\/$/, "");
   let throbber = null;
@@ -128,19 +128,14 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
   window.addEventListener("message", onWayback);
   const snapCache = new Map();
   async function loadYears() {
-    const key = norm(current);
-    const hit = snapCache.get(key);
-    if (hit) { wbYears = hit.years; wbSnaps = hit.snaps; return wbYears; }
+    const key = norm(current), hit = snapCache.get(key);
+    if (hit) return (wbYears = hit);
     try {
-      const r = await fetch("https://web.archive.org/cdx/search/cdx?output=json&fl=timestamp&collapse=timestamp:8&filter=statuscode:200&limit=20000&url=" + encodeURIComponent(current), { signal: AbortSignal.timeout(10000) });
-      const snaps = (await r.json()).slice(1).map((x) => x[0].slice(0, 8)).sort();
-      if (snaps.length) {
-        wbSnaps = snaps; wbYears = [...new Set(snaps.map((x) => x.slice(0, 4)))].filter((y) => y >= "1996" && y <= "2009");
-        snapCache.set(key, { years: wbYears, snaps });
-        return wbYears;
-      }
+      const r = await fetch("https://web.archive.org/cdx/search/cdx?output=json&fl=timestamp&collapse=timestamp:4&filter=statuscode:200&url=" + encodeURIComponent(current), { signal: AbortSignal.timeout(10000) });
+      const ys = [...new Set((await r.json()).slice(1).map((x) => x[0].slice(0, 4)))].filter((y) => y >= "1996" && y <= "2009");
+      if (ys.length) { snapCache.set(key, ys); return (wbYears = ys); }
     } catch {}
-    wbSnaps = []; return (wbYears = null);
+    return (wbYears = null);
   }
   // Closest archived copy to a wanted date (undefined = could not ask, null = nothing archived).
   async function closestSnap(url, st) {
@@ -150,28 +145,41 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
       return c?.available ? c.timestamp : null;
     } catch { return undefined; }
   }
+  let snapBusy = false;
+  const flash = (t) => { status.children[0].textContent = t; setTimeout(() => { if (!loading) status.children[0].textContent = "Done"; }, 2500); };
   const snapStep = async (dir) => {
-    await loadYears();
-    const cur = (wbStamp || wbYear + "0101").slice(0, 8), all = wbSnaps || [];
-    const t = dir < 0 ? [...all].reverse().find((x) => x < cur) : all.find((x) => x > cur);
-    if (!t) return ctx.dialogs.message(trDate() ? (dir < 0 ? "Bu sayfanın daha eski kaydı yok." : "Bu sayfanın daha yeni kaydı yok.") : (dir < 0 ? "There is no earlier copy of this page." : "There is no later copy of this page."), { title: "Microsoft Internet Explorer", icon: "information" });
-    wbYear = t.slice(0, 4); wbStamp = t; render();
+    if (snapBusy || !wbOn(current)) return;
+    snapBusy = true;
+    const cur = (wbStamp || wbYear + "0101").slice(0, 8), d = new Date(Date.UTC(+cur.slice(0, 4), +cur.slice(4, 6) - 1, +cur.slice(6, 8) + dir));
+    const lim = d.toISOString().slice(0, 10).replace(/-/g, "");
+    status.children[0].textContent = trDate() ? "Kayıt aranıyor..." : "Looking for a copy...";
+    try {
+      const q = "https://web.archive.org/cdx/search/cdx?output=json&fl=timestamp&collapse=timestamp:8&filter=statuscode:200&limit=" + (dir < 0 ? "-1&to=" : "1&from=") + lim + "&url=" + encodeURIComponent(current);
+      const rows = (await (await fetch(q, { signal: AbortSignal.timeout(12000) })).json()).slice(1);
+      const t = rows[0]?.[0];
+      if (!t) flash(trDate() ? (dir < 0 ? "Bu sayfanın daha eski kaydı yok." : "Bu sayfanın daha yeni kaydı yok.") : (dir < 0 ? "There is no earlier copy of this page." : "There is no later copy of this page."));
+      else { wbYear = t.slice(0, 4); wbStamp = t; snapBusy = false; render(); }
+    } catch { flash(trDate() ? "Arşive ulaşılamadı." : "Could not reach the archive."); }
+    snapBusy = false;
   };
   const SANDBOX_WB = "allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox";
-  const openCompare = async () => {
+  const openCompare = () => {
     if (!/^https?:/i.test(current)) return;
-    await loadYears();
-    const ys = wbYears?.length > 1 ? wbYears : DEF_YEARS, a = wbStamp ? wbStamp.slice(0, 4) : wbYear;
-    const b = ys.find((y) => y > a) || [...ys].reverse().find((y) => y < a) || a, url = current;
+    const a = wbStamp ? wbStamp.slice(0, 4) : wbYear, url = current, hit = snapCache.get(norm(url));
+    let ys = hit?.length > 1 ? hit : DEF_YEARS;
+    let b = ys.find((y) => y > a) || [...ys].reverse().find((y) => y < a) || a;
+    if (b === a) b = String(Math.min(2009, +a + 3));
     const cw = ctx.wm.create({ title: (trDate() ? "Karşılaştır - " : "Compare - ") + url, icon: "ie", width: 940, height: 600, appId: "ie" });
+    const sels = [];
     const pane = (y0) => {
       const sel = el("select", {}, ...ys.map((y) => el("option", { value: y, text: y, selected: y === y0 })));
       const f = el("iframe", { class: "ie-frame", sandbox: SANDBOX_WB, referrerpolicy: "no-referrer", title: "Wayback" });
       const load = () => { f.src = WB + sel.value + "if_/" + url; };
-      sel.addEventListener("change", load); load();
+      sel.addEventListener("change", load); load(); sels.push(sel);
       return el("div", { class: "ie-cmp-pane" }, el("div", { class: "ie-cmp-head" }, el("span", { text: trDate() ? "Yıl:" : "Year:" }), sel), f);
     };
     cw.setContent(el("div", { class: "ie-cmp" }, pane(a), pane(b)));
+    if (!hit) loadYears().then((list) => { if (!list) return; for (const sel of sels) { const v = sel.value; sel.replaceChildren(...list.map((y) => el("option", { value: y, text: y, selected: y === v }))); if (!list.includes(v)) sel.append(el("option", { value: v, text: v, selected: true })); } }).catch(() => {});
   };
   const setYear = (y) => { wbYear = String(y); wbStamp = ""; render(); };
   const chooseDate = async () => {

@@ -1,3 +1,4 @@
+import { getLang } from "../ui/i18n.js";
 // Internet Explorer 5.01 dialogs built from inetcplc.dll / shdoclc.dll templates.
 import { el } from "../ui/index.js";
 import { dialogFromTemplate, px, py } from "../ui/dlg.js";
@@ -49,9 +50,54 @@ export function ieOptions(ctx, tab = 0) {
         }) },
       { label: "Security", tpl: D.c500, opts: { iconBase: ICONS },
         after: (ctl) => {
+          const tr = getLang() === "tr", ZI = "/assets/ui/inet/";
           const list = ctl[1566].querySelector(".rk-listbox");
           list.classList.add("ie-adv", "ie-zones");
-          for (const z of ["Internet", "Local intranet", "Trusted sites", "Restricted sites"]) list.append(el("div", { class: "ie-zone" }, el("img", { src: ICONS + "1315.png" }), z));
+          const LEVELS = ["High", "Medium", "Medium-low", "Low"];
+          const LV = {
+            High: [tr ? "Yüksek" : "High", tr ? "- En güvenli gezinme yolu, ancak en az işlevsel\n- Daha az güvenli özellikler devre dışı\n- Çerezler devre dışı (bazı Web siteleri çalışmaz)\n- Zararlı içerik olabilecek siteler için uygundur" : "- The safest way to browse, but also the least functional\n- Less secure features are disabled\n- Cookies are disabled (some Web sites will not work)\n- Appropriate for sites that might have harmful content"],
+            Medium: [tr ? "Orta" : "Medium", tr ? "- Güvenli gezinme ve yine de işlevsel\n- Güvenli olmayabilecek içeriği indirmeden önce sorar\n- İmzasız ActiveX denetimleri indirilmez\n- Çoğu İnternet sitesi için uygundur" : "- Safe browsing and still functional\n- Prompts before downloading potentially unsafe content\n- Unsigned ActiveX controls will not be downloaded\n- Appropriate for most Internet sites"],
+            "Medium-low": [tr ? "Orta-düşük" : "Medium-low", tr ? "- Orta ile aynı, ancak sormaz\n- Çoğu içerik sormadan çalıştırılır\n- İmzasız ActiveX denetimleri indirilmez\n- Yerel ağınızdaki (intranet) siteler için uygundur" : "- Same as Medium without prompts\n- Most content will be run without prompts\n- Unsigned ActiveX controls will not be downloaded\n- Appropriate for sites on your local network (intranet)"],
+            Low: [tr ? "Düşük" : "Low", tr ? "- En az güvenlik önlemi ve uyarı istemi\n- Çoğu içerik sormadan indirilir ve çalıştırılır\n- Tüm etkin içerik çalışabilir\n- Kesinlikle güvendiğiniz siteler için uygundur" : "- Minimal safeguards and warning prompts are provided\n- Most content is downloaded and run without prompts\n- All active content can run\n- Appropriate for sites that you absolutely trust"],
+          };
+          const ZN = [
+            [tr ? "İnternet" : "Internet", "zone-internet", tr ? "Diğer bölgelere yerleştirmediğiniz tüm Web sitelerini içerir" : "This zone contains all Web sites you haven't placed in other zones", "Medium"],
+            [tr ? "Yerel intranet" : "Local intranet", "zone-intranet", tr ? "Kuruluşunuzun intranetindeki tüm Web sitelerini içerir" : "This zone contains all Web sites that are on your organization's intranet", "Medium-low"],
+            [tr ? "Güvenilen siteler" : "Trusted sites", "zone-trusted", tr ? "Bilgisayarınıza veya verilerinize zarar vermeyeceğine güvendiğiniz Web sitelerini içerir." : "This zone contains Web sites that you trust not to damage your computer or data.", "Low"],
+            [tr ? "Kısıtlı siteler" : "Restricted sites", "zone-restricted", tr ? "Bilgisayarınıza veya verilerinize zarar verme olasılığı olan Web sitelerini içerir." : "This zone contains Web sites that could potentially damage your computer or data.", "High"],
+          ];
+          const levels = ctx.settings.get("ieZoneLevels") || {};
+          let cur = 0;
+          const thumb = ctl[1567].querySelector("b");
+          const setText = (id, t) => { if (ctl[id]) ctl[id].textContent = t; };
+          const paintLevel = () => {
+            const lv = levels[cur] || ZN[cur][3], i = LEVELS.indexOf(lv), h = ctl[1567].clientHeight || 100, span = h - 11 - 4;
+            thumb.style.top = 2 + (i / 3) * span + "px";
+            setText(1578, LV[lv][0]); setText(1568, LV[lv][1]);
+          };
+          const rows = ZN.map(([name, file], i) => {
+            const row = el("div", { class: "ie-zone", onclick: () => select(i) }, el("img", { src: ZI + file + ".png", alt: "" }), el("span", { text: name }));
+            list.append(row); return row;
+          });
+          const select = (i) => {
+            cur = i; rows.forEach((r, k) => r.classList.toggle("sel", k === i));
+            setText(1576, ZN[i][0]); setText(1516, ZN[i][2]);
+            ctl[1516].style.whiteSpace = "pre-wrap";
+            ctl[1575].style.visibility = i >= 2 ? "" : "hidden";
+            const sites = ctl[1019]; if (sites) sites.disabled = i === 0;
+            if (ctl[1518]) ctl[1518].replaceChildren(el("img", { src: ZI + ZN[i][1] + ".png", alt: "", style: { width: "20px", height: "20px" } }));
+            paintLevel();
+          };
+          setText(1030, tr ? "Güvenlik düzeyi için kaydırıcıyı hareket ettirin." : "Move the slider to set the security level for this zone.");
+          if (tr) setText(1575, "Bu bölgede site yok.");
+          const move = (e) => {
+            const r = ctl[1567].getBoundingClientRect(), span = r.height - 15;
+            const i = Math.max(0, Math.min(3, Math.round(((e.clientY - r.top - 8) / span) * 3)));
+            levels[cur] = LEVELS[i]; ctx.settings.set("ieZoneLevels", levels); paintLevel();
+          };
+          ctl[1567].addEventListener("pointerdown", (e) => { move(e); const mv = (e2) => move(e2), up = () => { window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); }; window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up); });
+          if (ctl[1531]) ctl[1531].addEventListener("click", () => { delete levels[cur]; ctx.settings.set("ieZoneLevels", levels); paintLevel(); });
+          requestAnimationFrame(() => select(0));
         } },
       { label: "Content", tpl: D.c4454, opts: { iconBase: ICONS } },
       { label: "Connections", tpl: D.c200, opts: { iconBase: ICONS } },

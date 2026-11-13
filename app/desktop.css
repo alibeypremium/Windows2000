@@ -6743,7 +6743,8 @@ input.vlc-eqs[type="range"]{flex:none;writing-mode:vertical-lr;direction:rtl;hei
   cursor: default;
 }
 .ie-pane-snap:active {
-  border-color: #fff #808080 #808080 #fff;
+  background: #bdb9b1;
+  padding-top: 1px !important;
 }
 .ie-infobar {
   display: flex;
@@ -6794,3 +6795,7 @@ input.vlc-eqs[type="range"]{flex:none;writing-mode:vertical-lr;direction:rtl;hei
   background: #fff;
 }
 .ie-infobar + .ie-frame { min-height: 0; }
+
+.ie-zone { cursor: default; }
+.ie-zone span { display: inline-block; padding: 0 2px; }
+.ie-zone.sel span { background: #0a246a; color: #fff; outline: 1px dotted #ff0; }
