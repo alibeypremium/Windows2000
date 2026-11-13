@@ -82,7 +82,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
   // ---- Wayback Machine (the web of 2000) ----
   const WB = "https://web.archive.org/web/";
   const WB_RE = /web\.archive\.org\/web\/(\d+)[a-z_]*\/(https?:\/\/.+)$/i;
-  let wbYear = String(year || ctx.settings.get("ieYear") || "2000"), wbStamp = String(stamp || ""), wbFrame = null, progTimer = 0, loadTimer = 0, wbYears = null;
+  let wbYear = String(year || ctx.settings.get("ieYear") || "2000"), wbStamp = String(stamp || ""), wbFrame = null, progTimer = 0, loadTimer = 0, wbYears = null, wbInfo = null;
   const wbOn = (u) => ctx.settings.get("ieArchive") !== false && /^https?:/i.test(u);
   const norm = (u) => String(u).replace(/^https?:\/\//i, "").replace(/^www\./i, "").replace(/:80(?=\/|$)/, "").replace(/\/$/, "");
   let throbber = null;
@@ -106,7 +106,15 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     let n = 1; progBar.style.width = "6px";
     progTimer = setInterval(() => { n = Math.min(n + 1, 10); progBar.style.width = n * 8 - 2 + "px"; }, 350);
     status.children[0].textContent = what;
-    loadTimer = setTimeout(() => loadEnd(), 45000);
+    loadTimer = setTimeout(() => { loadEnd(); if (wbFrame) slowNote(); }, 45000);
+  };
+  const slowNote = () => {
+    const tr = trDate();
+    viewport.prepend(el("div", { class: "ie-infobar" },
+      el("span", { text: tr ? "Arşiv yanıt vermiyor." : "The archive is not responding." }),
+      el("span", { class: "ie-infobar-btns" },
+        button(tr ? "Yeniden dene" : "Try again", () => render()),
+        button(tr ? "Canlı siteyi aç" : "Open the live site", () => { ctx.settings.set("ieArchive", false); render(); }))));
   };
   const onWayback = (e) => {
     if (typeof e.data !== "string" || !wbFrame || e.source !== wbFrame.contentWindow) return;
@@ -126,53 +134,58 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     if (d.event === "domContentLoaded") loadEnd();
   };
   window.addEventListener("message", onWayback);
-  const snapCache = new Map();
-  async function loadYears() {
-    const key = norm(current), hit = snapCache.get(key);
-    if (hit) return (wbYears = hit);
-    try {
-      const r = await fetch("https://web.archive.org/cdx/search/cdx?output=json&fl=timestamp&collapse=timestamp:4&filter=statuscode:200&url=" + encodeURIComponent(current), { signal: AbortSignal.timeout(10000) });
-      const ys = [...new Set((await r.json()).slice(1).map((x) => x[0].slice(0, 4)))].filter((y) => y >= "1996" && y <= "2009");
-      if (ys.length) { snapCache.set(key, ys); return (wbYears = ys); }
-    } catch {}
-    return (wbYears = null);
-  }
+  // web.archive.org's CDX/timemap answers have no CORS headers, so a page cannot read them.
+  // archive.org/wayback/available can be asked with JSONP (a <script> tag), which works from any site.
+  let jpN = 0;
+  const jsonp = (url, ms = 15000) => new Promise((ok, no) => {
+    const cb = "__wbq" + ++jpN + "_" + Date.now().toString(36), sc = document.createElement("script");
+    let t = 0;
+    const done = (v, err) => { clearTimeout(t); delete window[cb]; sc.remove(); err ? no(err) : ok(v); };
+    window[cb] = (d) => done(d);
+    sc.onerror = () => done(null, new Error("jsonp"));
+    t = setTimeout(() => done(null, new Error("timeout")), ms);
+    sc.src = url + "&callback=" + cb;
+    document.head.append(sc);
+  });
   // Closest archived copy to a wanted date (undefined = could not ask, null = nothing archived).
   async function closestSnap(url, st) {
     try {
-      const r = await fetch("https://archive.org/wayback/available?url=" + encodeURIComponent(url) + "&timestamp=" + (st + "0101000000").slice(0, 14), { signal: AbortSignal.timeout(6000) });
-      const c = (await r.json())?.archived_snapshots?.closest;
+      const d = await jsonp("https://archive.org/wayback/available?url=" + encodeURIComponent(url) + "&timestamp=" + (st + "0101000000").slice(0, 14));
+      const c = d?.archived_snapshots?.closest;
       return c?.available ? c.timestamp : null;
     } catch { return undefined; }
+  }
+  // Which of 1996-2009 have a copy, plus the first and last copy: a handful of tiny JSONP questions, asked once per address.
+  const snapCache = new Map();
+  async function loadYears() {
+    const key = norm(current), hit = snapCache.get(key);
+    if (hit) return (wbYears = hit.years, wbInfo = hit, wbYears);
+    const ys = DEF_YEARS, url = current;
+    const res = await Promise.all([...ys.map((y) => closestSnap(url, y + "0701")), closestSnap(url, "1996"), closestSnap(url, "2026")]);
+    if (res.slice(0, ys.length).every((r) => r === undefined)) return (wbYears = null);
+    const has = ys.filter((y, i) => res[i] && res[i].slice(0, 4) === y);
+    const info = { years: has, first: res[ys.length] || null, last: res[ys.length + 1] || null };
+    snapCache.set(key, info); wbInfo = info; return (wbYears = has);
   }
   let snapBusy = false;
   const flash = (t) => { status.children[0].textContent = t; setTimeout(() => { if (!loading) status.children[0].textContent = "Done"; }, 2500); };
   const snapStep = async (dir) => {
     if (snapBusy || !wbOn(current)) return;
     snapBusy = true;
-    const cur = (wbStamp || wbYear + "0101").slice(0, 8), d = new Date(Date.UTC(+cur.slice(0, 4), +cur.slice(4, 6) - 1, +cur.slice(6, 8) + dir));
-    const lim = d.toISOString().slice(0, 10).replace(/-/g, "");
+    const cur = (wbStamp || wbYear + "0101").slice(0, 8);
     status.children[0].textContent = trDate() ? "Kayıt aranıyor..." : "Looking for a copy...";
     const none = () => flash(trDate() ? (dir < 0 ? "Bu sayfanın daha eski kaydı yok." : "Bu sayfanın daha yeni kaydı yok.") : (dir < 0 ? "There is no earlier copy of this page." : "There is no later copy of this page."));
     const go = (t) => { wbYear = t.slice(0, 4); wbStamp = t; snapBusy = false; render(); };
-    let found;
-    try { // 1) one small CDX query
-      const q = "https://web.archive.org/cdx/search/cdx?output=json&fl=timestamp&collapse=timestamp:8&filter=statuscode:200&limit=" + (dir < 0 ? "-1&to=" : "1&from=") + lim + "&url=" + encodeURIComponent(current);
-      const r = await fetch(q, { signal: AbortSignal.timeout(8000) });
-      if (!r.ok) throw new Error("cdx " + r.status);
-      found = (await r.json()).slice(1)[0]?.[0] || null;
-    } catch {
-      try { // 2) "closest copy" API, probing further and further from the current date until a different copy answers
-        found = null;
-        for (let days = 1, n = 0; n < 14 && !found; days *= 2, n++) {
-          const p = new Date(Date.UTC(+cur.slice(0, 4), +cur.slice(4, 6) - 1, +cur.slice(6, 8) + dir * days)).toISOString().slice(0, 10).replace(/-/g, "");
-          if (p < "19960101" || p > new Date().toISOString().slice(0, 10).replace(/-/g, "")) break;
-          const ts = await closestSnap(current, p);
-          if (ts === undefined) throw new Error("offline");
-          if (ts && (dir < 0 ? ts.slice(0, 8) < cur : ts.slice(0, 8) > cur)) found = ts;
-        }
-      } catch { snapBusy = false; return flash(trDate() ? "Arşive ulaşılamadı." : "Could not reach the archive."); }
-    }
+    let found = null;
+    try { // ask the "closest copy" API further and further from the current date until a different copy answers
+      for (let days = 1, n = 0; n < 14 && !found; days *= 2, n++) {
+        const p = new Date(Date.UTC(+cur.slice(0, 4), +cur.slice(4, 6) - 1, +cur.slice(6, 8) + dir * days)).toISOString().slice(0, 10).replace(/-/g, "");
+        if (p < "19960101" || p > new Date().toISOString().slice(0, 10).replace(/-/g, "")) break;
+        const ts = await closestSnap(current, p);
+        if (ts === undefined) throw new Error("offline");
+        if (ts && (dir < 0 ? ts.slice(0, 8) < cur : ts.slice(0, 8) > cur)) found = ts;
+      }
+    } catch { snapBusy = false; return flash(trDate() ? "Arşive ulaşılamadı." : "Could not reach the archive."); }
     if (found) return go(found);
     none();
     snapBusy = false;
@@ -181,7 +194,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
   const openCompare = () => {
     if (!/^https?:/i.test(current)) return;
     const a = wbStamp ? wbStamp.slice(0, 4) : wbYear, url = current, hit = snapCache.get(norm(url));
-    let ys = hit?.length > 1 ? hit : DEF_YEARS;
+    let ys = hit?.years?.length > 1 ? hit.years : DEF_YEARS;
     let b = ys.find((y) => y > a) || [...ys].reverse().find((y) => y < a) || a;
     if (b === a) b = String(Math.min(2009, +a + 3));
     const cw = ctx.wm.create({ title: (trDate() ? "Karşılaştır - " : "Compare - ") + url, icon: "ie", width: 940, height: 600, appId: "ie" });
@@ -194,7 +207,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
       return el("div", { class: "ie-cmp-pane" }, el("div", { class: "ie-cmp-head" }, el("span", { text: trDate() ? "Yıl:" : "Year:" }), sel), f);
     };
     cw.setContent(el("div", { class: "ie-cmp" }, pane(a), pane(b)));
-    if (!hit) loadYears().then((list) => { if (!list) return; for (const sel of sels) { const v = sel.value; sel.replaceChildren(...list.map((y) => el("option", { value: y, text: y, selected: y === v }))); if (!list.includes(v)) sel.append(el("option", { value: v, text: v, selected: true })); } }).catch(() => {});
+    if (!hit) loadYears().then((list) => { if (!list?.length) return; for (const sel of sels) { const v = sel.value; sel.replaceChildren(...list.map((y) => el("option", { value: y, text: y, selected: y === v }))); if (!list.includes(v)) sel.append(el("option", { value: v, text: v, selected: true })); } }).catch(() => {});
   };
   const setYear = (y) => { wbYear = String(y); wbStamp = ""; render(); };
   const chooseDate = async () => {
@@ -233,9 +246,15 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     if (m) m.style.left = Math.max(0, Math.min(r.left, innerWidth - m.offsetWidth - 2)) + "px";
   };
   const yearMenu = (anchor = datePane, up = true) => {
-    const ys = wbYears || DEF_YEARS;
+    const tr = trDate(), info = snapCache.get(norm(current)) || null;
+    const fmt = (t) => (t ? stampDate(t.slice(0, 8)) : "?");
+    const infoItems = info ? [
+      { label: info.years.length ? (tr ? `Kayıt: ${info.years[0]}–${info.years[info.years.length - 1]} arası, ${info.years.length} yılda` : `Copies: ${info.years[0]}–${info.years[info.years.length - 1]}, in ${info.years.length} years`) : (tr ? "1996–2009 arası kayıt yok" : "No copies from 1996 to 2009"), disabled: true },
+      { label: (tr ? "İlk: " : "First: ") + fmt(info.first) + (tr ? "  Son: " : "  Last: ") + fmt(info.last), disabled: true },
+      { separator: true }] : [];
     popAt(anchor, [
-      ...ys.map((y) => ({ label: y, radio: true, checked: y === (wbStamp ? wbStamp.slice(0, 4) : wbYear), action: () => { ctx.settings.set("ieArchive", true); setYear(y); } })),
+      ...infoItems,
+      ...DEF_YEARS.map((y) => ({ label: y, radio: true, checked: y === (wbStamp ? wbStamp.slice(0, 4) : wbYear), disabled: !!info && !info.years.includes(y), action: () => { ctx.settings.set("ieArchive", true); setYear(y); } })),
       { separator: true },
       { label: "Previous Snapshot", action: () => snapStep(-1) },
       { label: "Next Snapshot", action: () => snapStep(1) },
@@ -313,7 +332,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     explorer.hidden = !kind;
     for (const n of ["search", "favorites", "history"]) w.el?.querySelector?.(`.ie-tb[data-tb="${n}"]`)?.classList.toggle("pressed", n === kind);
     if (!kind) return explorer.replaceChildren();
-    const link = (title, url, ic = "ie") => button([icon(ic), el("span", { text: title })], () => navigate(url), { class: "ie-exp-item", title: url });
+    const link = (title, url, ic = "ie", fav = null) => button([icon(ic), el("span", { text: title })], () => (fav ? openFav(fav) : navigate(url)), { class: "ie-exp-item", title: fav?.wb ? url + " (" + stampDate(String(fav.wb)) + ")" : url });
     const tbtn = (img, label, fn, extra = {}) => button([el("img", { src: "/assets/ui/ie/iso/" + img + ".png", alt: "", draggable: "false" }), el("span", { text: label })], fn, { class: "ie-exp-tb", ...extra });
     const organize = () => ieOrganize(ctx, { get: favorites, set: (v) => ctx.settings.set("favorites", v), folders: favFolders, setFolders: (v) => ctx.settings.set("favFolders", v), open: navigate }).then?.(() => barKind === "favorites" && showBar("favorites", true));
     const draw = () => showBar(kind, true);
@@ -328,8 +347,8 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
       tools = [tbtn("bar-add", "Add...", addFav), tbtn("bar-org", "Organize...", organize)];
       const fav = favorites();
       body = el("div", { class: "ie-exp-body" },
-        ...favFolders().flatMap((fo) => [el("div", { class: "ie-exp-folder" }, icon("folder"), el("span", { text: fo })), ...fav.filter((f) => f.folder === fo).map((f) => el("div", { class: "ie-exp-indent" }, link(f.title, f.url)))]),
-        ...fav.filter((f) => !f.folder).map((f) => link(f.title, f.url)));
+        ...favFolders().flatMap((fo) => [el("div", { class: "ie-exp-folder" }, icon("folder"), el("span", { text: fo })), ...fav.filter((f) => f.folder === fo).map((f) => el("div", { class: "ie-exp-indent" }, link(f.title, f.url, "ie", f)))]),
+        ...fav.filter((f) => !f.folder).map((f) => link(f.title, f.url, "ie", f)));
     } else {
       const modes = [["date", "By &Date"], ["site", "By S&ite"], ["most", "By &Most Visited"], ["order", "By &Order Visited Today"]];
       const mode = (barMode = barMode || "date");
@@ -374,6 +393,12 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
       { title: "Yahoo!", url: "http://www.yahoo.com/" },
       { title: "The Internet Archive", url: "http://www.archive.org/" },
     ];
+  // A favourite remembers the archive date it was saved at, so it opens that very year/day again.
+  const openFav = (f) => {
+    if (f.wb && /^https?:/i.test(f.url)) { const d = String(f.wb); wbYear = d.slice(0, 4); wbStamp = d.length >= 8 ? d.slice(0, 8) : ""; ctx.settings.set("ieArchive", true); }
+    navigate(f.url);
+  };
+  const favEntry = (title, folder) => ({ title, url: current, folder, ...(wbOn(current) ? { wb: wbStamp || wbYear } : {}) });
   const favFolders = () => [...new Set([...(ctx.settings.get("favFolders") || []), ...favorites().map((f) => f.folder).filter(Boolean)])];
   const home = () => navigate(ctx.settings.get("homePage") || "about:home");
   function syncNav() {
@@ -452,7 +477,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
             "div",
             { class: "ie-start-links" },
             ...favorites().map((f) =>
-              button([icon("ie"), f.title], () => navigate(f.url), {
+              button([icon("ie"), f.title], () => openFav(f), {
                 class: "text-link",
               }),
             ),
@@ -511,7 +536,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
             text: current === "about:favorites" ? "Favorites" : "History",
           }),
           ...list.map((f) =>
-            button([icon("ie"), f.title], () => navigate(f.url), {
+            button([icon("ie"), f.title], () => openFav(f), {
               class: "text-link",
             }),
           ),
@@ -621,7 +646,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
       if (index < history.length - 1) navigate(history[++index], false);
     };
   const viewSource = () => ctx.launch("notepad", { text: current.startsWith("C:") ? ctx.fs.readFile(current) : viewport.innerHTML });
-  const addFav = () => ieAddFavorite(ctx, { name: w.title.replace(/ - Microsoft Internet Explorer( \[Working Offline\])?/, ""), folders: favFolders(), onOk: (title, folder) => { ctx.settings.set("favorites", [...favorites(), { title, url: current, folder }]); if (barKind === "favorites") showBar("favorites", true); } });
+  const addFav = () => ieAddFavorite(ctx, { name: w.title.replace(/ - Microsoft Internet Explorer( \[Working Offline\])?/, ""), folders: favFolders(), onOk: (title, folder) => { ctx.settings.set("favorites", [...favorites(), favEntry(title, folder)]); if (barKind === "favorites") showBar("favorites", true); } });
   const off = (label, extra = {}) => ({ label, disabled: true, ...extra });
   const pageMenu = () => [
     { label: "Back", disabled: index <= 0, action: back },
@@ -870,7 +895,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     Favorites: () => [
       {
         label: "Add to Favorites...",
-        action: () => ieAddFavorite(ctx, { name: w.title.replace(/ - Microsoft Internet Explorer( \[Working Offline\])?/, ""), folders: favFolders(), onOk: (title, folder) => ctx.settings.set("favorites", [...favorites(), { title, url: current, folder }]) }),
+        action: () => ieAddFavorite(ctx, { name: w.title.replace(/ - Microsoft Internet Explorer( \[Working Offline\])?/, ""), folders: favFolders(), onOk: (title, folder) => ctx.settings.set("favorites", [...favorites(), favEntry(title, folder)]) }),
       },
       { label: "Add to Links", disabled: !/^https?:/i.test(current), action: addLink },
       {
@@ -881,12 +906,12 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
       ...favFolders().map((fo) => ({
         label: fo,
         icon: "folder",
-        submenu: favorites().filter((f) => f.folder === fo).map((f) => ({ label: f.title, icon: "ie", action: () => navigate(f.url) })),
+        submenu: favorites().filter((f) => f.folder === fo).map((f) => ({ label: f.title, icon: "ie", action: () => openFav(f) })),
       })),
       ...favorites().filter((f) => !f.folder).map((f) => ({
         label: f.title,
         icon: "ie",
-        action: () => navigate(f.url),
+        action: () => openFav(f),
       })),
     ],
     Tools: [
