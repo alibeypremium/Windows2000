@@ -6732,3 +6732,65 @@ input.vlc-eqs[type="range"]{flex:none;writing-mode:vertical-lr;direction:rtl;hei
 .ie-chevron {
   cursor: default;
 }
+
+.ie-pane-snap {
+  order: 3;
+  width: 18px;
+  padding: 0 !important;
+  text-align: center;
+  font-size: 8px;
+  line-height: 15px;
+  cursor: default;
+}
+.ie-pane-snap:active {
+  border-color: #fff #808080 #808080 #fff;
+}
+.ie-infobar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: none;
+  padding: 3px 4px 3px 8px;
+  background: #ffffe1;
+  border-bottom: 1px solid #808080;
+  font: 13px/15px W2KSans, Tahoma, sans-serif;
+}
+.ie-infobar-x {
+  min-width: 0;
+  min-height: 0;
+  height: 17px;
+  padding: 0 5px;
+  background: none;
+  box-shadow: none;
+  border: 1px solid transparent;
+}
+.ie-infobar-x:hover {
+  border-color: #fff #808080 #808080 #fff;
+}
+.ie-cmp {
+  display: flex;
+  gap: 3px;
+  height: 100%;
+  background: #808080;
+}
+.ie-cmp-pane {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: #d4d0c8;
+}
+.ie-cmp-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  padding: 3px 6px;
+  font: 13px/15px W2KSans, Tahoma, sans-serif;
+}
+.ie-cmp-pane > .ie-frame {
+  flex: 1;
+  min-height: 0;
+  background: #fff;
+}
+.ie-infobar + .ie-frame { min-height: 0; }

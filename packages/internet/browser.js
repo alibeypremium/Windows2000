@@ -10,6 +10,7 @@ import {
 import { basename, downloadFile } from "../core/index.js";
 import { buildSite, isSite, prefetchNews, homeBoxes } from "./netscape-sites.js";
 import { getLang } from "../ui/i18n.js";
+import { YEAR_FACTS, YEAR_SITES, YEAR_TR_SITES } from "./ie-years.js";
 import { openDlgWindow } from "../accessories/winrar-dlg.js";
 import { ieOpen, ieOptions, ieAddFavorite, ieProps, ieOrganize, iePageSetup, iePrint, IE_HELP } from "./ie-dialogs.js";
 const normalizeAddress = (input) => {
@@ -36,6 +37,7 @@ const normalizeAddress = (input) => {
     throw new Error("This built-in page does not exist.");
   return target;
 };
+const YEAR_RANGE = Array.from({ length: 14 }, (_, i) => String(1996 + i));
 const PORTALS = {
   tr: [["Hürriyet", "hurriyet.com.tr"], ["Milliyet", "milliyet.com.tr"], ["Mynet", "mynet.com"], ["Superonline", "superonline.com"], ["Sabah", "sabah.com.tr"], ["Turk.net", "turk.net"], ["Netscape", "netscape.com"], ["Yahoo!", "yahoo.com"]],
   en: [["Yahoo!", "yahoo.com"], ["MSN", "msn.com"], ["AltaVista", "altavista.com"], ["Lycos", "lycos.com"], ["Excite", "excite.com"], ["GeoCities", "geocities.com"], ["Netscape", "netscape.com"], ["CNN", "cnn.com"], ["Microsoft", "microsoft.com"], ["Apple", "apple.com"]],
@@ -70,6 +72,8 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
       el("div", { class: "ie-pane ie-pane-zone", text: "Internet" }),
       el("div", { class: "ie-pane ie-pane-prog", hidden: true }, el("div", { class: "ie-prog-bar" })),
       el("div", { class: "ie-pane ie-pane-blank" }),
+      el("div", { class: "ie-pane ie-pane-snap", title: "Previous Snapshot", text: "◄", onclick: () => snapStep(-1) }),
+      el("div", { class: "ie-pane ie-pane-snap", title: "Next Snapshot", text: "►", onclick: () => snapStep(1) }),
       el("div", { class: "ie-pane ie-pane-date", title: "Archive date" }),
       el("div", { class: "ie-pane ie-pane-wb", text: "Wayback Machine" }),
       el("span", { class: "status-grip" }),
@@ -78,7 +82,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
   // ---- Wayback Machine (the web of 2000) ----
   const WB = "https://web.archive.org/web/";
   const WB_RE = /web\.archive\.org\/web\/(\d+)[a-z_]*\/(https?:\/\/.+)$/i;
-  let wbYear = String(year || ctx.settings.get("ieYear") || "2000"), wbStamp = String(stamp || ""), wbFrame = null, progTimer = 0, loadTimer = 0, wbYears = null;
+  let wbYear = String(year || ctx.settings.get("ieYear") || "2000"), wbStamp = String(stamp || ""), wbFrame = null, progTimer = 0, loadTimer = 0, wbYears = null, wbSnaps = null;
   const wbOn = (u) => ctx.settings.get("ieArchive") !== false && /^https?:/i.test(u);
   const norm = (u) => String(u).replace(/^https?:\/\//i, "").replace(/^www\./i, "").replace(/:80(?=\/|$)/, "").replace(/\/$/, "");
   let throbber = null;
@@ -122,15 +126,53 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     if (d.event === "domContentLoaded") loadEnd();
   };
   window.addEventListener("message", onWayback);
+  const snapCache = new Map();
   async function loadYears() {
-    if (wbYears) return wbYears;
+    const key = norm(current);
+    const hit = snapCache.get(key);
+    if (hit) { wbYears = hit.years; wbSnaps = hit.snaps; return wbYears; }
     try {
-      const r = await fetch("https://web.archive.org/cdx/search/cdx?output=json&fl=timestamp&collapse=timestamp:4&filter=statuscode:200&url=" + encodeURIComponent(current), { signal: AbortSignal.timeout(8000) });
-      const rows = (await r.json()).slice(1).map((x) => x[0].slice(0, 4));
-      if (rows.length) return (wbYears = [...new Set(rows)].filter((y) => y >= "1996" && y <= "2009"));
+      const r = await fetch("https://web.archive.org/cdx/search/cdx?output=json&fl=timestamp&collapse=timestamp:8&filter=statuscode:200&limit=20000&url=" + encodeURIComponent(current), { signal: AbortSignal.timeout(10000) });
+      const snaps = (await r.json()).slice(1).map((x) => x[0].slice(0, 8)).sort();
+      if (snaps.length) {
+        wbSnaps = snaps; wbYears = [...new Set(snaps.map((x) => x.slice(0, 4)))].filter((y) => y >= "1996" && y <= "2009");
+        snapCache.set(key, { years: wbYears, snaps });
+        return wbYears;
+      }
     } catch {}
-    return (wbYears = Array.from({ length: 14 }, (_, i) => String(1996 + i)));
+    wbSnaps = []; return (wbYears = null);
   }
+  // Closest archived copy to a wanted date (undefined = could not ask, null = nothing archived).
+  async function closestSnap(url, st) {
+    try {
+      const r = await fetch("https://archive.org/wayback/available?url=" + encodeURIComponent(url) + "&timestamp=" + (st + "0101000000").slice(0, 14), { signal: AbortSignal.timeout(6000) });
+      const c = (await r.json())?.archived_snapshots?.closest;
+      return c?.available ? c.timestamp : null;
+    } catch { return undefined; }
+  }
+  const snapStep = async (dir) => {
+    await loadYears();
+    const cur = (wbStamp || wbYear + "0101").slice(0, 8), all = wbSnaps || [];
+    const t = dir < 0 ? [...all].reverse().find((x) => x < cur) : all.find((x) => x > cur);
+    if (!t) return ctx.dialogs.message(trDate() ? (dir < 0 ? "Bu sayfanın daha eski kaydı yok." : "Bu sayfanın daha yeni kaydı yok.") : (dir < 0 ? "There is no earlier copy of this page." : "There is no later copy of this page."), { title: "Microsoft Internet Explorer", icon: "information" });
+    wbYear = t.slice(0, 4); wbStamp = t; render();
+  };
+  const SANDBOX_WB = "allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox";
+  const openCompare = async () => {
+    if (!/^https?:/i.test(current)) return;
+    await loadYears();
+    const ys = wbYears?.length > 1 ? wbYears : DEF_YEARS, a = wbStamp ? wbStamp.slice(0, 4) : wbYear;
+    const b = ys.find((y) => y > a) || [...ys].reverse().find((y) => y < a) || a, url = current;
+    const cw = ctx.wm.create({ title: (trDate() ? "Karşılaştır - " : "Compare - ") + url, icon: "ie", width: 940, height: 600, appId: "ie" });
+    const pane = (y0) => {
+      const sel = el("select", {}, ...ys.map((y) => el("option", { value: y, text: y, selected: y === y0 })));
+      const f = el("iframe", { class: "ie-frame", sandbox: SANDBOX_WB, referrerpolicy: "no-referrer", title: "Wayback" });
+      const load = () => { f.src = WB + sel.value + "if_/" + url; };
+      sel.addEventListener("change", load); load();
+      return el("div", { class: "ie-cmp-pane" }, el("div", { class: "ie-cmp-head" }, el("span", { text: trDate() ? "Yıl:" : "Year:" }), sel), f);
+    };
+    cw.setContent(el("div", { class: "ie-cmp" }, pane(a), pane(b)));
+  };
   const setYear = (y) => { wbYear = String(y); wbStamp = ""; render(); };
   const chooseDate = async () => {
     const v = await ctx.dialogs.prompt((trDate() ? "Bir yıl (1996-2009) veya tarih (GG/AA/YYYY) girin:" : "Enter a year (1996-2009) or a date (MM/DD/YYYY):"), stampDate(wbStamp), { title: trDate() ? "Tarih Seç" : "Choose Date" });
@@ -171,6 +213,10 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     const ys = wbYears || DEF_YEARS;
     popAt(anchor, [
       ...ys.map((y) => ({ label: y, radio: true, checked: y === (wbStamp ? wbStamp.slice(0, 4) : wbYear), action: () => { ctx.settings.set("ieArchive", true); setYear(y); } })),
+      { separator: true },
+      { label: "Previous Snapshot", action: () => snapStep(-1) },
+      { label: "Next Snapshot", action: () => snapStep(1) },
+      { label: "Compare Years...", action: openCompare },
       { separator: true },
       { label: "Choose Date...", action: chooseDate },
       { label: "Wayback Calendar...", action: () => window.open("https://web.archive.org/web/*/" + current, "_blank", "noopener,noreferrer") },
@@ -325,6 +371,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
       return;
     }
     if (current === "about:home" || current === "about:welcome") {
+      const tr2 = trDate();
       w.setTitle("Welcome to the Internet - Microsoft Internet Explorer");
       const search = el("input", {
         "aria-label": "Search the Web",
@@ -388,9 +435,11 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
             ),
           ),
           el("hr"),
-          el("h3", { text: "Sites from the web of 2000" }),
-          el("p", { text: "These pages are loaded from the Wayback Machine, as they looked around the year shown at the bottom of the window." }),
-          el("p", {}, ...(PORTALS[getLang()] || PORTALS.en).flatMap(([n, u], i) => [i ? " · " : "", button(n, () => navigate("http://www." + u + "/"), { class: "text-link" })])),
+          el("h3", { text: tr2 ? `${wbYear}'de İnternet` : `The web in ${wbYear}` }),
+          el("p", {}, ...YEAR_RANGE.flatMap((y, i) => [i ? " · " : "", button(y, () => { wbYear = y; wbStamp = ""; render(); }, { class: "text-link", style: y === wbYear ? { fontWeight: "bold" } : null })])),
+          el("ul", {}, ...(YEAR_FACTS[wbYear] || []).map((f) => el("li", { text: tr2 ? f[0] : f[1] }))),
+          el("p", { text: tr2 ? "Bu yılın popüler siteleri (sayfalar Wayback Machine'den, o yıldaki hâliyle açılır):" : "Popular sites of the year (opened from the Wayback Machine as they looked then):" }),
+          el("p", {}, ...[...YEAR_SITES(+wbYear), ...(tr2 ? YEAR_TR_SITES : [])].flatMap(([n, u], i) => [i ? " · " : "", button(n, () => navigate("http://www." + u + "/"), { class: "text-link" })])),
           el("hr"),
           el("h3", { text: "Make yourself at home" }),
           el("p", {
@@ -507,21 +556,40 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
       return;
     }
     const live = !wbOn(current);
-    if (!live) { wbYears = null; loadYears().catch(() => {}); }
+    const tr2 = trDate(), token = (render.wb = (render.wb || 0) + 1);
+    if (!live) { loadYears().catch(() => {}); }
     loadStart("Opening page " + current + "...");
     w.setTitle(url.hostname + " - Microsoft Internet Explorer");
-    const frame = el("iframe", {
-      class: "ie-frame",
-      src: live ? current : WB + (wbStamp || wbYear) + "if_/" + current,
-      title: "Web page: " + url.hostname,
-      sandbox: live
-        ? "allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
-        : "allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox",
-      referrerpolicy: "no-referrer",
+    const show = (src, note) => {
+      const frame = el("iframe", {
+        class: "ie-frame",
+        src,
+        title: "Web page: " + url.hostname,
+        sandbox: live ? "allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox" : SANDBOX_WB,
+        referrerpolicy: "no-referrer",
+      });
+      wbFrame = live ? null : frame;
+      frame.addEventListener("load", () => loadEnd());
+      viewport.replaceChildren(...(note ? [el("div", { class: "ie-infobar" }, el("span", { text: note }), button("×", (e) => e.currentTarget.parentElement.remove(), { class: "ie-infobar-x", title: "Close" }))] : []), frame);
+    };
+    if (live) return show(current);
+    const want = wbStamp || wbYear;
+    closestSnap(current, want).then((ts) => {
+      if (token !== render.wb) return;
+      if (ts === undefined) return show(WB + want + "if_/" + current);
+      if (ts === null) {
+        loadEnd(tr2 ? "Bu sayfanın arşiv kaydı yok" : "No archived copy of this page");
+        viewport.replaceChildren(el("div", { class: "ie-legacy-page" },
+          tr2 ? "Wayback Machine'de bu sayfanın hiçbir kaydı bulunamadı." : "The Wayback Machine has no copy of this page.", el("br"), el("br"),
+          button(tr2 ? "Canlı siteyi aç" : "Open the live site", () => { ctx.settings.set("ieArchive", false); render(); })));
+        return;
+      }
+      const gotY = ts.slice(0, 4), wantY = want.slice(0, 4);
+      if (gotY === wantY) return show(WB + want + "if_/" + current);
+      const when = tr2 ? ts.slice(6, 8) + "/" + ts.slice(4, 6) + "/" + gotY : +ts.slice(4, 6) + "/" + +ts.slice(6, 8) + "/" + gotY;
+      wbYear = gotY; wbStamp = ts; setDate();
+      show(WB + ts + "if_/" + current, tr2 ? `Bu sayfa ${wantY} yılında arşivlenmemiş. En yakın kayıt (${when}) gösteriliyor.` : `This page was not archived in ${wantY}. Showing the closest copy (${when}).`);
     });
-    wbFrame = live ? null : frame;
-    frame.addEventListener("load", () => loadEnd());
-    viewport.append(frame);
   }
   const back = () => {
       if (index > 0) navigate(history[--index], false);
@@ -742,6 +810,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
         label: "Archive Year",
         submenu: Array.from({ length: 14 }, (_, i) => String(1996 + i)).map((y) => ({ label: y, radio: true, checked: y === (wbStamp ? wbStamp.slice(0, 4) : wbYear), action: () => setYear(y) })),
       },
+      { label: "Compare Years...", action: openCompare },
       { label: "Archive Options...", action: archiveOptions },
       { separator: true },
       {
