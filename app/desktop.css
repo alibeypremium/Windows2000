@@ -6209,8 +6209,10 @@ body.icon-dragging, body.icon-dragging * { cursor: default; }
 .ns-bar{display:flex;align-items:stretch;background:var(--face);border-bottom:1px solid #fff;position:relative}
 .ns-grip{width:10px;flex:none;margin:2px 2px 2px 3px;border-top:3px solid var(--shadow);background:repeating-linear-gradient(0deg,transparent 0 2px,#fff 2px 3px,var(--shadow) 3px 4px) 2px 6px/4px 100% no-repeat}
 .ns-nav{height:46px;padding:1px 0;align-items:center}
-.ns-tb{all:unset;display:flex;align-items:flex-start;justify-content:center;height:42px;min-width:48px;cursor:default;padding:0 1px}
-.ns-tb img{display:block;height:42px;width:auto;pointer-events:none}
+.ns-tb{all:unset;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;height:42px;min-width:48px;cursor:default;padding:0 4px;box-sizing:border-box}
+.ns-tb img{display:block;height:28px;width:auto;pointer-events:none}
+.ns-tb-l{font:11px Arial,sans-serif;line-height:13px;margin-top:1px;white-space:nowrap;color:#000;pointer-events:none}
+.ns-tb.disabled .ns-tb-l{color:#808080;text-shadow:1px 1px 0 #fff}
 .ns-tb:not(.disabled):hover img{filter:brightness(1.12)}
 .ns-tb:not(.disabled):active img{transform:translate(1px,1px)}
 .ns-tb.disabled{pointer-events:none}
@@ -6232,6 +6234,7 @@ body.icon-dragging, body.icon-dragging * { cursor: default; }
 .ns-frame{width:100%;height:100%;border:0;display:block;background:#fff}
 .ns-status{display:flex;align-items:center;gap:4px;height:22px;padding:0 3px;background:var(--face);border-top:1px solid #fff}
 .ns-status img{display:block;height:18px}
+.ns-status img[title]:active{transform:translate(1px,1px)}
 .ns-status-text{flex:1;font:11px Arial,sans-serif;border:1px inset #fff;padding:1px 4px;height:16px;line-height:14px;white-space:nowrap;overflow:hidden}
 
 /* WinRAR 4.11 real dialog templates */
@@ -6325,9 +6328,9 @@ body.icon-dragging, body.icon-dragging * { cursor: default; }
 .msn-emo-b{all:unset;width:24px;height:24px;display:flex;align-items:center;justify-content:center;cursor:default}
 .msn-emo-b:hover{background:#cfdcf5}
 /* Netscape: bookmarks, history, page info, preferences */
-.ns-textonly .ns-tb img{display:none}.ns-textonly .ns-tb{height:22px;min-width:44px;font:11px Arial,sans-serif;align-items:center;padding:0 6px}.ns-textonly .ns-tb::after{content:attr(title)}
+.ns-textonly .ns-tb img{display:none}.ns-textonly .ns-tb{height:22px;min-width:44px;justify-content:center;padding:0 6px}
 .ns-textonly{height:26px}
-.ns-picsonly .ns-tb img{height:34px}
+.ns-picsonly .ns-tb img{height:34px}.ns-picsonly .ns-tb-l{display:none}
 .nsb-tree{flex:1;min-height:0;overflow:auto;background:#fff;border:2px inset #fff;margin:2px;font:12px Arial,sans-serif;outline:0}
 .nsb-row{display:flex;align-items:center;gap:3px;height:19px;white-space:nowrap;cursor:default;border-top:2px solid transparent;border-bottom:2px solid transparent;box-sizing:content-box}
 .nsb-row.sel .nsb-name{background:#000080;color:#fff}.nsb-row.d-in .nsb-name{background:#9cf}.nsb-row.d-before{border-top-color:#000}.nsb-row.d-after{border-bottom-color:#000}
@@ -6861,3 +6864,18 @@ input.vlc-eqs[type="range"]{flex:none;writing-mode:vertical-lr;direction:rtl;hei
 .ns-pt-arch img { filter: grayscale(1); }
 .ns-pt-arch:hover img { filter: none; }
 .ns-bar[hidden] { display: none; }
+
+/* Netscape: contained viewport (status bar never pushed out), progress meter, component bar buttons */
+.ns-view { display: flex; flex-direction: column; overflow: hidden; }
+.ns-view > .ns-frame { flex: 1; min-height: 0; height: auto; }
+.ns-view:has(> .ih) { display: block; overflow: auto; }
+.ns-status { flex: none; }
+.ns-prog { width: 110px; height: 16px; border: 1px solid; border-color: #808080 #fff #fff #808080; background: #d4d0c8; padding: 1px; box-sizing: border-box; flex: none; }
+.ns-prog[hidden] { display: none; }
+.ns-prog-bar { height: 100%; width: 0; background: repeating-linear-gradient(90deg, #000080 0 6px, #d4d0c8 6px 8px); transition: width .25s linear; }
+.ns-compbar { display: flex; gap: 1px; flex: none; padding-left: 2px; border-left: 1px solid #808080; }
+.ns-comp-b { all: unset; box-sizing: border-box; width: 38px; height: 21px; display: flex; align-items: center; justify-content: center; border: 1px solid transparent; cursor: default; }
+.ns-comp-b > span { display: block; width: 34px; height: 18px; background: url(/assets/ui/netscape/st-comp.png) no-repeat; background-size: auto 18px; image-rendering: pixelated; }
+.ns-comp-b:hover { border-color: #fff #808080 #808080 #fff; }
+.ns-comp-b:active { border-color: #808080 #fff #fff #808080; }
+.ns-comp-b:active > span { transform: translate(1px, 1px); }

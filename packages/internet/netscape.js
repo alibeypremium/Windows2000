@@ -84,8 +84,18 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
     anim.style.backgroundPosition = `-${frameNo * 32}px 0`;
   }, 60);
 
+  const prog = el("div", { class: "ns-prog", hidden: true }, el("div", { class: "ns-prog-bar" }));
+  let progT = 0, progN = 0;
   const setLoading = (on) => {
     loading = on;
+    clearInterval(progT);
+    if (on) {
+      prog.hidden = false; progN = 8; prog.firstChild.style.width = progN + "%";
+      progT = setInterval(() => { progN = Math.min(92, progN + (95 - progN) * 0.12); prog.firstChild.style.width = progN + "%"; }, 300);
+    } else if (!prog.hidden) {
+      prog.firstChild.style.width = "100%";
+      progT = setTimeout(() => { prog.hidden = true; prog.firstChild.style.width = "0"; }, 250);
+    }
     syncNav();
   };
 
@@ -203,7 +213,7 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
   const external = () => /^https?:/i.test(current) && window.open(current, "_blank", "noopener,noreferrer");
 
   const mkBtn = (key, label, action, cls = "") => {
-    const b = el("button", { class: "ns-tb " + cls, type: "button", "data-tb": key, title: label }, el("img", { src: IMG + "tb-" + key + ".png", alt: label, draggable: "false" }));
+    const b = el("button", { class: "ns-tb " + cls, type: "button", "data-tb": key, title: label }, el("img", { src: IMG + "tb-" + key + "-i.png", alt: "", draggable: "false" }), el("span", { class: "ns-tb-l", text: label }));
     b.addEventListener("click", () => !b.classList.contains("disabled") && action());
     return b;
   };
@@ -220,7 +230,7 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
   function syncNav() {
     const set = (b, key, off) => {
       b.classList.toggle("disabled", off);
-      const src = IMG + "tb-" + key + (off && (key === "back" || key === "forward") ? "-dis" : "") + ".png";
+      const src = IMG + "tb-" + key + (off && (key === "back" || key === "forward") ? "-dis" : "") + "-i.png";
       b.firstChild.src = src;
     };
     set(bBack, "back", idx <= 0);
@@ -381,12 +391,13 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
   });
   const lockImg = el("img", { src: IMG + "st-lock.png", alt: "", draggable: "false", title: "Security Info" });
   lockImg.addEventListener("click", () => bSec.click());
-  const compImg = el("img", { class: "ns-comp", src: IMG + "st-comp.png", alt: "", draggable: "false" });
-  compImg.addEventListener("click", (e) => {
-    const k = Math.min(3, Math.floor(((e.offsetX || 0) / (compImg.offsetWidth || 1)) * 4));
-    [() => go("about:home"), () => ctx.launch("outlook"), () => go("about:news"), () => ctx.launch("notepad")][k]();
+  const comps = [["Navigator", () => go("about:home")], ["Messenger Mailbox", () => ctx.launch("outlook")], ["Collabra Discussions", () => ctx.launch("outlook")], ["Address Book", () => ctx.launch("address")], ["Page Composer", () => ctx.launch("notepad")]].map(([t, fn], i) => {
+    const b = el("button", { class: "ns-comp-b", type: "button", title: t }, el("span", { style: { backgroundPosition: `-${[4, 37, 71, 105, 139][i]}px 0` } }));
+    b.addEventListener("click", fn);
+    return b;
   });
-  const status = el("div", { class: "ns-status" }, lockImg, msg, wb.datePane, wb.wbPane, compImg);
+  const compBar = el("div", { class: "ns-compbar" }, ...comps);
+  const status = el("div", { class: "ns-status" }, lockImg, msg, prog, wb.datePane, wb.wbPane, compBar);
 
   w.setContent(menus, nav, loc, pers, viewport, status);
   w.onClose = () => { clearInterval(timer); window.removeEventListener("message", onMsg); wb.destroy(); return true; };
