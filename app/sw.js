@@ -1,4 +1,4 @@
-const CACHE = "win2k-desktop-v3";
+const CACHE = "win2k-desktop-v4";
 const isAsset = (u) => /\/assets\/.+\.(png|gif|ico|woff2?|ttf)$/i.test(u.pathname);
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -43,7 +43,7 @@ self.addEventListener("fetch", (event) => {
       ),
     );
   event.respondWith(
-    fetch(request)
+    fetch(request, { cache: "no-cache" })
       .then((response) => {
         if (response.ok) {
           const copy = response.clone();
