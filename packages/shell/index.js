@@ -73,8 +73,8 @@ export class DesktopShell {
         const w = wins.find((x) => String(x.id) === b.dataset.winId), img = b.querySelector("img");
         if (!w || !img) return;
         const on = !!(w.trayFlash?.() && phase);
-        const want = on ? w.trayFlashIcon : w.trayIcon;
-        if (want && img.dataset.cur !== String(on)) { img.dataset.cur = String(on); { const n = icon(want, 16); n.dataset.cur = String(on); img.replaceWith(n); } }
+        const want = on ? w.trayFlashIcon : w.trayIconNow?.() || w.trayIcon;
+        if (want && img.dataset.cur !== String(on) + want) { img.dataset.cur = String(on) + want; { const n = icon(want, 16); n.dataset.cur = String(on) + want; img.replaceWith(n); } }
       });
     }, 500);
     this.updateClock();
@@ -839,7 +839,7 @@ export class DesktopShell {
     this.renderTrayWindows();
     root.replaceChildren(
       ...ctx.wm.windows
-        .filter((w) => !w.dialog && !w.closed && !(w.trayIcon && w.minimized))
+        .filter((w) => !w.dialog && !w.closed && !(w.trayIcon && w.minimized && !w.trayAlways))
         .map((w) => {
           const b = button(
             [icon(w.icon), el("span", { text: w.title })],
@@ -868,11 +868,11 @@ export class DesktopShell {
     const tray = document.querySelector(".system-tray");
     if (!tray) return;
     const ctx = this.ctx;
-    const want = ctx.wm.windows.filter((w) => w.trayIcon && w.minimized && !w.closed);
+    const want = ctx.wm.windows.filter((w) => w.trayIcon && (w.minimized || w.trayAlways) && !w.closed);
     for (const old of [...tray.querySelectorAll(".tray-app")]) if (!want.some((w) => w.id === old.dataset.winId)) old.remove();
     for (const w of want) {
       if (tray.querySelector(`.tray-app[data-win-id="${w.id}"]`)) continue;
-      const b = button(icon(w.trayIcon, 16), () => w.focus(), { class: "tray-button tray-app", title: w.trayTitle?.() || w.title, "aria-label": w.title });
+      const b = button(icon(w.trayIconNow?.() || w.trayIcon, 16), () => (w.minimized || ctx.wm.active !== w ? w.focus() : w.minimize()), { class: "tray-button tray-app", title: w.trayTitle?.() || w.title, "aria-label": w.title });
       b.dataset.winId = w.id;
       b.addEventListener("dblclick", () => w.focus());
       b.addEventListener("contextmenu", (e) => {

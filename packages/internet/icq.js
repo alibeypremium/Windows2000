@@ -4,7 +4,8 @@
 import { el, button, popup, icon, separator } from "../ui/index.js";
 import { t as tr } from "../ui/i18n.js";
 import { openDlgWindow } from "../accessories/winrar-dlg.js";
-import { STATUSES, STATUS_LONG, FIELDS, DEFAULT_LIST, KNOCKS, validUin, baseInfo, resolve, search, newUin, shownStatus, fmtTime, rand, diffInfo, reply } from "./icq-data.js";
+import { getLang } from "../ui/i18n.js";
+import { STATUSES, STATUS_LONG, FIELDS, DEFAULT_LIST, knocks, setDataLang, builtinNick, validUin, baseInfo, resolve, search, newUin, shownStatus, fmtTime, rand, diffInfo, reply } from "./icq-data.js";
 
 const SND = "/assets/sounds/icq/";
 const SKEY = "icq";
@@ -27,15 +28,23 @@ let inst = null; // single instance
 
 export function openICQ(ctx) {
   if (inst && !inst.closed) { inst.win.focus(); return inst.win; }
+  setDataLang(getLang());
   const S = Object.assign({ uin: 0, me: { nick: "", first: "", last: "", email: "", gender: "", age: "", city: "", state: "", country: "", phone: "", homepage: "", company: "", position: "", about: "", interests: "" }, status: "online", contacts: [], history: {}, unread: {}, dropped: [] }, ctx.settings.get(SKEY) || {});
-  const save = () => ctx.settings.set(SKEY, S);
+  const lang = getLang();
+  // contacts saved under the other language keep their (default) names in sync with the interface language
+  for (const c of S.contacts) { const o = builtinNick(c.uin, lang === "tr" ? "en" : "tr"); if (o && c.nick === o && !c.info?.nick) c.nick = builtinNick(c.uin, lang) || c.nick; }
+  const save = () => {
+    ctx.settings.set(SKEY, S);
+    // win98.si persists the ICQ store under HKCU\Software\Mirabilis\ICQ
+    try { const k = "HKEY_CURRENT_USER\\Software\\Mirabilis\\ICQ"; ctx.registry?.set(k, "UIN", String(S.uin)); ctx.registry?.set(k, "Nick", S.me.nick || ""); ctx.registry?.set(k, "Status", S.status); } catch {}
+  };
   const timers = new Set(), busy = new Set();
   const later = (fn, ms) => { const t = setTimeout(() => { timers.delete(t); fn(); }, ms); timers.add(t); return t; };
   const play = (n) => { if (ctx.settings.get("muted") || ctx.settings.get("soundScheme") === "No Sounds") return; try { const a = new Audio(SND + n + ".wav"); a.volume = 1; a.play().catch(() => {}); } catch {} };
-  const w = ctx.wm.create({ title: S.uin ? String(S.uin) : "ICQ", icon: "icq", width: 190, height: 380, x: 640, y: 60, appId: "icq", maximizable: false });
+  const w = ctx.wm.create({ title: S.uin ? String(S.uin) : "ICQ", icon: "icq", width: 208, height: 370, x: 640, y: 60, appId: "icq", maximizable: false });
   inst = { win: w, closed: false };
   const anyUnread = () => Object.values(S.unread).some(Boolean);
-  w.trayIcon = "icq"; w.trayFlashIcon = "icq-mail"; w.trayFlash = anyUnread;
+  w.trayIcon = "icq-online"; w.trayAlways = true; w.trayFlashIcon = "icq-mail"; w.trayFlash = anyUnread; w.trayIconNow = () => "icq-" + (S.uin ? S.status : "offline");
   w.trayTitle = () => "ICQ" + (S.uin ? ` - ${S.me.nick || S.uin} (${statusLabel(S.status)})` : "");
   w.trayMenu = () => [{ label: "Open ICQ", bold: true, action: () => w.focus() }, { separator: true }, ...(S.uin ? statusItems() : []), { separator: true }, { label: "Shut Down", action: () => w.close() }];
   const attention = (win) => { if (win && !win.closed && (win.minimized || ctx.wm.active !== win)) { win.flashing = true; ctx.shell?.renderTasks?.(); } };
@@ -237,7 +246,7 @@ export function openICQ(ctx) {
     const info = resolve(c), last = [...hist(uin)].reverse().find((m) => m.from === "me");
     const text = reply(info, last ? last.text : "", hist(uin));
     const slow = ["online", "ffc"].includes(info.status) ? 1 : 2;
-    later(() => { busy.delete(uin); if (!S.contacts.some((x) => x.uin === uin) || S.status === "offline") return; incoming(uin, text); if (hist(uin).at(-1)?.from === "me") respond(uin); }, rand(1, 2) + Math.min(12, Math.max(2, 1.5 + text.length / 6)) * 1000 * slow / 2);
+    later(() => { busy.delete(uin); if (!S.contacts.some((x) => x.uin === uin) || S.status === "offline") return; incoming(uin, text); if (hist(uin).at(-1)?.from === "me") respond(uin); }, Math.max(rand(1, 2), Math.min(12, Math.max(2, 1.5 + text.length / 6)) * 1000 * slow));
   };
   let knocked = false;
   const scheduleKnock = () => later(() => {
@@ -245,13 +254,13 @@ export function openICQ(ctx) {
     const up = S.contacts.map((c) => ({ c, s: shownStatus(resolve(c), S.status, S.dropped) })).filter((x) => x.s !== "offline");
     if (!up.length) return;
     knocked = true; const p = up[Math.floor(Math.random() * up.length)].c;
-    incoming(p.uin, KNOCKS[Math.floor(Math.random() * KNOCKS.length)]);
+    incoming(p.uin, knocks()[Math.floor(Math.random() * knocks().length)]);
   }, rand(30, 90));
 
   // ---------- status ----------
   const setStatus = (k) => {
     if (k === "offline") { timers.forEach(clearTimeout); timers.clear(); busy.clear(); }
-    else if (S.status === "offline") S.dropped = [];
+    else if (S.status === "offline") { S.dropped = []; knocked = false; scheduleKnock(); }
     S.status = k; save(); render();
   };
   const statusItems = () => STATUSES.map(([k, l]) => ({ label: plain(l), icon: `icq-${k}`, checked: S.status === k, action: () => setStatus(k) }));

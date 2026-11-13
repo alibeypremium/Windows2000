@@ -6395,9 +6395,9 @@ input.vlc-eqs[type="range"]{flex:none;writing-mode:vertical-lr;direction:rtl;hei
 .icq-search,.icq-buttons{display:flex;gap:2px}
 .icq-search input{flex:1;min-width:0;font:inherit}
 .icq-search button.icq-go{min-width:26px;padding:0}
-.icq-buttons button{flex:1;display:flex;justify-content:center;align-items:center;gap:3px;min-width:0;padding:0 2px;font:11px Tahoma,sans-serif;height:23px}
-.icq-buttons .icq-services{flex:0 0 64px;background:#ff0;font-weight:700}
-.icq-buttons .icq-logo{flex:0 0 64px;font-weight:700}
+.icq-buttons button{flex:1 1 0;width:0;display:flex;justify-content:center;align-items:center;gap:3px;min-width:0;padding:0 2px !important;overflow:hidden;font:11px Tahoma,sans-serif;height:23px}
+.icq-buttons .icq-services{flex:0 0 64px;width:64px;background:#ff0;font-weight:700}
+.icq-buttons .icq-logo{flex:0 0 64px;width:64px;font-weight:700}
 .icq-buttons .icq-status{justify-content:flex-start}
 .icq-dlg{padding:8px 10px 0}
 .icq-dlg .field-row{display:flex;align-items:center;gap:6px;margin:3px 0}
