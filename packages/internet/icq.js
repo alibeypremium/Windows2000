@@ -248,7 +248,12 @@ export function openICQ(ctx) {
     S.status = k; save(); render();
   };
   const statusItems = () => STATUSES.map(([k, l]) => ({ label: plain(l), icon: `icq-${k}`, checked: S.status === k, action: () => setStatus(k) }));
-  const menuAt = (btn, items, up = true) => { const r = btn.getBoundingClientRect(); popup(items, r.left, up ? Math.max(0, r.top - items.length * 20) : r.bottom, { anchor: btn }); };
+  const menuAt = (btn, items, up = true) => {
+    const r = btn.getBoundingClientRect();
+    popup(items, r.left, r.top, { anchor: btn });
+    const m = [...document.querySelectorAll(".popup-menu")].pop();
+    if (m && up) { const h = m.getBoundingClientRect().height; m.style.top = Math.max(0, r.top - h) + "px"; m.style.left = Math.min(r.left, innerWidth - m.offsetWidth - 2) + "px"; }
+  };
   const about = () => dlg("About ICQ", el("div", { class: "icq-about" },
     el("div", { class: "icq-about-row" }, icon("icq", 32), el("div", {}, el("p", { class: "icq-b", text: "ICQ 99b" }), el("p", { text: "Copyright (C) 1996-1999 Mirabilis Ltd." }), el("p", { text: `Your UIN: ${S.uin}` })))), { cancel: null, ok: "OK", onOk: () => true });
 
@@ -273,7 +278,7 @@ export function openICQ(ctx) {
     ...items.map((e) => {
       const row = el("div", { class: `icq-row${e.uin === sel ? " highlighted" : ""}${e.status === "offline" ? " icq-off" : ""}`, "data-uin": e.uin, onmousedown: () => pick(e.uin), ondblclick: () => open(e.uin), oncontextmenu: (ev) => { ev.preventDefault(); pick(e.uin); popup(ctxMenu(e.uin), ev.clientX, ev.clientY); } });
       const mail = S.unread[e.uin] && blink;
-      row.append(el("img", { class: "icon", src: mail ? "/assets/icons/icq-mail-16x16.png" : `/assets/icons/icq-${e.status}-16x16.png`, width: 16, height: 16, alt: "", draggable: "false" }));
+      row.append(el("img", { class: "icon", "data-src": `/assets/icons/icq-${e.status}-16x16.png`, src: mail ? "/assets/icons/icq-mail-16x16.png" : `/assets/icons/icq-${e.status}-16x16.png`, width: 16, height: 16, alt: "", draggable: "false" }));
       if (renaming === e.uin) {
         const i = el("input", { type: "text", value: e.nick });
         i.addEventListener("keydown", (k) => { k.stopPropagation(); if (k.key === "Enter") i.blur(); if (k.key === "Escape") { i.value = e.nick; i.blur(); } });
@@ -319,7 +324,8 @@ export function openICQ(ctx) {
     list.scrollTop = keep; if (had) list.focus();
     stBtn.replaceChildren(sicon(S.status), document.createTextNode(statusLabel(S.status)));
   }
-  const blinker = setInterval(() => { if (inst.closed) return clearInterval(blinker); if (Object.values(S.unread).some(Boolean)) { blink = !blink; render(); } else if (blink) { blink = false; render(); } }, 500);
+  const paintMail = () => { for (const r of rows()) { const u = Number(r.dataset.uin), img = r.querySelector("img"); if (!img) continue; const st = r.classList.contains("icq-off") ? "offline" : null; img.src = S.unread[u] && blink ? "/assets/icons/icq-mail-16x16.png" : img.dataset.src; } };
+  const blinker = setInterval(() => { if (inst.closed) return clearInterval(blinker); const any = Object.values(S.unread).some(Boolean); if (any || blink) { blink = any ? !blink : false; paintMail(); } }, 500);
   render();
   if (!S.uin) register(); else scheduleKnock();
   return w;
