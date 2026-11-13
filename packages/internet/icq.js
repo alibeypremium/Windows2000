@@ -5,7 +5,7 @@ import { el, button, popup, icon, separator } from "../ui/index.js";
 import { t as tr } from "../ui/i18n.js";
 import { openDlgWindow } from "../accessories/winrar-dlg.js";
 import { getLang } from "../ui/i18n.js";
-import { STATUSES, STATUS_LONG, FIELDS, DEFAULT_LIST, knocks, setDataLang, builtinNick, validUin, baseInfo, resolve, search, newUin, shownStatus, fmtTime, rand, diffInfo, reply } from "./icq-data.js";
+import { STATUSES, STATUS_LONG, FIELDS, defaultList, OLD_UINS, knocks, setDataLang, builtinNick, validUin, baseInfo, resolve, search, newUin, shownStatus, fmtTime, rand, diffInfo, reply } from "./icq-data.js";
 
 const SND = "/assets/sounds/icq/";
 const SKEY = "icq";
@@ -33,6 +33,13 @@ export function openICQ(ctx) {
   const lang = getLang();
   // contacts saved under the other language keep their (default) names in sync with the interface language
   for (const c of S.contacts) { const o = builtinNick(c.uin, lang === "tr" ? "en" : "tr"); if (o && c.nick === o && !c.info?.nick) c.nick = builtinNick(c.uin, lang) || c.nick; }
+  if (lang === "tr" && (S.v || 0) < 2) {
+    // v2: contact list moved to the MSN directory (Diyanet Kütüphanesi, Ayşe, ...); the old made-up users are dropped
+    S.contacts = S.contacts.filter((c) => !OLD_UINS.includes(c.uin));
+    for (const u of OLD_UINS) { delete S.history[u]; delete S.unread[u]; }
+    if (S.uin) for (const u of defaultList()) if (u !== S.uin && !S.contacts.some((c) => c.uin === u)) S.contacts.push({ uin: u, nick: baseInfo(u).nick });
+    S.v = 2;
+  }
   const save = () => {
     ctx.settings.set(SKEY, S);
     // win98.si persists the ICQ store under HKCU\Software\Mirabilis\ICQ
@@ -48,6 +55,7 @@ export function openICQ(ctx) {
   w.trayIcon = "/assets/icons/icq-tray-online.svg"; w.trayAlways = true; w.trayFlashIcon = "icq-mail"; w.trayFlash = anyUnread; w.trayIconNow = () => "/assets/icons/icq-tray-" + (S.uin ? S.status : "offline") + ".svg";
   w.trayTitle = () => "ICQ" + (S.uin ? ` - ${S.me.nick || S.uin} (${statusLabel(S.status)})` : "");
   w.trayMenu = () => [{ label: "Open ICQ", bold: true, action: () => w.focus() }, { separator: true }, ...(S.uin ? statusItems() : []), { separator: true }, { label: "Shut Down", action: () => w.close() }];
+  ctx.shell?.renderTasks?.(); // notification-area icon appears together with the window
   const attention = (win) => { if (win && !win.closed && (win.minimized || ctx.wm.active !== win)) { win.flashing = true; ctx.shell?.renderTasks?.(); } };
   const msgWins = new Map();
   w.onClose = () => { inst.closed = true; timers.forEach(clearTimeout); for (const mw of [...msgWins.values()]) mw.close(); return true; };
@@ -93,7 +101,7 @@ export function openICQ(ctx) {
         const uin = own ? Number(uinIn.value) : newUin();
         S.me = { ...S.me, ...f, nick: f.nick.trim() };
         S.uin = uin; S.status = "online";
-        S.contacts = DEFAULT_LIST.filter((u) => u !== uin).map((u) => ({ uin: u, nick: baseInfo(u).nick }));
+        S.contacts = defaultList().filter((u) => u !== uin).map((u) => ({ uin: u, nick: baseInfo(u).nick }));
         save(); w.setTitle(winTitle()); render(); scheduleKnock();
       },
     });

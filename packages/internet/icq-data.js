@@ -1,3 +1,4 @@
+import { DIRECTORY, pickReply } from "./msn-data.js";
 // ICQ 99b data layer: ported from the win98.si ICQ store (statuses, the 12 contacts, UIN lookup, search, history),
 // with the remote AI reply backend replaced by a small local rule-based persona so everything works offline.
 
@@ -19,20 +20,22 @@ const mk = (uin, status, o) => ({ ...BLANK, ...o, uin, status });
 
 let LANG = "tr";
 export const setDataLang = (l) => { LANG = l === "en" ? "en" : "tr"; };
-const BUILTIN_TR = [
-  mk(1834521, "online", { nick: "KaykayCan", first: "Can", last: "Yılmaz", gender: "Male", age: "17", city: "İzmir", country: "Türkiye", interests: "kaykay, Blink-182, Quake II", about: "lise 2 öğrencisiyim. online değilsem parktayım" }),
-  mk(2290417, "online", { nick: "YıldızKız", first: "Melis", last: "Aksoy", gender: "Female", age: "19", city: "Ankara", country: "Türkiye", interests: "Dawson's Creek, müzik, GeoCities sayfaları", about: "ODTÜ 1. sınıf. geocities sayfama bakın!!" }),
-  mk(3051288, "away", { nick: "Neo99", first: "Tolga", last: "Demir", gender: "Male", age: "22", city: "İstanbul", country: "Türkiye", interests: "The Matrix, Linux, IRC", about: "bilgisayar mühendisliği öğrencisi. kaşık yok." }),
-  mk(4187730, "online", { nick: "Lotus", first: "Elif", last: "Kaya", gender: "Female", age: "20", city: "Bursa", country: "Türkiye", interests: "anime, karaoke, müzik", about: "ingilizce öğretmenliği okuyorum. j-pop ve şarkı söylemek bayılıyorum" }),
-  mk(1290055, "offline", { nick: "DrDOS", first: "Hasan", last: "Öztürk", gender: "Male", age: "34", city: "Eskişehir", country: "Türkiye", interests: "BBS, assembler, Y2K", about: "1988'den beri dial-up BBS sysop'uyum. Y2K'ya hazırlanıyorum." }),
-  mk(5520163, "online", { nick: "Cyberella", first: "Ayşe", last: "Çelik", gender: "Female", age: "24", city: "İstanbul", country: "Türkiye", interests: "tekno, müzik, web tasarım", about: "küçük bir ajansta web tasarımcısı. geceleri tekno kulüpler." }),
-  mk(6034471, "na", { nick: "Gizmo", first: "Emre", last: "Şahin", gender: "Male", age: "16", city: "Adana", country: "Türkiye", interests: "StarCraft, Tamagotchi, Pokemon", about: "bana ödevi sormayın" }),
-  mk(2718281, "online", { nick: "MatematikDahisi", first: "Burak", last: "Aydın", gender: "Male", age: "21", city: "Konya", country: "Türkiye", interests: "satranç, C++, futbol", about: "mühendislik öğrencisi. satrançta bana meydan oku" }),
-  mk(7745902, "occupied", { nick: "DenizKızı", first: "Selin", last: "Arslan", gender: "Female", age: "18", city: "Antalya", country: "Türkiye", interests: "yüzmek, Backstreet Boys, müzik", about: "son sınıf, her sabah denize giriyorum" }),
-  mk(3389014, "online", { nick: "Kerem", first: "Kerem", last: "Koç", gender: "Male", age: "23", city: "Trabzon", country: "Türkiye", interests: "Final Fantasy VII, anime, gitar", about: "gündüz ofis, gece gitar" }),
-  mk(8120376, "offline", { nick: "LaRosa", first: "Gül", last: "Erdoğan", gender: "Female", age: "27", city: "Mersin", country: "Türkiye", interests: "halk oyunları, seyahat, şiir", about: "turizm acentesinde çalışıyorum, şiir yazarım" }),
-  mk(4499120, "dnd", { nick: "Kurt_Murat", first: "Murat", last: "Polat", gender: "Male", age: "25", city: "Samsun", country: "Türkiye", interests: "heavy metal, Half-Life, basketbol", about: "metalci ve LAN party organizatörü" }),
-];
+// Turkish contact list = the same made-up people and institutions as MSN Messenger (msn-data.js), incl. Diyanet Kütüphanesi.
+const OLD_TR_UINS = [1834521, 2290417, 3051288, 4187730, 1290055, 5520163, 6034471, 2718281, 7745902, 3389014, 8120376, 4499120];
+export const OLD_UINS = OLD_TR_UINS;
+const STATUS_MAP = { online: "online", busy: "occupied", away: "away", phone: "na", lunch: "away", offline: "offline" };
+const CITIES = ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Konya", "Eskişehir", "Trabzon", "Samsun", "Adana"];
+const strHash = (t) => { let h = 2166136261; for (const ch of t) h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0; return h; };
+const used = new Set();
+const BUILTIN_TR = DIRECTORY.map((d) => {
+  let u = 10000000 + (strHash(d.email) % 80000000);
+  while (used.has(u)) u++;
+  used.add(u);
+  const [first, ...rest] = d.name.split(" ");
+  const o = mk(u, STATUS_MAP[d.status] || "online", { nick: d.name, first, last: rest.join(" "), email: d.email, city: CITIES[strHash(d.name) % CITIES.length], country: "Türkiye", interests: d.group, about: d.note || d.auto || "" });
+  o._tr = { bot: d.bot, replies: d.replies, auto: d.auto, hidden: !!d.hidden };
+  return o;
+});
 const BUILTIN_EN = [
   mk(1834521, "online", { nick: "SkaterBoi", first: "Jason", last: "Miller", gender: "Male", age: "17", city: "San Diego", country: "USA", interests: "skateboarding, Blink-182, Quake II", about: "junior at mission bay high. if im not online im at the skatepark" }),
   mk(2290417, "online", { nick: "StarGrl", first: "Melissa", last: "Grant", gender: "Female", age: "19", city: "Toronto", country: "Canada", interests: "Dawson's Creek, music, GeoCities pages", about: "1st year at u of t. pacey > dawson. check out my geocities page!!" }),
@@ -48,7 +51,8 @@ const BUILTIN_EN = [
   mk(4499120, "dnd", { nick: "Wolfie", first: "Erik", last: "Lindqvist", gender: "Male", age: "25", city: "Stockholm", country: "Sweden", interests: "heavy metal, Half-Life, hockey", about: "metalhead and LAN party organizer" }),
 ];
 const BUILTIN_ALL = () => (LANG === "tr" ? BUILTIN_TR : BUILTIN_EN);
-export const DEFAULT_LIST = [2290417, 3051288, 4187730, 1290055, 2718281];
+const DEFAULT_EN = [2290417, 3051288, 4187730, 1290055, 2718281];
+export const defaultList = () => (LANG === "tr" ? BUILTIN_TR.filter((c) => !c._tr.hidden).map((c) => c.uin) : DEFAULT_EN);
 
 export const validUin = (s) => /^\d{5,9}$/.test(String(s).trim()) && Number(s) >= 10001;
 const rng = (seed) => { let t = seed % 2147483647 || 1; return () => (t = (t * 48271) % 2147483647) / 2147483647; };
@@ -86,7 +90,7 @@ export function search(q) {
   const k = q.trim().toLowerCase();
   if (!k) return [...BUILTIN_ALL()];
   if (validUin(k)) return [baseInfo(Number(k))];
-  return BUILTIN_ALL().filter((c) => [c.nick, c.first, c.last, String(c.uin), c.city, c.country, c.interests].some((v) => v.toLowerCase().includes(k)));
+  return BUILTIN_ALL().filter((c) => [c.nick, c.first, c.last, String(c.uin), c.city, c.country, c.interests, c.email].some((v) => v.toLowerCase().includes(k)));
 }
 export const newUin = () => 1000000 + Math.floor(Math.random() * 89999999);
 export const shownStatus = (c, myStatus, dropped) => (myStatus === "offline" || dropped.includes(c.uin) ? "offline" : c.status);
@@ -104,6 +108,11 @@ const pick = (a) => a[Math.floor(Math.random() * a.length)];
 const ANY_EN = ["lol", "hehe :)", "yeah?", "k", "cool", "omg really?", "haha no way", "brb, mom needs the phone line", "my modem keeps dropping lol", "same here", "sorry, lag. what did u say?", "gtg soon, dinner", "ur funny :P"];
 const ANY_TR = ["lol", "hehe :)", "öyle mi?", "tamam", "harika", "yok artık :D", "modemim yine koptu lol", "bende de öyle", "pardon, hat kopuyordu, ne dedin?", "birazdan çıkmam lazım, yemek", "komiksin :P"];
 export function reply(them, text, hist) {
+  if (LANG === "tr" && them._tr) {
+    if (them._tr.auto && !["online", "ffc"].includes(them.status)) return them._tr.auto;
+    if (!/[A-Za-z]/.test(text) && !them._tr.bot) return pick(["?", "hmm", ":)"]);
+    return pickReply({ bot: them._tr.bot, replies: them._tr.replies }, text);
+  }
   const t = text.trim(), low = t.toLowerCase(), tr = LANG === "tr" ? !EN_HINT.test(low) : TR.test(t);
   const kid = Number(them.age) < 21;
   const A = (en, trs) => pick(tr ? trs : en);
