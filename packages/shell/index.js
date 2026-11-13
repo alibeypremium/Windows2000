@@ -880,7 +880,10 @@ export class DesktopShell {
       b.addEventListener("contextmenu", (e) => {
         e.preventDefault();
         e.stopPropagation();
-        popup(w.trayMenu?.() || [{ label: "Open", action: () => w.focus() }, { label: "Close", action: () => w.close() }], e.clientX, e.clientY - 120);
+        popup(w.trayMenu?.() || [{ label: "Open", action: () => w.focus() }, { label: "Close", action: () => w.close() }], e.clientX, e.clientY);
+        // the menu grows upwards from the pointer (the tray sits at the bottom edge)
+        const m = [...document.querySelectorAll(".popup-menu")].pop();
+        if (m) { m.style.top = "auto"; m.style.bottom = Math.max(0, innerHeight - e.clientY) + "px"; m.style.left = Math.max(0, Math.min(e.clientX, innerWidth - m.offsetWidth - 2)) + "px"; }
       });
       tray.insertBefore(b, tray.firstChild);
     }
