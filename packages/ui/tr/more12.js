@@ -1,6 +1,6 @@
 // Turkish strings: ICQ 99b (win98.si port). Accelerator "&" marks are stripped from keys by the loader.
 export const MORE12 = {
-  "Online": "Çevrimiçi", "Offline": "Çevrimdışı", "Enter Search Keyword": "Arama anahtar sözcüğünü girin", "Add Users": "Kullanıcı Ekle", "Services": "Hizmetler", "System Menu": "Sistem Menüsü",
+  "Online": "Çevrimiçi", "Offline": "Çevrimdışı", "GO": "ARA", "Enter Search Keyword": "Arama anahtar sözcüğünü girin", "Add Users": "Kullanıcı Ekle", "Services": "Hizmetler", "System Menu": "Sistem Menüsü",
   "Message": "İleti", "Chat": "Sohbet", "File": "Dosya", "URL": "URL", "Contacts": "Kişiler", "Info": "Bilgi", "History": "Geçmiş", "Rename": "Yeniden Adlandır", "Delete": "Sil",
   "Find/Add Users": "Kullanıcı Bul/Ekle", "ICQ White Pages": "ICQ Beyaz Sayfalar", "ICQ Chat Rooms": "ICQ Sohbet Odaları", "ICQ Search": "ICQ Arama", "ICQ Now!": "ICQ Şimdi!",
   "My ICQ Page": "ICQ Sayfam", "Reminder": "Hatırlatıcı", "Notes": "Notlar", "ToDo": "Yapılacaklar", "Email": "E-posta", "Phone - \"Follow Me\"": "Telefon - \"Beni Takip Et\"", "Message Archive": "İleti Arşivi", "ICQ Active List": "ICQ Etkin Liste", "E-ICQ": "E-ICQ",
