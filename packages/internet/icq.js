@@ -41,10 +41,11 @@ export function openICQ(ctx) {
   const timers = new Set(), busy = new Set();
   const later = (fn, ms) => { const t = setTimeout(() => { timers.delete(t); fn(); }, ms); timers.add(t); return t; };
   const play = (n) => { if (ctx.settings.get("muted") || ctx.settings.get("soundScheme") === "No Sounds") return; try { const a = new Audio(SND + n + ".wav"); a.volume = 1; a.play().catch(() => {}); } catch {} };
-  const w = ctx.wm.create({ title: S.uin ? String(S.uin) : "ICQ", icon: "icq", width: 208, height: 370, x: 640, y: 60, appId: "icq", maximizable: false });
+  const winTitle = () => (S.uin ? `${S.uin}${S.me.nick ? " - " + S.me.nick : ""}` : "ICQ");
+  const w = ctx.wm.create({ title: winTitle(), icon: "icq", width: 208, height: 370, x: 640, y: 60, appId: "icq", maximizable: false });
   inst = { win: w, closed: false };
   const anyUnread = () => Object.values(S.unread).some(Boolean);
-  w.trayIcon = "icq-online"; w.trayAlways = true; w.trayFlashIcon = "icq-mail"; w.trayFlash = anyUnread; w.trayIconNow = () => "icq-" + (S.uin ? S.status : "offline");
+  w.trayIcon = "/assets/icons/icq-tray-online.svg"; w.trayAlways = true; w.trayFlashIcon = "icq-mail"; w.trayFlash = anyUnread; w.trayIconNow = () => "/assets/icons/icq-tray-" + (S.uin ? S.status : "offline") + ".svg";
   w.trayTitle = () => "ICQ" + (S.uin ? ` - ${S.me.nick || S.uin} (${statusLabel(S.status)})` : "");
   w.trayMenu = () => [{ label: "Open ICQ", bold: true, action: () => w.focus() }, { separator: true }, ...(S.uin ? statusItems() : []), { separator: true }, { label: "Shut Down", action: () => w.close() }];
   const attention = (win) => { if (win && !win.closed && (win.minimized || ctx.wm.active !== win)) { win.flashing = true; ctx.shell?.renderTasks?.(); } };
@@ -93,7 +94,7 @@ export function openICQ(ctx) {
         S.me = { ...S.me, ...f, nick: f.nick.trim() };
         S.uin = uin; S.status = "online";
         S.contacts = DEFAULT_LIST.filter((u) => u !== uin).map((u) => ({ uin: u, nick: baseInfo(u).nick }));
-        save(); w.setTitle(String(uin)); render(); scheduleKnock();
+        save(); w.setTitle(winTitle()); render(); scheduleKnock();
       },
     });
     d.onClose = () => { if (!S.uin) w.close(); return true; };
@@ -102,7 +103,7 @@ export function openICQ(ctx) {
 
   // ---------- Find / Add users ----------
   const findAdd = (initial = "") => {
-    let found = search(initial), idx = 0, ran = !!initial.trim();
+    let found = search(initial), idx = 0, ran = true;
     const kwIn = el("input", { type: "text", class: "icq-fill", value: initial });
     const tbody = el("tbody"), none = el("p", { class: "icq-none" });
     const addBtn = button("Add User", () => add(), { class: "icq-addbtn" });
@@ -175,7 +176,7 @@ export function openICQ(ctx) {
           if (wasDefault && f.nick) c.nick = f.nick;
           if (nu !== uin) { c.base = c.base ?? c.uin; c.uin = nu; for (const key of ["history", "unread"]) if (uin in S[key]) { S[key][nu] = S[key][uin]; delete S[key][uin]; } S.dropped = S.dropped.map((u) => (u === uin ? nu : u)); const mw = msgWins.get(uin); if (mw) { msgWins.delete(uin); msgWins.set(nu, mw); mw.uin = nu; mw.setTitle(`Message Session with ${c.nick}`); } }
           c.info = diffInfo(base, f); c.notes = notes; sel = nu;
-        } else { S.me = f; S.uin = nu; w.setTitle(String(nu)); }
+        } else { S.me = f; S.uin = nu; w.setTitle(winTitle()); }
         save(); render();
       },
     });

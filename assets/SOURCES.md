@@ -611,3 +611,4 @@ Original work (Turkish translations of the Windows 2000 help text in assets/help
 ## ICQ (assets/sounds/icq, assets/icons/icq-*)
 - sounds/icq/message.wav, online.wav, sent.wav: Message.wav (the "Uh-oh!"), Online.wav, MsgSent.wav from ICQ 2001b (StandardClient.emo, delta.mld).
 - icons/icq-32x32.png and icq-16x16.png: win98.si icons/icq_32.png (16px downscaled). icq-<status>-16x16.png: status flowers redrawn from win98.si's pixel maps; icq-mail-16x16.png is a plain envelope.
+- icons/icq-tray.svg (your tray flower, online) and icq-tray-<status>.svg: same shape recoloured per status.

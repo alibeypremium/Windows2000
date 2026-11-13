@@ -20,6 +20,8 @@ import { rarMenuItems } from "../accessories/winrar-shell.js";
 import { startSaver } from "../rendering/savers.js";
 import { openLanStatus } from "./lan-status.js";
 export { openHelp, openWelcome, openAbout } from "./help.js";
+// tray icons: a name from the icon set, or a root-absolute file path (e.g. an .svg)
+const trayImg = (name) => (name.startsWith("/") ? el("img", { class: "icon", src: name, width: 16, height: 16, alt: "", draggable: "false" }) : icon(name, 16));
 export class DesktopShell {
   constructor(ctx) {
     this.ctx = ctx;
@@ -74,7 +76,7 @@ export class DesktopShell {
         if (!w || !img) return;
         const on = !!(w.trayFlash?.() && phase);
         const want = on ? w.trayFlashIcon : w.trayIconNow?.() || w.trayIcon;
-        if (want && img.dataset.cur !== String(on) + want) { img.dataset.cur = String(on) + want; { const n = icon(want, 16); n.dataset.cur = String(on) + want; img.replaceWith(n); } }
+        if (want && img.dataset.cur !== String(on) + want) { img.dataset.cur = String(on) + want; { const n = trayImg(want); n.dataset.cur = String(on) + want; img.replaceWith(n); } }
       });
     }, 500);
     this.updateClock();
@@ -872,7 +874,7 @@ export class DesktopShell {
     for (const old of [...tray.querySelectorAll(".tray-app")]) if (!want.some((w) => w.id === old.dataset.winId)) old.remove();
     for (const w of want) {
       if (tray.querySelector(`.tray-app[data-win-id="${w.id}"]`)) continue;
-      const b = button(icon(w.trayIconNow?.() || w.trayIcon, 16), () => (w.minimized || ctx.wm.active !== w ? w.focus() : w.minimize()), { class: "tray-button tray-app", title: w.trayTitle?.() || w.title, "aria-label": w.title });
+      const b = button(trayImg(w.trayIconNow?.() || w.trayIcon), () => (w.minimized || ctx.wm.active !== w ? w.focus() : w.minimize()), { class: "tray-button tray-app", title: w.trayTitle?.() || w.title, "aria-label": w.title });
       b.dataset.winId = w.id;
       b.addEventListener("dblclick", () => w.focus());
       b.addEventListener("contextmenu", (e) => {

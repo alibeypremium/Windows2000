@@ -84,7 +84,7 @@ export const baseInfo = (uin) => BUILTIN_ALL().find((c) => c.uin === uin) || gen
 export const resolve = (c) => ({ ...baseInfo(c.base ?? c.uin), ...(c.info || {}), uin: c.uin });
 export function search(q) {
   const k = q.trim().toLowerCase();
-  if (!k) return [];
+  if (!k) return [...BUILTIN_ALL()];
   if (validUin(k)) return [baseInfo(Number(k))];
   return BUILTIN_ALL().filter((c) => [c.nick, c.first, c.last, String(c.uin), c.city, c.country, c.interests].some((v) => v.toLowerCase().includes(k)));
 }
