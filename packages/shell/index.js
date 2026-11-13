@@ -676,11 +676,12 @@ export class DesktopShell {
     const ctx = this.ctx;
     const st = (this.lan = this.lan || { up: true, since: Date.now(), sentPk: 0, recvPk: 0, burst: 0 });
     const img = el("img", { src: "assets/tray/lan193.png", width: 16, height: 16, alt: "" });
-    const b = button(img, () => this.lanStatus(), {
+    const b = button(img, () => {}, {
       class: "tray-button lan",
       title: "Local Area Connection\nSpeed: 100.0 Mbps",
       "aria-label": "Local Area Connection",
     });
+    b.addEventListener("dblclick", () => this.lanStatus());
     const frames = ["190", "191", "192"];
     const paint = () => {
       const n = st.up ? (st.burst > 0 ? frames[(st.burst + (st.tick = (st.tick || 0) + 1)) % 3] : "193") : "195";
@@ -774,13 +775,14 @@ export class DesktopShell {
           title: "Volume",
           "aria-label": "Volume",
         }),
-        button("", () => ctx.launch("control", { page: "datetime" }), {
+        button("", () => {}, {
           id: "taskbar-clock",
           class: "tray-button clock",
           "aria-label": "Date and time",
         }),
       ),
     );
+    taskbar.querySelector("#taskbar-clock")?.addEventListener("dblclick", () => ctx.launch("control", { page: "datetime" }));
     taskbar.addEventListener("contextmenu", (e) => {
       if (e.target.closest("#task-buttons button")) return;
       e.preventDefault();
@@ -874,9 +876,9 @@ export class DesktopShell {
     for (const old of [...tray.querySelectorAll(".tray-app")]) if (!want.some((w) => w.id === old.dataset.winId)) old.remove();
     for (const w of want) {
       if (tray.querySelector(`.tray-app[data-win-id="${w.id}"]`)) continue;
-      const b = button(trayImg(w.trayIconNow?.() || w.trayIcon), () => (w.minimized || ctx.wm.active !== w ? w.focus() : w.minimize()), { class: "tray-button tray-app", title: w.trayTitle?.() || w.title, "aria-label": w.title });
+      const b = button(trayImg(w.trayIconNow?.() || w.trayIcon), () => {}, { class: "tray-button tray-app", title: w.trayTitle?.() || w.title, "aria-label": w.title });
       b.dataset.winId = w.id;
-      b.addEventListener("dblclick", () => w.focus());
+      b.addEventListener("dblclick", () => w.focus()); // notification-area icons open on double-click, like the original
       b.addEventListener("contextmenu", (e) => {
         e.preventDefault();
         e.stopPropagation();

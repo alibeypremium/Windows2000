@@ -6434,4 +6434,8 @@ input.vlc-eqs[type="range"]{flex:none;writing-mode:vertical-lr;direction:rtl;hei
 
 .task-button.flash{background:#0a246a !important;color:#fff;box-shadow:inset 1px 1px #404040,inset -1px -1px #fff}
 /* disabled menu items never take the selection highlight (it made their grey text look blurred) */
-.popup-item:disabled,.popup-item:disabled.selected,.popup-item:disabled:hover{background:transparent !important;color:#808080 !important;text-shadow:1px 1px 0 #fff}
+.popup-item:disabled{background:transparent;color:#808080;text-shadow:1px 1px 0 #fff}
+.popup-item:disabled:hover,.popup-item:disabled.selected,.popup-item:disabled:focus{background:var(--active) !important;color:#808080 !important;text-shadow:none !important;filter:none}
+/* notification-area icons are flat: no 3-D press */
+.tray-button:active,.tray-button:hover:active{box-shadow:none !important;padding:0 !important;border-color:transparent !important;transform:none !important}
+.tray-button.language:active{padding:0 3px !important}.tray-button.clock:active{padding:0 5px !important}
