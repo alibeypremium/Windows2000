@@ -6852,3 +6852,12 @@ input.vlc-eqs[type="range"]{flex:none;writing-mode:vertical-lr;direction:rtl;hei
 .ih-favlist .text-link { display: inline-flex; align-items: center; gap: 4px; color: #0033cc; text-decoration: underline; }
 .ih-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin: 12px 14px 0; padding: 8px 0 12px; border-top: 1px solid #c9c9bd; color: #555; }
 @media (max-width: 720px) { .ih-cols { grid-template-columns: 1fr; } .ih-search { flex-wrap: wrap; } }
+
+/* Netscape: Wayback panes in the status bar, archive button */
+.ns-pane { height: 18px; padding: 1px 6px; font: 11px Arial, sans-serif; border: 1px solid; border-color: #808080 #fff #fff #808080; white-space: nowrap; cursor: default; display: flex; align-items: center; }
+.ns-pane-date { min-width: 64px; justify-content: center; }
+.ns-pane:hover { background: #e4e0d8; }
+.ns-grow { flex: 1; }
+.ns-pt-arch img { filter: grayscale(1); }
+.ns-pt-arch:hover img { filter: none; }
+.ns-bar[hidden] { display: none; }

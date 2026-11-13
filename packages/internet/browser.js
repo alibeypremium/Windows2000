@@ -89,7 +89,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
   let throbber = null;
   const prog = status.querySelector(".ie-pane-prog"), progBar = prog.firstChild, datePane = status.querySelector(".ie-pane-date"), wbPane = status.querySelector(".ie-pane-wb");
   const trDate = () => getLang() === "tr";
-  const stampDate = (st) => (st && st.length >= 8 ? (trDate() ? st.slice(6, 8) + "/" + st.slice(4, 6) + "/" + st.slice(0, 4) : +st.slice(4, 6) + "/" + +st.slice(6, 8) + "/" + st.slice(0, 4)) : wbYear);
+  const stampDate = (st) => (st && st.length >= 8 ? (trDate() ? st.slice(6, 8) + "/" + st.slice(4, 6) + "/" + st.slice(0, 4) : +st.slice(4, 6) + "/" + +st.slice(6, 8) + "/" + st.slice(0, 4)) : st && /^\d{4}$/.test(st) ? st : wbYear);
   const setDate = () => {
     const web = /^https?:/i.test(current), on = wbOn(current);
     datePane.textContent = on ? stampDate(wbStamp) : "";

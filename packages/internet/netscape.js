@@ -1,8 +1,10 @@
 import { el, button, icon, popup, menuBar, separator, browserFrame } from "../ui/index.js";
 import { getLang } from "../ui/i18n.js";
-import { basename } from "../core/index.js";
+import { basename, downloadFile } from "../core/index.js";
+import { iePageSetup } from "./ie-dialogs.js";
 import { buildHome } from "./ie-home.js";
-import { NAV_SCRIPT, buildSite, isSite, prefetchNews, homeParts } from "./netscape-sites.js";
+import { createNsWayback, WB_YEARS } from "./ns-wayback.js";
+import { NAV_SCRIPT, COMMON_LINKS, buildSite, isSite, prefetchNews, homeParts } from "./netscape-sites.js";
 import { loadBM, saveBM, bookmarkItems, addBookmark, folderChoices, openBookmarkWindow } from "./netscape-bm.js";
 import { recordVisit, setVisitTitle, expireHistory, openHistoryWindow, openPageInfo, openPreferences } from "./netscape-tools.js";
 
@@ -105,6 +107,7 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
   function render() {
     viewport.replaceChildren();
     address.value = current === "about:home" ? NS_HOME : current;
+    wb.setDate();
     const mk = (props) => el("iframe", { class: "ns-frame", ...props });
     loadedAt = Date.now();
     if (isSite(current)) {
@@ -128,11 +131,10 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
       return;
     }
     if (current === "about:home") {
-      const year = String(ctx.settings.get("ieYear") || "2000");
       viewport.append(buildHome({
-        ctx, tr: getLang() === "tr", year, years: Array.from({ length: 14 }, (_, i) => String(1996 + i)),
-        navigate: (t) => go(/^https?:\/\//i.test(t) ? `https://web.archive.org/web/${year}if_/${t}` : t),
-        setYear: (y) => { ctx.settings.set("ieYear", String(y)); const top = viewport.scrollTop; render(); viewport.scrollTop = top; },
+        ctx, tr: getLang() === "tr", year: wb.date.slice(0, 4), years: WB_YEARS,
+        navigate: (t) => go(t),
+        setYear: (y) => { const top = viewport.scrollTop; wb.setYear(y); viewport.scrollTop = top; },
         favorites: () => [], openFav: () => {}, favLabel: (f) => f.title,
         brand: { icon: "netscape", title: "Netscape Netcenter" }, noOptions: true,
       }));
@@ -173,23 +175,9 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
       msg.textContent = "Document: Done";
       return;
     }
-    setTitle(u.hostname);
     visited(u.hostname);
-    msg.textContent = `Connecting to ${u.hostname}...`;
-    setLoading(true);
     ctx.bus?.emit?.("network:activity");
-    const f = mk({
-      src: current,
-      title: u.hostname,
-      sandbox: "allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox" + (u.hostname === "web.archive.org" ? " allow-same-origin" : ""),
-      referrerpolicy: "no-referrer",
-    });
-    f.addEventListener("load", () => {
-      msg.textContent = "Document: Done";
-      setLoading(false);
-    });
-    viewport.append(f);
-    setTimeout(() => loading && msg.textContent.startsWith("Connecting") && (msg.textContent = `Contacting host ${u.hostname}...`), 500);
+    wb.show(current);
     syncNav();
   }
 
@@ -208,6 +196,7 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
   const home = () => go(ctx.settings.get("nsHome") || "about:home");
   const stop = () => {
     viewport.querySelector("iframe")?.remove();
+    wb.stop();
     setLoading(false);
     msg.textContent = "Document: Done";
   };
@@ -240,6 +229,12 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
   }
 
   const viewSource = () => ctx.launch("notepad", { text: /^[A-Z]:/i.test(current) ? ctx.fs.readFile(current) : pages[current] || `<!-- Source of ${current} is not available in embedded view -->` });
+  let lastFind = "";
+  const savePage = () => {
+    const f = viewport.querySelector("iframe");
+    const html = current.startsWith("about:") ? (pages[current] || (f && f.srcdoc) || "") : /^https?:/i.test(current) ? `<html><head><title>${title}</title></head><body><a href="${current}">${current}</a></body></html>` : (f && f.srcdoc) || "";
+    downloadFile((title || "index").replace(/[\\/:*?"<>|]/g, "_") + ".htm", html || `<html><body>${viewport.innerHTML}</body></html>`, "text/html");
+  };
   const off = (label, extra = {}) => ({ label, disabled: true, ...extra });
   const about = () => go("about:netscape");
 
@@ -247,38 +242,38 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
     File: [
       { label: "New", submenu: [{ label: "Navigator Window", shortcut: "Ctrl+N", action: () => ctx.launch("netscape") }, off("Message"), off("Blank Page")] },
       { label: "Open Page...", shortcut: "Ctrl+O", action: async () => { const t = await ctx.dialogs.prompt("Enter the World Wide Web location (URL) or specify the local file you would like to open:", "", { title: "Open Page" }); if (t) go(t); } },
-      { label: "Save As...", shortcut: "Ctrl+S", disabled: true },
-      off("Save Frame As..."),
-      off("Send Page..."),
-      off("Edit Page"),
+      { label: "Save As...", shortcut: "Ctrl+S", action: savePage },
+      { label: "Save Frame As...", action: savePage },
+      { label: "Send Page...", action: () => ctx.launch("outlook", { compose: true, subject: title || current, body: current }) },
+      { label: "Edit Page", action: viewSource },
       separator(),
       off("Offline"),
       separator(),
-      off("Page Setup..."),
+      { label: "Page Setup...", action: () => iePageSetup(ctx) },
       { label: "Open Page in Real Browser", action: external },
-      { label: "Print Preview", disabled: true },
+      { label: "Print Preview", action: () => ctx.printText?.(viewport.innerText || "", current) },
       { label: "Print...", shortcut: "Ctrl+P", action: () => ctx.printText?.(viewport.innerText || "", current) },
       separator(),
       { label: "Close", shortcut: "Ctrl+W", action: () => w.close() },
       { label: "Exit", shortcut: "Ctrl+Q", action: () => w.close() },
     ],
     Edit: [
-      off("Undo", { shortcut: "Ctrl+Z" }),
-      off("Redo", { shortcut: "Ctrl+Y" }),
+      { label: "Undo", shortcut: "Ctrl+Z", action: () => document.execCommand("undo") },
+      { label: "Redo", shortcut: "Ctrl+Y", action: () => document.execCommand("redo") },
       separator(),
-      off("Cut", { shortcut: "Ctrl+X" }),
+      { label: "Cut", shortcut: "Ctrl+X", action: () => document.execCommand("cut") },
       { label: "Copy", shortcut: "Ctrl+C", action: () => document.execCommand("copy") },
-      off("Paste", { shortcut: "Ctrl+V" }),
+      { label: "Paste", shortcut: "Ctrl+V", action: async () => { try { const t = await navigator.clipboard.readText(); const a = document.activeElement; if (a && "value" in a) { a.setRangeText(t, a.selectionStart ?? a.value.length, a.selectionEnd ?? a.value.length, "end"); } } catch {} } },
       separator(),
       { label: "Select All", shortcut: "Ctrl+A", action: () => { const r = document.createRange(); r.selectNodeContents(viewport); const s = getSelection(); s.removeAllRanges(); s.addRange(r); } },
       separator(),
-      { label: "Find in Page...", shortcut: "Ctrl+F", action: async () => { const t = await ctx.dialogs.prompt("Find:", "", { title: "Find" }); if (t) window.find(t); } },
-      off("Find Again", { shortcut: "Ctrl+G" }),
+      { label: "Find in Page...", shortcut: "Ctrl+F", action: async () => { const t = await ctx.dialogs.prompt("Find:", lastFind, { title: "Find" }); if (t) { lastFind = t; window.find(t); } } },
+      { label: "Find Again", shortcut: "Ctrl+G", disabled: !lastFind, action: () => window.find(lastFind) },
       separator(),
       { label: "Preferences...", action: () => openPreferences(ctx, { onApply: applyPrefs }) },
     ],
-    View: [
-      { label: "Show", submenu: [{ label: "Navigation Toolbar", checked: true }, { label: "Location Toolbar", checked: true }, { label: "Personal Toolbar", checked: true }] },
+    View: () => [
+      { label: "Show", submenu: [[nav, "Navigation Toolbar"], [loc, "Location Toolbar"], [pers, "Personal Toolbar"]].map(([bar, label]) => ({ label, checked: !bar.hidden, action: () => { bar.hidden = !bar.hidden; } })) },
       separator(),
       { label: "Increase Font", shortcut: "Ctrl+]", action: () => (viewport.style.zoom = String((parseFloat(viewport.style.zoom) || 1) + 0.1)) },
       { label: "Decrease Font", shortcut: "Ctrl+[", action: () => (viewport.style.zoom = String(Math.max(0.5, (parseFloat(viewport.style.zoom) || 1) - 0.1))) },
@@ -298,40 +293,47 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
       { label: "Forward", shortcut: "Alt+Right", disabled: idx >= hist.length - 1, action: fwd },
       { label: "Home", action: home },
       separator(),
+      { label: "Previous Snapshot", disabled: !wb.on(), action: () => wb.snapStep(-1) },
+      { label: "Next Snapshot", disabled: !wb.on(), action: () => wb.snapStep(1) },
+      { label: "Compare Years...", disabled: !/^https?:/i.test(current), action: wb.openCompare },
+      { label: "Choose Date...", disabled: !/^https?:/i.test(current), action: wb.chooseDate },
+      { label: "Archive Options...", action: wb.archiveOptions },
+      separator(),
       ...histItems(),
     ],
     Communicator: () => [
       { label: "Navigator", shortcut: "Ctrl+1", checked: true },
       { label: "Messenger Mailbox", shortcut: "Ctrl+2", action: () => ctx.launch("outlook") },
-      off("Collabra Discussions", { shortcut: "Ctrl+3" }),
-      off("Page Composer", { shortcut: "Ctrl+4" }),
+      { label: "Collabra Discussions", shortcut: "Ctrl+3", action: () => ctx.launch("outlook") },
+      { label: "Page Composer", shortcut: "Ctrl+4", action: () => ctx.launch("notepad") },
       off("Conference"),
       separator(),
       off("Show Component Bar"),
       { label: "Bookmarks", submenu: bmMenu() },
       { label: "History", shortcut: "Ctrl+H", action: () => openHistoryWindow(ctx, { go }) },
       separator(),
-      off("Java Console"),
+      { label: "Java Console", action: () => ctx.dialogs.message("Java Console\n\nJava is not running in this Navigator window.", { title: "Java Console", icon: "info" }) },
       { label: "Security Info", action: () => bSec.click() },
     ],
     Help: [
-      off("Help Contents"),
-      off("Release Notes"),
-      off("Product Information and Support"),
-      off("Software Updates"),
-      off("Member Services"),
+      { label: "Help Contents", action: about },
+      { label: "Release Notes", action: about },
+      { label: "Product Information and Support", action: about },
+      { label: "Software Updates", action: () => go("about:plugins") },
+      { label: "Member Services", action: about },
       separator(),
       { label: "About Communicator", action: about },
     ],
   });
 
   const bookmarksBtn = el("button", { class: "ns-bm", type: "button", title: "Bookmarks" }, el("img", { src: IMG + "bookmarks.png", alt: "", draggable: "false" }));
+  const bmGo = (u, n) => { if (n?.wb && /^https?:/i.test(u)) wb.useDate(n.wb); go(u); };
   const bmMenu = () => [
-    { label: "Add Bookmark", shortcut: "Ctrl+D", action: () => addBookmark(ctx, title || current, current) },
-    { label: "File Bookmark", submenu: folderChoices(ctx, title || current, current) },
-    { label: "Edit Bookmarks...", shortcut: "Ctrl+B", action: () => openBookmarkWindow(ctx, { go, current }) },
+    { label: "Add Bookmark", shortcut: "Ctrl+D", action: () => addBookmark(ctx, title || current, current, null, wb.on() ? wb.date : "") },
+    { label: "File Bookmark", submenu: folderChoices(ctx, title || current, current, wb.on() ? wb.date : "") },
+    { label: "Edit Bookmarks...", shortcut: "Ctrl+B", action: () => openBookmarkWindow(ctx, { go: bmGo, current }) },
     separator(),
-    ...bookmarkItems(ctx, loadBM(ctx), go),
+    ...bookmarkItems(ctx, loadBM(ctx), bmGo, wb.stampDate),
   ];
   bookmarksBtn.addEventListener("click", () => {
     const r = bookmarksBtn.getBoundingClientRect();
@@ -361,12 +363,33 @@ export function openNetscape(ctx, { url = null, path = null } = {}) {
   const personal = (label, action) => button([el("img", { src: "/assets/icons/nshtml-16x16.png", alt: "", width: 16, height: 16 }), el("span", { text: label })], action, { class: "ns-pt" });
 
   const nav = el("div", { class: "ns-bar ns-nav" }, el("span", { class: "ns-grip" }), bBack, bFwd, bReload, bHome, bSearch, bNs, bPrint, bSec, bStop, el("span", { class: "ns-spacer" }), throbber);
-  const loc = el("div", { class: "ns-bar ns-loc" }, el("span", { class: "ns-grip" }), bookmarksBtn, el("span", { class: "ns-loc-label", text: "Location:" }), el("div", { class: "ns-loc-field" }, el("img", { src: "/assets/icons/nshtml-16x16.png", alt: "", draggable: "false" }), address), el("img", { class: "ns-related", src: IMG + "related.png", alt: "What's Related", draggable: "false" }));
-  const pers = el("div", { class: "ns-bar ns-pers" }, el("span", { class: "ns-grip" }), personal("Internet", () => go("about:home")), personal("Lookup", () => go("about:google")), personal("News", () => go("about:news")));
-  const status = el("div", { class: "ns-status" }, el("img", { src: IMG + "st-lock.png", alt: "", draggable: "false" }), msg, el("img", { class: "ns-comp", src: IMG + "st-comp.png", alt: "", draggable: "false" }));
+  const relImg = el("img", { class: "ns-related", src: IMG + "related.png", alt: "What's Related", title: "What's Related", draggable: "false" });
+  relImg.addEventListener("click", () => {
+    const r = relImg.getBoundingClientRect();
+    popup([...COMMON_LINKS.map((c) => ({ label: c.title, icon: "nshtml", action: () => go(c.url) })), { separator: true }, { label: "Wayback Machine", action: () => wb.yearMenu(relImg, false) }], r.left, r.bottom, { anchor: relImg });
+  });
+  const loc = el("div", { class: "ns-bar ns-loc" }, el("span", { class: "ns-grip" }), bookmarksBtn, el("span", { class: "ns-loc-label", text: "Location:" }), el("div", { class: "ns-loc-field" }, el("img", { src: "/assets/icons/nshtml-16x16.png", alt: "", draggable: "false" }), address), relImg);
+  const archBtn = el("button", { class: "ns-pt ns-pt-arch", type: "button", title: "Wayback Machine" }, el("img", { src: "/assets/ui/ie/iso/archive-cold.png", alt: "", width: 16, height: 16 }), el("span", { text: "Archive" }));
+  archBtn.addEventListener("click", () => { if (document.querySelector(".popup-menu") && archBtn.dataset.open) { delete archBtn.dataset.open; return; } wb.yearMenu(archBtn, false); });
+  archBtn.addEventListener("pointerdown", () => { archBtn.dataset.open = document.querySelector(".popup-menu") ? "1" : ""; });
+  const pers = el("div", { class: "ns-bar ns-pers" }, el("span", { class: "ns-grip" }), personal("Internet", () => go("about:home")), personal("Lookup", () => go("about:google")), personal("News", () => go("about:news")), el("span", { class: "ns-grow" }), archBtn);
+  const wb = createNsWayback({
+    ctx, viewport, msg, getCurrent: () => current, rerender: () => render(),
+    mkFrame: (props) => el("iframe", { class: "ns-frame", ...props }),
+    setTitle: (t) => { setTitle(t); visited(t); }, setLoading,
+    followed: (u) => { current = u; address.value = u; hist = hist.slice(0, idx + 1); hist.push({ url: u, title: "" }); idx = hist.length - 1; syncNav(); ctx.bus?.emit?.("network:activity"); },
+  });
+  const lockImg = el("img", { src: IMG + "st-lock.png", alt: "", draggable: "false", title: "Security Info" });
+  lockImg.addEventListener("click", () => bSec.click());
+  const compImg = el("img", { class: "ns-comp", src: IMG + "st-comp.png", alt: "", draggable: "false" });
+  compImg.addEventListener("click", (e) => {
+    const k = Math.min(3, Math.floor(((e.offsetX || 0) / (compImg.offsetWidth || 1)) * 4));
+    [() => go("about:home"), () => ctx.launch("outlook"), () => go("about:news"), () => ctx.launch("notepad")][k]();
+  });
+  const status = el("div", { class: "ns-status" }, lockImg, msg, wb.datePane, wb.wbPane, compImg);
 
   w.setContent(menus, nav, loc, pers, viewport, status);
-  w.onClose = () => { clearInterval(timer); window.removeEventListener("message", onMsg); return true; };
+  w.onClose = () => { clearInterval(timer); window.removeEventListener("message", onMsg); wb.destroy(); return true; };
 
   const applyPrefs = () => {
     const m = ctx.settings.get("nsToolbar") || "both";

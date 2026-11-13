@@ -4,7 +4,7 @@ import { COMMON_LINKS } from "./netscape-sites.js";
 const KEY = "nsBM2";
 let uid = 0;
 const mk = (n) => ({ id: "b" + Date.now().toString(36) + ++uid, ...n });
-const link = (title, url) => mk({ type: "link", title, url, added: Date.now() });
+const link = (title, url, wb) => mk({ type: "link", title, url, added: Date.now(), ...(wb ? { wb } : {}) });
 const folder = (title, children = [], open = true) => mk({ type: "folder", title, children, open });
 
 function defaults() {
@@ -35,22 +35,22 @@ const find = (root, id) => { let r = null; walk(root, (n, p) => { if (n.id === i
 const contains = (node, id) => { let r = false; walk(node, (n) => { if (n.id === id) r = true; }); return r; };
 
 /** Items for the Bookmarks drop-down (folders become cascading submenus). */
-export function bookmarkItems(ctx, root, go) {
+export function bookmarkItems(ctx, root, go, dateOf = (d) => d) {
   const conv = (list) => list.map((n) => n.type === "sep" ? separator() : n.type === "folder"
     ? { label: n.title, icon: "folder", submenu: n.children.length ? conv(n.children) : [{ label: "(Empty)", disabled: true }] }
-    : { label: n.title || n.url, icon: "nshtml", action: () => go(n.url) });
+    : { label: (n.title || n.url) + (n.wb ? " (" + dateOf(String(n.wb)) + ")" : ""), icon: "nshtml", action: () => go(n.url, n) });
   return conv(root.children);
 }
 
-export function addBookmark(ctx, title, url, into = null) {
+export function addBookmark(ctx, title, url, into = null, wb = "") {
   const root = loadBM(ctx);
   const target = (into && find(root, into)?.node) || root;
-  target.children.push(link(title || url, url));
+  target.children.push(link(title || url, url, wb));
   saveBM(ctx, root);
 }
-export function folderChoices(ctx, title, url) {
+export function folderChoices(ctx, title, url, wb = "") {
   const root = loadBM(ctx), out = [];
-  const rec = (f, d) => { out.push({ label: f.title, icon: "folder", action: () => addBookmark(ctx, title, url, f.id) }); f.children.filter((c) => c.type === "folder").forEach((c) => rec(c, d + 1)); };
+  const rec = (f, d) => { out.push({ label: f.title, icon: "folder", action: () => addBookmark(ctx, title, url, f.id, wb) }); f.children.filter((c) => c.type === "folder").forEach((c) => rec(c, d + 1)); };
   rec(root, 0);
   return out;
 }
@@ -84,9 +84,9 @@ export function openBookmarkWindow(ctx, { go, current }) {
     else r.append(el("span", { class: "nsb-arrow", text: isF ? (n.open ? "▾" : "▸") : "" }), icon(isF ? (n.open ? "folderOpen" : "folder") : "nshtml", 16), el("span", { class: "nsb-name", text: n.title || n.url }));
     r.addEventListener("pointerdown", () => { sel = n.id; tree.querySelectorAll(".sel").forEach((x) => x.classList.remove("sel")); r.classList.add("sel"); status.textContent = n.url || ""; });
     r.querySelector(".nsb-arrow").addEventListener("click", (e) => { if (isF) { e.stopPropagation(); n.open = !n.open; save(); } });
-    r.addEventListener("dblclick", () => { if (isF) { n.open = !n.open; save(); } else if (n.type === "link") go(n.url); });
+    r.addEventListener("dblclick", () => { if (isF) { n.open = !n.open; save(); } else if (n.type === "link") go(n.url, n); });
     r.addEventListener("contextmenu", (e) => { e.preventDefault(); sel = n.id; render(); popup([
-      n.type === "link" ? { label: "Go to Bookmark", action: () => go(n.url) } : isF ? { label: n.open ? "Collapse" : "Expand", action: () => { n.open = !n.open; save(); } } : null,
+      n.type === "link" ? { label: "Go to Bookmark", action: () => go(n.url, n) } : isF ? { label: n.open ? "Collapse" : "Expand", action: () => { n.open = !n.open; save(); } } : null,
       n.type !== "sep" ? separator() : null,
       { label: "Delete Bookmark", action: () => del() },
       { label: "Bookmark Properties...", disabled: n.type === "sep", action: () => props(n) },
@@ -136,7 +136,7 @@ export function openBookmarkWindow(ctx, { go, current }) {
       { label: "New Folder...", action: async () => { const t = await ctx.dialogs.prompt("Folder name:", "New Folder", { title: "New Folder" }); if (t) newItem(folder(t, [], true)); } },
       { label: "New Separator", action: () => newItem(mk({ type: "sep" })) },
       separator(),
-      { label: "Go to Bookmark", action: () => { const s = selected(); if (s?.node.type === "link") go(s.node.url); } },
+      { label: "Go to Bookmark", action: () => { const s = selected(); if (s?.node.type === "link") go(s.node.url, s.node); } },
       separator(),
       { label: "Close", shortcut: "Ctrl+W", action: () => w.close() },
     ],
