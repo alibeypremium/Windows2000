@@ -6431,3 +6431,5 @@ input.vlc-eqs[type="range"]{flex:none;writing-mode:vertical-lr;direction:rtl;hei
 .icq-about-row{display:flex;gap:12px}
 .icq-about p{margin:0}
 .icq-b{font-weight:700}
+
+.task-button.flash{background:#0a246a !important;color:#fff;box-shadow:inset 1px 1px #404040,inset -1px -1px #fff}

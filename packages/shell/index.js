@@ -62,6 +62,21 @@ export class DesktopShell {
         ctx.lastTextTarget = e.target;
     });
     this.clockTimer = setInterval(() => this.updateClock(), 1000);
+    // Windows that set `flashing` (new message while unfocused/minimized) blink their taskbar button; tray windows blink their icon.
+    let phase = false;
+    this.flashTimer = setInterval(() => {
+      phase = !phase;
+      const wins = ctx.wm.windows;
+      for (const w of wins) if (w.flashing && ctx.wm.active === w && !w.minimized) w.flashing = false;
+      document.querySelectorAll("#task-buttons .task-button[data-task-id]").forEach((b) => { const w = wins.find((x) => String(x.id) === b.dataset.taskId); b.classList.toggle("flash", !!(w?.flashing && phase)); });
+      document.querySelectorAll(".tray-app").forEach((b) => {
+        const w = wins.find((x) => String(x.id) === b.dataset.winId), img = b.querySelector("img");
+        if (!w || !img) return;
+        const on = !!(w.trayFlash?.() && phase);
+        const want = on ? w.trayFlashIcon : w.trayIcon;
+        if (want && img.dataset.cur !== String(on)) { img.dataset.cur = String(on); { const n = icon(want, 16); n.dataset.cur = String(on); img.replaceWith(n); } }
+      });
+    }, 500);
     this.updateClock();
     const desktop = document.querySelector("#desktop-icons");
     desktop.addEventListener("contextmenu", (e) => {

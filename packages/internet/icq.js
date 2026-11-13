@@ -34,6 +34,11 @@ export function openICQ(ctx) {
   const play = (n) => { if (ctx.settings.get("muted") || ctx.settings.get("soundScheme") === "No Sounds") return; try { const a = new Audio(SND + n + ".wav"); a.volume = 1; a.play().catch(() => {}); } catch {} };
   const w = ctx.wm.create({ title: S.uin ? String(S.uin) : "ICQ", icon: "icq", width: 190, height: 380, x: 640, y: 60, appId: "icq", maximizable: false });
   inst = { win: w, closed: false };
+  const anyUnread = () => Object.values(S.unread).some(Boolean);
+  w.trayIcon = "icq"; w.trayFlashIcon = "icq-mail"; w.trayFlash = anyUnread;
+  w.trayTitle = () => "ICQ" + (S.uin ? ` - ${S.me.nick || S.uin} (${statusLabel(S.status)})` : "");
+  w.trayMenu = () => [{ label: "Open ICQ", bold: true, action: () => w.focus() }, { separator: true }, ...(S.uin ? statusItems() : []), { separator: true }, { label: "Shut Down", action: () => w.close() }];
+  const attention = (win) => { if (win && !win.closed && (win.minimized || ctx.wm.active !== win)) { win.flashing = true; ctx.shell?.renderTasks?.(); } };
   const msgWins = new Map();
   w.onClose = () => { inst.closed = true; timers.forEach(clearTimeout); for (const mw of [...msgWins.values()]) mw.close(); return true; };
 
@@ -203,18 +208,20 @@ export function openICQ(ctx) {
     };
     input.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } });
     mw.setContent(el("div", { class: "icq-msg" }, log, input, el("div", { class: "icq-msgbtns" }, button("Send", send, { class: "default-button" }), button("Close", () => mw.close()))));
+    mw.el.addEventListener("pointerdown", () => readMsgs(mw.uin), true);
+    input.addEventListener("focus", () => readMsgs(mw.uin));
     paint(); readMsgs(uin); input.focus();
     return mw;
   };
-  const readMsgs = (uin) => { if (S.unread[uin]) { S.unread[uin] = 0; save(); render(); } };
+  const readMsgs = (uin) => { if (S.unread[uin]) { S.unread[uin] = 0; save(); render(); } const mw = msgWins.get(uin); if (mw) mw.flashing = false; };
 
   // ---------- incoming messages ----------
   const incoming = (uin, text) => {
     const h = hist(uin); h.push({ from: "them", text, time: Date.now() }); if (h.length > 50) h.shift();
     const mw = msgWins.get(uin);
-    if (mw && !mw.closed) { mw.paint?.(); }
+    if (mw && !mw.closed) { mw.paint?.(); if (mw.minimized || ctx.wm.active !== mw) { mw.flashing = true; S.unread[uin] = (S.unread[uin] || 0) + 1; } }
     else { S.unread[uin] = (S.unread[uin] || 0) + 1; }
-    save(); play("message"); render();
+    save(); play("message"); render(); attention(w); if (mw) ctx.shell?.renderTasks?.();
   };
   const isUp = (uin) => { const c = S.contacts.find((x) => x.uin === uin); return c && S.status !== "offline" && !S.dropped.includes(uin) && shownStatus(resolve(c), S.status, S.dropped) !== "offline"; };
   const respond = (uin) => {

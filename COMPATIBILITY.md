@@ -169,3 +169,4 @@ Clipboard, recording, serial ports, media codecs, GPU, printing and external han
 
 ## ICQ 99b
 Ported from the win98.si ICQ app (main window, registration, Find/Add Users, user details, history, status/system menus, 12 built-in contacts, UIN lookup, knock). The remote AI backend is replaced by local rule-based persona replies (English/Turkish). The message-session window is built after the same CSS because win98.si's `icqmsg` chunk was not available. Flower status icons are drawn from win98.si's pixel maps; "Uh-oh!" (message), online and sent sounds come from the ICQ 2001b installer (StandardClient.emo).
+ICQ notification behaviour (from win98.si's window store): a message for an unfocused or minimized window flashes its taskbar button; the minimized main window lives in the notification area, its icon alternating with an envelope while messages are unread, and "Uh-oh!" plays.
