@@ -156,13 +156,13 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     } catch { return undefined; }
   }
   // Which of 1996-2009 have a copy, plus the first and last copy: a handful of tiny JSONP questions, asked once per address.
-  const snapCache = new Map();
+  const snapCache = new Map(), probeFail = new Set();
   async function loadYears() {
     const key = norm(current), hit = snapCache.get(key);
     if (hit) return (wbYears = hit.years, wbInfo = hit, wbYears);
     const ys = DEF_YEARS, url = current;
     const res = await Promise.all([...ys.map((y) => closestSnap(url, y + "0701")), closestSnap(url, "1996"), closestSnap(url, "2026")]);
-    if (res.slice(0, ys.length).every((r) => r === undefined)) return (wbYears = null);
+    if (res.slice(0, ys.length).every((r) => r === undefined)) { probeFail.add(key); return (wbYears = null); }
     const has = ys.filter((y, i) => res[i] && res[i].slice(0, 4) === y);
     const info = { years: has, first: res[ys.length] || null, last: res[ys.length + 1] || null };
     snapCache.set(key, info); wbInfo = info; return (wbYears = has);
@@ -238,23 +238,27 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
       el("div", { class: "field-row" }, el("label", { text: T.year }), sel)) });
   };
   const DEF_YEARS = Array.from({ length: 14 }, (_, i) => String(1996 + i));
-  const popAt = (anchor, items, up) => {
+  const popAt = (anchor, items, up, minWidth = 0) => {
     const r = anchor.getBoundingClientRect();
     popup(items, r.left, up ? r.top : r.bottom, { anchor });
     const m = [...document.querySelectorAll(".popup-menu")].pop();
     if (m && up) { m.style.top = "auto"; m.style.bottom = Math.max(0, innerHeight - r.top) + "px"; }
+    if (m && minWidth) m.style.minWidth = minWidth + "px";
     if (m) m.style.left = Math.max(0, Math.min(r.left, innerWidth - m.offsetWidth - 2)) + "px";
   };
   const yearMenu = (anchor = datePane, up = true) => {
-    const tr = trDate(), info = snapCache.get(norm(current)) || null;
+    const tr = trDate(), key = norm(current), info = snapCache.get(key) || null;
+    const pending = !info && !probeFail.has(key);
+    if (pending) loadYears().then(() => { if (document.querySelector(".popup-menu") && yearMenu.anchor === anchor) yearMenu(anchor, up); }).catch(() => {});
+    yearMenu.anchor = anchor;
     const fmt = (t) => (t ? stampDate(t.slice(0, 8)) : "?");
-    const infoItems = info ? [
+    const infoItems = pending ? [{ label: tr ? "Kayıtlar denetleniyor..." : "Checking copies...", disabled: true }, { separator: true }] : info ? [
       { label: info.years.length ? (tr ? `Kayıt: ${info.years[0]}–${info.years[info.years.length - 1]} arası, ${info.years.length} yılda` : `Copies: ${info.years[0]}–${info.years[info.years.length - 1]}, in ${info.years.length} years`) : (tr ? "1996–2009 arası kayıt yok" : "No copies from 1996 to 2009"), disabled: true },
       { label: (tr ? "İlk: " : "First: ") + fmt(info.first) + (tr ? "  Son: " : "  Last: ") + fmt(info.last), disabled: true },
       { separator: true }] : [];
     popAt(anchor, [
       ...infoItems,
-      ...DEF_YEARS.map((y) => ({ label: y, radio: true, checked: y === (wbStamp ? wbStamp.slice(0, 4) : wbYear), disabled: !!info && !info.years.includes(y), action: () => { ctx.settings.set("ieArchive", true); setYear(y); } })),
+      ...DEF_YEARS.map((y) => ({ label: y, radio: true, checked: y === (wbStamp ? wbStamp.slice(0, 4) : wbYear), disabled: pending || (!!info && !info.years.includes(y)), action: () => { ctx.settings.set("ieArchive", true); setYear(y); } })),
       { separator: true },
       { label: "Previous Snapshot", action: () => snapStep(-1) },
       { label: "Next Snapshot", action: () => snapStep(1) },
@@ -274,7 +278,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     ], true);
   };
   let popWasOpen = false;
-  const onPopDown = (e) => { popWasOpen = !!document.querySelector(".popup-menu") && !!e.target.closest?.(".ie-pane-date,.ie-pane-wb,.ie-links,.ie-chevron,.ie-tb[data-tb=archive]"); };
+  const onPopDown = (e) => { popWasOpen = !!document.querySelector(".popup-menu") && !!e.target.closest?.(".ie-pane-date,.ie-pane-wb,.ie-links,.ie-chevron,.ie-combo-drop,.ie-tb[data-tb=archive]"); };
   document.addEventListener("pointerdown", onPopDown, true);
   datePane.addEventListener("click", () => { if (popWasOpen) { popWasOpen = false; return; } yearMenu(); });
   wbPane.addEventListener("click", () => { if (popWasOpen) { popWasOpen = false; return; } if (/^https?:/i.test(current)) modeMenu(); });
@@ -313,6 +317,15 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     siteFrames.add(f);
     return f;
   };
+  // Address drop-down: the addresses you typed or visited, newest first.
+  const typed = () => ctx.settings.get("ieTyped") || [];
+  const remember = (u) => { if (/^https?:/i.test(u)) ctx.settings.set("ieTyped", [u, ...typed().filter((x) => x !== u)].slice(0, 25)); };
+  const addrMenu = (field) => {
+    if (popWasOpen) { popWasOpen = false; return; }
+    const list = [...new Set([...typed(), ...[...history].reverse().filter((x) => /^https?:/i.test(x))])].slice(0, 25);
+    if (!list.length) return;
+    popAt(field, list.map((u) => ({ label: u, icon: "ie", action: () => navigate(u) })), false, field.offsetWidth);
+  };
   // ---- Links bar ----
   const defaultLinks = () => (PORTALS[getLang()] || PORTALS.en).slice(0, 6).map(([title, u]) => ({ title, url: "http://www." + u + "/" }));
   const links = () => ctx.settings.get("ieLinks") || defaultLinks();
@@ -334,7 +347,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     if (!kind) return explorer.replaceChildren();
     const link = (title, url, ic = "ie", fav = null) => button([icon(ic), el("span", { text: title })], () => (fav ? openFav(fav) : navigate(url)), { class: "ie-exp-item", title: fav?.wb ? url + " (" + stampDate(String(fav.wb)) + ")" : url });
     const tbtn = (img, label, fn, extra = {}) => button([el("img", { src: "/assets/ui/ie/iso/" + img + ".png", alt: "", draggable: "false" }), el("span", { text: label })], fn, { class: "ie-exp-tb", ...extra });
-    const organize = () => ieOrganize(ctx, { get: favorites, set: (v) => ctx.settings.set("favorites", v), folders: favFolders, setFolders: (v) => ctx.settings.set("favFolders", v), open: navigate }).then?.(() => barKind === "favorites" && showBar("favorites", true));
+    const organize = () => ieOrganize(ctx, { get: favorites, set: (v) => ctx.settings.set("favorites", v), folders: favFolders, setFolders: (v) => ctx.settings.set("favFolders", v), open: (u) => { const f = favorites().find((x) => x.url === u); f ? openFav(f) : navigate(u); } }).then?.(() => barKind === "favorites" && showBar("favorites", true));
     const draw = () => showBar(kind, true);
     let tools, body;
     if (kind === "search") {
@@ -347,8 +360,8 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
       tools = [tbtn("bar-add", "Add...", addFav), tbtn("bar-org", "Organize...", organize)];
       const fav = favorites();
       body = el("div", { class: "ie-exp-body" },
-        ...favFolders().flatMap((fo) => [el("div", { class: "ie-exp-folder" }, icon("folder"), el("span", { text: fo })), ...fav.filter((f) => f.folder === fo).map((f) => el("div", { class: "ie-exp-indent" }, link(f.title, f.url, "ie", f)))]),
-        ...fav.filter((f) => !f.folder).map((f) => link(f.title, f.url, "ie", f)));
+        ...favFolders().flatMap((fo) => [el("div", { class: "ie-exp-folder" }, icon("folder"), el("span", { text: fo })), ...fav.filter((f) => f.folder === fo).map((f) => el("div", { class: "ie-exp-indent" }, link(favLabel(f), f.url, "ie", f)))]),
+        ...fav.filter((f) => !f.folder).map((f) => link(favLabel(f), f.url, "ie", f)));
     } else {
       const modes = [["date", "By &Date"], ["site", "By S&ite"], ["most", "By &Most Visited"], ["order", "By &Order Visited Today"]];
       const mode = (barMode = barMode || "date");
@@ -398,6 +411,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     if (f.wb && /^https?:/i.test(f.url)) { const d = String(f.wb); wbYear = d.slice(0, 4); wbStamp = d.length >= 8 ? d.slice(0, 8) : ""; ctx.settings.set("ieArchive", true); }
     navigate(f.url);
   };
+  const favLabel = (f) => (f.wb && /^https?:/i.test(f.url) ? f.title + " (" + stampDate(String(f.wb).slice(0, 8)) + ")" : f.title);
   const favEntry = (title, folder) => ({ title, url: current, folder, ...(wbOn(current) ? { wb: wbStamp || wbYear } : {}) });
   const favFolders = () => [...new Set([...(ctx.settings.get("favFolders") || []), ...favorites().map((f) => f.folder).filter(Boolean)])];
   const home = () => navigate(ctx.settings.get("homePage") || "about:home");
@@ -477,7 +491,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
             "div",
             { class: "ie-start-links" },
             ...favorites().map((f) =>
-              button([icon("ie"), f.title], () => openFav(f), {
+              button([icon("ie"), favLabel(f)], () => openFav(f), {
                 class: "text-link",
               }),
             ),
@@ -536,7 +550,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
             text: current === "about:favorites" ? "Favorites" : "History",
           }),
           ...list.map((f) =>
-            button([icon("ie"), f.title], () => openFav(f), {
+            button([icon("ie"), favLabel(f)], () => openFav(f), {
               class: "text-link",
             }),
           ),
@@ -900,16 +914,16 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
       { label: "Add to Links", disabled: !/^https?:/i.test(current), action: addLink },
       {
         label: "Organize Favorites...",
-        action: () => ieOrganize(ctx, { get: favorites, set: (v) => ctx.settings.set("favorites", v), folders: favFolders, setFolders: (v) => ctx.settings.set("favFolders", v), open: navigate }),
+        action: () => ieOrganize(ctx, { get: favorites, set: (v) => ctx.settings.set("favorites", v), folders: favFolders, setFolders: (v) => ctx.settings.set("favFolders", v), open: (u) => { const f = favorites().find((x) => x.url === u); f ? openFav(f) : navigate(u); } }),
       },
       separator(),
       ...favFolders().map((fo) => ({
         label: fo,
         icon: "folder",
-        submenu: favorites().filter((f) => f.folder === fo).map((f) => ({ label: f.title, icon: "ie", action: () => openFav(f) })),
+        submenu: favorites().filter((f) => f.folder === fo).map((f) => ({ label: favLabel(f), icon: "ie", action: () => openFav(f) })),
       })),
       ...favorites().filter((f) => !f.folder).map((f) => ({
-        label: f.title,
+        label: favLabel(f),
         icon: "ie",
         action: () => openFav(f),
       })),
@@ -945,11 +959,11 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
         { class: "ie-address-field" },
         el("img", { src: "/assets/ui/ie/addr-ie.png", alt: "", draggable: "false" }),
         address,
-        el("span", { class: "ie-combo-drop" }),
+        el("span", { class: "ie-combo-drop", onclick: (e) => addrMenu(e.currentTarget.parentElement) }),
       ),
       button(
         [el("img", { src: "/assets/ui/ie/go.png", alt: "", draggable: "false" }), el("span", { text: "Go" })],
-        () => navigate(address.value),
+        () => { navigate(address.value); remember(current); },
         { class: "ie-go" },
       ),
       el("span", { class: "ie-grip" }),
@@ -983,7 +997,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     (throbber = el("div", { class: "ie-throbber", "aria-hidden": "true" })),
   );
   address.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") navigate(address.value);
+    if (e.key === "Enter") { navigate(address.value); remember(current); }
   });
   w.el.addEventListener("keydown", (e) => {
     if (e.key === "F5") {

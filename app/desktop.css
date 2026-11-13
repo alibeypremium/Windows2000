@@ -6801,3 +6801,4 @@ input.vlc-eqs[type="range"]{flex:none;writing-mode:vertical-lr;direction:rtl;hei
 .ie-zone.sel span { background: #0a246a; color: #fff; outline: 1px dotted #ff0; }
 .ie-infobar-btns { display: flex; gap: 4px; }
 .ie-infobar-btns button { min-height: 0; height: 20px; padding: 0 8px; }
+.ie-combo-drop:active { border-color: #404040 #fff #fff #404040; box-shadow: inset 1px 1px #808080; }
