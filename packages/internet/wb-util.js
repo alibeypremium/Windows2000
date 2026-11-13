@@ -1,3 +1,6 @@
+export const WB_FIRST = 1996, WB_LAST = 2025;
+export const WB_YEARS = Array.from({ length: WB_LAST - WB_FIRST + 1 }, (_, i) => String(WB_FIRST + i));
+export const WB_YEAR_TEXT = `${WB_FIRST}-${WB_LAST}`;
 // The Wayback "available" API answers per exact address, so http/https and www/no-www count as different pages.
 // Try the other spellings before concluding that nothing was archived.
 export function urlVariants(url) {
@@ -16,6 +19,18 @@ export async function closestAny(ask, url) {
   for (const v of vs) {
     const r = await ask(v);
     if (r) return r;
+    if (r === undefined) failed++;
+  }
+  return failed === vs.length ? undefined : null;
+}
+
+/** The first spelling of the address that the archive has any copy of (null = none, undefined = could not ask). */
+export async function spellingWithCopies(ask, url) {
+  let failed = 0;
+  const vs = urlVariants(url);
+  for (const v of vs) {
+    const r = await ask(v);
+    if (r) return v;
     if (r === undefined) failed++;
   }
   return failed === vs.length ? undefined : null;

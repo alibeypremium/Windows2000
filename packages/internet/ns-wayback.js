@@ -3,13 +3,13 @@
 // closest-copy fallback, "no copy" page, slow-archive notice).
 import { el, button, popup } from "../ui/index.js";
 import { getLang } from "../ui/i18n.js";
-import { closestAny } from "./wb-util.js";
+import { closestAny, spellingWithCopies, WB_YEARS, WB_YEAR_TEXT, WB_LAST } from "./wb-util.js";
+export { WB_YEARS };
 import { openDlgWindow } from "../accessories/winrar-dlg.js";
 
 const WB = "https://web.archive.org/web/";
 const WB_RE = /web\.archive\.org\/web\/(\d+)[a-z_]*\/(https?:\/\/.+)$/i;
 const SANDBOX_WB = "allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox";
-export const WB_YEARS = Array.from({ length: 14 }, (_, i) => String(1996 + i));
 const norm = (u) => String(u).replace(/^https?:\/\//i, "").replace(/^www\./i, "").replace(/:80(?=\/|$)/, "").replace(/\/$/, "");
 
 export function createNsWayback(env) {
@@ -67,21 +67,23 @@ export function createNsWayback(env) {
     sc.src = url + "&callback=" + cb;
     document.head.append(sc);
   });
-  async function closestSnap(url, st) {
-    return closestAny(async (u) => {
-      try {
-        const d = await jsonp("https://archive.org/wayback/available?url=" + encodeURIComponent(u) + "&timestamp=" + (st + "0101000000").slice(0, 14));
-        const c = d?.archived_snapshots?.closest;
-        return c?.available ? c.timestamp : null;
-      } catch { return undefined; }
-    }, url);
+  async function askOne(u, st) {
+    try {
+      const d = await jsonp("https://archive.org/wayback/available?url=" + encodeURIComponent(u) + "&timestamp=" + (st + "0101000000").slice(0, 14));
+      const c = d?.archived_snapshots?.closest;
+      return c?.available ? c.timestamp : null;
+    } catch { return undefined; }
   }
+  const closestSnap = (url, st) => closestAny((u) => askOne(u, st), url);
   const snapCache = new Map(), probeFail = new Set();
   async function loadYears() {
     const key = norm(getCurrent()), hit = snapCache.get(key);
     if (hit) return (years = hit.years);
     const url = getCurrent();
-    const res = await Promise.all([...WB_YEARS.map((y) => closestSnap(url, y + "0701")), closestSnap(url, "1996"), closestSnap(url, "2026")]);
+    const base = await spellingWithCopies((u) => askOne(u, "2000"), url);
+    if (base === undefined) { probeFail.add(key); return (years = null); }
+    if (base === null) { snapCache.set(key, { years: [], first: null, last: null }); return (years = []); }
+    const res = await Promise.all([...WB_YEARS.map((y) => askOne(base, y + "0701")), askOne(base, "1996"), askOne(base, String(new Date().getFullYear()))]);
     if (res.slice(0, WB_YEARS.length).every((r) => r === undefined)) { probeFail.add(key); return (years = null); }
     const has = WB_YEARS.filter((y, i) => res[i] && res[i].slice(0, 4) === y);
     snapCache.set(key, { years: has, first: res[WB_YEARS.length] || null, last: res[WB_YEARS.length + 1] || null });
@@ -114,7 +116,7 @@ export function createNsWayback(env) {
     const a = stamp ? stamp.slice(0, 4) : year, hit = snapCache.get(norm(url));
     const ys = hit?.years?.length > 1 ? hit.years : WB_YEARS;
     let b = ys.find((y) => y > a) || [...ys].reverse().find((y) => y < a) || a;
-    if (b === a) b = String(Math.min(2009, +a + 3));
+    if (b === a) b = String(Math.min(WB_LAST, +a + 3));
     const cw = ctx.wm.create({ title: (tr() ? "Karşılaştır - " : "Compare - ") + url, icon: "netscape", width: 940, height: 600, appId: "netscape" });
     const sels = [];
     const pane = (y0) => {
@@ -128,7 +130,7 @@ export function createNsWayback(env) {
     if (!hit) loadYears().then((list) => { if (!list?.length) return; for (const sel of sels) { const v = sel.value; sel.replaceChildren(...list.map((y) => el("option", { value: y, text: y, selected: y === v }))); if (!list.includes(v)) sel.append(el("option", { value: v, text: v, selected: true })); } }).catch(() => {});
   };
   const chooseDate = async () => {
-    const v = await ctx.dialogs.prompt(tr() ? "Bir yıl (1996-2009) veya tarih (GG/AA/YYYY) girin:" : "Enter a year (1996-2009) or a date (MM/DD/YYYY):", stampDate(stamp), { title: tr() ? "Tarih Seç" : "Choose Date" });
+    const v = await ctx.dialogs.prompt(tr() ? "Bir yıl (" + WB_YEAR_TEXT + ") veya tarih (GG/AA/YYYY) girin:" : "Enter a year (" + WB_YEAR_TEXT + ") or a date (MM/DD/YYYY):", stampDate(stamp), { title: tr() ? "Tarih Seç" : "Choose Date" });
     if (!v) return;
     const d = v.trim().match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/), y = v.trim().match(/^\d{4}$/);
     if (d) { const [dd, mm] = tr() ? [d[1], d[2]] : [d[2], d[1]]; year = d[3]; stamp = d[3] + mm.padStart(2, "0") + dd.padStart(2, "0"); rerender(); }
@@ -158,6 +160,7 @@ export function createNsWayback(env) {
     const r = anchor.getBoundingClientRect();
     popup(items, r.left, up ? r.top : r.bottom, { anchor });
     const m = [...document.querySelectorAll(".popup-menu")].pop();
+    if (m) { const room = (up ? r.top : innerHeight - r.bottom) - 6; if (m.offsetHeight > room) { m.style.maxHeight = Math.max(160, room) + "px"; m.style.overflowY = "auto"; } }
     if (m && up) { m.style.top = "auto"; m.style.bottom = Math.max(0, innerHeight - r.top) + "px"; }
     if (m) m.style.left = Math.max(0, Math.min(r.left, innerWidth - m.offsetWidth - 2)) + "px";
   };

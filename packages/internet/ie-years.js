@@ -1,4 +1,4 @@
-// "This year on the web": short, well-known milestones per year (1996-2009), Turkish and English.
+// "This year on the web": short, well-known milestones per year (1996-2025), Turkish and English.
 export const YEAR_FACTS = {
   1996: [["Internet Explorer 3.0 yayımlandı; tarayıcı savaşları kızıştı.", "Internet Explorer 3.0 arrives and the browser wars heat up."], ["Yahoo! halka arz edildi.", "Yahoo! goes public."], ["Nintendo 64 satışa çıktı.", "Nintendo 64 goes on sale."]],
   1997: [["Internet Explorer 4.0 ve Active Desktop geldi.", "Internet Explorer 4.0 and Active Desktop arrive."], ["google.com alan adı kaydedildi.", "The google.com domain is registered."], ["Deep Blue, Kasparov'u satrançta yendi.", "Deep Blue beats Kasparov at chess."], ["Amazon halka arz edildi.", "Amazon goes public."]],
@@ -14,8 +14,23 @@ export const YEAR_FACTS = {
   2007: [["iPhone tanıtıldı ve satışa çıktı.", "The iPhone is introduced and released."], ["Windows Vista tüketicilere sunuldu.", "Windows Vista reaches consumers."], ["Amazon Kindle çıktı.", "The Amazon Kindle arrives."]],
   2008: [["Google Chrome yayımlandı.", "Google Chrome is released."], ["App Store açıldı.", "The App Store opens."], ["İlk Android telefon (T-Mobile G1) çıktı.", "The first Android phone (T-Mobile G1) ships."], ["Türkiye Avrupa Futbol Şampiyonası'nda yarı finale yükseldi.", "Turkey reaches the Euro 2008 semi-finals."]],
   2009: [["Windows 7 yayımlandı (22 Ekim).", "Windows 7 is released (October 22)."], ["Microsoft Bing'i duyurdu.", "Microsoft announces Bing."], ["Bitcoin'in ilk bloğu üretildi.", "The first Bitcoin block is mined."]],
-};
-// Popular sites that existed in each period (Wayback has no copy of a site before it existed; the fallback handles that).
+  2010: [["Apple iPad'i tanıttı.", "Apple introduces the iPad."], ["Instagram yayına başladı.", "Instagram launches."]],
+  2011: [["Skype'ın Microsoft'a satışı duyuruldu.", "Microsoft announces it will buy Skype."], ["Steve Jobs hayatını kaybetti (Ekim).", "Steve Jobs dies (October)."]],
+  2012: [["Windows 8 yayımlandı (Ekim).", "Windows 8 is released (October)."], ["Gangnam Style, YouTube'da bir milyarı aşan ilk video oldu.", "Gangnam Style becomes the first YouTube video past a billion views."]],
+  2013: [["Edward Snowden gözetleme belgelerini yayımladı.", "Edward Snowden's surveillance leaks go public."], ["Windows 8.1 çıktı.", "Windows 8.1 ships."]],
+  2014: [["Heartbleed güvenlik açığı bulundu.", "The Heartbleed bug is disclosed."], ["Facebook, WhatsApp'ı satın aldığını duyurdu.", "Facebook announces it is buying WhatsApp."]],
+  2015: [["Windows 10 yayımlandı (29 Temmuz).", "Windows 10 is released (July 29)."], ["Microsoft, Internet Explorer'ın yerini alacak Edge'i duyurdu.", "Microsoft unveils Edge as the successor to Internet Explorer."]],
+  2016: [["Pokémon Go dünya çapında yayılmaya başladı.", "Pokémon Go takes off worldwide."]],
+  2017: [["WannaCry fidye yazılımı dünya çapında bilgisayarları vurdu.", "The WannaCry ransomware hits computers worldwide."], ["Adobe, Flash'ı 2020'de sonlandıracağını açıkladı.", "Adobe announces the end of Flash for 2020."]],
+  2018: [["AB'de GDPR yürürlüğe girdi (Mayıs).", "The EU's GDPR takes effect (May)."]],
+  2019: [["Disney+ yayına başladı (Kasım).", "Disney+ launches (November)."]],
+  2020: [["Pandemi uzaktan çalışmayı ve görüntülü görüşmeyi yaygınlaştırdı.", "The pandemic makes remote work and video calls everyday."], ["Flash'ın desteği sona erdi (31 Aralık).", "Flash support ends (December 31)."]],
+  2021: [["Windows 11 yayımlandı (5 Ekim).", "Windows 11 is released (October 5)."], ["Facebook şirketi Meta adını aldı.", "Facebook, the company, renames itself Meta."]],
+  2022: [["ChatGPT yayımlandı (30 Kasım).", "ChatGPT is released (November 30)."], ["Internet Explorer 15 Haziran'da emekli edildi.", "Internet Explorer is retired on June 15."]],
+  2023: [["Twitter'ın adı X oldu (Temmuz).", "Twitter is renamed X (July)."]],
+  2024: [["Apple Vision Pro satışa çıktı (Şubat).", "Apple Vision Pro goes on sale (February)."]],
+  2025: [["Windows 10 desteği sona erdi (14 Ekim).", "Windows 10 support ends (October 14)."]],
+};// Popular sites that existed in each period (Wayback has no copy of a site before it existed; the fallback handles that).
 export const YEAR_SITES = (y) => {
   const s = [["Yahoo!", "yahoo.com"], ["AltaVista", "altavista.com"], ["Lycos", "lycos.com"], ["Excite", "excite.com"], ["Netscape", "netscape.com"], ["Microsoft", "microsoft.com"], ["GeoCities", "geocities.com"], ["MSN", "msn.com"], ["AOL", "aol.com"]];
   if (y >= 1999) s.push(["Amazon", "amazon.com"], ["eBay", "ebay.com"]);

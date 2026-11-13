@@ -12,7 +12,7 @@ import { buildSite, isSite, prefetchNews, homeBoxes } from "./netscape-sites.js"
 import { getLang } from "../ui/i18n.js";
 import { YEAR_FACTS } from "./ie-years.js";
 import { buildHome } from "./ie-home.js";
-import { closestAny } from "./wb-util.js";
+import { closestAny, spellingWithCopies, WB_YEARS, WB_YEAR_TEXT, WB_LAST } from "./wb-util.js";
 import { openDlgWindow } from "../accessories/winrar-dlg.js";
 import { ieOpen, ieOptions, ieAddFavorite, ieProps, ieOrganize, iePageSetup, iePrint, IE_HELP } from "./ie-dialogs.js";
 const normalizeAddress = (input) => {
@@ -39,7 +39,7 @@ const normalizeAddress = (input) => {
     throw new Error("This built-in page does not exist.");
   return target;
 };
-const YEAR_RANGE = Array.from({ length: 14 }, (_, i) => String(1996 + i));
+const YEAR_RANGE = WB_YEARS;
 const PORTALS = {
   tr: [["Hürriyet", "hurriyet.com.tr"], ["Milliyet", "milliyet.com.tr"], ["Mynet", "mynet.com"], ["Superonline", "superonline.com"], ["Sabah", "sabah.com.tr"], ["Turk.net", "turk.net"], ["Netscape", "netscape.com"], ["Yahoo!", "yahoo.com"]],
   en: [["Yahoo!", "yahoo.com"], ["MSN", "msn.com"], ["AltaVista", "altavista.com"], ["Lycos", "lycos.com"], ["Excite", "excite.com"], ["GeoCities", "geocities.com"], ["Netscape", "netscape.com"], ["CNN", "cnn.com"], ["Microsoft", "microsoft.com"], ["Apple", "apple.com"]],
@@ -150,22 +150,24 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     document.head.append(sc);
   });
   // Closest archived copy to a wanted date (undefined = could not ask, null = nothing archived).
-  async function closestSnap(url, st) {
-    return closestAny(async (u) => {
-      try {
-        const d = await jsonp("https://archive.org/wayback/available?url=" + encodeURIComponent(u) + "&timestamp=" + (st + "0101000000").slice(0, 14));
-        const c = d?.archived_snapshots?.closest;
-        return c?.available ? c.timestamp : null;
-      } catch { return undefined; }
-    }, url);
+  async function askOne(u, st) {
+    try {
+      const d = await jsonp("https://archive.org/wayback/available?url=" + encodeURIComponent(u) + "&timestamp=" + (st + "0101000000").slice(0, 14));
+      const c = d?.archived_snapshots?.closest;
+      return c?.available ? c.timestamp : null;
+    } catch { return undefined; }
   }
+  const closestSnap = (url, st) => closestAny((u) => askOne(u, st), url);
   // Which of 1996-2009 have a copy, plus the first and last copy: a handful of tiny JSONP questions, asked once per address.
   const snapCache = new Map(), probeFail = new Set();
   async function loadYears() {
     const key = norm(current), hit = snapCache.get(key);
     if (hit) return (wbYears = hit.years, wbInfo = hit, wbYears);
     const ys = DEF_YEARS, url = current;
-    const res = await Promise.all([...ys.map((y) => closestSnap(url, y + "0701")), closestSnap(url, "1996"), closestSnap(url, "2026")]);
+    const base = await spellingWithCopies((u) => askOne(u, "2000"), url);
+    if (base === undefined) { probeFail.add(key); return (wbYears = null); }
+    if (base === null) { const info = { years: [], first: null, last: null }; snapCache.set(key, info); wbInfo = info; return (wbYears = []); }
+    const res = await Promise.all([...ys.map((y) => askOne(base, y + "0701")), askOne(base, "1996"), askOne(base, String(new Date().getFullYear()))]);
     if (res.slice(0, ys.length).every((r) => r === undefined)) { probeFail.add(key); return (wbYears = null); }
     const has = ys.filter((y, i) => res[i] && res[i].slice(0, 4) === y);
     const info = { years: has, first: res[ys.length] || null, last: res[ys.length + 1] || null };
@@ -200,7 +202,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     const a = wbStamp ? wbStamp.slice(0, 4) : wbYear, url = current, hit = snapCache.get(norm(url));
     let ys = hit?.years?.length > 1 ? hit.years : DEF_YEARS;
     let b = ys.find((y) => y > a) || [...ys].reverse().find((y) => y < a) || a;
-    if (b === a) b = String(Math.min(2009, +a + 3));
+    if (b === a) b = String(Math.min(WB_LAST, +a + 3));
     const cw = ctx.wm.create({ title: (trDate() ? "Karşılaştır - " : "Compare - ") + url, icon: "ie", width: 940, height: 600, appId: "ie" });
     const sels = [];
     const pane = (y0) => {
@@ -215,7 +217,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
   };
   const setYear = (y) => { wbYear = String(y); wbStamp = ""; render(); };
   const chooseDate = async () => {
-    const v = await ctx.dialogs.prompt((trDate() ? "Bir yıl (1996-2009) veya tarih (GG/AA/YYYY) girin:" : "Enter a year (1996-2009) or a date (MM/DD/YYYY):"), stampDate(wbStamp), { title: trDate() ? "Tarih Seç" : "Choose Date" });
+    const v = await ctx.dialogs.prompt((trDate() ? "Bir yıl (" + WB_YEAR_TEXT + ") veya tarih (GG/AA/YYYY) girin:" : "Enter a year (" + WB_YEAR_TEXT + ") or a date (MM/DD/YYYY):"), stampDate(wbStamp), { title: trDate() ? "Tarih Seç" : "Choose Date" });
     if (!v) return;
     const d = v.trim().match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/), y = v.trim().match(/^\d{4}$/);
     if (d) { const [dd, mm] = trDate() ? [d[1], d[2]] : [d[2], d[1]]; wbYear = d[3]; wbStamp = d[3] + mm.padStart(2, "0") + dd.padStart(2, "0"); render(); }
@@ -241,11 +243,12 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
         el("div", { class: "field-row" }, rLive, el("label", { for: "wbo-live", text: T.live }))),
       el("div", { class: "field-row" }, el("label", { text: T.year }), sel)) });
   };
-  const DEF_YEARS = Array.from({ length: 14 }, (_, i) => String(1996 + i));
+  const DEF_YEARS = WB_YEARS;
   const popAt = (anchor, items, up, minWidth = 0) => {
     const r = anchor.getBoundingClientRect();
     popup(items, r.left, up ? r.top : r.bottom, { anchor });
     const m = [...document.querySelectorAll(".popup-menu")].pop();
+    if (m) { const room = (up ? r.top : innerHeight - r.bottom) - 6; if (m.offsetHeight > room) { m.style.maxHeight = Math.max(160, room) + "px"; m.style.overflowY = "auto"; } }
     if (m && up) { m.style.top = "auto"; m.style.bottom = Math.max(0, innerHeight - r.top) + "px"; }
     if (m && minWidth) m.style.minWidth = minWidth + "px";
     if (m) m.style.left = Math.max(0, Math.min(r.left, innerWidth - m.offsetWidth - 2)) + "px";
@@ -257,7 +260,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     yearMenu.anchor = anchor;
     const fmt = (t) => (t ? stampDate(t.slice(0, 8)) : "?");
     const infoItems = pending ? [{ label: tr ? "Kayıtlar denetleniyor..." : "Checking copies...", disabled: true }, { separator: true }] : info ? [
-      { label: info.years.length ? (tr ? `Kayıt: ${info.years[0]}–${info.years[info.years.length - 1]} arası, ${info.years.length} yılda` : `Copies: ${info.years[0]}–${info.years[info.years.length - 1]}, in ${info.years.length} years`) : (tr ? "1996–2009 arası kayıt yok" : "No copies from 1996 to 2009"), disabled: true },
+      { label: info.years.length ? (tr ? `Kayıt: ${info.years[0]}–${info.years[info.years.length - 1]} arası, ${info.years.length} yılda` : `Copies: ${info.years[0]}–${info.years[info.years.length - 1]}, in ${info.years.length} years`) : (tr ? WB_YEAR_TEXT + " arası kayıt yok" : "No copies from " + WB_YEAR_TEXT), disabled: true },
       { label: (tr ? "İlk: " : "First: ") + fmt(info.first) + (tr ? "  Son: " : "  Last: ") + fmt(info.last), disabled: true },
       { separator: true }] : [];
     popAt(anchor, [
@@ -788,7 +791,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
       { separator: true },
       {
         label: "Archive Year",
-        submenu: Array.from({ length: 14 }, (_, i) => String(1996 + i)).map((y) => ({ label: y, radio: true, checked: y === (wbStamp ? wbStamp.slice(0, 4) : wbYear), action: () => setYear(y) })),
+        submenu: WB_YEARS.map((y) => ({ label: y, radio: true, checked: y === (wbStamp ? wbStamp.slice(0, 4) : wbYear), action: () => setYear(y) })),
       },
       { label: "Compare Years...", action: openCompare },
       { label: "Archive Options...", action: archiveOptions },
