@@ -10,6 +10,7 @@ import {
 import { basename, downloadFile } from "../core/index.js";
 import { buildSite, isSite, prefetchNews, homeBoxes } from "./netscape-sites.js";
 import { getLang } from "../ui/i18n.js";
+import { openDlgWindow } from "../accessories/winrar-dlg.js";
 import { ieOpen, ieOptions, ieAddFavorite, ieProps, ieOrganize, iePageSetup, iePrint, IE_HELP } from "./ie-dialogs.js";
 const normalizeAddress = (input) => {
   let target = String(input || "about:home").trim();
@@ -132,19 +133,31 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
   }
   const setYear = (y) => { wbYear = String(y); wbStamp = ""; render(); };
   const chooseDate = async () => {
-    const v = await ctx.dialogs.prompt((trDate() ? "Bir yıl (1996-2009) veya tarih (GG/AA/YYYY) girin:" : "Enter a year (1996-2009) or a date (MM/DD/YYYY):"), stampDate(wbStamp), { title: "Choose Date" });
+    const v = await ctx.dialogs.prompt((trDate() ? "Bir yıl (1996-2009) veya tarih (GG/AA/YYYY) girin:" : "Enter a year (1996-2009) or a date (MM/DD/YYYY):"), stampDate(wbStamp), { title: trDate() ? "Tarih Seç" : "Choose Date" });
     if (!v) return;
     const d = v.trim().match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/), y = v.trim().match(/^\d{4}$/);
     if (d) { const [dd, mm] = trDate() ? [d[1], d[2]] : [d[2], d[1]]; wbYear = d[3]; wbStamp = d[3] + mm.padStart(2, "0") + dd.padStart(2, "0"); render(); }
     else if (y) setYear(v.trim());
     else ctx.dialogs.message((trDate() ? "Lütfen 2000 gibi bir yıl veya 24/01/2001 gibi bir tarih girin." : "Please enter a year such as 2000 or a date such as 1/24/2001."), { title: "Microsoft Internet Explorer", icon: "warning" });
   };
-  const archiveOptions = async () => {
-    const v = await ctx.dialogs.prompt("Default archive year (1996-2009).\nType LIVE to browse the current web instead of the Wayback Machine, or ARCHIVE to switch back.", ctx.settings.get("ieArchive") === false ? "LIVE" : wbYear, { title: "Archive Options" });
-    if (!v) return;
-    if (/^live$/i.test(v.trim())) { ctx.settings.set("ieArchive", false); setDate(); render(); }
-    else if (/^archive$/i.test(v.trim())) { ctx.settings.set("ieArchive", true); render(); }
-    else if (/^\d{4}$/.test(v.trim())) { ctx.settings.set("ieYear", v.trim()); ctx.settings.set("ieArchive", true); setYear(v.trim()); }
+  const archiveOptions = () => {
+    const T = trDate() ? { title: "Arşiv Seçenekleri", src: "Kaynak", wb: "Wayback Machine (geçmiş web arşivi)", live: "Canlı (sitenin şu anki sürümü)", year: "Varsayılan arşiv yılı:", ok: "Tamam", cancel: "İptal" } : { title: "Archive Options", src: "Source", wb: "Wayback Machine (web archive)", live: "Live (the site as it is today)", year: "Default archive year:", ok: "OK", cancel: "Cancel" };
+    const isLive = ctx.settings.get("ieArchive") === false;
+    const rWb = el("input", { type: "radio", name: "src", id: "wbo-wb", checked: !isLive }), rLive = el("input", { type: "radio", name: "src", id: "wbo-live", checked: isLive });
+    const sel = el("select", {}, ...DEF_YEARS.map((y) => el("option", { value: y, text: y, selected: y === wbYear })));
+    let d;
+    const row = el("div", { class: "rd-btnrow" },
+      button(T.ok, () => {
+        ctx.settings.set("ieArchive", !rLive.checked);
+        if (!rLive.checked) { ctx.settings.set("ieYear", sel.value); wbYear = sel.value; wbStamp = ""; }
+        d.close(); render();
+      }, { class: "default-button" }),
+      button(T.cancel, () => d.close()));
+    d = openDlgWindow(ctx, { title: T.title, buttons: row, content: el("div", { class: "wbo" },
+      el("fieldset", {}, el("legend", { text: T.src }),
+        el("div", { class: "field-row" }, rWb, el("label", { for: "wbo-wb", text: T.wb })),
+        el("div", { class: "field-row" }, rLive, el("label", { for: "wbo-live", text: T.live }))),
+      el("div", { class: "field-row" }, el("label", { text: T.year }), sel)) });
   };
   const DEF_YEARS = Array.from({ length: 14 }, (_, i) => String(1996 + i));
   const popAt = (anchor, items, up) => {
@@ -255,7 +268,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
         const r = view.getBoundingClientRect();
         popup(modes.map(([k, l]) => ({ label: l.replace("&", ""), radio: true, checked: k === barMode, action: () => { barMode = k; draw(); } })), r.left, r.bottom);
       });
-      view.querySelector("img").src = "/assets/ui/ie/iso/bar-cust0.png";
+      view.querySelector("img").remove();
       tools = [view];
       const visits = history.filter((x) => /^https?:/i.test(x));
       const uniq = [...new Set(visits)];
@@ -270,7 +283,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
       body = el("div", { class: "ie-exp-body" }, ...(uniq.length ? rows : [el("p", { text: "No pages to display." })]));
     }
     explorer.replaceChildren(
-      el("div", { class: "ie-exp-head" }, el("span", { text: { search: "Search", favorites: "Favorites", history: "History" }[kind] }), button("×", () => showBar(null), { class: "ie-exp-close", title: "Close" })),
+      el("div", { class: "ie-exp-head" }, el("span", { text: { search: "Search", favorites: "Favorites", history: "History" }[kind] }), button(el("img", { src: "/assets/ui/ie/iso/bar-close.png", alt: "", draggable: "false" }), () => showBar(null), { class: "ie-exp-close", title: "Close" })),
       el("div", { class: "ie-exp-tools" }, ...tools),
       body);
   }
@@ -573,10 +586,10 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     popup(t.closest?.("input,textarea,select") ? controlMenu() : img ? imageMenu(img.src) : a ? linkMenu(a.href) : pageMenu(), e.clientX, e.clientY);
   });
   const TB = "/assets/ui/ie/tb-", ISO = "/assets/ui/ie/iso/";
-  const isoTb = new Set(["back", "fwd", "stop", "refresh", "home", "search", "favorites", "history", "mail", "print"]);
+  const isoTb = new Set(["archive", "back", "fwd", "stop", "refresh", "home", "search", "favorites", "history", "mail", "print"]);
   const tbButton = (name, label, action, { drop = false, disabled = false, title } = {}) => {
     const iso = isoTb.has(name);
-    const pic = el("img", { src: iso ? ISO + name + "-cold.png" : name === "archive" ? "/assets/ui/ie/st-cal.svg" : TB + name + ".png", alt: "", draggable: "false" });
+    const pic = el("img", { src: iso ? ISO + name + "-cold.png" : TB + name + ".png", alt: "", draggable: "false" });
     const b = button(
       [
         pic,

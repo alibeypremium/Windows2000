@@ -6577,12 +6577,33 @@ input.vlc-eqs[type="range"]{flex:none;writing-mode:vertical-lr;direction:rtl;hei
   border-bottom: 1px solid #808080;
 }
 .ie-exp-close {
-  min-width: 14px;
-  width: 14px;
-  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 0;
+  width: 17px;
+  height: 15px;
   padding: 0;
-  line-height: 10px;
-  font-size: 13px;
+  border: 1px solid transparent;
+  background: none;
+  box-shadow: none;
+}
+.ie-exp-close:hover {
+  border-color: #fff #808080 #808080 #fff;
+}
+.ie-exp-close:active {
+  border-color: #808080 #fff #fff #808080;
+}
+.wbo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px 0;
+  min-width: 300px;
+}
+.wbo fieldset {
+  margin: 0;
 }
 .ie-exp-body {
   flex: 1;
