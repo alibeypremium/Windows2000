@@ -624,12 +624,7 @@ export function openExplorer(ctx, { path = "computer", title } = {}) {
     ],
   });
   w.el.querySelector(":scope > .menu-bar").append(
-    el("img", {
-      class: "throbber",
-      src: "/assets/ui/explorer/throbber.png",
-      alt: "",
-      draggable: "false",
-    }),
+    el("div", { class: "throbber w2k-throb", "aria-hidden": "true" }),
   );
   const SPRITE_DIR = "/assets/ui/explorer/";
   const ISO_TB = new Set(["back", "forward", "up", "search", "folders", "history", "moveto", "copyto", "delete", "undo", "views"]);

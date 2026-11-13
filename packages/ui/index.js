@@ -253,6 +253,8 @@ export function closeMenus() {
     .querySelectorAll(".menu-open")
     .forEach((n) => n.classList.remove("menu-open"));
 }
+// Clicks inside an <iframe> never reach this document: losing focus to one also closes open menus.
+window.addEventListener("blur", () => { if (document.activeElement?.tagName === "IFRAME") closeMenus(); });
 document.addEventListener("pointerdown", (e) => {
   if (!e.target.closest(".popup-menu,.menu-bar,.start-menu,#start-button"))
     closeMenus();

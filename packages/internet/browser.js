@@ -192,6 +192,23 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     siteFrames.add(f);
     return f;
   };
+  // ---- Links bar ----
+  const defaultLinks = () => (PORTALS[getLang()] || PORTALS.en).slice(0, 6).map(([title, u]) => ({ title, url: "http://www." + u + "/" }));
+  const links = () => ctx.settings.get("ieLinks") || defaultLinks();
+  const linksRow = el("div", { class: "ie-links-row" });
+  let addressBar = null;
+  const drawLinks = () => linksRow.replaceChildren(...links().map((l) => button([el("img", { src: "/assets/ui/ie/addr-ie.png", alt: "", draggable: "false" }), el("span", { text: l.title })], () => navigate(l.url), { class: "ie-link-btn", title: l.url })));
+  const toggleLinks = (on) => {
+    addressBar ||= w.el.querySelector(".ie-address");
+    const open = on ?? !addressBar.classList.contains("links-open");
+    addressBar.classList.toggle("links-open", open);
+    if (open) drawLinks();
+  };
+  const addLink = () => { const l = links().filter((x) => x.url !== current); ctx.settings.set("ieLinks", [...l, { title: w.title.replace(/ - Microsoft Internet Explorer( \[Working Offline\])?/, "") || current, url: current }]); drawLinks(); };
+  const linksMenu = (anchor) => {
+    const r = anchor.getBoundingClientRect();
+    popup([...links().map((l) => ({ label: l.title, icon: "ie", action: () => navigate(l.url) })), { separator: true }, { label: "Add Current Page to Links", disabled: !/^https?:/i.test(current), action: addLink }], r.left - 120, r.bottom);
+  };
   // ---- Explorer bar (Search / Favorites / History) ----
   let barKind = null;
   const explorer = el("div", { class: "ie-explorer", hidden: true });
@@ -738,6 +755,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
         label: "Add to Favorites...",
         action: () => ieAddFavorite(ctx, { name: w.title.replace(/ - Microsoft Internet Explorer( \[Working Offline\])?/, ""), folders: favFolders(), onOk: (title, folder) => ctx.settings.set("favorites", [...favorites(), { title, url: current, folder }]) }),
       },
+      { label: "Add to Links", disabled: !/^https?:/i.test(current), action: addLink },
       {
         label: "Organize Favorites...",
         action: () => ieOrganize(ctx, { get: favorites, set: (v) => ctx.settings.set("favorites", v), folders: favFolders, setFolders: (v) => ctx.settings.set("favFolders", v), open: navigate }),
@@ -793,8 +811,9 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
         { class: "ie-go" },
       ),
       el("span", { class: "ie-grip" }),
-      el("span", { class: "ie-links", text: "Links" }),
-      el("span", { class: "ie-chevron", text: "»" }),
+      el("span", { class: "ie-links", text: "Links", onclick: () => toggleLinks() }),
+      linksRow,
+      el("span", { class: "ie-chevron", text: "»", onclick: (e) => linksMenu(e.currentTarget) }),
     ),
     ieBody,
     status,

@@ -469,7 +469,7 @@ function openInbox(ctx) {
     return t[id];
   };
   loadOeMenus().then((mm) => w.setMenu(oeMenu(mm.main, cmd, { Help: [{ label: "Contents and Index", action: () => ctx.launch("help", { topic: "outlook" }) }, separator(), { label: "About Outlook Express", action: () => oeAbout(ctx) }] })));
-  w.el.querySelector(":scope > .menu-bar")?.append(im("throbber", "throbber oe-throbber"), el("i", { class: "oe-mgrip" }));
+  w.el.querySelector(":scope > .menu-bar")?.append(el("div", { class: "throbber oe-throbber w2k-throb", "aria-hidden": "true" }), el("i", { class: "oe-mgrip" }));
   contacts.append(el("div", { class: "oe-phead" }, el("span", {}, ...mn("Contacts")), el("i", { class: "oe-dd" }), el("b", { class: "oe-x", text: "×" })), cbody);
   const hdr = (cls, inner) => el("div", { class: "oe-h " + cls }, ...inner);
   listEl.append(el("div", { class: "oe-lhead" }, hdr("h1", [im("hdr1")]), hdr("h2", [im("hdr2")]), hdr("h3", [im("hdr3")]), hdr("h4", [el("span", { text: "From" })]), hdr("h5", [el("span", { text: "Subject" })]), hdr("h6", [el("span", { text: "Received" }), el("i", { class: "oe-sort" })]), hdr("h7", [])), rowsEl);

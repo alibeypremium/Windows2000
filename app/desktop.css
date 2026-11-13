@@ -4810,51 +4810,52 @@ button.selected:focus {
   height: 22px;
   background: #000 url(/assets/ui/ie/throbber-strip.png) 8px 0 no-repeat;
 }
-.ie-throbber.spin {
+.ie-throbber.spin,
+.w2k-throb {
   animation: ie-throb 2.05s steps(1) infinite;
 }
 @keyframes ie-throb {
-  0% { background-position: 8px 0; }
-  2.44% { background-position: 8px -22px; }
-  4.88% { background-position: 8px -44px; }
-  7.32% { background-position: 8px -66px; }
-  9.76% { background-position: 8px -88px; }
-  12.20% { background-position: 8px -110px; }
-  14.63% { background-position: 8px -132px; }
-  17.07% { background-position: 8px -154px; }
-  19.51% { background-position: 8px -176px; }
-  21.95% { background-position: 8px -198px; }
-  24.39% { background-position: 8px -220px; }
-  26.83% { background-position: 8px -242px; }
-  29.27% { background-position: 8px -264px; }
-  31.71% { background-position: 8px -286px; }
-  34.15% { background-position: 8px -308px; }
-  36.59% { background-position: 8px -330px; }
-  39.02% { background-position: 8px -352px; }
-  41.46% { background-position: 8px -374px; }
-  43.90% { background-position: 8px -396px; }
-  46.34% { background-position: 8px -418px; }
-  48.78% { background-position: 8px -440px; }
-  51.22% { background-position: 8px -462px; }
-  53.66% { background-position: 8px -484px; }
-  56.10% { background-position: 8px -506px; }
-  58.54% { background-position: 8px -528px; }
-  60.98% { background-position: 8px -550px; }
-  63.41% { background-position: 8px -572px; }
-  65.85% { background-position: 8px -594px; }
-  68.29% { background-position: 8px -616px; }
-  70.73% { background-position: 8px -638px; }
-  73.17% { background-position: 8px -660px; }
-  75.61% { background-position: 8px -682px; }
-  78.05% { background-position: 8px -704px; }
-  80.49% { background-position: 8px -726px; }
-  82.93% { background-position: 8px -748px; }
-  85.37% { background-position: 8px -770px; }
-  87.80% { background-position: 8px -792px; }
-  90.24% { background-position: 8px -814px; }
-  92.68% { background-position: 8px -836px; }
-  95.12% { background-position: 8px -858px; }
-  97.56% { background-position: 8px -880px; }
+  0% { background-position-y: 0; }
+  2.44% { background-position-y: -22px; }
+  4.88% { background-position-y: -44px; }
+  7.32% { background-position-y: -66px; }
+  9.76% { background-position-y: -88px; }
+  12.20% { background-position-y: -110px; }
+  14.63% { background-position-y: -132px; }
+  17.07% { background-position-y: -154px; }
+  19.51% { background-position-y: -176px; }
+  21.95% { background-position-y: -198px; }
+  24.39% { background-position-y: -220px; }
+  26.83% { background-position-y: -242px; }
+  29.27% { background-position-y: -264px; }
+  31.71% { background-position-y: -286px; }
+  34.15% { background-position-y: -308px; }
+  36.59% { background-position-y: -330px; }
+  39.02% { background-position-y: -352px; }
+  41.46% { background-position-y: -374px; }
+  43.90% { background-position-y: -396px; }
+  46.34% { background-position-y: -418px; }
+  48.78% { background-position-y: -440px; }
+  51.22% { background-position-y: -462px; }
+  53.66% { background-position-y: -484px; }
+  56.10% { background-position-y: -506px; }
+  58.54% { background-position-y: -528px; }
+  60.98% { background-position-y: -550px; }
+  63.41% { background-position-y: -572px; }
+  65.85% { background-position-y: -594px; }
+  68.29% { background-position-y: -616px; }
+  70.73% { background-position-y: -638px; }
+  73.17% { background-position-y: -660px; }
+  75.61% { background-position-y: -682px; }
+  78.05% { background-position-y: -704px; }
+  80.49% { background-position-y: -726px; }
+  82.93% { background-position-y: -748px; }
+  85.37% { background-position-y: -770px; }
+  87.80% { background-position-y: -792px; }
+  90.24% { background-position-y: -814px; }
+  92.68% { background-position-y: -836px; }
+  95.12% { background-position-y: -858px; }
+  97.56% { background-position-y: -880px; }
 }
 .menu-bar:has(.ie-throbber) {
   position: relative;
@@ -6661,4 +6662,52 @@ input.vlc-eqs[type="range"]{flex:none;writing-mode:vertical-lr;direction:rtl;hei
 }
 .ie-exp-indent {
   padding-left: 16px;
+}
+
+.w2k-throb {
+  background: #000 url(/assets/ui/ie/throbber-strip.png) 8px 0 no-repeat;
+  animation: ie-throb 2.05s steps(1) infinite;
+}
+.oe-throbber.w2k-throb {
+  background-position: 0 0;
+  background-color: transparent;
+}
+
+.ie-links-row {
+  display: none;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  gap: 1px;
+  align-items: center;
+}
+.ie-address.links-open .ie-links-row {
+  display: flex;
+}
+.ie-address.links-open .ie-address-field {
+  flex: 0 0 240px;
+}
+.ie-link-btn {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex: none;
+  height: 22px;
+  min-height: 0;
+  padding: 0 4px;
+  border: 1px solid transparent;
+  background: none;
+  box-shadow: none;
+}
+.ie-link-btn:hover {
+  border-color: #fff #808080 #808080 #fff;
+}
+.ie-link-btn:active {
+  border-color: #808080 #fff #fff #808080;
+}
+.ie-links {
+  cursor: default;
+}
+.ie-chevron {
+  cursor: default;
 }

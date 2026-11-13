@@ -1,5 +1,6 @@
 // Turkish strings: ICQ 99b (win98.si port). Accelerator "&" marks are stripped from keys by the loader.
 export const MORE12 = {
+  "Add Current Page to Links": "Geçerli Sayfayı Bağlantılara Ekle", "Add to Links": "Bağlantılara Ekle", "Stopped": "Durduruldu", "Links": "Bağlantılar",
   "By Date": "Tarihe Göre", "By Site": "Siteye Göre", "By Most Visited": "En Çok Ziyaret Edilene Göre", "By Order Visited Today": "Bugünkü Ziyaret Sırasına Göre", "Today": "Bugün",
   "Type a word or phrase": "Bir sözcük veya tümce yazın", "New": "Yeni", "Next": "İleri", "Customize": "Özelleştir", "Archive Year": "Arşiv Yılı", "Archive Options...": "Arşiv Seçenekleri...", "Choose Date...": "Tarih Seç...", "Wayback Calendar...": "Wayback Takvimi...", "Share Link (copy to Clipboard)": "Bağlantıyı Paylaş (Panoya Kopyala)", "Sites from the web of 2000": "2000'lerin Web Siteleri", "Wayback Machine": "Wayback Machine",
   "Online": "Çevrimiçi", "Offline": "Çevrimdışı", "GO": "ARA", "Open ICQ": "ICQ'yu Aç", "Enter Search Keyword": "Arama anahtar sözcüğünü girin", "Add Users": "Kullanıcı Ekle", "Services": "Hizmetler", "System Menu": "Sistem Menüsü",
@@ -19,6 +20,8 @@ export const MORE12 = {
   "Yes": "Evet", "No": "Hayır", "Send": "Gönder", "About ICQ": "ICQ Hakkında", "Copyright (C) 1996-1999 Mirabilis Ltd.": "Telif Hakkı (C) 1996-1999 Mirabilis Ltd.",
 };
 export const RULES12 = [
+  [/^Opening page (.+?)\.\.\.$/, (u) => `${u} sayfası açılıyor...`],
+  [/^Opening (.+?)\.\.\.$/, (u) => `${u} açılıyor...`],
   [/^User Details - (.+)$/, (n) => `Kullanıcı Ayrıntıları - ${n}`],
   [/^View\/Change My Details - (\d+)$/, (n) => `Ayrıntılarımı Görüntüle/Değiştir - ${n}`],
   [/^History - (.+)$/, (n) => `Geçmiş - ${n}`],
