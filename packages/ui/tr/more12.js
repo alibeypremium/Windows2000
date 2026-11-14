@@ -1,7 +1,7 @@
 // Turkish strings: ICQ 99b (win98.si port). Accelerator "&" marks are stripped from keys by the loader.
 export const MORE12 = {
   "From my computer (browser file picker)...": "Bilgisayarımdan (tarayıcı dosya seçici)...", "From inside the app (My Documents)...": "Uygulama içinden (Belgelerim)...",
-  "Music and Video": "Müzik ve Video", "Music and Video...": "Müzik ve Video...", "Add music or video files from your computer and play them": "Bilgisayarınızdan müzik veya video dosyaları ekleyip oynatın", "Visualizations": "Görselleştirmeler", "Spectrum Analyzer": "Spektrum Çözümleyici", "Oscilloscope": "Osiloskop", "Ambience": "Ambiyans", "Particles": "Parçacıklar",
+  "Music and Video": "Müzik ve Video", "Music and Video...": "Müzik ve Video...", "Add music or video files from your computer and play them": "Bilgisayarınızdan müzik veya video dosyaları ekleyip oynatın", "Visualizations": "Görselleştirmeler", "Bars and Waves": "Çubuklar ve Dalgalar", "Scope": "Osiloskop", "Battery": "Pil", "Ambience": "Ambiyans", "Alchemy": "Simya", "Spikes": "Dikenler",
   "Advanced >>": "Gelişmiş >>", "<< Advanced": "<< Gelişmiş",
   "Navigation panel": "Gezinti Çubuğu", "Controls panel": "Denetimler", "Display panel": "Görüntü", "Captions panel": "Altyazılar", "Go To panel": "Git Çubuğu", "Status panel": "Durum Çubuğu",
   "Display": "Görüntü", "Captions": "Altyazılar", "Status Bar": "Durum Çubuğu", "TV Channels...": "TV Kanalları...", "Organize Favorites...": "Sık Kullanılanları Düzenle...", "Add to Favorites...": "Sık Kullanılanlara Ekle...", "Media Guide": "Ortam Rehberi", "Music": "Müzik", "Radio": "Radyo", "TV": "TV",

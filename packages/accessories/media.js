@@ -19,7 +19,7 @@ import {
   DOCS,
 } from "../core/index.js";
 import { openChannelList } from "./channel-list.js";
-import { sourceFor, siblingSubtitles, loadSubtitleFile, subtitleFromFile, SUB_RE, loadHls, isHls, parseM3U, fetchPlaylistText, isHlsManifest } from "./media-engine.js";
+import { isMedia, sourceFor, siblingSubtitles, loadSubtitleFile, subtitleFromFile, SUB_RE, loadHls, isHls, parseM3U, fetchPlaylistText, isHlsManifest } from "./media-engine.js";
 import { wmpOpen, wmpAbout, wmpStats, wmpProps, wmpOptions, wmpGoto, wmpError } from "./wmp-dialogs.js";
 import { ieAddFavorite, ieOrganize } from "../internet/ie-dialogs.js";
 import { RADIO_STATIONS, fetchDecadeStations } from "./radio-data.js";
@@ -159,7 +159,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
     curEntry = p;
     directUrl = false;
     video.removeAttribute("crossorigin");
-    current = url ? null : p;
+    current = url || p?.file ? null : p;
     tracks = []; curSub = null; subEl.textContent = "";
     if (hls) { hls.destroy(); hls = null; }
     if (objectURL) {
@@ -181,6 +181,17 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
           hls.attachMedia(video);
         } catch { status.children[0].textContent = "The stream could not be played."; }
       } else { directUrl = true; if (ac) video.crossOrigin = "anonymous"; video.src = url; }
+    } else if (p?.file) {
+      // a file picked from the computer is played straight from the browser (no copy into the simulated disk)
+      const f = p.file, ext = (/\.([a-z0-9]+)$/i.exec(f.name) || [])[1]?.toLowerCase() || "";
+      const T = { mp4: "video/mp4", m4v: "video/mp4", mov: "video/mp4", webm: "video/webm", ogv: "video/ogg", mkv: "video/webm", mp3: "audio/mpeg", m4a: "audio/mp4", aac: "audio/aac", ogg: "audio/ogg", oga: "audio/ogg", opus: "audio/ogg", wav: "audio/wav", flac: "audio/flac" };
+      const type = f.type || T[ext] || "";
+      objectURL = URL.createObjectURL(type && !f.type ? new Blob([f], { type }) : f);
+      video.src = objectURL;
+      title.textContent = f.name;
+      const isVideo = type.startsWith("video/") || /^(mp4|m4v|mov|webm|ogv|mkv|avi|wmv|3gp)$/.test(ext);
+      video.hidden = !isVideo; visual.hidden = isVideo;
+      if (isVideo && video.canPlayType(type) === "" && !/^(mkv|mov)$/.test(ext)) status.children[0].textContent = "This format may not be supported by your browser.";
     } else if (p) {
       const node = ctx.fs.stat(p);
       try { const r = await sourceFor(ctx, { path: p }); video.src = r.url; if (r.blob) objectURL = r.url; } catch { video.src = node.content; }
@@ -229,16 +240,9 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
   };
   const open = async () => {
     const p = await ctx.dialogs.file({
-      filter: (n) =>
-        n.mime?.startsWith("audio/") ||
-        n.mime?.startsWith("video/") ||
-        /\.(wav|mp3|ogg|mp4|webm|m4a)$/i.test(n.name),
+      filter: (n) => isMedia(n) || /\.(m3u8?|pls)$/i.test(n.name),
     });
-    if (p) {
-      playlist.push(p);
-      index = playlist.length - 1;
-      await load(p, true);
-    }
+    if (p) await openAny(p);
   };
   const musicVideo = (e) => {
     const r = e?.currentTarget?.getBoundingClientRect?.() || w.el.getBoundingClientRect();
@@ -249,11 +253,11 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
   };
   const importMedia = async () => {
     const files = await pickFiles({
-      accept: "audio/*,video/*",
+      accept: "audio/*,video/*,.mp3,.mp4,.m4v,.m4a,.mov,.mkv,.webm,.ogg,.ogv,.oga,.opus,.wav,.flac,.aac,.avi,.wmv,.wma,.3gp",
       multiple: true,
     });
     for (const file of files)
-      playlist.push(await ctx.fs.importFile(file));
+      playlist.push({ title: file.name, file });
     if (files.length) {
       index = playlist.length - files.length;
       await load(playlist[index], true);
@@ -350,58 +354,106 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
   const pic = () => { if (!video.src && !video.currentSrc) return; const v = video.videoWidth > 0; video.hidden = !v; visual.hidden = v; };
   video.addEventListener("loadedmetadata", pic); video.addEventListener("playing", pic); video.addEventListener("resize", pic);
   const bars = new Uint8Array(128);
-  // ---- visualizations (View > Visualizations, or click the picture): real FFT data when the audio is routed through Web Audio,
-  // an animated stand-in for cross-origin radio streams, which the browser will not let us analyse ----
-  const VIS = [["bars", "Spectrum Analyzer"], ["scope", "Oscilloscope"], ["ambience", "Ambience"], ["particles", "Particles"]];
-  let vis = ctx.settings.get("wmpVis") || "bars";
-  const setVis = (v) => { vis = v; ctx.settings.set("wmpVis", v); };
-  const wave = new Uint8Array(128);
-  const fake = (t, i) => { const e = 0.55 + 0.35 * Math.sin(t * 2.1 + i * 0.35) * Math.sin(t * 0.7 + i * 0.1); return Math.max(0, 255 * e * (1 - i / 140) * (0.75 + 0.25 * Math.sin(t * 6 + i))); };
-  const parts = Array.from({ length: 70 }, () => ({ a: Math.random() * 6.28, r: Math.random(), s: 0.2 + Math.random() * 0.8 }));
-  let lvl = 0;
+  // ---- visualizations in the style of Windows Media Player 6.4 / 7 (View > Visualizations, or click the picture) ----
+  // Real FFT/waveform data when the audio goes through Web Audio; a beat-driven stand-in for cross-origin radio streams,
+  // which the browser will not let us analyse.
+  const VIS = [["bars", "Bars and Waves"], ["scope", "Scope"], ["battery", "Battery"], ["ambience", "Ambience"], ["alchemy", "Alchemy"], ["spikes", "Spikes"]];
+  let vis = ctx.settings.get("wmpVis"); if (!VIS.some(([k]) => k === vis)) vis = "bars";
+  const setVis = (v) => { vis = v; ctx.settings.set("wmpVis", v); clearV = true; };
+  const wave = new Uint8Array(128), sm = new Float32Array(128), peaks = new Float32Array(128);
+  let clearV = true, lvl = 0, bass = 0, mid = 0, hi = 0, phase = 0, hue0 = 0, trail = [];
+  const fake = (t) => {
+    const beat = Math.pow(Math.max(0, Math.sin(t * 2 * Math.PI * 2.1)), 5), off = Math.pow(Math.max(0, Math.sin(t * 2 * Math.PI * 1.05 + 1.2)), 8);
+    for (let i = 0; i < 128; i++) {
+      const f = i / 128, body = 0.32 + 0.22 * Math.sin(t * 0.9 + i * 0.23) * Math.sin(t * 0.37 + i * 0.07);
+      bars[i] = Math.max(0, Math.min(255, 255 * ((1 - f) * (0.35 * beat + 0.3 * off) + body * (1 - f * 0.8) * (0.7 + 0.3 * Math.sin(t * 7 + i * 1.3)) * 0.8)));
+      wave[i] = 128 + 55 * (Math.sin(t * 11 + i * 0.28) * (0.5 + 0.5 * beat) + 0.5 * Math.sin(t * 23 + i * 0.7) * (0.4 + 0.6 * off));
+    }
+  };
+  const hsl = (h, sat, l, a = 1) => `hsla(${((h % 360) + 360) % 360},${sat}%,${l}%,${a})`;
   const draw = () => {
     if (w.closed) return;
-    const c = canvasCtx, W = 560, H = 245, t = performance.now() / 1000, playing = !video.paused;
-    const cw = visual.clientWidth || W, ch = visual.clientHeight || H;
-    if (visual.width !== cw || visual.height !== ch) { visual.width = cw; visual.height = ch; }
-    c.setTransform(cw / W, 0, 0, ch / H, 0, 0);
+    const c = canvasCtx, t = performance.now() / 1000, playing = !video.paused;
+    const W = visual.clientWidth || 560, H = visual.clientHeight || 245;
+    if (visual.width !== W || visual.height !== H) { visual.width = W; visual.height = H; clearV = true; }
+    c.setTransform(1, 0, 0, 1, 0, 0);
     let real = false;
     if (analyser && playing) { analyser.getByteFrequencyData(bars); analyser.getByteTimeDomainData(wave); real = bars.some((x) => x > 0); }
-    if (!real) for (let i = 0; i < 128; i++) { bars[i] = playing ? fake(t, i) : 0; wave[i] = 128 + (playing ? Math.sin(t * 9 + i * 0.3) * 40 * Math.sin(t * 1.3 + i * 0.05) + Math.sin(t * 17 + i * 0.9) * 18 : 0); }
-    let sum = 0; for (let i = 0; i < 32; i++) sum += bars[i]; lvl += (sum / 32 / 255 - lvl) * 0.25;
+    if (!real) { if (playing) fake(t); else { bars.fill(0); wave.fill(128); } }
+    for (let i = 0; i < 128; i++) { sm[i] += (bars[i] - sm[i]) * (bars[i] > sm[i] ? 0.6 : 0.18); peaks[i] = Math.max(sm[i], peaks[i] - 1.6); }
+    let b = 0, m = 0, h = 0; for (let i = 0; i < 8; i++) b += sm[i]; for (let i = 8; i < 40; i++) m += sm[i]; for (let i = 40; i < 100; i++) h += sm[i];
+    bass += (b / 8 / 255 - bass) * 0.35; mid += (m / 32 / 255 - mid) * 0.3; hi += (h / 60 / 255 - hi) * 0.3; lvl = (bass + mid + hi) / 3;
+    phase += 0.004 + lvl * 0.03; hue0 += 0.15 + bass * 1.5;
+    const clear = (a) => { c.globalCompositeOperation = "source-over"; c.fillStyle = clearV ? "#000" : `rgba(0,0,0,${a})`; c.fillRect(0, 0, W, H); clearV = false; };
     if (vis === "bars") {
-      c.fillStyle = "#081008"; c.fillRect(0, 0, W, H);
-      for (let i = 0; i < 56; i++) {
-        const h = (bars[i * 2] || 0) * 0.72, x = i * 9 + 25;
-        for (let y = 0; y < h; y += 7) { c.fillStyle = y > 150 ? "#d5ce30" : y > 80 ? "#49b924" : "#07840a"; c.fillRect(x, 215 - y, 6, 5); }
+      // Bars and Waves: gradient columns with falling peak caps over a blue backdrop and a waveform trace
+      clearV = false;
+      const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "#0a0a3c"); g.addColorStop(1, "#000010"); c.fillStyle = g; c.fillRect(0, 0, W, H);
+      const n = Math.max(24, Math.floor(W / 11)), bw = W / n;
+      for (let i = 0; i < n; i++) {
+        const k = Math.floor(Math.pow(i / n, 1.5) * 64), v = sm[k] / 255, ph = peaks[k] / 255, x = i * bw, hh = v * H * 0.86;
+        const gg = c.createLinearGradient(0, H - hh, 0, H); gg.addColorStop(0, "#ffee55"); gg.addColorStop(0.35, "#44dd44"); gg.addColorStop(1, "#006a44");
+        c.fillStyle = gg; c.fillRect(x + 1, H - hh, bw - 2, hh);
+        c.fillStyle = "#ffffff"; c.fillRect(x + 1, H - ph * H * 0.86 - 3, bw - 2, 2);
       }
+      c.strokeStyle = "rgba(120,200,255,.9)"; c.lineWidth = 1.5; c.beginPath();
+      for (let i = 0; i < 128; i++) { const x = (i / 127) * W, y = H * 0.3 + (wave[i] - 128) * H / 400; i ? c.lineTo(x, y) : c.moveTo(x, y); }
+      c.stroke();
     } else if (vis === "scope") {
-      c.fillStyle = "rgba(0,12,0,.35)"; c.fillRect(0, 0, W, H);
-      c.strokeStyle = "#0a3a0a"; c.lineWidth = 1; c.beginPath();
-      for (let x = 0; x <= W; x += 40) { c.moveTo(x, 0); c.lineTo(x, H); }
-      for (let y = 0; y <= H; y += 40) { c.moveTo(0, y); c.lineTo(W, y); }
+      // Scope: green phosphor oscilloscope with graticule and persistence
+      clear(0.28);
+      c.strokeStyle = "rgba(0,120,0,.35)"; c.lineWidth = 1; c.beginPath();
+      for (let x = 0; x <= W; x += W / 10) { c.moveTo(Math.round(x) + .5, 0); c.lineTo(Math.round(x) + .5, H); }
+      for (let y = 0; y <= H; y += H / 6) { c.moveTo(0, Math.round(y) + .5); c.lineTo(W, Math.round(y) + .5); }
       c.stroke();
-      c.strokeStyle = "#39ff39"; c.lineWidth = 2; c.beginPath();
-      for (let i = 0; i < 128; i++) { const x = (i / 127) * W, y = H / 2 + (wave[i] - 128) * 0.9; i ? c.lineTo(x, y) : c.moveTo(x, y); }
-      c.stroke();
+      c.shadowColor = "#38ff38"; c.shadowBlur = 8; c.strokeStyle = "#7dff7d"; c.lineWidth = 2; c.beginPath();
+      for (let i = 0; i < 128; i++) { const x = (i / 127) * W, y = H / 2 + (wave[i] - 128) * H / 260; i ? c.lineTo(x, y) : c.moveTo(x, y); }
+      c.stroke(); c.shadowBlur = 0;
+    } else if (vis === "battery") {
+      // Battery: pulsing rings and rotating spokes, colour-cycling with the bass
+      clear(0.2); c.globalCompositeOperation = "lighter";
+      const cx = W / 2, cy = H / 2, R = Math.min(W, H) * 0.46;
+      for (let k = 0; k < 3; k++) { c.strokeStyle = hsl(hue0 + k * 50, 90, 55, 0.55); c.lineWidth = 2 + bass * 6; c.beginPath(); c.arc(cx, cy, R * (0.25 + k * 0.22 + bass * 0.25), 0, 6.2832); c.stroke(); }
+      const n = 48; c.lineWidth = 2;
+      for (let i = 0; i < n; i++) {
+        const a = (i / n) * 6.2832 + phase * 2, v = Math.min(1, sm[Math.floor(i * 0.7)] / 200) + 0.05, r0 = R * 0.28, r1 = r0 + v * R * 0.8;
+        c.strokeStyle = hsl(hue0 + i * 5, 100, 55, 0.9); c.beginPath(); c.moveTo(cx + Math.cos(a) * r0, cy + Math.sin(a) * r0); c.lineTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1); c.stroke();
+      }
     } else if (vis === "ambience") {
-      c.fillStyle = "rgba(0,0,0,.18)"; c.fillRect(0, 0, W, H);
-      for (let k = 0; k < 6; k++) {
-        const x = W / 2 + Math.cos(t * (0.4 + k * 0.13) + k) * (150 + lvl * 90), y = H / 2 + Math.sin(t * (0.5 + k * 0.11) + k * 2) * (60 + lvl * 50), r = 30 + lvl * 90 + (bars[k * 6] || 0) * 0.25;
-        const g = c.createRadialGradient(x, y, 0, x, y, r); const hue = (t * 40 + k * 60) % 360;
-        g.addColorStop(0, `hsla(${hue},90%,60%,.55)`); g.addColorStop(1, `hsla(${hue},90%,50%,0)`);
-        c.fillStyle = g; c.beginPath(); c.arc(x, y, r, 0, 6.29); c.fill();
+      // Ambience: slow, soft colour fields that swell with the music
+      clear(0.16); c.globalCompositeOperation = "lighter";
+      for (let k = 0; k < 7; k++) {
+        const x = W / 2 + Math.cos(t * (0.21 + k * 0.07) + k * 1.7) * W * 0.38, y = H / 2 + Math.sin(t * (0.17 + k * 0.05) + k * 2.3) * H * 0.38;
+        const r = Math.min(W, H) * (0.22 + 0.1 * Math.sin(t * 0.5 + k)) * (1 + lvl * 1.2) + sm[k * 9] * 0.25;
+        const g = c.createRadialGradient(x, y, 0, x, y, r), hh = hue0 * 0.5 + k * 48;
+        g.addColorStop(0, hsl(hh, 80, 48, 0.2)); g.addColorStop(1, hsl(hh, 80, 40, 0));
+        c.fillStyle = g; c.beginPath(); c.arc(x, y, r, 0, 6.2832); c.fill();
+      }
+    } else if (vis === "alchemy") {
+      // Alchemy: a glowing Lissajous curve whose shape and colour are driven by the spectrum
+      clear(0.12); c.globalCompositeOperation = "lighter";
+      const cx = W / 2, cy = H / 2, ax = W * 0.42, ay = H * 0.42, fa = 3 + Math.round(bass * 2), fb = 2 + Math.round(mid * 3);
+      for (let pass = 0; pass < 2; pass++) {
+        c.strokeStyle = hsl(hue0 + pass * 140, 100, 50, pass ? 0.22 : 0.6); c.lineWidth = pass ? 4 : 1.5; c.beginPath();
+        for (let i = 0; i <= 360; i++) {
+          const a = (i / 360) * 6.2832, wv = (wave[i % 128] - 128) / 128, r = 1 + wv * 0.25 + hi * 0.3;
+          const x = cx + Math.sin(fa * a + phase * 3) * ax * r, y = cy + Math.sin(fb * a + phase * 2) * ay * r;
+          i ? c.lineTo(x, y) : c.moveTo(x, y);
+        }
+        c.stroke();
       }
     } else {
-      c.fillStyle = "rgba(0,0,10,.3)"; c.fillRect(0, 0, W, H);
-      for (const p of parts) {
-        p.r += p.s * (playing ? 0.006 + lvl * 0.03 : 0.0008); if (p.r > 1) { p.r = 0.02; p.a = Math.random() * 6.28; }
-        const x = W / 2 + Math.cos(p.a) * p.r * W * 0.6, y = H / 2 + Math.sin(p.a) * p.r * H * 0.9, z = 1 + p.r * 3;
-        c.fillStyle = `hsl(${(p.a * 57 + t * 30) % 360},90%,${55 + p.r * 30}%)`; c.fillRect(x, y, z, z);
+      // Spikes: a ring of spectrum spikes, centre glow on the beat
+      clear(0.3); c.globalCompositeOperation = "lighter";
+      const cx = W / 2, cy = H / 2, R = Math.min(W, H) * 0.2 * (1 + bass * 0.4), n = 96;
+      const g = c.createRadialGradient(cx, cy, 0, cx, cy, R * 2.2); g.addColorStop(0, hsl(hue0, 90, 55, 0.35 * (0.4 + bass))); g.addColorStop(1, hsl(hue0, 90, 40, 0)); c.fillStyle = g; c.fillRect(0, 0, W, H);
+      c.lineWidth = 2;
+      for (let i = 0; i < n; i++) {
+        const a = (i / n) * 6.2832 + phase, v = Math.min(1, sm[Math.floor((i < n / 2 ? i : n - i) * 0.9)] / 200), r1 = R + (0.06 + v) * Math.min(W, H) * 0.4;
+        c.strokeStyle = hsl(hue0 + (i / n) * 200, 95, 60, 0.9); c.beginPath(); c.moveTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R); c.lineTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1); c.stroke();
       }
     }
-    c.fillStyle = "#263e24"; c.font = "11px Tahoma"; c.textAlign = "center";
-    if (vis === "bars") c.fillText(playing ? "SPECTRUM ANALYZER" : "WINDOWS MEDIA PLAYER", 280, 235);
+    c.globalCompositeOperation = "source-over";
     raf = requestAnimationFrame(draw);
   };
   visual.addEventListener("click", () => setVis(VIS[(VIS.findIndex(([k]) => k === vis) + 1) % VIS.length][0]));
