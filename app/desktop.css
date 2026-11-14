@@ -6927,3 +6927,10 @@ input.wmp-seek::-moz-range-thumb { width: 13px; height: 15px; border: 0; border-
 .wmp-root.mp .wmp-btn, .wmp-root.mp .wmp-vol-icon { border-color: transparent !important; background-color: transparent !important; box-shadow: none !important; min-width: 0; }
 .wmp-root.mp .wmp-btn:hover:not(:disabled), .wmp-root.mp .wmp-vol-icon:hover { box-shadow: inset 1px 1px #fff, inset -1px -1px #808080 !important; }
 .wmp-root.mp .wmp-btn:active:not(:disabled), .wmp-root.mp .wmp-vol-icon:active { box-shadow: inset 1px 1px #808080, inset -1px -1px #fff !important; }
+
+.wmp-root.mp .wmp-cc { font-size: 0; background: url("/assets/wmp/cc.png") no-repeat 0 center; }
+.wmp-root.mp .wmp-cc:disabled { background-position: -24px center; color: transparent; }
+.wmp-tbar { display: flex; gap: 2px; padding: 3px 4px; background: #d4d0c8; border-bottom: 1px solid #808080; }
+.wmp-tb { all: unset; box-sizing: border-box; width: 24px; height: 24px; background: url("/assets/wmp/bmp60.png") no-repeat calc(var(--c, 0) * -20px + 2px) 2px; cursor: default; }
+.wmp-tb:hover { background-image: url("/assets/wmp/bmp62.png"); box-shadow: inset 1px 1px #fff, inset -1px -1px #808080; }
+.wmp-tb:active { box-shadow: inset 1px 1px #808080, inset -1px -1px #fff; }

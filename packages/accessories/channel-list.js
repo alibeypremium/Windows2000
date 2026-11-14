@@ -30,8 +30,12 @@ export function openChannelList(ctx, api) {
   };
   sel.addEventListener("change", () => { group = sel.value; refresh(); });
   search.addEventListener("input", () => { q = search.value.trim().toLowerCase(); refresh(); });
+  // Original Radio Tuner buttons from msdxm.ocx (bmp60 normal, bmp61 disabled, bmp62 hover): play, station, stop, guide, speaker.
+  const tb = (cell, label, run) => { const b = el("button", { class: "wmp-tb", type: "button", title: label, "aria-label": label, onclick: run }); b.style.setProperty("--c", cell); return b; };
+  const play = () => { const r = body.querySelector(".vlc-pl-row.cur") || body.querySelector(".vlc-pl-row"); if (r) api.play(+r.dataset.i); };
+  const toolbar = el("div", { class: "wmp-tbar" }, tb(0, "Play", play), tb(2, "Stop", () => api.stop?.()), tb(4, "Mute", () => api.mute?.()));
   const menu = menuBar({ File: [...(api.openFile ? [{ label: "Open Playlist...", action: api.openFile }, { separator: true }] : []), { label: "Close", action: () => win.close() }] });
-  win.setContent(menu, el("div", { class: "vlc-ch-bar" }, urlBox), el("div", { class: "vlc-ch-bar" }, sel, search), body,
+  win.setContent(menu, toolbar, el("div", { class: "vlc-ch-bar" }, urlBox), el("div", { class: "vlc-ch-bar" }, sel, search), body,
     el("div", { class: "vlc-pl-bar" }, button("Play", () => { const r = body.querySelector(".vlc-pl-row.cur") || body.querySelector(".vlc-pl-row"); if (r) api.play(+r.dataset.i); }), count));
   win.onClose = () => { api.onClose?.(); return true; };
   refresh();

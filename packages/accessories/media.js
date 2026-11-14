@@ -307,7 +307,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
   ];
   const showChannels = () => {
     if (chList && !chList.win.closed) { chList.win.focus(); chList.refresh(); return; }
-    chList = openChannelList(ctx, { getList: () => playlist.map((e) => (typeof e === "string" ? { title: entryTitle(e), group: "" } : e)), getIndex: () => index, play: async (i) => { index = i; await load(playlist[i], true); }, loadUrl: loadListUrl, openFile: openListFile, onClose: () => { chList = null; } });
+    chList = openChannelList(ctx, { stop: () => { video.pause(); video.currentTime = 0; }, mute: () => A.mute.run(), getList: () => playlist.map((e) => (typeof e === "string" ? { title: entryTitle(e), group: "" } : e)), getIndex: () => index, play: async (i) => { index = i; await load(playlist[i], true); }, loadUrl: loadListUrl, openFile: openListFile, onClose: () => { chList = null; } });
   };
   const addEntries = async (items) => {
     const first = playlist.length;
@@ -473,7 +473,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
   const showRadio = () => {
     if (radio && !radio.win.closed) { radio.win.focus(); return; }
     radio = openChannelList(ctx, {
-      title: "Radio Tuner", getList: () => stations, getIndex: () => radioIdx,
+      title: "Radio Tuner", stop: () => { video.pause(); video.currentTime = 0; }, mute: () => A.mute.run(), getList: () => stations, getIndex: () => radioIdx,
       play: async (i) => { radioIdx = i; await load(stations[i], true); radio?.refresh(); },
       loadUrl: async (v) => { try { const items = parseM3U(await fetchPlaylistText(v), "", () => false); items.forEach((e) => stations.push({ ...e, group: e.group || "Benim İstasyonlarım", live: true })); radio?.refresh(); } catch (e) { ctx.dialogs.message(`The station list '${v}' could not be read.\n\n${e?.message || e}`, { title: "Windows Media Player", icon: "error" }); } },
       onClose: () => { radio = null; },
