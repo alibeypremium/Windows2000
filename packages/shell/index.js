@@ -182,6 +182,12 @@ export class DesktopShell {
         action: () => ctx.launch("winamp"),
       },
       {
+        id: "mediaplayer",
+        name: "Windows Media Player",
+        icon: "media",
+        action: () => ctx.launch("mediaplayer"),
+      },
+      {
         id: "acrobat",
         name: "Acrobat Reader 5.0",
         icon: "acrobat",

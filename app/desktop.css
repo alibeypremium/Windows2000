@@ -6879,3 +6879,51 @@ input.vlc-eqs[type="range"]{flex:none;writing-mode:vertical-lr;direction:rtl;hei
 .ns-comp-b:hover { border-color: #fff #808080 #808080 #fff; }
 .ns-comp-b:active { border-color: #808080 #fff #fff #808080; }
 .ns-comp-b:active > span { transform: translate(1px, 1px); }
+
+/* ---- Windows Media Player 6.4 layout (nav bar, screen, seek bar, controls, Go To bar, display, captions, status) ---- */
+.wmp-root.mp { display: flex; flex-direction: column; height: 100%; background: #c0c0c0; font: 11px Tahoma, sans-serif; }
+.wmp-root.mp [hidden] { display: none !important; }
+.wmp-nav { flex: none; height: 24px; display: flex; align-items: center; gap: 2px; padding: 0 2px 0 4px; box-shadow: inset 0 1px #808080, inset 0 2px #fff; }
+.wmp-nav-btn { all: unset; --r: 2; box-sizing: border-box; display: flex; align-items: center; gap: 4px; padding: 1px 3px; cursor: default; color: #000; font: 11px Tahoma, sans-serif; }
+.wmp-nav-btn:hover:not(:disabled) { --r: 3; }
+.wmp-nav-btn:disabled { --r: 0; color: #808080; }
+.wmp-nav-btn:active:not(:disabled) .wmp-ni { transform: translate(1px, 1px); }
+.wmp-nav-btn:not(.wmp-link) { margin-right: 9px; }
+.wmp-ni { display: block; width: 24px; height: 22px; background-repeat: no-repeat; background-position: calc(var(--c, 0) * -24px) calc(var(--r, 2) * -22px); }
+.wmp-root.mp .wmp-screen { flex: 1; min-height: 0; margin: 0; border: 0; box-shadow: inset 1px 1px #808080, inset -1px -1px #fff; position: relative; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.wmp-root.mp .wmp-screen .media-video, .wmp-root.mp .wmp-screen .media-visual { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.wmp-root[data-cap=on] .wmp-sub { display: none; }
+.wmp-seekrow { flex: none; height: 19px; padding: 0 2px; display: flex; align-items: center; }
+input.wmp-seek { -webkit-appearance: none; appearance: none; width: 100%; height: 15px; margin: 0; background: transparent; }
+input.wmp-seek::-webkit-slider-runnable-track { height: 7px; border: 0; background: #c0c0c0; box-shadow: inset 0 1px #808080, inset 0 -1px #fff; }
+input.wmp-seek::-webkit-slider-thumb { -webkit-appearance: none; width: 13px; height: 15px; border: 0; background: url(assets/wmp/seek-thumb.png); transform: translateY(-4px); }
+input.wmp-seek::-moz-range-track { height: 7px; border: 0; background: #c0c0c0; box-shadow: inset 0 1px #808080, inset 0 -1px #fff; }
+input.wmp-seek::-moz-range-thumb { width: 13px; height: 15px; border: 0; border-radius: 0; background: url(assets/wmp/seek-thumb.png); }
+.wmp-root.mp .wmp-controls { flex: none; height: 26px; display: flex; align-items: center; padding: 0 1px 0 2px; gap: 0; }
+.wmp-root.mp .wmp-btn { box-sizing: border-box; flex: none; width: 22px; height: 22px; padding: 0; border: 1px solid transparent; background-color: transparent; background-repeat: no-repeat; background-origin: content-box; background-clip: border-box; color: #000; cursor: default; }
+.wmp-root.mp .wmp-btn:hover:not(:disabled) { border-color: #fff #808080 #808080 #fff; }
+.wmp-root.mp .wmp-btn:active:not(:disabled) { border-color: #808080 #fff #fff #808080; background-position-x: calc(var(--x, 0px) + 1px); }
+.wmp-root.mp .wmp-cc { width: 24px; font: bold 10px Tahoma, sans-serif; letter-spacing: -.3px; }
+.wmp-root.mp .wmp-cc:disabled { color: #808080; }
+.wmp-root.mp .wmp-sep { flex: none; width: 2px; height: 21px; margin: 0 5px; box-shadow: inset 1px 0 #808080, inset -1px 0 #fff; }
+.wmp-seek2 { display: none; flex: 1; min-width: 60px; margin: 0 4px; }
+.wmp-root[data-view=minimal] .wmp-seek2 { display: flex; }
+.wmp-root[data-view=minimal] .wmp-seek2 + .wmp-flex { flex: 0; }
+.wmp-vol { display: flex; align-items: center; gap: 4px; margin-left: 4px; }
+.wmp-vol-icon { all: unset; box-sizing: border-box; width: 22px; height: 22px; background-repeat: no-repeat; background-origin: content-box; border: 1px solid transparent; padding: 1px; cursor: default; }
+.wmp-vol-icon:hover { border-color: #fff #808080 #808080 #fff; }
+.wmp-goto { flex: none; height: 29px; padding: 4px 6px; box-sizing: border-box; }
+.wmp-goto-sel { width: 100%; height: 21px; font: 11px Tahoma, sans-serif; }
+.wmp-display { flex: none; height: 74px; box-sizing: border-box; padding: 3px 0; background: #000; color: #fff; box-shadow: inset 1px 1px #808080, inset -1px -1px #fff; }
+.wmp-d-row { display: grid; grid-template-columns: 74px 1fr; gap: 4px; height: 14px; line-height: 14px; white-space: nowrap; overflow: hidden; }
+.wmp-d-row.first { height: 16px; }
+.wmp-d-k { text-align: right; }
+.wmp-root.mp .wmp-d-v { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; background: none; border: 0; padding: 0; margin: 0; color: #fff; font: 11px Tahoma, sans-serif; }
+.wmp-d-rule { height: 1px; margin: 1px 1px 3px; background: #808080; }
+.wmp-captions { flex: none; height: 40px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; padding: 0 8px; overflow: hidden; text-align: center; white-space: pre-wrap; line-height: 1.2; background: #000; color: #fff; border-top: 1px solid #808080; font: 12px Tahoma, sans-serif; }
+.wmp-root.mp .wmp-status { flex: none; height: 23px; box-sizing: border-box; display: flex; align-items: center; gap: 4px; padding: 0 6px 0 4px; background: #000; color: #fff; border-top: 1px solid #808080; white-space: nowrap; }
+.wmp-st-text { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.wmp-st-text::before { content: ""; display: inline-block; vertical-align: middle; width: 20px; height: 20px; margin-right: 4px; background: url(assets/wmp/bmp5212.png) 0 0 no-repeat; }
+.wmp-root.mp .wmp-btn, .wmp-root.mp .wmp-vol-icon { border-color: transparent !important; background-color: transparent !important; box-shadow: none !important; min-width: 0; }
+.wmp-root.mp .wmp-btn:hover:not(:disabled), .wmp-root.mp .wmp-vol-icon:hover { box-shadow: inset 1px 1px #fff, inset -1px -1px #808080 !important; }
+.wmp-root.mp .wmp-btn:active:not(:disabled), .wmp-root.mp .wmp-vol-icon:active { box-shadow: inset 1px 1px #808080, inset -1px -1px #fff !important; }

@@ -1,5 +1,7 @@
 // Turkish strings: ICQ 99b (win98.si port). Accelerator "&" marks are stripped from keys by the loader.
 export const MORE12 = {
+  "Navigation panel": "Gezinti Çubuğu", "Controls panel": "Denetimler", "Display panel": "Görüntü", "Captions panel": "Altyazılar", "Go To panel": "Git Çubuğu", "Status panel": "Durum Çubuğu",
+  "Display": "Görüntü", "Captions": "Altyazılar", "Status Bar": "Durum Çubuğu", "TV Channels...": "TV Kanalları...", "Organize Favorites...": "Sık Kullanılanları Düzenle...", "Add to Favorites...": "Sık Kullanılanlara Ekle...", "Media Guide": "Ortam Rehberi", "Music": "Müzik", "Radio": "Radyo", "TV": "TV",
   "Add Current Page to Links": "Geçerli Sayfayı Bağlantılara Ekle", "Add to Links": "Bağlantılara Ekle", "Stopped": "Durduruldu", "Links": "Bağlantılar", "Previous Snapshot": "Önceki Kayıt", "Next Snapshot": "Sonraki Kayıt", "Compare Years...": "Yılları Karşılaştır...", "Archive": "Arşiv",
   "By Date": "Tarihe Göre", "By Site": "Siteye Göre", "By Most Visited": "En Çok Ziyaret Edilene Göre", "By Order Visited Today": "Bugünkü Ziyaret Sırasına Göre", "Today": "Bugün",
   "Type a word or phrase": "Bir sözcük veya tümce yazın", "New": "Yeni", "Next": "İleri", "Customize": "Özelleştir", "Archive Year": "Arşiv Yılı", "Archive Options...": "Arşiv Seçenekleri...", "Choose Date...": "Tarih Seç...", "Wayback Calendar...": "Wayback Takvimi...", "Share Link (copy to Clipboard)": "Bağlantıyı Paylaş (Panoya Kopyala)", "Sites from the web of 2000": "2000'lerin Web Siteleri", "Wayback Machine": "Wayback Machine",

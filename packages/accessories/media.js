@@ -20,7 +20,8 @@ import {
 } from "../core/index.js";
 import { openChannelList } from "./channel-list.js";
 import { sourceFor, siblingSubtitles, loadSubtitleFile, subtitleFromFile, SUB_RE, loadHls, isHls, parseM3U, fetchPlaylistText, isHlsManifest } from "./media-engine.js";
-import { wmpOpen, wmpAbout, wmpStats, wmpProps, wmpOptions, wmpGoto, wmpAddFavorite, wmpError } from "./wmp-dialogs.js";
+import { wmpOpen, wmpAbout, wmpStats, wmpProps, wmpOptions, wmpGoto, wmpError } from "./wmp-dialogs.js";
+import { ieAddFavorite, ieOrganize } from "../internet/ie-dialogs.js";
 import { RADIO_STATIONS } from "./radio-data.js";
 export function encodeWav(channels, sampleRate) {
   const length = channels[0].length,
@@ -84,7 +85,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
     title: cd ? "CD Player" : "Windows Media Player",
     icon: "media",
     width: 600,
-    height: 455,
+    height: cd ? 455 : 470,
     appId: cd ? "cdplayer" : "mediaplayer",
   });
   let current = path,
@@ -137,7 +138,9 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
       },
       { title: "Stop", "aria-label": "Stop", class: "media-control" },
     ),
-    status = statusBar("Stopped");
+    status = cd ? statusBar("Stopped") : el("div", { class: "wmp-status" }, el("span", { class: "wmp-st-text", text: "Stopped" }), el("span", { class: "wmp-st-time" }));
+  const hist = { back: [], fwd: [] };
+  let capEl = null, afterLoad = () => {}, curEntry, navigating = false;
   video.volume = ctx.settings.get("volume") / 100;
   video.muted = ctx.settings.get("muted");
   const format = (s) =>
@@ -146,12 +149,14 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
       : String(Math.floor(s / 60)).padStart(2, "0") +
         ":" +
         String(Math.floor(s % 60)).padStart(2, "0");
-  const showSub = () => { const t = curSub ? curSub.at(video.currentTime) : ""; if (subEl.textContent !== t) subEl.textContent = t; };
+  const showSub = () => { const t = curSub ? curSub.at(video.currentTime) : ""; if (subEl.textContent !== t) subEl.textContent = t; if (capEl && capEl.textContent !== t) capEl.textContent = t; };
   const addTrack = (t) => { tracks.push(t); curSub = t; showSub(); status.children[0].textContent = "Captions: " + t.name; };
   const entryUrl = (p) => (typeof p === "string" ? (/^https?:\/\//i.test(p) ? p : null) : p?.url || null);
   const entryTitle = (p) => (typeof p === "string" ? p.split("/").pop() : p?.title || p?.url || "");
   const load = async (p, autoplay = false) => {
     const url = entryUrl(p);
+    if (!navigating && curEntry != null && curEntry !== p) { hist.back.push(curEntry); hist.fwd.length = 0; }
+    curEntry = p;
     directUrl = false;
     video.removeAttribute("crossorigin");
     current = url ? null : p;
@@ -195,6 +200,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
       title.textContent + " - " + (cd ? "CD Player" : "Windows Media Player"),
     );
     chList?.refresh();
+    afterLoad();
     if (autoplay) await toggle(true);
   };
   const setupAudio = async () => {
@@ -377,25 +383,35 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
   applyVolume();
   w.addCleanup(ctx.bus.on("settings:change", applyVolume));
   const off = (label, extra = {}) => ({ label, disabled: true, ...extra });
-  let onTop = false, mute = false, viewMode = "standard";
-  const setView = (m) => {
-    viewMode = m;
-    const r = w.el.querySelector(".wmp-root");
-    if (r) r.dataset.view = m;
-    if (!w.el.classList.contains("maximized")) w.el.style.height = (m === "standard" ? 455 : m === "compact" ? 385 : 335) + "px";
+  const MODES = {
+    standard: { nav: true, controls: true, display: true, captions: false, goto: true, status: true },
+    compact: { nav: false, controls: true, display: false, captions: false, goto: false, status: true },
+    minimal: { nav: false, controls: true, display: false, captions: false, goto: false, status: false },
   };
+  let onTop = false, mute = false, viewMode = ctx.settings.get("wmpMode") || "standard";
+  let panels = { ...MODES[viewMode], ...(ctx.settings.get("wmpPanels") || {}) };
+  let layoutHook = null;
+  const setView = (m, p) => layoutHook?.(m, p || MODES[m]);
+  const togglePanel = (k) => layoutHook?.(viewMode, { ...panels, [k]: !panels[k] });
   // ---- menus, context menu and accelerators come from the msdxm.ocx resources (assets/wmp/menus2.json) ----
-  const favorites = () => ctx.settings.get("wmpFavorites") || [];
+  const favorites = () => ctx.settings.get("favorites") || [];
+  const mediaFavs = () => favorites().filter((f) => f.media);
+  const favFolders = () => [...new Set(["Media", ...(ctx.settings.get("favFolders") || []), ...favorites().map((f) => f.folder).filter(Boolean)])];
+  const organize = () => ieOrganize(ctx, { get: favorites, set: (v) => ctx.settings.set("favorites", v), folders: favFolders, setFolders: (v) => ctx.settings.set("favFolders", v), open: (u) => { const f = favorites().find((x) => x.url === u); if (f?.media) playFav(f); } });
+  const playFav = async (f) => { const it = f.media; if (it === "@welcome") return ctx.launch("mediaplayer"); playlist.push(it); index = playlist.length - 1; await load(it, true); };
   let zoom = 100;
   const setZoom = (z) => { zoom = z; video.style.transform = z === 100 ? "" : `scale(${z / 100})`; };
-  const hist = { back: [], fwd: [] };
   const saveAs = () => {
     if (!current || !ctx.fs.exists(current)) return;
     const n = ctx.fs.stat(current);
     const a = el("a", { href: n.content, download: n.name }); a.click();
   };
   const goTo = () => wmpGoto(ctx, playlist.length ? playlist.map(entryTitle) : [title.textContent], Math.max(index, 0), async (i) => { if (!playlist.length) return toggle(true); index = i; await load(playlist[i], true); });
-  const addFavorite = () => wmpAddFavorite(ctx, title.textContent, (name) => ctx.settings.set("wmpFavorites", [...favorites(), { name, item: playlist[index] ?? current }]));
+  const addFavorite = () => {
+    const it = playlist[index] ?? current ?? "@welcome";
+    const loc = entryUrl(it) || (typeof it === "string" ? it : it.path || it.url || title.textContent);
+    ieAddFavorite(ctx, { name: title.textContent, folders: favFolders(), onOk: (name, folder) => ctx.settings.set("favorites", [...favorites(), { title: name, url: String(loc), media: typeof it === "string" ? it : (entryUrl(it) || loc), folder: folder || "Media" }]) });
+  };
   const props = () => {
     const n = current && ctx.fs.exists(current) ? ctx.fs.stat(current) : null;
     wmpProps(ctx, { name: n?.name || title.textContent, type: n?.mime || "Wave Sound", size: n?.size ? n.size + " bytes" : "", length: format(video.duration), videoSize: video.videoWidth ? video.videoWidth + " x " + video.videoHeight : "" });
@@ -403,6 +419,15 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
   const closeClip = () => { video.pause(); video.removeAttribute("src"); video.load(); current = null; tracks = []; curSub = null; subEl.textContent = ""; };
   const volStep = (d) => ctx.settings.set("volume", Math.max(0, Math.min(100, (ctx.settings.get("volume") ?? 65) + d)));
   const openDlg = () => wmpOpen(ctx, (v) => openAny(v), async (dlg) => { dlg.close(); await importMedia(); });
+  const M = { guide: "http://www.windowsmedia.com/", music: "http://www.windowsmedia.com/music/" };
+  const histGo = async (from, to) => {
+    const e = from.pop();
+    if (e == null) return;
+    if (curEntry != null) to.push(curEntry);
+    const i = playlist.indexOf(e); if (i >= 0) index = i;
+    navigating = true;
+    try { await load(e, true); } finally { navigating = false; }
+  };
   const A = {
     open: { run: openDlg }, close: { run: closeClip, off: () => !current && !entryUrl(playlist[index]) }, saveas: { run: saveAs, off: () => !current || !ctx.fs.exists(current) }, exit: { run: () => w.close() },
     props: { run: props }, stats: { run: () => wmpStats(ctx, video) }, options: { run: () => wmpOptions(ctx, { onTop }, (st) => (onTop = !!st.onTop)) },
@@ -417,10 +442,12 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
     radio: { run: () => showRadio() }, help: { run: () => ctx.launch("help", { topic: "media" }) }, about: { run: () => wmpAbout(ctx) },
     upgrade: { run: () => ctx.dialogs.message("You already have the most recent version of Windows Media Player installed.", { title: "Windows Media Player", icon: "info" }) },
     errdetails: { run: () => wmpError(ctx, { message: status.children[0].textContent, details: `Clip: ${title.textContent}\nLocation: ${entryUrl(playlist[index]) || current || "(none)"}` }) },
-    back: { run: () => { const h = hist.back.pop(); if (h != null) { hist.fwd.push(index); index = h; load(playlist[index], true); } }, off: () => !hist.back.length },
-    fwd: { run: () => { const h = hist.fwd.pop(); if (h != null) { hist.back.push(index); index = h; load(playlist[index], true); } }, off: () => !hist.fwd.length },
+    back: { run: () => histGo(hist.back, hist.fwd), off: () => !hist.back.length },
+    fwd: { run: () => histGo(hist.fwd, hist.back), off: () => !hist.fwd.length },
+    guide: { run: () => ctx.launch("ie", { url: M.guide }) }, music: { run: () => ctx.launch("ie", { url: M.music }) }, home: { run: () => ctx.launch("ie", { url: "http://www.windowsmedia.com/" }) },
+    tv: { run: () => showChannels() },
   };
-  const BY_ID = { 3009: "open", 3022: "close", 3010: "saveas", 1010: "saveas", 3008: "exit", 3036: "props", 1009: "props", 3061: "stats", 3209: "stats", 3031: "options", 1007: "options", 3044: "std", 3045: "compact", 3046: "min", 3042: "full", 3203: "full", 3039: "z50", 3200: "z50", 3040: "z100", 3201: "z100", 3041: "z200", 3202: "z200", 3032: "top", 3047: "play", 3204: "play", 3048: "stop", 1002: "stop", 3049: "skipback", 3205: "skipback", 3050: "skipfwd", 3206: "skipfwd", 3051: "rewind", 1004: "rewind", 3052: "ff", 1003: "ff", 3054: "goto", 3208: "goto", 3055: "volup", 3213: "volup", 3056: "voldown", 3214: "voldown", 3057: "mute", 3215: "mute", 129: "radio", 3062: "help", 3035: "about", 1008: "about", 3064: "upgrade", 3216: "errdetails", 125: "back", 126: "fwd" };
+  const BY_ID = { 3009: "open", 3022: "close", 3010: "saveas", 1010: "saveas", 3008: "exit", 3036: "props", 1009: "props", 3061: "stats", 3209: "stats", 3031: "options", 1007: "options", 3044: "std", 3045: "compact", 3046: "min", 3042: "full", 3203: "full", 3039: "z50", 3200: "z50", 3040: "z100", 3201: "z100", 3041: "z200", 3202: "z200", 3032: "top", 3047: "play", 3204: "play", 3048: "stop", 1002: "stop", 3049: "skipback", 3205: "skipback", 3050: "skipfwd", 3206: "skipfwd", 3051: "rewind", 1004: "rewind", 3052: "ff", 1003: "ff", 3054: "goto", 3208: "goto", 3055: "volup", 3213: "volup", 3056: "voldown", 3214: "voldown", 3057: "mute", 3215: "mute", 129: "radio", 127: "guide", 128: "music", 150: "home", 3062: "help", 3035: "about", 1008: "about", 3064: "upgrade", 3216: "errdetails", 125: "back", 126: "fwd" };
   const handle = (id, it, ctxMenu) => {
     if (it.label.replace("&", "") === "Captions") return { submenu: capMenu };
     const a = A[ctxMenu && id === 3003 ? "help" : BY_ID[id]];
@@ -431,6 +458,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
     const out = [];
     for (const it of items) {
       if (it.sep) { if (out.length && !out.at(-1).separator) out.push(separator()); continue; }
+      if (it.sub && it.label === "Settings") { out.push({ label: "Settings", submenu: [["nav", "Navigation panel"], ["controls", "Controls panel"], ["display", "Display panel"], ["captions", "Captions panel"], ["goto", "Go To panel"], ["status", "Status panel"]].map(([k, l]) => ({ label: l, checked: !!panels[k], action: () => togglePanel(k) })) }); continue; }
       if (it.sub) { const sub = build(it.sub, ctxMenu); out.push(sub.some((s) => s.label && !s.disabled) ? { label: it.label, submenu: sub } : { label: it.label, disabled: true }); continue; }
       const r = handle(it.id, it, ctxMenu);
       if (r?.submenu) { out.push({ label: it.label, submenu: r.submenu }); continue; }
@@ -456,8 +484,11 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
   const menuTree = Object.fromEntries(Object.entries(await (await fetch("/assets/wmp/menus2.json")).json()).map(([k, v]) => [k, strip(v)]));
   const mainMenu = {};
   for (const top of menuTree["9102"]) mainMenu[top.label] = () => build(top.sub, false);
-  mainMenu["Favorites"] = () => [{ label: "Add to Favorites...", action: addFavorite }, separator(), ...(favorites().length ? favorites().map((f) => ({ label: f.name, action: async () => { playlist.push(f.item); index = playlist.length - 1; await load(f.item, true); } })) : [{ label: "(Empty)", disabled: true }])];
-  mainMenu["Go"] = () => build(menuTree["9102"].find((t) => t.label === "Go").sub, false).map((m) => (/Media Guide|Music|Windows Media Player Home/.test(m.label || "") ? { ...m, disabled: true } : m));
+  mainMenu["Favorites"] = () => {
+    const fo = favFolders().map((n) => ({ label: n, submenu: mediaFavs().filter((f) => (f.folder || "Media") === n).map((f) => ({ label: f.title, action: () => playFav(f) })) })).filter((m) => m.submenu.length);
+    return [{ label: "Add to Favorites...", action: addFavorite }, { label: "Organize Favorites...", action: organize }, separator(), ...(fo.length ? fo : [{ label: "(Empty)", disabled: true }])];
+  };
+  mainMenu["Go"] = () => { const m = build(menuTree["9102"].find((t) => t.label === "Go").sub, false); const r = m.findIndex((x) => x.label === "Radio"); m.splice(r + 1, 0, { label: "TV Channels...", action: () => showChannels() }); return m; };
   w.setMenu(mainMenu);
   w.el.addEventListener("contextmenu", (e) => {
     if (!e.target.closest(".wmp-screen")) return;
@@ -536,12 +567,14 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
       status,
     );
     } else {
-  const spr = (n, i, dis) => ({ backgroundImage: `url(assets/wmp/bmp${n}.png)`, backgroundPosition: `-${i * 20}px 0` });
+  // ---- Windows Media Player 6.4 layout: menu, navigation bar, screen, seek bar, controls, Go To bar, display, captions, status ----
+  const used = (p, m) => (p.nav ? 24 : 0) + (p.controls ? 26 + (m === "minimal" ? 0 : 19) : 0) + (p.goto ? 29 : 0) + (p.display ? 74 : 0) + (p.captions ? 40 : 0) + (p.status ? 23 : 0);
+  const sprite = (url, x, y) => ({ backgroundImage: `url(${url})`, backgroundPosition: `-${x}px -${y}px` });
   const wbs = [];
   const wb = (i, titleText, fn) => {
-    const b = el("button", { class: "wmp-btn", title: titleText, "aria-label": titleText, onclick: fn });
+    const b = el("button", { class: "wmp-btn", type: "button", title: titleText, "aria-label": titleText, onclick: fn });
     b.dataset.i = i;
-    Object.assign(b.style, spr(5208, i));
+    Object.assign(b.style, sprite("assets/wmp/bmp5208.png", i * 20, 0));
     wbs.push(b);
     return b;
   };
@@ -553,7 +586,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
   const sync = () => {
     const idle = video.paused && !video.currentTime;
     logo.hidden = !idle;
-    const off = { 1: video.paused, 2: idle, 3: false, 4: idle, 5: idle, 6: playlist.length < 2 };
+    const off = { 1: video.paused, 2: idle, 3: false, 4: idle, 5: idle, 6: playlist.length < 2, 7: true };
     for (const b of wbs) {
       const i = +b.dataset.i, dis = !!off[i];
       b.disabled = dis;
@@ -563,10 +596,41 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
   };
   video.addEventListener("play", sync);
   video.addEventListener("pause", sync);
-  const info = (k, v) => el("div", { class: "wmp-info-row" }, el("span", { class: "wmp-info-k", text: k }), el("span", { class: "wmp-info-v" }, v));
+  // navigation bar: Back / Forward (bmp116 cells 24x22: rows grey, outline, colour, hot) and the Radio / TV / Music / Media Guide links
+  const navCell = (img) => el("span", { class: "wmp-ni", style: { backgroundImage: `url(${img})` } });
+  const navButtons = [];
+  const navBtn = (img, col, label, fn, { text, tip, off } = {}) => {
+    const b = el("button", { class: "wmp-nav-btn" + (text ? " wmp-link" : ""), type: "button", title: tip || label, "aria-label": label, onclick: fn }, navCell(img), text ? el("span", { text }) : null);
+    b.style.setProperty("--c", col);
+    b.off = off;
+    navButtons.push(b);
+    return b;
+  };
+  const navSync = () => {
+    for (const b of navButtons) {
+      const dis = !!b.off?.();
+      b.disabled = dis;
+    }
+  };
+  const nav = el("div", { class: "wmp-nav" },
+    navBtn("assets/wmp/bmp116.png", 0, "Back", () => A.back.run(), { off: A.back.off }),
+    navBtn("assets/wmp/bmp116.png", 1, "Forward", () => A.fwd.run(), { off: A.fwd.off }),
+    el("span", { class: "wmp-flex" }),
+    navBtn("assets/wmp/bmp116.png", 4, "Radio", () => A.radio.run(), { text: "Radio", tip: "Radio Tuner (Ctrl+F)" }),
+    navBtn("assets/wmp/tv.png", 0, "TV", () => A.tv.run(), { text: "TV", tip: "TV Channels" }),
+    navBtn("assets/wmp/bmp116.png", 3, "Music", () => A.music.run(), { text: "Music" }),
+    navBtn("assets/wmp/bmp116.png", 2, "Media Guide", () => A.guide.run(), { text: "Media Guide", tip: "Media Guide (Ctrl+Home)" }),
+  );
+  // seek bars: one above the controls, one inside them in the Minimal view
+  const seek2 = el("input", { type: "range", min: 0, max: 1000, value: 0, "aria-label": "Playback position", class: "wmp-seek" });
+  seek.className = "wmp-seek";
+  seek2.addEventListener("input", () => { seek.value = seek2.value; seek.dispatchEvent(new Event("input")); });
+  video.addEventListener("timeupdate", () => (seek2.value = seek.value));
+  const seekRow = el("div", { class: "wmp-seekrow" }, seek);
+  // volume: speaker (mute) + triangle
   const vol = el("div", { class: "wmp-vol" });
-  const volImg = el("div", { class: "wmp-vol-icon" });
-  Object.assign(volImg.style, { backgroundImage: "url(assets/wmp/bmp5212.png)", backgroundPosition: "0 0" });
+  const volImg = el("button", { class: "wmp-vol-icon", type: "button", title: "Mute", "aria-label": "Mute" });
+  Object.assign(volImg.style, sprite("assets/wmp/bmp5212.png", 0, 0));
   volImg.onclick = () => ctx.settings.set("muted", !ctx.settings.get("muted"));
   const tri = el("div", { class: "wmp-tri" }), knob = el("div", { class: "wmp-knob" });
   tri.append(knob);
@@ -584,35 +648,65 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
   w.addCleanup(ctx.bus.on("settings:change", syncKnob));
   syncKnob();
   vol.append(volImg, tri);
-  const syncMute = () => (volImg.style.backgroundPosition = ctx.settings.get("muted") ? "-40px 0" : "0 0");
+  const syncMute = () => (volImg.style.backgroundPosition = ctx.settings.get("muted") ? "-20px 0" : "0 0");
   w.addCleanup(ctx.bus.on("settings:change", syncMute));
   syncMute();
-  seek.className = "wmp-seek";
-  w.setContent(
-    el("div", { class: "wmp-root", "data-view": "standard" },
-      el("div", { class: "wmp-screen" }, video, visual, logo, subEl),
-      el("div", { class: "wmp-seekrow" }, seek),
-      el("div", { class: "wmp-controls" },
-        wmpPlay,
-        wmpPause,
-        wb(2, "Stop", () => { video.pause(); video.currentTime = 0; sync(); }),
-        el("span", { class: "wmp-sep" }),
-        wb(3, "Skip Back", skipBack),
-        wb(4, "Rewind", () => (video.currentTime = Math.max(0, video.currentTime - 5))),
-        wb(5, "Fast Forward", () => (video.currentTime = Math.min(video.duration || 0, video.currentTime + 5))),
-        wb(6, "Skip Forward", skipFwd),
-        el("span", { class: "wmp-flex" }),
-        el("button", { class: "wmp-txtbtn", type: "button", title: "Channel list", onclick: showChannels, text: "TV" }),
-        el("button", { class: "wmp-txtbtn", type: "button", title: "Captions", text: "CC", onclick: (e) => { const r = e.currentTarget.getBoundingClientRect(); popup(capMenu(), r.left, r.top - 4, {}); } }),
-        vol,
-      ),
-      el("div", { class: "wmp-info" }, info("Show:", ""), info("Clip:", (title.className = "wmp-clip", title)), info("Author:", ""), info("Copyright:", "")),
-    ),
-    status,
+  const ccBtn = el("button", { class: "wmp-btn wmp-cc", type: "button", title: "Captions", "aria-label": "Captions", text: "CC", onclick: (e) => { const r = e.currentTarget.getBoundingClientRect(); popup(capMenu(), r.left, r.top - 4, {}); } });
+  const controls = el("div", { class: "wmp-controls" },
+    wmpPlay, wmpPause,
+    wb(2, "Stop", () => { video.pause(); video.currentTime = 0; sync(); }),
+    el("i", { class: "wmp-sep" }),
+    wb(3, "Skip Back", skipBack), wb(4, "Rewind", () => (video.currentTime = Math.max(0, video.currentTime - 5))), wb(5, "Fast Forward", () => (video.currentTime = Math.min(video.duration || 0, video.currentTime + 5))), wb(6, "Skip Forward", skipFwd),
+    el("i", { class: "wmp-sep" }),
+    wb(7, "Preview", () => {}),
+    el("i", { class: "wmp-sep" }),
+    el("span", { class: "wmp-seek2" }, seek2),
+    el("span", { class: "wmp-flex" }),
+    ccBtn,
+    vol,
   );
-  status.children[1] && (status.children[1].textContent = "");
-  video.addEventListener("timeupdate", () => status.children[1] && (status.children[1].textContent = time.textContent));
-  sync();
+  // Go To bar: the clips of the play list / channel list
+  const gotoSel = el("select", { "aria-label": "Go To", class: "wmp-goto-sel" });
+  gotoSel.addEventListener("change", async () => { const i = gotoSel.selectedIndex; if (playlist.length && i >= 0) { index = i; await load(playlist[i], true); } });
+  const gotoBar = el("div", { class: "wmp-goto" }, gotoSel);
+  // display (Show / Clip / Author / Copyright) and captions panels: white on black
+  const showEl = el("span", { class: "wmp-d-v" }), authorEl = el("span", { class: "wmp-d-v" }), copyEl = el("span", { class: "wmp-d-v" });
+  title.className = "wmp-d-v";
+  const drow = (k, v, cls = "") => el("div", { class: "wmp-d-row " + cls }, el("span", { class: "wmp-d-k", text: k }), v);
+  const display = el("div", { class: "wmp-display" }, drow("Show:", showEl, "first"), el("div", { class: "wmp-d-rule" }), drow("Clip:", title), drow("Author:", authorEl), drow("Copyright:", copyEl));
+  capEl = el("div", { class: "wmp-captions", "aria-label": "Captions" });
+  const syncInfo = () => {
+    const e = playlist[index];
+    showEl.textContent = (e && typeof e === "object" && e.group) || (current ? basename(current).replace(/\.[^.]*$/, "") : title.textContent.split(" — ")[0]);
+    gotoSel.replaceChildren(...(playlist.length ? playlist.map((p, i) => el("option", { value: i, text: entryTitle(p), selected: i === index })) : [el("option", { text: title.textContent })]));
+    gotoSel.disabled = !playlist.length;
+    navSync();
+  };
+  afterLoad = syncInfo;
+  const root = el("div", { class: "wmp-root mp", "data-view": viewMode },
+    nav,
+    el("div", { class: "wmp-screen" }, video, visual, logo, subEl),
+    seekRow, controls, gotoBar, display, capEl, status,
+  );
+  const panelEls = { nav, controls, goto: gotoBar, display, captions: capEl, status };
+  const apply = () => {
+    root.dataset.view = viewMode;
+    root.dataset.cap = panels.captions ? "on" : "";
+    for (const [k, e] of Object.entries(panelEls)) e.hidden = !panels[k];
+    seekRow.hidden = !panels.controls || viewMode === "minimal";
+  };
+  layoutHook = (m, p) => {
+    const before = used(panels, viewMode);
+    viewMode = m; panels = { ...p };
+    ctx.settings.set("wmpMode", m); ctx.settings.set("wmpPanels", panels);
+    apply();
+    if (!w.el.classList.contains("maximized")) w.el.style.height = Math.max(120, w.el.offsetHeight + used(panels, m) - before) + "px";
+  };
+  w.setContent(root);
+  video.addEventListener("timeupdate", () => { status.children[1].textContent = time.textContent; });
+  apply(); sync(); syncInfo();
+  // start in the remembered view: the window was created for the Standard layout
+  if (used(panels, viewMode) !== used(MODES.standard, "standard")) w.el.style.height = Math.max(120, 470 + used(panels, viewMode) - used(MODES.standard, "standard")) + "px";
   }
   w.addCleanup(() => {
     cancelAnimationFrame(raf);

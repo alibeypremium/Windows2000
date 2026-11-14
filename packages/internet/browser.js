@@ -385,6 +385,7 @@ export function openInternetExplorer(ctx, { url = null, path = null, year = null
     ];
   // A favourite remembers the archive date it was saved at, so it opens that very year/day again.
   const openFav = (f) => {
+    if (f.media) { ctx.launch("mediaplayer", f.media === "@welcome" ? {} : { path: f.media }); return; }
     if (f.wb && /^https?:/i.test(f.url)) { const d = String(f.wb); wbYear = d.slice(0, 4); wbStamp = d.length >= 8 ? d.slice(0, 8) : ""; ctx.settings.set("ieArchive", true); }
     navigate(f.url);
   };
