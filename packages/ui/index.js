@@ -264,7 +264,7 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeMenus();
 });
 let ctxMenu = null;
-export function popup(items, x, y, { parent = null, anchor = null } = {}) {
+export function popup(items, x, y, { parent = null, anchor = null, shift = false } = {}) {
   if (!parent) closeMenus();
   const menu = el("div", { class: "popup-menu", role: "menu", tabindex: -1 });
   let child = null;
@@ -382,10 +382,16 @@ export function popup(items, x, y, { parent = null, anchor = null } = {}) {
   document.querySelector("#menu-layer").append(menu);
   menuRoots.push(menu);
   const r = menu.getBoundingClientRect();
+  // Like Windows: a menu that does not fit opens to the other side of the pointer (above / to the left of it) instead of sliding
+  // under the cursor; only sub-menus and menus flagged `shift` are simply moved back onto the screen.
   if (x + r.width > innerWidth)
     x = parent
       ? Math.max(0, x - r.width - parent.offsetWidth + 7)
-      : innerWidth - r.width - 2;
+      : shift ? innerWidth - r.width - 2 : (x - r.width >= 0 ? x - r.width : innerWidth - r.width - 2);
+  if (!parent && !shift && y + r.height > innerHeight - 3) {
+    const top = anchor ? anchor.getBoundingClientRect().top : y;
+    if (top - r.height >= 0) y = top - r.height;
+  }
   y = Math.max(0, Math.min(y, innerHeight - r.height - 3));
   menu.style.left = Math.max(0, x) + "px";
   menu.style.top = y + "px";

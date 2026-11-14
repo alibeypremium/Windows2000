@@ -74,9 +74,13 @@ const say = (k) => pick(SAY[k][getLang() === "tr" ? "tr" : "en"]);
 // Animations that make sense to offer in the menu (the engine plays the rest, e.g. Idle*, Look*, itself).
 const hidden = (n) => /^(Idle|Look|Show|Hide|RestPose|Hearing|Speaking|Moving|Blink|Think|Deep|Reading|Writing)/i.test(n) && !/^(Thinking|Writing|Reading)$/.test(n);
 
-const DEF = { char: "Clippit", visible: false, x: null, y: null, scale: 1, sound: true, tts: false, chatter: false };
+const DEF = { v: 2, char: "Clippit", visible: true, x: null, y: null, scale: 1, sound: true, tts: false, chatter: true };
 let agent = null, curId = null, ctxRef = null, busy = false, chatTimer = 0, gallery = null;
-const S = (ctx) => Object.assign({}, DEF, ctx.settings.get("agent") || {});
+// v2: Clippit is on the desktop by default with tips switched on; settings saved by the first version are upgraded once.
+const S = (ctx) => {
+  const st = ctx.settings.get("agent") || {};
+  return st.v === DEF.v ? Object.assign({}, DEF, st) : Object.assign({}, DEF, st, { v: DEF.v, visible: true, chatter: true, x: null, y: null });
+};
 const save = (ctx, patch) => ctx.settings.set("agent", Object.assign(S(ctx), patch));
 const taskbarH = () => parseInt(getComputedStyle(document.documentElement).getPropertyValue("--taskbar-height")) || 28;
 
@@ -124,6 +128,7 @@ async function load(ctx, id) {
   a.audioManager?.setEnabled?.(!!st.sound);
   a.on("contextmenu", (e) => openMenu(ctx, e.x, e.y));
   a.on("click", () => { if (!a.requestQueue?.activeRequestId) { if (Math.random() < 0.5) speak(ctx, say("tips")); else a.animate(); } });
+  a.renderer.canvas.addEventListener("dblclick", () => openGallery(ctx));
   a.on("dragend", () => { const o = a.core.options; save(ctx, { x: Math.round(o.x), y: Math.round(o.y) }); });
   return a;
 }
@@ -158,7 +163,7 @@ export async function dismiss(ctx) {
 
 /** Called once the desktop is up: bring the assistant back if it was on screen when the session ended. */
 export function restoreAgent(ctx) {
-  if (S(ctx).visible) setTimeout(() => summon(ctx, S(ctx).char, { greet: false }), 1500);
+  if (S(ctx).visible) setTimeout(() => summon(ctx, S(ctx).char, { greet: true }), 1500);
 }
 
 function openGallery(ctx) {

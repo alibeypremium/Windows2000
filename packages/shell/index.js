@@ -1184,7 +1184,7 @@ export class DesktopShell {
         b.classList.add("selected");
         if (item.submenu) {
           const r = b.getBoundingClientRect();
-          child = popup(item.submenu, r.right - 4, r.top - 3);
+          child = popup(item.submenu, r.right - 4, r.top - 3, { shift: true });
         }
       };
       b.addEventListener("pointerenter", openChild);
