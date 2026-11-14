@@ -105,6 +105,13 @@ export const btn = (
       style: at(x, y, w, h),
     },
   );
+  // Translated captions can be longer than the template width: grow the button and keep it inside its dialog.
+  b.style.width = "auto"; b.style.minWidth = w + "px"; b.style.whiteSpace = "nowrap"; b.style.paddingInline = "6px";
+  requestAnimationFrame(() => {
+    const p = b.parentElement; if (!p || b.offsetWidth <= w + 1) return;
+    const over = b.offsetLeft + b.offsetWidth - (p.clientWidth - 4);
+    if (over > 0) b.style.left = Math.max(2, b.offsetLeft - over) + "px";
+  });
   return b;
 };
 

@@ -1,5 +1,6 @@
 // Turkish strings: ICQ 99b (win98.si port). Accelerator "&" marks are stripped from keys by the loader.
 export const MORE12 = {
+  "Advanced >>": "Gelişmiş >>", "<< Advanced": "<< Gelişmiş",
   "Navigation panel": "Gezinti Çubuğu", "Controls panel": "Denetimler", "Display panel": "Görüntü", "Captions panel": "Altyazılar", "Go To panel": "Git Çubuğu", "Status panel": "Durum Çubuğu",
   "Display": "Görüntü", "Captions": "Altyazılar", "Status Bar": "Durum Çubuğu", "TV Channels...": "TV Kanalları...", "Organize Favorites...": "Sık Kullanılanları Düzenle...", "Add to Favorites...": "Sık Kullanılanlara Ekle...", "Media Guide": "Ortam Rehberi", "Music": "Müzik", "Radio": "Radyo", "TV": "TV",
   "Add Current Page to Links": "Geçerli Sayfayı Bağlantılara Ekle", "Add to Links": "Bağlantılara Ekle", "Stopped": "Durduruldu", "Links": "Bağlantılar", "Previous Snapshot": "Önceki Kayıt", "Next Snapshot": "Sonraki Kayıt", "Compare Years...": "Yılları Karşılaştır...", "Archive": "Arşiv",

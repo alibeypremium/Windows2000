@@ -1,17 +1,35 @@
 // Radio presets for the Windows Media Player "Radio" page. Addresses are public internet streams
 // (HLS or plain MP3/AAC); availability depends on the broadcaster.
 export const RADIO_STATIONS = [
-  { title: "TRT Radyo 1", group: "Türkiye", url: "https://radio-trt1.live.trt.com.tr/master_720.m3u8" },
-  { title: "TRT FM", group: "Türkiye", url: "https://radio-trtfm.live.trt.com.tr/master_720.m3u8" },
-  { title: "TRT Radyo 3", group: "Türkiye", url: "https://radio-trt3.live.trt.com.tr/master_720.m3u8" },
-  { title: "TRT Nağme", group: "Türkiye", url: "https://radio-trtnagme.live.trt.com.tr/master_720.m3u8" },
-  { title: "TRT Radyo Haber", group: "Haber", url: "https://radio-trthaber.live.trt.com.tr/master_720.m3u8" },
-  { title: "BBC World Service", group: "Haber", url: "https://stream.live.vc.bbcmedia.co.uk/bbc_world_service" },
-  { title: "Radio Paradise", group: "Müzik", url: "https://stream.radioparadise.com/mp3-192" },
-  { title: "Radio Paradise Mellow", group: "Müzik", url: "https://stream.radioparadise.com/mellow-192" },
-  { title: "KEXP 90.3 Seattle", group: "Müzik", url: "https://kexp.streamguys1.com/kexp160.aac" },
-  { title: "SomaFM Groove Salad", group: "Elektronik", url: "https://ice1.somafm.com/groovesalad-128-mp3" },
-  { title: "SomaFM Drone Zone", group: "Elektronik", url: "https://ice1.somafm.com/dronezone-128-mp3" },
-  { title: "SomaFM Secret Agent", group: "Elektronik", url: "https://ice1.somafm.com/secretagent-128-mp3" },
-  { title: "SomaFM Sonic Universe", group: "Caz", url: "https://ice1.somafm.com/sonicuniverse-128-mp3" },
+  { title: "SomaFM Underground 80s", group: "80'ler", url: "https://ice1.somafm.com/u80s-128-mp3" },
+  { title: "80s80s", group: "80'ler", url: "https://streams.80s80s.de/web/mp3-192/streams.80s80s.de/" },
+  { title: "90s90s", group: "90'lar", url: "https://streams.90s90s.de/web/mp3-192/streams.90s90s.de/" },
 ].map((s) => ({ ...s, live: true }));
+
+// Live directory (Radio Browser, community-maintained, CORS-enabled): the most listened https/MP3 stations tagged 80s, 90s and 2000s.
+const HOSTS = ["de1", "fi1", "at1"];
+const TAGS = [["80s", "80'ler"], ["90s", "90'lar"], ["2000s", "2000'ler"]];
+async function rb(tag, limit) {
+  for (const h of HOSTS) {
+    try {
+      const r = await fetch(`https://${h}.api.radio-browser.info/json/stations/search?tag=${tag}&order=clickcount&reverse=true&limit=${limit}&hidebroken=true&is_https=true&codec=MP3`);
+      if (r.ok) return await r.json();
+    } catch { /* try next mirror */ }
+  }
+  return [];
+}
+export async function fetchDecadeStations(perTag = 8) {
+  const out = [], seen = new Set();
+  for (const [tag, group] of TAGS) {
+    const list = await rb(tag, perTag * 3);
+    let n = 0;
+    for (const x of list) {
+      const title = String(x.name || "").trim().replace(/\s+/g, " ");
+      const url = x.url_resolved || x.url;
+      if (!title || !url || !/^https:/i.test(url) || seen.has(title.toLowerCase())) continue;
+      seen.add(title.toLowerCase()); out.push({ title, group, url, live: true });
+      if (++n >= perTag) break;
+    }
+  }
+  return out;
+}

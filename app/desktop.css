@@ -6934,3 +6934,6 @@ input.wmp-seek::-moz-range-thumb { width: 13px; height: 15px; border: 0; border-
 .wmp-tb { all: unset; box-sizing: border-box; width: 24px; height: 24px; background: url("/assets/wmp/bmp60.png") no-repeat calc(var(--c, 0) * -20px + 2px) 2px; cursor: default; }
 .wmp-tb:hover { background-image: url("/assets/wmp/bmp62.png"); box-shadow: inset 1px 1px #fff, inset -1px -1px #808080; }
 .wmp-tb:active { box-shadow: inset 1px 1px #808080, inset -1px -1px #fff; }
+
+.vlc-ch .vlc-pl-row.sel { background: #0a246a; color: #fff; }
+.vlc-ch .vlc-pl-row.sel .d { color: #fff; }

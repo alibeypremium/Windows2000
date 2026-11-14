@@ -22,7 +22,7 @@ import { openChannelList } from "./channel-list.js";
 import { sourceFor, siblingSubtitles, loadSubtitleFile, subtitleFromFile, SUB_RE, loadHls, isHls, parseM3U, fetchPlaylistText, isHlsManifest } from "./media-engine.js";
 import { wmpOpen, wmpAbout, wmpStats, wmpProps, wmpOptions, wmpGoto, wmpError } from "./wmp-dialogs.js";
 import { ieAddFavorite, ieOrganize } from "../internet/ie-dialogs.js";
-import { RADIO_STATIONS } from "./radio-data.js";
+import { RADIO_STATIONS, fetchDecadeStations } from "./radio-data.js";
 export function encodeWav(channels, sampleRate) {
   const length = channels[0].length,
     count = channels.length,
@@ -468,7 +468,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
     return out;
   };
   // ---- Radio (Go > Radio, Ctrl+F): preset stations plus your own .m3u address ----
-  let radio = null, radioIdx = -1;
+  let radio = null, radioIdx = -1, radioLoaded = false;
   const stations = RADIO_STATIONS.map((x) => ({ ...x }));
   const showRadio = () => {
     if (radio && !radio.win.closed) { radio.win.focus(); return; }
@@ -478,6 +478,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
       loadUrl: async (v) => { try { const items = parseM3U(await fetchPlaylistText(v), "", () => false); items.forEach((e) => stations.push({ ...e, group: e.group || "Benim İstasyonlarım", live: true })); radio?.refresh(); } catch (e) { ctx.dialogs.message(`The station list '${v}' could not be read.\n\n${e?.message || e}`, { title: "Windows Media Player", icon: "error" }); } },
       onClose: () => { radio = null; },
     });
+    if (!radioLoaded) { radioLoaded = true; fetchDecadeStations().then((l) => { if (!l.length) { radioLoaded = false; return; } const mine = stations.filter((x) => x.group === "Benim İstasyonlarım"); stations.splice(0, stations.length, ...l, ...mine); radio?.refresh(); }); }
   };
   w.addCleanup(() => { if (radio && !radio.win.closed) radio.win.close(); });
   const strip = (items) => items.map((i) => ({ ...i, label: i.label?.replace(/&/g, ""), ...(i.sub ? { sub: strip(i.sub) } : {}) }));

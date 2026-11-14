@@ -15,7 +15,7 @@ import { MORE10 } from "./more10.js";
 import { MORE11, RULES11 } from "./more11.js";
 import { MORE12, RULES12 } from "./more12.js";
 const nk = (k) => k.replace(/&(?=[A-Za-z0-9])/g, "").trim();
-export const DICT = new Map(Object.entries({ ...CORE, ...APPS1, ...APPS2, ...MORE, ...MORE1, ...MORE2, ...MORE3, ...MORE4, ...MORE5, ...MORE6, ...MORE7, ...MORE8, ...MORE9, ...MORE10, ...MORE11, ...MORE12 }).map(([k, v]) => [nk(k), v]));
+export const DICT = new Map(Object.entries({ ...CORE, ...APPS1, ...APPS2, ...MORE, ...MORE1, ...MORE2, ...MORE3, ...MORE4, ...MORE5, ...MORE6, ...MORE7, ...MORE8, ...MORE9, ...MORE10, ...MORE11, ...MORE12 }).map(([k, v]) => [nk(k), typeof v === "string" ? v.replace(/&(?=[\p{L}\d])/gu, "") : v]));
 const fmt = (s) => s;
 /** Pattern rules for strings that contain numbers/names: [RegExp, (…groups) => Turkish]. */
 export const RULES = [
