@@ -168,8 +168,8 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
     }
     if (url) {
       title.textContent = entryTitle(p);
-      video.hidden = false;
-      visual.hidden = true;
+      video.hidden = true;
+      visual.hidden = false;
       if (isHls(url) && !video.canPlayType("application/vnd.apple.mpegurl")) {
         try {
           status.children[0].textContent = "Buffering...";
@@ -239,6 +239,13 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
       index = playlist.length - 1;
       await load(p, true);
     }
+  };
+  const musicVideo = (e) => {
+    const r = e?.currentTarget?.getBoundingClientRect?.() || w.el.getBoundingClientRect();
+    popup([
+      { label: "From my computer (browser file picker)...", action: () => importMedia() },
+      { label: "From inside the app (My Documents)...", action: () => open() },
+    ], r.left, e?.currentTarget ? r.bottom : r.top + 60, {});
   };
   const importMedia = async () => {
     const files = await pickFiles({
@@ -339,6 +346,9 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
     if (/\.(m3u8?|pls)$/i.test(v)) return openList(v);
     playlist.push(v); index = playlist.length - 1; await load(v, true);
   };
+  // a stream or file without a picture (radio, music) shows the visualization; one with video shows the video
+  const pic = () => { if (!video.src && !video.currentSrc) return; const v = video.videoWidth > 0; video.hidden = !v; visual.hidden = v; };
+  video.addEventListener("loadedmetadata", pic); video.addEventListener("playing", pic); video.addEventListener("resize", pic);
   const bars = new Uint8Array(128);
   // ---- visualizations (View > Visualizations, or click the picture): real FFT data when the audio is routed through Web Audio,
   // an animated stand-in for cross-origin radio streams, which the browser will not let us analyse ----
@@ -352,6 +362,9 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
   const draw = () => {
     if (w.closed) return;
     const c = canvasCtx, W = 560, H = 245, t = performance.now() / 1000, playing = !video.paused;
+    const cw = visual.clientWidth || W, ch = visual.clientHeight || H;
+    if (visual.width !== cw || visual.height !== ch) { visual.width = cw; visual.height = ch; }
+    c.setTransform(cw / W, 0, 0, ch / H, 0, 0);
     let real = false;
     if (analyser && playing) { analyser.getByteFrequencyData(bars); analyser.getByteTimeDomainData(wave); real = bars.some((x) => x > 0); }
     if (!real) for (let i = 0; i < 128; i++) { bars[i] = playing ? fake(t, i) : 0; wave[i] = 128 + (playing ? Math.sin(t * 9 + i * 0.3) * 40 * Math.sin(t * 1.3 + i * 0.05) + Math.sin(t * 17 + i * 0.9) * 18 : 0); }
@@ -472,7 +485,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
     errdetails: { run: () => wmpError(ctx, { message: status.children[0].textContent, details: `Clip: ${title.textContent}\nLocation: ${entryUrl(playlist[index]) || current || "(none)"}` }) },
     back: { run: () => histGo(hist.back, hist.fwd), off: () => !hist.back.length },
     fwd: { run: () => histGo(hist.fwd, hist.back), off: () => !hist.fwd.length },
-    guide: { run: () => importMedia() }, music: { run: () => importMedia() }, home: { run: () => ctx.launch("ie", { url: "http://www.windowsmedia.com/" }) },
+    guide: { run: musicVideo }, music: { run: musicVideo }, home: { run: () => ctx.launch("ie", { url: "http://www.windowsmedia.com/" }) },
     tv: { run: () => showChannels() },
   };
   const BY_ID = { 3009: "open", 3022: "close", 3010: "saveas", 1010: "saveas", 3008: "exit", 3036: "props", 1009: "props", 3061: "stats", 3209: "stats", 3031: "options", 1007: "options", 3044: "std", 3045: "compact", 3046: "min", 3042: "full", 3203: "full", 3039: "z50", 3200: "z50", 3040: "z100", 3201: "z100", 3041: "z200", 3202: "z200", 3032: "top", 3047: "play", 3204: "play", 3048: "stop", 1002: "stop", 3049: "skipback", 3205: "skipback", 3050: "skipfwd", 3206: "skipfwd", 3051: "rewind", 1004: "rewind", 3052: "ff", 1003: "ff", 3054: "goto", 3208: "goto", 3055: "volup", 3213: "volup", 3056: "voldown", 3214: "voldown", 3057: "mute", 3215: "mute", 129: "radio", 127: "guide", 128: "music", 150: "home", 3062: "help", 3035: "about", 1008: "about", 3064: "upgrade", 3216: "errdetails", 125: "back", 126: "fwd" };
@@ -487,7 +500,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
     for (const it of items) {
       if (it.sep) { if (out.length && !out.at(-1).separator) out.push(separator()); continue; }
       if (it.id === 127) continue;
-      if (it.id === 128) { out.push({ label: "Music and Video...", action: () => importMedia() }); continue; }
+      if (it.id === 128) { out.push({ label: "Music and Video...", action: () => musicVideo() }); continue; }
       if (it.sub && it.label === "Settings") { out.push({ label: "Settings", submenu: [["nav", "Navigation panel"], ["controls", "Controls panel"], ["display", "Display panel"], ["captions", "Captions panel"], ["goto", "Go To panel"], ["status", "Status panel"]].map(([k, l]) => ({ label: l, checked: !!panels[k], action: () => togglePanel(k) })) }); continue; }
       if (it.sub) { const sub = build(it.sub, ctxMenu); out.push(sub.some((s) => s.label && !s.disabled) ? { label: it.label, submenu: sub } : { label: it.label, disabled: true }); continue; }
       const r = handle(it.id, it, ctxMenu);
@@ -508,7 +521,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
       loadUrl: async (v) => { try { const items = parseM3U(await fetchPlaylistText(v), "", () => false); items.forEach((e) => stations.push({ ...e, group: e.group || "Benim İstasyonlarım", live: true })); radio?.refresh(); } catch (e) { ctx.dialogs.message(`The station list '${v}' could not be read.\n\n${e?.message || e}`, { title: "Windows Media Player", icon: "error" }); } },
       onClose: () => { radio = null; },
     });
-    if (!radioLoaded) { radioLoaded = true; fetchDecadeStations().then((l) => { if (!l.length) { radioLoaded = false; return; } const mine = stations.filter((x) => x.group === "Benim İstasyonlarım"); stations.splice(0, stations.length, ...l, ...mine); radio?.refresh(); }); }
+    if (!radioLoaded) { radioLoaded = true; fetchDecadeStations((e) => { stations.push(e); radio?.refresh(); }).then((l) => { if (!l.length) radioLoaded = false; }); }
   };
   w.addCleanup(() => { if (radio && !radio.win.closed) radio.win.close(); });
   const strip = (items) => items.map((i) => ({ ...i, label: i.label?.replace(/&/g, ""), ...(i.sub ? { sub: strip(i.sub) } : {}) }));
@@ -650,7 +663,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
     el("span", { class: "wmp-flex" }),
     navBtn("assets/wmp/bmp116.png", 4, "Radio", () => A.radio.run(), { text: "Radio", tip: "Radio Tuner (Ctrl+F)" }),
     navBtn("assets/wmp/tv.png", 0, "TV", () => A.tv.run(), { text: "TV", tip: "TV Channels" }),
-    navBtn("assets/wmp/bmp116.png", 3, "Music and Video", () => A.music.run(), { text: "Music and Video", tip: "Add music or video files from your computer and play them" }),
+    navBtn("assets/wmp/bmp116.png", 3, "Music and Video", (e) => A.music.run(e), { text: "Music and Video", tip: "Add music or video files from your computer and play them" }),
   );
   // seek bars: one above the controls, one inside them in the Minimal view
   const seek2 = el("input", { type: "range", min: 0, max: 1000, value: 0, "aria-label": "Playback position", class: "wmp-seek" });
