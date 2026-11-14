@@ -84,8 +84,8 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
   const w = ctx.wm.create({
     title: cd ? "CD Player" : "Windows Media Player",
     icon: "media",
-    width: 600,
-    height: cd ? 455 : 470,
+    width: cd ? 600 : 386,
+    height: cd ? 455 : 530,
     appId: cd ? "cdplayer" : "mediaplayer",
   });
   let current = path,
@@ -340,30 +340,58 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
     playlist.push(v); index = playlist.length - 1; await load(v, true);
   };
   const bars = new Uint8Array(128);
+  // ---- visualizations (View > Visualizations, or click the picture): real FFT data when the audio is routed through Web Audio,
+  // an animated stand-in for cross-origin radio streams, which the browser will not let us analyse ----
+  const VIS = [["bars", "Spectrum Analyzer"], ["scope", "Oscilloscope"], ["ambience", "Ambience"], ["particles", "Particles"]];
+  let vis = ctx.settings.get("wmpVis") || "bars";
+  const setVis = (v) => { vis = v; ctx.settings.set("wmpVis", v); };
+  const wave = new Uint8Array(128);
+  const fake = (t, i) => { const e = 0.55 + 0.35 * Math.sin(t * 2.1 + i * 0.35) * Math.sin(t * 0.7 + i * 0.1); return Math.max(0, 255 * e * (1 - i / 140) * (0.75 + 0.25 * Math.sin(t * 6 + i))); };
+  const parts = Array.from({ length: 70 }, () => ({ a: Math.random() * 6.28, r: Math.random(), s: 0.2 + Math.random() * 0.8 }));
+  let lvl = 0;
   const draw = () => {
     if (w.closed) return;
-    canvasCtx.fillStyle = "#081008";
-    canvasCtx.fillRect(0, 0, 560, 245);
-    if (analyser) analyser.getByteFrequencyData(bars);
-    for (let i = 0; i < 56; i++) {
-      const h = (bars[i * 2] || 0) * 0.72,
-        x = i * 9 + 25;
-      for (let y = 0; y < h; y += 7) {
-        canvasCtx.fillStyle =
-          y > 150 ? "#d5ce30" : y > 80 ? "#49b924" : "#07840a";
-        canvasCtx.fillRect(x, 215 - y, 6, 5);
+    const c = canvasCtx, W = 560, H = 245, t = performance.now() / 1000, playing = !video.paused;
+    let real = false;
+    if (analyser && playing) { analyser.getByteFrequencyData(bars); analyser.getByteTimeDomainData(wave); real = bars.some((x) => x > 0); }
+    if (!real) for (let i = 0; i < 128; i++) { bars[i] = playing ? fake(t, i) : 0; wave[i] = 128 + (playing ? Math.sin(t * 9 + i * 0.3) * 40 * Math.sin(t * 1.3 + i * 0.05) + Math.sin(t * 17 + i * 0.9) * 18 : 0); }
+    let sum = 0; for (let i = 0; i < 32; i++) sum += bars[i]; lvl += (sum / 32 / 255 - lvl) * 0.25;
+    if (vis === "bars") {
+      c.fillStyle = "#081008"; c.fillRect(0, 0, W, H);
+      for (let i = 0; i < 56; i++) {
+        const h = (bars[i * 2] || 0) * 0.72, x = i * 9 + 25;
+        for (let y = 0; y < h; y += 7) { c.fillStyle = y > 150 ? "#d5ce30" : y > 80 ? "#49b924" : "#07840a"; c.fillRect(x, 215 - y, 6, 5); }
+      }
+    } else if (vis === "scope") {
+      c.fillStyle = "rgba(0,12,0,.35)"; c.fillRect(0, 0, W, H);
+      c.strokeStyle = "#0a3a0a"; c.lineWidth = 1; c.beginPath();
+      for (let x = 0; x <= W; x += 40) { c.moveTo(x, 0); c.lineTo(x, H); }
+      for (let y = 0; y <= H; y += 40) { c.moveTo(0, y); c.lineTo(W, y); }
+      c.stroke();
+      c.strokeStyle = "#39ff39"; c.lineWidth = 2; c.beginPath();
+      for (let i = 0; i < 128; i++) { const x = (i / 127) * W, y = H / 2 + (wave[i] - 128) * 0.9; i ? c.lineTo(x, y) : c.moveTo(x, y); }
+      c.stroke();
+    } else if (vis === "ambience") {
+      c.fillStyle = "rgba(0,0,0,.18)"; c.fillRect(0, 0, W, H);
+      for (let k = 0; k < 6; k++) {
+        const x = W / 2 + Math.cos(t * (0.4 + k * 0.13) + k) * (150 + lvl * 90), y = H / 2 + Math.sin(t * (0.5 + k * 0.11) + k * 2) * (60 + lvl * 50), r = 30 + lvl * 90 + (bars[k * 6] || 0) * 0.25;
+        const g = c.createRadialGradient(x, y, 0, x, y, r); const hue = (t * 40 + k * 60) % 360;
+        g.addColorStop(0, `hsla(${hue},90%,60%,.55)`); g.addColorStop(1, `hsla(${hue},90%,50%,0)`);
+        c.fillStyle = g; c.beginPath(); c.arc(x, y, r, 0, 6.29); c.fill();
+      }
+    } else {
+      c.fillStyle = "rgba(0,0,10,.3)"; c.fillRect(0, 0, W, H);
+      for (const p of parts) {
+        p.r += p.s * (playing ? 0.006 + lvl * 0.03 : 0.0008); if (p.r > 1) { p.r = 0.02; p.a = Math.random() * 6.28; }
+        const x = W / 2 + Math.cos(p.a) * p.r * W * 0.6, y = H / 2 + Math.sin(p.a) * p.r * H * 0.9, z = 1 + p.r * 3;
+        c.fillStyle = `hsl(${(p.a * 57 + t * 30) % 360},90%,${55 + p.r * 30}%)`; c.fillRect(x, y, z, z);
       }
     }
-    canvasCtx.fillStyle = "#263e24";
-    canvasCtx.font = "11px Tahoma";
-    canvasCtx.textAlign = "center";
-    canvasCtx.fillText(
-      video.paused ? "WINDOWS MEDIA PLAYER" : "SPECTRUM ANALYZER",
-      280,
-      235,
-    );
+    c.fillStyle = "#263e24"; c.font = "11px Tahoma"; c.textAlign = "center";
+    if (vis === "bars") c.fillText(playing ? "SPECTRUM ANALYZER" : "WINDOWS MEDIA PLAYER", 280, 235);
     raf = requestAnimationFrame(draw);
   };
+  visual.addEventListener("click", () => setVis(VIS[(VIS.findIndex(([k]) => k === vis) + 1) % VIS.length][0]));
   const volume = el("input", {
     type: "range",
     min: 0,
@@ -444,7 +472,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
     errdetails: { run: () => wmpError(ctx, { message: status.children[0].textContent, details: `Clip: ${title.textContent}\nLocation: ${entryUrl(playlist[index]) || current || "(none)"}` }) },
     back: { run: () => histGo(hist.back, hist.fwd), off: () => !hist.back.length },
     fwd: { run: () => histGo(hist.fwd, hist.back), off: () => !hist.fwd.length },
-    guide: { run: () => ctx.launch("ie", { url: M.guide }) }, music: { run: () => ctx.launch("ie", { url: M.music }) }, home: { run: () => ctx.launch("ie", { url: "http://www.windowsmedia.com/" }) },
+    guide: { run: () => importMedia() }, music: { run: () => importMedia() }, home: { run: () => ctx.launch("ie", { url: "http://www.windowsmedia.com/" }) },
     tv: { run: () => showChannels() },
   };
   const BY_ID = { 3009: "open", 3022: "close", 3010: "saveas", 1010: "saveas", 3008: "exit", 3036: "props", 1009: "props", 3061: "stats", 3209: "stats", 3031: "options", 1007: "options", 3044: "std", 3045: "compact", 3046: "min", 3042: "full", 3203: "full", 3039: "z50", 3200: "z50", 3040: "z100", 3201: "z100", 3041: "z200", 3202: "z200", 3032: "top", 3047: "play", 3204: "play", 3048: "stop", 1002: "stop", 3049: "skipback", 3205: "skipback", 3050: "skipfwd", 3206: "skipfwd", 3051: "rewind", 1004: "rewind", 3052: "ff", 1003: "ff", 3054: "goto", 3208: "goto", 3055: "volup", 3213: "volup", 3056: "voldown", 3214: "voldown", 3057: "mute", 3215: "mute", 129: "radio", 127: "guide", 128: "music", 150: "home", 3062: "help", 3035: "about", 1008: "about", 3064: "upgrade", 3216: "errdetails", 125: "back", 126: "fwd" };
@@ -458,6 +486,8 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
     const out = [];
     for (const it of items) {
       if (it.sep) { if (out.length && !out.at(-1).separator) out.push(separator()); continue; }
+      if (it.id === 127) continue;
+      if (it.id === 128) { out.push({ label: "Music and Video...", action: () => importMedia() }); continue; }
       if (it.sub && it.label === "Settings") { out.push({ label: "Settings", submenu: [["nav", "Navigation panel"], ["controls", "Controls panel"], ["display", "Display panel"], ["captions", "Captions panel"], ["goto", "Go To panel"], ["status", "Status panel"]].map(([k, l]) => ({ label: l, checked: !!panels[k], action: () => togglePanel(k) })) }); continue; }
       if (it.sub) { const sub = build(it.sub, ctxMenu); out.push(sub.some((s) => s.label && !s.disabled) ? { label: it.label, submenu: sub } : { label: it.label, disabled: true }); continue; }
       const r = handle(it.id, it, ctxMenu);
@@ -489,6 +519,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
     const fo = favFolders().map((n) => ({ label: n, submenu: mediaFavs().filter((f) => (f.folder || "Media") === n).map((f) => ({ label: f.title, action: () => playFav(f) })) })).filter((m) => m.submenu.length);
     return [{ label: "Add to Favorites...", action: addFavorite }, { label: "Organize Favorites...", action: organize }, separator(), ...(fo.length ? fo : [{ label: "(Empty)", disabled: true }])];
   };
+  { const base = mainMenu["View"]; mainMenu["View"] = () => { const m = base ? base() : []; const i = m.findIndex((x) => x.label === "Captions"); const sub = { label: "Visualizations", submenu: VIS.map(([k, l]) => ({ label: l, checked: vis === k, action: () => setVis(k) })) }; m.splice(i < 0 ? m.length : i, 0, sub); return m; }; }
   mainMenu["Go"] = () => { const m = build(menuTree["9102"].find((t) => t.label === "Go").sub, false); const r = m.findIndex((x) => x.label === "Radio"); m.splice(r + 1, 0, { label: "TV Channels...", action: () => showChannels() }); return m; };
   w.setMenu(mainMenu);
   w.el.addEventListener("contextmenu", (e) => {
@@ -619,8 +650,7 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
     el("span", { class: "wmp-flex" }),
     navBtn("assets/wmp/bmp116.png", 4, "Radio", () => A.radio.run(), { text: "Radio", tip: "Radio Tuner (Ctrl+F)" }),
     navBtn("assets/wmp/tv.png", 0, "TV", () => A.tv.run(), { text: "TV", tip: "TV Channels" }),
-    navBtn("assets/wmp/bmp116.png", 3, "Music", () => A.music.run(), { text: "Music" }),
-    navBtn("assets/wmp/bmp116.png", 2, "Media Guide", () => A.guide.run(), { text: "Media Guide", tip: "Media Guide (Ctrl+Home)" }),
+    navBtn("assets/wmp/bmp116.png", 3, "Music and Video", () => A.music.run(), { text: "Music and Video", tip: "Add music or video files from your computer and play them" }),
   );
   // seek bars: one above the controls, one inside them in the Minimal view
   const seek2 = el("input", { type: "range", min: 0, max: 1000, value: 0, "aria-label": "Playback position", class: "wmp-seek" });
@@ -728,7 +758,8 @@ export async function openMediaPlayer(ctx, { path = null, cd = false } = {}) {
       }
     }),
   );
-  await load(path);
+  if (path) { playlist.push(path); index = 0; }
+  await load(path, !!path);
   draw();
   return w;
 }
