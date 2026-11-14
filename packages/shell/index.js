@@ -188,6 +188,12 @@ export class DesktopShell {
         action: () => ctx.launch("mediaplayer"),
       },
       {
+        id: "agent",
+        name: "Microsoft Agent",
+        icon: "agent",
+        action: () => ctx.launch("agent"),
+      },
+      {
         id: "acrobat",
         name: "Acrobat Reader 5.0",
         icon: "acrobat",
@@ -1015,6 +1021,7 @@ export class DesktopShell {
             "recorder",
             "volume",
             "mediaplayer",
+            "agent",
           ]),
         },
         { label: "Games", icon: "programGroup", submenu: games },

@@ -1,5 +1,6 @@
 // Turkish strings: ICQ 99b (win98.si port). Accelerator "&" marks are stripped from keys by the loader.
 export const MORE12 = {
+  "Give me a tip": "Bana ipucu ver", "Tell me a joke": "Bir fıkra anlat", "What time is it?": "Saat kaç?", "Animate!": "Hareket et!", "Animations": "Animasyonlar", "Choose Assistant...": "Asistan Seç...", "Character": "Karakter", "Speak aloud": "Sesli konuş", "Sound effects": "Ses efektleri", "Speak tips automatically": "İpuçlarını kendiliğinden söyle", "Hide": "Gizle", "Show": "Göster", "Normal size": "Normal boyut", "Large (150%)": "Büyük (%150)", "Extra large (200%)": "Çok büyük (%200)", "Size:": "Boyut:", "Speak aloud (browser voice)": "Sesli konuş (tarayıcı sesi)",
   "From my computer (browser file picker)...": "Bilgisayarımdan (tarayıcı dosya seçici)...", "From inside the app (My Documents)...": "Uygulama içinden (Belgelerim)...",
   "Music and Video": "Müzik ve Video", "Music and Video...": "Müzik ve Video...", "Add music or video files from your computer and play them": "Bilgisayarınızdan müzik veya video dosyaları ekleyip oynatın", "Visualizations": "Görselleştirmeler", "Bars and Waves": "Çubuklar ve Dalgalar", "Scope": "Osiloskop", "Battery": "Pil", "Ambience": "Ambiyans", "Alchemy": "Simya", "Spikes": "Dikenler",
   "Advanced >>": "Gelişmiş >>", "<< Advanced": "<< Gelişmiş",

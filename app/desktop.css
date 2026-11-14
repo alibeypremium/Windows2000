@@ -6937,3 +6937,19 @@ input.wmp-seek::-moz-range-thumb { width: 13px; height: 15px; border: 0; border-
 
 .vlc-ch .vlc-pl-row.sel { background: #0a246a; color: #fff; }
 .vlc-ch .vlc-pl-row.sel .d { color: #fff; }
+
+/* Microsoft Agent gallery */
+.ag-window .window-body { background: var(--face); }
+.ag-body { display: flex; flex-direction: column; gap: 8px; padding: 8px; height: 100%; box-sizing: border-box; }
+.ag-top { display: flex; gap: 8px; flex: 1; min-height: 0; }
+.ag-list { width: 170px; overflow-y: auto; background: #fff; box-shadow: inset 1px 1px #808080, inset -1px -1px #fff, inset 2px 2px #404040, inset -2px -2px #d4d0c8; padding: 2px; }
+.ag-row { display: flex; align-items: center; gap: 6px; padding: 1px 3px; cursor: default; white-space: nowrap; }
+.ag-row.sel { background: #0a246a; color: #fff; }
+.ag-side { flex: 1; display: flex; flex-direction: column; gap: 6px; align-items: center; padding: 6px; background: #fff; box-shadow: inset 1px 1px #808080, inset -1px -1px #fff, inset 2px 2px #404040, inset -2px -2px #d4d0c8; text-align: center; }
+.ag-prev img { image-rendering: pixelated; }
+.ag-info { font-size: 12px; line-height: 1.35; }
+.ag-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; }
+.ag-chk { display: flex; align-items: center; gap: 4px; }
+.ag-chk select { margin-left: 4px; }
+.ag-btns { display: flex; justify-content: flex-end; gap: 6px; }
+.ag-btns button { min-width: 75px; }

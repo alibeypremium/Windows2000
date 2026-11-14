@@ -620,3 +620,6 @@ Original work (Turkish translations of the Windows 2000 help text in assets/help
 - IE throbber: browseui.dll bitmap 306 (22x22, 41 frames, Windows logo -> globe) -> `assets/ui/ie/throbber-strip.png`, animated with CSS steps while a page loads. Progress bar in the status bar follows win98.si (104px pane, 6px blocks with 2px gaps). Generic button pressed-padding rule is now zero-specificity so buttons with their own padding no longer grow when pressed.
 - IE explorer bar close button: browseui.dll bitmap 545 (cell 1) -> `assets/ui/ie/iso/bar-close.png`. Archive toolbar button has cold/hot bitmaps (`archive-cold/hot.png`) like the ISO toolbar icons.
 - IE Wayback data: web.archive.org CDX/timemap answers carry no CORS headers, so a page cannot read them; archive.org/wayback/available supports `callback=` (JSONP, https://archive.org/help/wayback_api.php) and is used for year availability, first/last copy, previous/next copy and nearest-copy fallback.
+
+## Microsoft Agent characters
+- assets/agents/* and packages/accessories/vendor/ms-agent.js come from the ms-agent-js project (https://github.com/azayrahmad/ms-agent-js); the characters are the original Microsoft Agent characters. Balloon font replaced with the Windows 2000 UI font.

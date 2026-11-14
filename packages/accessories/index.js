@@ -9,3 +9,4 @@ export {
 export { openCdPlayer } from "./cdplayer.js";
 export { openVolume } from "./volume.js";
 export { openSoundRecorder } from "./recorder.js";
+export { openAgentApp, restoreAgent } from "./agent.js";

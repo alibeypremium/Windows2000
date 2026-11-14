@@ -67,6 +67,7 @@ const icons = {
   freecell: "w2k/ref-freecell",
   minesweeper: "w2k/ref-minesweeper",
   winamp: "winamp",
+  agent: "agent",
   winrar: "winrar",
   wintools: "wintools",
   nvidia: "nvidia",

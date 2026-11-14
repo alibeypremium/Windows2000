@@ -44,6 +44,7 @@ const openWordPad = lazy(() => import("/packages/accessories/index.js"), "openWo
 const openCalculator = lazy(() => import("/packages/accessories/index.js"), "openCalculator");
 const openPaint = lazy(() => import("/packages/accessories/index.js"), "openPaint");
 const openMediaPlayer = lazy(() => import("/packages/accessories/index.js"), "openMediaPlayer");
+const openAgentApp = lazy(() => import("/packages/accessories/index.js"), "openAgentApp");
 const openCdPlayer = lazy(() => import("/packages/accessories/index.js"), "openCdPlayer");
 const openVolume = lazy(() => import("/packages/accessories/index.js"), "openVolume");
 const openSoundRecorder = lazy(() => import("/packages/accessories/index.js"), "openSoundRecorder");
@@ -209,6 +210,13 @@ ctx.apps = [
     icon: "media",
     aliases: ["mplayer2", "mplayer2.exe", "wmplayer"],
     open: openMediaPlayer,
+  },
+  {
+    id: "agent",
+    name: "Microsoft Agent",
+    icon: "agent",
+    aliases: ["msagent", "agent.exe", "clippy"],
+    open: (ctx, args) => openAgentApp(ctx, args || {}),
   },
   {
     id: "cdplayer",
@@ -747,6 +755,7 @@ async function start() {
   if (settings.get("showWelcome")) await ctx.launch("welcome");
   wm.fit();
   document.body.classList.add("ready");
+  import("/packages/accessories/index.js").then((m) => m.restoreAgent(ctx)).catch(() => {});
   const params = new URLSearchParams(location.search);
   if (params.has("app")) {
     const id = params.get("app");
